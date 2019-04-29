@@ -1,0 +1,48 @@
+body #root {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+}
+
+.headTitleBackground {
+  margin-top: 4em;
+  height: 10em;
+  background-image: linear-gradient(
+    135deg,
+    rgb(24, 42, 115) 0%,
+    rgb(33, 138, 174) 69%,
+    rgb(32, 167, 172) 89%
+  )
+}
+
+.headText1 {
+  padding-top: 1em;
+  margin-left: 0.5em;
+  color: white;
+
+}
+
+.headText2 {
+  margin-left: 1em;
+  color: white;
+}
+
+.p_title {
+  margin-left: 1em;
+  padding-top: 1em
+}
+
+.p_body {
+  margin-left: 2em;
+  margin-right: 2em;
+}
+
+.footer_background {
+  margin-top: 13em;
+  height: 5em;
+  background-color: grey;
+}
+
+.footer_text {
+  padding-top: 2em;
+  padding-left: 2em;
+}
