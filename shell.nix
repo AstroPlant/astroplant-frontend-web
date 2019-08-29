@@ -5,5 +5,6 @@ pkgs.mkShell {
     nodejs-10_x
     nodePackages.javascript-typescript-langserver
     nodePackages.prettier
+    jre
   ];
 }
