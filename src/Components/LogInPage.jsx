@@ -6,7 +6,7 @@ export default class LogInPage extends Component {
   render() {
     return (
       <div>
-        <HeadTitle titulo="LogIn" />
+        <HeadTitle main="Log in" />
         <Container>
           <Grid columns={1} textAlign="center">
             <Grid.Row style={{ paddingTop: "3em" }}>

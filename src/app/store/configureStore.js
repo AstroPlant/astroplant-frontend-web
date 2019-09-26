@@ -1,22 +1,18 @@
-import { createStore, applyMiddleware } from 'redux'
-import { composeWithDevTools } from 'redux-devtools-extension'  
-import rootReducer from '../reducers/rootReducer'
+import { createStore, applyMiddleware } from "redux";
+import { composeWithDevTools } from "redux-devtools-extension";
+import rootReducer from "../reducers/rootReducer";
 
-const configureStore = (preloadedState) => {
-    const middlewares = [];
-    const middlewareEnhancer = applyMiddleware(...middlewares);
+const configureStore = preloadedState => {
+  const middlewares = [];
+  const middlewareEnhancer = applyMiddleware(...middlewares);
 
-    const storeEnhancers = [middlewareEnhancer];
+  const storeEnhancers = [middlewareEnhancer];
 
-    const composedEnhancer = composeWithDevTools(...storeEnhancers);
+  const composedEnhancer = composeWithDevTools(...storeEnhancers);
 
-    const store = createStore(
-        rootReducer,
-        preloadedState,
-        composedEnhancer
-    )
+  const store = createStore(rootReducer, preloadedState, composedEnhancer);
 
-    return store
-}
+  return store;
+};
 
-export default configureStore
+export default configureStore;

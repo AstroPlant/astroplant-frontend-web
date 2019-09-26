@@ -7,7 +7,7 @@ class MapPage extends Component {
   render() {
     return (
       <div>
-        <HeadTitle titulo="Map" texto="See Astroplant Kits Around the World." />
+        <HeadTitle main="Map" secondary="See Astroplant kits around the world" />
         <Container>
           <GoogleMap />
         </Container>

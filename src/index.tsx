@@ -5,10 +5,14 @@ import "semantic-ui-css/semantic.min.css";
 import { BrowserRouter } from "react-router-dom";
 import "./index.css";
 import App from "./App";
+import { store } from "./store";
+import * as actions from "./modules/generic/actions";
 import * as serviceWorker from "./serviceWorker";
-import configureStore from "./app/store/configureStore";
 
-const store = configureStore();
+store.dispatch(actions.pageInitializationSuccess());
+window.addEventListener("load", () => {
+  store.dispatch(actions.pageLoadSuccess());
+});
 
 ReactDOM.render(
   <Provider store={store}>
