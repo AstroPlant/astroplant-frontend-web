@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { withTranslation, WithTranslation } from "react-i18next";
 import HeadTitle from "./HeadTitle";
 import { Container, Form, Segment } from "semantic-ui-react";
 import RjsfForm from "../rjsf-theme-semantic-ui";
 import { JSONSchema6, JSONSchema6Type } from "json-schema";
 
 import { UserApi } from "../api";
+import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
 
 const schema: JSONSchema6 = {
   type: "object",
@@ -38,6 +40,7 @@ const uiSchema = {
 type State = {
   submitting: boolean;
   formData: any;
+  additionalFormErrors: InvalidParametersFormErrors;
 };
 
 function validate(formData: any, errors: any) {
@@ -51,7 +54,7 @@ function validate(formData: any, errors: any) {
   return errors;
 }
 
-class SignUpPage extends Component<{}, State> {
+class SignUpPage extends Component<WithTranslation, State> {
   state = {
     submitting: false,
     formData: {},
@@ -74,6 +77,11 @@ class SignUpPage extends Component<{}, State> {
     } catch (e) {
       console.warn(e);
       console.warn(e.response);
+      const formErrors = PDInvalidParameters.toFormErrors(this.props.t, e.response.data);
+      console.warn("form errors", formErrors);
+      if (formErrors !== null) {
+        this.setState({ additionalFormErrors: formErrors });
+      }
     } finally {
       this.setState({ submitting: false });
     }
@@ -102,7 +110,7 @@ class SignUpPage extends Component<{}, State> {
               }}
               formData={this.state.formData}
               disabled={this.state.submitting}
-              extraErrors={{ username: { __errors: ["test"] } }}
+              extraErrors={this.state.additionalFormErrors}
             >
               <Form.Button
                 type="submit"
@@ -120,4 +128,4 @@ class SignUpPage extends Component<{}, State> {
   }
 }
 
-export default SignUpPage;
+export default withTranslation()(SignUpPage);

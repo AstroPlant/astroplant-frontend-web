@@ -26,6 +26,12 @@
           "button": "Go to the Dashboard"
         }
       }
+    },
+    "invalidParameter": {
+      "mustBeEmailAddress": "must be an email address",
+      "mustHaveLengthBetween": "must be between {{min}} and {{max}} characters",
+      "alreadyExists": "already exists and must be unique",
+      "unexpected": "invalid for an unknown or unexpected reason"
     }
   }
 }
