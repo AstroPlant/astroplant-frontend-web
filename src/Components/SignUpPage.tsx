@@ -36,8 +36,8 @@ const uiSchema = {
 };
 
 type State = {
-  username: string;
-  emailAddress: string;
+  submitting: boolean;
+  formData: any;
 };
 
 function validate(formData: any, errors: any) {
@@ -52,15 +52,31 @@ function validate(formData: any, errors: any) {
 }
 
 class SignUpPage extends Component<{}, State> {
+  state = {
+    submitting: false,
+    formData: {},
+    additionalFormErrors: {}
+  };
+
   async submit(formData: any) {
+    this.setState({ submitting: true, formData });
     console.warn("asd", formData);
 
     const api = new UserApi();
-    console.warn(await api.createUser({
-      username: formData.username,
-      password: formData.password,
-      emailAddress: formData.emailAddress
-    }));
+
+    try {
+      const result = await api.createUser({
+        username: formData.username,
+        password: formData.password,
+        emailAddress: formData.emailAddress
+      });
+      console.log(result);
+    } catch (e) {
+      console.warn(e);
+      console.warn(e.response);
+    } finally {
+      this.setState({ submitting: false });
+    }
   }
 
   render() {
@@ -72,13 +88,28 @@ class SignUpPage extends Component<{}, State> {
         />
         <Container text style={{ marginTop: "1em" }}>
           <Segment piled padded>
+            {/* TODO: Waiting for
+                https://github.com/rjsf-team/react-jsonschema-form/pull/1444
+                to be merged
+               // @ts-ignore */}
             <RjsfForm
               schema={schema}
               uiSchema={uiSchema}
               validate={validate}
-              onSubmit={({ formData }) => this.submit(formData)}
+              onSubmit={({ formData }) => {
+                this.submit(formData);
+                return false;
+              }}
+              formData={this.state.formData}
+              disabled={this.state.submitting}
+              extraErrors={{ username: { __errors: ["test"] } }}
             >
-              <Form.Button type="submit" primary>
+              <Form.Button
+                type="submit"
+                primary
+                disabled={this.state.submitting}
+                loading={this.state.submitting}
+              >
                 Submit
               </Form.Button>
             </RjsfForm>

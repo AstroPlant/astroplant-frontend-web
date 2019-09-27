@@ -1,0 +1,31 @@
+{
+  "translation": {
+    "home": {
+      "header": "AstroPlant Prototype",
+      "subheader": "Be a space farmer",
+      "content": {
+        "title": "Grow plants in space",
+        "p1": "Welcome, space farmer!",
+        "p2": "AstroPlant is an educational citizen science project with the European Space Agency to engage a new generation of space farmers, collect data and ideas for agriculture on Mars, develop open source research equipment, and create awareness of regenerative and closed-loop life support systems.",
+        "p3": "We have built a prototype plant lab that collects and shares open data about plant growth in different grow environments and are working on an open lab-infrastructure that makes it possible for everyone to contribute to science and space exploration—and to get to know more about topics such as plant science and biology, space science, engineering, electronics, open innovation and the circular economy."
+      },
+      "buttons": {
+        "see": {
+          "head": "See",
+          "body": "See the Astroplant kits in the world.",
+          "button": "Show Map"
+        },
+        "learn": {
+          "head": "Learn",
+          "body": "Learn about growing plants and AstroPlant.",
+          "button": "Read More"
+        },
+        "analyze": {
+          "head": "Analyze",
+          "body": "Analyze real-time AstroPlant data.",
+          "button": "Go to the Dashboard"
+        }
+      }
+    }
+  }
+}
