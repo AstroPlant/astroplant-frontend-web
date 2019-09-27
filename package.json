@@ -16,7 +16,7 @@
     "react-async-component": "^2.0.0",
     "react-device-detect": "^1.6.2",
     "react-dom": "^16.8.6",
-    "react-jsonschema-form": "^1.8.0",
+    "react-jsonschema-form": "github:rjsf-team/react-jsonschema-form#pull/1444/head",
     "react-jsonschema-form-semanticui": "^1.0.3",
     "react-redux": "^7.0.2",
     "react-router-dom": "^5.0.0",
