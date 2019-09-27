@@ -48,7 +48,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "4.1.1",
+    "@openapitools/openapi-generator-cli": "0.0.19-4.1.2",
     "typescript": "^3.4.5"
   }
 }
