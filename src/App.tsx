@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { withTranslation, WithTranslation } from "react-i18next";
 import "./App.css";
 
 import { Switch, Route, Redirect, NavLink } from "react-router-dom";
@@ -13,18 +14,19 @@ import LogInPage from "./Components/LogInPage";
 import SignUpPage from "./Components/SignUpPage";
 import TestComponent from "./Components/Test/TestComponent";
 
-class App extends Component {
+class App extends Component<WithTranslation> {
   render() {
+    const { t } = this.props;
     return (
       <>
         <NavigationBar
           leftItems={[
-            { as: NavLink, content: "Home", to: "/home", key: "home" },
-            { as: NavLink, content: "Map", to: "/map", key: "map" }
+            { as: NavLink, content: t("common.home"), to: "/home", key: "home" },
+            { as: NavLink, content: t("common.map"), to: "/map", key: "map" }
           ]}
           rightItems={[
-            { as: NavLink, content: "Log in", to: "/log-in", key: "logIn" },
-            { as: NavLink, content: "Sign up", to: "/sign-up", key: "signUp" }
+            { as: NavLink, content: t("common.logIn"), to: "/log-in", key: "logIn" },
+            { as: NavLink, content: t("common.signUp"), to: "/sign-up", key: "signUp" }
           ]}
         >
           <Switch>
@@ -57,4 +59,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withTranslation()(App);

@@ -1,5 +1,11 @@
 {
   "translation": {
+    "common": {
+      "home": "Home",
+      "map": "Map",
+      "logIn": "Log in",
+      "signUp": "Sign up"
+    },
     "home": {
       "header": "AstroPlant Prototype",
       "subheader": "Be a space farmer",
