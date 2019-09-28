@@ -16,7 +16,7 @@ export default function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
 
   return (
     <>
-      {(title !== null || description != null) && (
+      {(title || description) && (
         <Segment vertical>
           {title !== null && (
             <TitleField
