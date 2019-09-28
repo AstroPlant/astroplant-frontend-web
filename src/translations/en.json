@@ -4,7 +4,10 @@
       "home": "Home",
       "map": "Map",
       "logIn": "Log in",
-      "signUp": "Sign up"
+      "signUp": "Sign up",
+      "username": "Username",
+      "password": "Password",
+      "emailAddress": "Email address"
     },
     "home": {
       "header": "AstroPlant Prototype",
@@ -32,6 +35,13 @@
           "button": "Go to the Dashboard"
         }
       }
+    },
+    "account": {
+      "passwordRepeat": "Password repeat"
+    },
+    "signUp": {
+      "readAgreeTermsOfService": "I have read and agree to the terms of service.",
+      "createAccount": "Create account"
     },
     "invalidParameter": {
       "mustBeEmailAddress": "must be an email address",

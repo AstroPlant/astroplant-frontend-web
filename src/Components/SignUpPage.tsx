@@ -2,43 +2,25 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { withTranslation, WithTranslation } from "react-i18next";
 import HeadTitle from "./HeadTitle";
-import { Container, Form, Segment } from "semantic-ui-react";
+import {
+  Container,
+  Form,
+  Segment,
+  Header,
+  Icon,
+  Transition
+} from "semantic-ui-react";
 import RjsfForm from "../rjsf-theme-semantic-ui";
-import { JSONSchema6, JSONSchema6Type } from "json-schema";
+import { JSONSchema6 } from "json-schema";
 
 import { UserApi } from "../api";
+import HttpStatus from "http-status-codes";
 import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
-
-const schema: JSONSchema6 = {
-  type: "object",
-  title: "Account details",
-  required: ["username", "password", "passwordRepeat", "emailAddress"],
-  properties: {
-    username: { type: "string", title: "Username" },
-    password: { type: "string", title: "Password" },
-    passwordRepeat: { type: "string", title: "Password repeat" },
-    emailAddress: { type: "string", title: "Email address" },
-    termsOfService: {
-      type: "boolean",
-      title: "I have read and agree to the Terms of Service"
-    }
-  }
-};
-
-const uiSchema = {
-  password: {
-    "ui:widget": "password"
-  },
-  passwordRepeat: {
-    "ui:widget": "password"
-  },
-  emailAddress: {
-    "ui:widget": "email"
-  }
-};
 
 type State = {
   submitting: boolean;
+  done: boolean;
+  formEpoch: number; // Hacky var to reset form errors on submission.
   formData: any;
   additionalFormErrors: InvalidParametersFormErrors;
 };
@@ -57,13 +39,21 @@ function validate(formData: any, errors: any) {
 class SignUpPage extends Component<WithTranslation, State> {
   state = {
     submitting: false,
+    done: false,
+    formEpoch: 0,
     formData: {},
     additionalFormErrors: {}
   };
 
   async submit(formData: any) {
-    this.setState({ submitting: true, formData });
-    console.warn("asd", formData);
+    this.setState(state => {
+      return {
+        submitting: true,
+        formEpoch: state.formEpoch + 1,
+        formData,
+        additionalFormErrors: {}
+      };
+    });
 
     const api = new UserApi();
 
@@ -73,13 +63,18 @@ class SignUpPage extends Component<WithTranslation, State> {
         password: formData.password,
         emailAddress: formData.emailAddress
       });
-      console.log(result);
+
+      if (result.status === HttpStatus.CREATED) {
+        this.setState({ done: true });
+      }
     } catch (e) {
-      console.warn(e);
-      console.warn(e.response);
-      const formErrors = PDInvalidParameters.toFormErrors(this.props.t, e.response.data);
-      console.warn("form errors", formErrors);
+      console.warn("error when attempting to create account", e, e.response);
+      const formErrors = PDInvalidParameters.toFormErrors(
+        this.props.t,
+        e.response.data
+      );
       if (formErrors !== null) {
+        console.warn("form errors", formErrors);
         this.setState({ additionalFormErrors: formErrors });
       }
     } finally {
@@ -88,6 +83,36 @@ class SignUpPage extends Component<WithTranslation, State> {
   }
 
   render() {
+    const { t } = this.props;
+
+    const schema: JSONSchema6 = {
+      type: "object",
+      title: "Account details",
+      required: ["username", "password", "passwordRepeat", "emailAddress"],
+      properties: {
+        username: { type: "string", title: t("common.username") },
+        password: { type: "string", title: t("common.password") },
+        passwordRepeat: { type: "string", title: t("account.passwordRepeat") },
+        emailAddress: { type: "string", title: t("common.emailAddress") },
+        termsOfService: {
+          type: "boolean",
+          title: t("signUp.readAgreeTermsOfService")
+        }
+      }
+    };
+
+    const uiSchema = {
+      password: {
+        "ui:widget": "password"
+      },
+      passwordRepeat: {
+        "ui:widget": "password"
+      },
+      emailAddress: {
+        "ui:widget": "email"
+      }
+    };
+
     return (
       <div>
         <HeadTitle
@@ -96,31 +121,51 @@ class SignUpPage extends Component<WithTranslation, State> {
         />
         <Container text style={{ marginTop: "1em" }}>
           <Segment piled padded>
-            {/* TODO: Waiting for
-                https://github.com/rjsf-team/react-jsonschema-form/pull/1444
-                to be merged
-               // @ts-ignore */}
-            <RjsfForm
-              schema={schema}
-              uiSchema={uiSchema}
-              validate={validate}
-              onSubmit={({ formData }) => {
-                this.submit(formData);
-                return false;
-              }}
-              formData={this.state.formData}
-              disabled={this.state.submitting}
-              extraErrors={this.state.additionalFormErrors}
-            >
-              <Form.Button
-                type="submit"
-                primary
-                disabled={this.state.submitting}
-                loading={this.state.submitting}
-              >
-                Submit
-              </Form.Button>
-            </RjsfForm>
+            {this.state.done ? (
+              <>
+                <Header size="huge" icon textAlign="center">
+                  <Transition animation="drop" duration={450} transitionOnMount>
+                    <Icon name="check" circular />
+                  </Transition>
+                  <Header.Content>Success!</Header.Content>
+                </Header>
+                <Container textAlign="center">
+                  <p>
+                    Your account has been created.{" "}
+                    <Link to="/log-in">You can now log in.</Link>
+                  </p>
+                </Container>
+              </>
+            ) : (
+              <>
+                {/* TODO: Waiting for
+                    https://github.com/rjsf-team/react-jsonschema-form/pull/1444
+                    to be merged
+                    // @ts-ignore */}
+                <RjsfForm
+                  key={this.state.formEpoch}
+                  schema={schema}
+                  uiSchema={uiSchema}
+                  validate={validate}
+                  onSubmit={({ formData }) => {
+                    this.submit(formData);
+                    return false;
+                  }}
+                  formData={this.state.formData}
+                  disabled={this.state.submitting}
+                  extraErrors={this.state.additionalFormErrors}
+                >
+                  <Form.Button
+                    type="submit"
+                    primary
+                    disabled={this.state.submitting}
+                    loading={this.state.submitting}
+                  >
+                    {t("signUp.createAccount")}
+                  </Form.Button>
+                </RjsfForm>
+              </>
+            )}
           </Segment>
         </Container>
       </div>
