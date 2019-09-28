@@ -6,10 +6,6 @@ type PageLoaderProps = {
 };
 
 class PageLoader extends React.Component<PageLoaderProps, {}> {
-  constructor(props: PageLoaderProps) {
-    super(props);
-  }
-
   render() {
     console.log(this.props.page);
     const AsyncComponent = asyncComponent({

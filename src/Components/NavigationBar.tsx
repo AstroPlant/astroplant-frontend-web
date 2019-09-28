@@ -1,12 +1,9 @@
 import React, { Component } from "react";
-import { render } from "react-dom";
 import {
   Container,
   Icon,
-  Image,
   Menu,
   Sidebar,
-  Segment,
   Responsive
 } from "semantic-ui-react";
 

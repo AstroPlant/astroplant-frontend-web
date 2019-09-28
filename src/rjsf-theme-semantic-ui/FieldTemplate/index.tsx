@@ -11,8 +11,6 @@ export default function FieldTemplate(props: FieldTemplateProps) {
     help,
     required,
     description,
-    rawDescription,
-    errors,
     rawErrors = [],
     children
   } = props;

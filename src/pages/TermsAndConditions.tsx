@@ -1,9 +1,9 @@
-import React, { Component } from "react";
+import React from "react";
 import { Container } from "semantic-ui-react";
 
 import HeadTitle from "../Components/HeadTitle";
 
-export default function TermsAndConditions({}) {
+export default function TermsAndConditions() {
   return (
     <>
       <HeadTitle main="Terms and Conditions" />
