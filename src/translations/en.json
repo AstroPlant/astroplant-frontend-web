@@ -43,6 +43,10 @@
       "readAgreeTermsOfService": "I have read and agree to the terms of service.",
       "createAccount": "Create account"
     },
+    "logIn": {
+      "logIn": "Log in",
+      "rememberMe": "Keep me logged in"
+    },
     "invalidParameter": {
       "mustBeEmailAddress": "must be an email address",
       "mustHaveLengthBetween": "must be between {{min}} and {{max}} characters",

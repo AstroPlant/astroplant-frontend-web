@@ -7,38 +7,28 @@ export function setRememberMe(payload: boolean): types.AuthActionTypes {
   };
 }
 
-export function setJwt(payload: string): types.AuthActionTypes {
+export function setRefreshToken(payload: string): types.AuthActionTypes {
   return {
-    type: types.AUTH_JWT_SET,
+    type: types.AUTH_REFRESH_TOKEN_SET,
     payload
   };
 }
 
-export function clearJwt(): types.AuthActionTypes {
+export function clearRefreshToken(): types.AuthActionTypes {
   return {
-    type: types.AUTH_JWT_CLEAR
+    type: types.AUTH_REFRESH_TOKEN_CLEAR
   };
 }
 
-export function signUpRequest(
-  username: string,
-  password: string,
-  emailAddress: string
-): types.AuthActionTypes {
+export function setAuthenticationToken(payload: string): types.AuthActionTypes {
   return {
-    type: types.AUTH_SIGN_UP_REQUEST,
-    payload: { username, password, emailAddress }
+    type: types.AUTH_AUTHENTICATION_TOKEN_SET,
+    payload
   };
 }
 
-export function signUpSuccessAction(): types.AuthActionTypes {
+export function clearAuthenticationToken(): types.AuthActionTypes {
   return {
-    type: types.AUTH_SIGN_UP_SUCCESS
-  };
-}
-
-export function signUpErrorAction(): types.AuthActionTypes {
-  return {
-    type: types.AUTH_SIGN_UP_ERROR
+    type: types.AUTH_AUTHENTICATION_TOKEN_CLEAR
   };
 }

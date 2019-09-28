@@ -2,17 +2,24 @@ import * as types from "./actionTypes";
 
 export interface AuthState {
   rememberMe: boolean;
-  jwt: string | null;
+  refreshToken: string | null;
+  authenticationToken: string | null;
 }
 
 const initial: AuthState = {
   rememberMe: false,
-  jwt: null
+  refreshToken: null,
+  authenticationToken: null
 };
 
 export default function reducer(
   state: AuthState = initial,
   action: any
 ): AuthState {
-  return state;
+  switch (action.type) {
+    case types.AUTH_REFRESH_TOKEN_SET:
+      return { ...state, refreshToken: action.payload };
+    default:
+      return state;
+  }
 }

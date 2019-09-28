@@ -8,25 +8,14 @@ import { UserApi } from "api";
 import { SESSION_INITIALIZE } from "../session/actionTypes";
 
 /**
- * Listens to session initialization, and clear the authentication token if we
- * do not want to be remembered.
+ * Listens to session initialization, and clear the refresh token if we do not
+ * want to be remembered.
  */
-const clearTokenEpic = (action$: any, state$: any) =>
+const clearRefreshTokenEpic = (action$: any, state$: any) =>
   action$.pipe(
     ofType(SESSION_INITIALIZE),
     filter(() => !state$.value.auth.rememberMe),
-    map(actions.clearJwt)
+    map(actions.clearRefreshToken)
   );
 
-const signUpEpic = (action$: any, state$: any) =>
-  action$.pipe(
-    ofType(types.AUTH_SIGN_UP_REQUEST),
-    switchMap((action: types.SignUpRequestAction) => {
-      const userApi = new UserApi();
-      return from(
-        userApi.createUser(action.payload)
-      );
-    })
-  );
-
-export default combineEpics(clearTokenEpic);
+export default combineEpics(clearRefreshTokenEpic);

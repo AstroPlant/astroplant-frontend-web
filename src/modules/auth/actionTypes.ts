@@ -1,6 +1,9 @@
 export const AUTH_REMEMBER_ME_SET = "AUTH_REMEMBER_ME_SET";
-export const AUTH_JWT_SET = "AUTH_JWT_SET";
-export const AUTH_JWT_CLEAR = "AUTH_JWT_CLEAR";
+export const AUTH_REFRESH_TOKEN_SET = "AUTH_REFRESH_TOKEN_SET";
+export const AUTH_REFRESH_TOKEN_CLEAR = "AUTH_REFRESH_TOKEN_CLEAR";
+export const AUTH_AUTHENTICATION_TOKEN_SET = "AUTH_AUTHENTICATION_TOKEN_SET";
+export const AUTH_AUTHENTICATION_TOKEN_CLEAR =
+  "AUTH_AUTHENTICATION_TOKEN_CLEAR";
 export const AUTH_SIGN_UP_REQUEST = "AUTH_SIGN_UP_REQUEST";
 export const AUTH_SIGN_UP_SUCCESS = "AUTH_SIGN_UP_SUCCESS";
 export const AUTH_SIGN_UP_ERROR = "AUTH_SIGN_UP_ERROR";
@@ -10,13 +13,22 @@ export interface RememberMeSetAction {
   payload: boolean;
 }
 
-export interface JwtSetAction {
-  type: typeof AUTH_JWT_SET;
+export interface RefreshTokenSetAction {
+  type: typeof AUTH_REFRESH_TOKEN_SET;
   payload: string;
 }
 
-export interface JwtClearAction {
-  type: typeof AUTH_JWT_CLEAR;
+export interface RefreshTokenClearAction {
+  type: typeof AUTH_REFRESH_TOKEN_CLEAR;
+}
+
+export interface AuthenticationTokenSetAction {
+  type: typeof AUTH_AUTHENTICATION_TOKEN_SET;
+  payload: string;
+}
+
+export interface AuthenticationTokenClearAction {
+  type: typeof AUTH_AUTHENTICATION_TOKEN_CLEAR;
 }
 
 export interface SignUpRequestAction {
@@ -38,8 +50,10 @@ export interface SignUpErrorAction {
 
 export type AuthActionTypes =
   | RememberMeSetAction
-  | JwtSetAction
-  | JwtClearAction
+  | RefreshTokenSetAction
+  | RefreshTokenClearAction
+  | AuthenticationTokenSetAction
+  | AuthenticationTokenClearAction
   | SignUpRequestAction
   | SignUpSuccessAction
   | SignUpErrorAction;
