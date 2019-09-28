@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { withTranslation, WithTranslation } from "react-i18next";
-import HeadTitle from "./HeadTitle";
 import {
   Container,
   Form,
@@ -10,8 +9,10 @@ import {
   Icon,
   Transition
 } from "semantic-ui-react";
-import RjsfForm from "../rjsf-theme-semantic-ui";
 import { JSONSchema6 } from "json-schema";
+import RjsfForm from "../rjsf-theme-semantic-ui";
+
+import HeadTitle from "./HeadTitle";
 
 import { UserApi } from "../api";
 import HttpStatus from "http-status-codes";
@@ -114,7 +115,7 @@ class SignUpPage extends Component<WithTranslation, State> {
     };
 
     return (
-      <div>
+      <>
         <HeadTitle
           main="Create an account"
           secondary="Create an account to connect to the AstroPlant world."
@@ -147,10 +148,7 @@ class SignUpPage extends Component<WithTranslation, State> {
                   schema={schema}
                   uiSchema={uiSchema}
                   validate={validate}
-                  onSubmit={({ formData }) => {
-                    this.submit(formData);
-                    return false;
-                  }}
+                  onSubmit={({ formData }) => this.submit(formData) }
                   formData={this.state.formData}
                   disabled={this.state.submitting}
                   extraErrors={this.state.additionalFormErrors}
@@ -168,7 +166,7 @@ class SignUpPage extends Component<WithTranslation, State> {
             )}
           </Segment>
         </Container>
-      </div>
+      </>
     );
   }
 }
