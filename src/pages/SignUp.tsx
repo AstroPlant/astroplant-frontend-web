@@ -12,7 +12,7 @@ import {
 import { JSONSchema6 } from "json-schema";
 import RjsfForm from "../rjsf-theme-semantic-ui";
 
-import HeadTitle from "./HeadTitle";
+import HeadTitle from "../Components/HeadTitle";
 
 import { UserApi } from "../api";
 import HttpStatus from "http-status-codes";

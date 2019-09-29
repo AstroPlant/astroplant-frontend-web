@@ -1,7 +1,7 @@
 import React, { Component } from "react";
-import HeadTitle from "./HeadTitle";
+import HeadTitle from "../Components/HeadTitle";
 import { Container } from "semantic-ui-react";
-import GoogleMap from "./GoogleMap";
+import GoogleMap from "../Components/GoogleMap";
 
 class MapPage extends Component {
   render() {

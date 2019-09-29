@@ -9,12 +9,7 @@ import { Switch, Route, Redirect, NavLink } from "react-router-dom";
 
 import NavigationBar from "./Components/NavigationBar";
 import Footer from "./Components/Footer";
-import Home from "./Components/Home";
 import PageLoader from "./PageLoader";
-import MapPage from "./Components/MapPage";
-import AnalyzePage from "./Components/AnalyzePage";
-import LogInPage from "./Components/LogInPage";
-import SignUpPage from "./Components/SignUpPage";
 import TestComponent from "./Components/Test/TestComponent";
 
 type Props = WithTranslation & {
@@ -64,15 +59,26 @@ class App extends Component<Props> {
         >
           <Switch>
             <Redirect exact from="/" to="home" />
-            <Route exact path="/home" component={Home} />
+            <Route exact path="/home">
+              <PageLoader page="Home" />
+            </Route>
             <Route exact path="/terms-and-conditions">
               <PageLoader page="TermsAndConditions" />
             </Route>
-            <Route path="/map" component={MapPage} />
+            <Route path="/map">
+              <PageLoader page="Map" />
+            </Route>
             <Route path="/test" component={TestComponent} />
-            <Route path="/analyze" component={AnalyzePage} />
-            <Route path="/log-in" component={LogInPage} />
-            <Route path="/sign-up" component={SignUpPage} />
+            <Route path="/analyze">
+
+              <PageLoader page="Analyze" />
+              </Route>
+            <Route path="/log-in">
+              <PageLoader page="LogIn" />
+            </Route>
+            <Route path="/sign-up">
+              <PageLoader page="SignUp" />
+            </Route>
             <Route>
               <PageLoader page="NotFound" />
             </Route>

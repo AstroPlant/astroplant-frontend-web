@@ -15,7 +15,7 @@ import RjsfForm from "../rjsf-theme-semantic-ui";
 
 import { setRefreshToken, setAuthenticationToken } from "../modules/auth/actions";
 
-import HeadTitle from "./HeadTitle";
+import HeadTitle from "../Components/HeadTitle";
 
 import { AuthenticateApi } from "../api";
 import HttpStatus from "http-status-codes";

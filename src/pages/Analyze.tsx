@@ -1,15 +1,15 @@
 import React, { Component } from "react";
-import HeadTitle from "./HeadTitle";
 import { Container, Grid } from "semantic-ui-react";
 
-import PieChartCards from "./PieChartCards";
-import LineChartCard from "./LineChartCard";
+import HeadTitle from "../Components/HeadTitle";
+import PieChartCards from "../Components/PieChartCards";
+import LineChartCard from "../Components/LineChartCard";
 
 class AnalyzePage extends Component {
   render() {
     return (
       <div>
-        <HeadTitle titulo="Kits Name" texto="" />
+        <HeadTitle main="Kits Name" />
 
         <LineChartCard />
 
