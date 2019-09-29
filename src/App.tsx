@@ -68,20 +68,15 @@ class App extends Component<Props> {
             <Route exact path="/terms-and-conditions">
               <PageLoader page="TermsAndConditions" />
             </Route>
+            <Route path="/map" component={MapPage} />
+            <Route path="/test" component={TestComponent} />
+            <Route path="/analyze" component={AnalyzePage} />
+            <Route path="/log-in" component={LogInPage} />
+            <Route path="/sign-up" component={SignUpPage} />
+            <Route>
+              <PageLoader page="NotFound" />
+            </Route>
           </Switch>
-
-          <Route
-            path="/(.+)"
-            render={() => (
-              <div>
-                <Route path="/map" component={MapPage} />
-                <Route path="/test" component={TestComponent} />
-                <Route path="/analyze" component={AnalyzePage} />
-                <Route path="/log-in" component={LogInPage} />
-                <Route path="/sign-up" component={SignUpPage} />
-              </div>
-            )}
-          />
 
           <div style={{ minHeight: "1rem", flex: "auto" }} />
 
