@@ -37,7 +37,7 @@ export interface AuthenticationTokens {
      * @type {string}
      * @memberof AuthenticationTokens
      */
-    normalToken: string;
+    authenticationToken: string;
 }
 /**
  * 
@@ -367,15 +367,15 @@ export const AuthenticateApiAxiosParamCreator = function (configuration?: Config
         },
         /**
          * 
-         * @summary Obtain a normal token from a refresh token.
+         * @summary Obtain an authentication token from a refresh token.
          * @param {InlineObject3} inlineObject3 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        obtainNormalTokenFromRefreshToken(inlineObject3: InlineObject3, options: any = {}): RequestArgs {
+        obtainAuthenticationTokenFromRefreshToken(inlineObject3: InlineObject3, options: any = {}): RequestArgs {
             // verify required parameter 'inlineObject3' is not null or undefined
             if (inlineObject3 === null || inlineObject3 === undefined) {
-                throw new RequiredError('inlineObject3','Required parameter inlineObject3 was null or undefined when calling obtainNormalTokenFromRefreshToken.');
+                throw new RequiredError('inlineObject3','Required parameter inlineObject3 was null or undefined when calling obtainAuthenticationTokenFromRefreshToken.');
             }
             const localVarPath = `/me/refresh`;
             const localVarUrlObj = globalImportUrl.parse(localVarPath, true);
@@ -428,13 +428,13 @@ export const AuthenticateApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @summary Obtain a normal token from a refresh token.
+         * @summary Obtain an authentication token from a refresh token.
          * @param {InlineObject3} inlineObject3 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        obtainNormalTokenFromRefreshToken(inlineObject3: InlineObject3, options?: any): (axios?: AxiosInstance, basePath?: string) => AxiosPromise<string> {
-            const localVarAxiosArgs = AuthenticateApiAxiosParamCreator(configuration).obtainNormalTokenFromRefreshToken(inlineObject3, options);
+        obtainAuthenticationTokenFromRefreshToken(inlineObject3: InlineObject3, options?: any): (axios?: AxiosInstance, basePath?: string) => AxiosPromise<string> {
+            const localVarAxiosArgs = AuthenticateApiAxiosParamCreator(configuration).obtainAuthenticationTokenFromRefreshToken(inlineObject3, options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
                 return axios.request(axiosRequestArgs);
@@ -461,13 +461,13 @@ export const AuthenticateApiFactory = function (configuration?: Configuration, b
         },
         /**
          * 
-         * @summary Obtain a normal token from a refresh token.
+         * @summary Obtain an authentication token from a refresh token.
          * @param {InlineObject3} inlineObject3 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        obtainNormalTokenFromRefreshToken(inlineObject3: InlineObject3, options?: any) {
-            return AuthenticateApiFp(configuration).obtainNormalTokenFromRefreshToken(inlineObject3, options)(axios, basePath);
+        obtainAuthenticationTokenFromRefreshToken(inlineObject3: InlineObject3, options?: any) {
+            return AuthenticateApiFp(configuration).obtainAuthenticationTokenFromRefreshToken(inlineObject3, options)(axios, basePath);
         },
     };
 };
@@ -493,14 +493,14 @@ export class AuthenticateApi extends BaseAPI {
 
     /**
      * 
-     * @summary Obtain a normal token from a refresh token.
+     * @summary Obtain an authentication token from a refresh token.
      * @param {InlineObject3} inlineObject3 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof AuthenticateApi
      */
-    public obtainNormalTokenFromRefreshToken(inlineObject3: InlineObject3, options?: any) {
-        return AuthenticateApiFp(this.configuration).obtainNormalTokenFromRefreshToken(inlineObject3, options)(this.axios, this.basePath);
+    public obtainAuthenticationTokenFromRefreshToken(inlineObject3: InlineObject3, options?: any) {
+        return AuthenticateApiFp(this.configuration).obtainAuthenticationTokenFromRefreshToken(inlineObject3, options)(this.axios, this.basePath);
     }
 
 }
