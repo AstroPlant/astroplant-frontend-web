@@ -13,7 +13,7 @@ import {
 import { JSONSchema6 } from "json-schema";
 import RjsfForm from "../rjsf-theme-semantic-ui";
 
-import { setRefreshToken } from "../modules/auth/actions";
+import { setRefreshToken, setAuthenticationToken } from "../modules/auth/actions";
 
 import HeadTitle from "./HeadTitle";
 
@@ -30,6 +30,7 @@ type State = {
 
 type Props = WithTranslation & {
   setRefreshToken: (token: string) => void;
+  setAuthenticationToken: (token: string) => void;
 };
 
 class LogInPage extends Component<Props, State> {
@@ -61,6 +62,7 @@ class LogInPage extends Component<Props, State> {
       console.log(result);
       if (result.status === HttpStatus.OK) {
         this.props.setRefreshToken(result.data.refreshToken);
+        this.props.setAuthenticationToken(result.data.authenticationToken);
         //this.setState({ done: true });
       }
     } catch (e) {
@@ -139,7 +141,8 @@ const mapStateToProps = (state: any) => {
 const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
-      setRefreshToken
+      setRefreshToken,
+      setAuthenticationToken
     },
     dispatch
   );
