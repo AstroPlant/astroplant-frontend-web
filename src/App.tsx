@@ -1,5 +1,8 @@
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { withTranslation, WithTranslation } from "react-i18next";
+import { RootState } from "types";
+import Option from "./utils/option";
 import "./App.css";
 
 import { Switch, Route, Redirect, NavLink } from "react-router-dom";
@@ -14,20 +17,50 @@ import LogInPage from "./Components/LogInPage";
 import SignUpPage from "./Components/SignUpPage";
 import TestComponent from "./Components/Test/TestComponent";
 
-class App extends Component<WithTranslation> {
+type Props = WithTranslation & {
+  displayName: Option<string>;
+};
+
+class App extends Component<Props> {
   render() {
     const { t } = this.props;
     return (
       <>
         <NavigationBar
           leftItems={[
-            { as: NavLink, content: t("common.home"), to: "/home", key: "home" },
+            {
+              as: NavLink,
+              content: t("common.home"),
+              to: "/home",
+              key: "home"
+            },
             { as: NavLink, content: t("common.map"), to: "/map", key: "map" }
           ]}
-          rightItems={[
-            { as: NavLink, content: t("common.logIn"), to: "/log-in", key: "logIn" },
-            { as: NavLink, content: t("common.signUp"), to: "/sign-up", key: "signUp" }
-          ]}
+          rightItems={
+            this.props.displayName.isSome()
+              ? [
+                  {
+                    as: NavLink,
+                    content: this.props.displayName.unwrap(),
+                    to: "/me",
+                    key: "me"
+                  }
+                ]
+              : [
+                  {
+                    as: NavLink,
+                    content: t("common.logIn"),
+                    to: "/log-in",
+                    key: "logIn"
+                  },
+                  {
+                    as: NavLink,
+                    content: t("common.signUp"),
+                    to: "/sign-up",
+                    key: "signUp"
+                  }
+                ]
+          }
         >
           <Switch>
             <Redirect exact from="/" to="home" />
@@ -59,4 +92,9 @@ class App extends Component<WithTranslation> {
   }
 }
 
-export default withTranslation()(App);
+const mapStateToProps = (state: RootState) => {
+  const { details } = state.me;
+  return { displayName: details.map(d => d.displayName) };
+};
+
+export default connect(mapStateToProps)(withTranslation()(App));

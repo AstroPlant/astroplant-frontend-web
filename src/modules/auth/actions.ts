@@ -24,3 +24,8 @@ export const clearAuthenticationToken = createAction(
   "auth/CLEAR_AUTHENTICATION_TOKEN",
   action => () => action()
 );
+
+export const clearTokens = createAction(
+  "auth/CLEAR_TOKENS",
+  action => () => action()
+);

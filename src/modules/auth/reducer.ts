@@ -1,4 +1,4 @@
-import { createReducer, getType, ActionType } from "typesafe-actions";
+import { createReducer, ActionType } from "typesafe-actions";
 import * as actions from "./actions";
 
 export interface AuthState {
@@ -19,12 +19,15 @@ export default createReducer<AuthState, AuthAction>(initial)
   .handleAction(actions.setRefreshToken, (state, action) => {
     return { ...state, refreshToken: action.payload.token };
   })
-  .handleAction(actions.clearRefreshToken, (state, action) => {
+  .handleAction(actions.clearRefreshToken, (state, _) => {
     return { ...state, refreshToken: null };
   })
   .handleAction(actions.setAuthenticationToken, (state, action) => {
     return { ...state, authenticationToken: action.payload };
   })
-  .handleAction(actions.clearAuthenticationToken, (state, action) => {
+  .handleAction(actions.clearAuthenticationToken, (state, _) => {
     return { ...state, authenticationToken: null };
+  })
+  .handleAction(actions.clearTokens, (state, _) => {
+    return { ...state, refreshToken: null, authenticationToken: null };
   });

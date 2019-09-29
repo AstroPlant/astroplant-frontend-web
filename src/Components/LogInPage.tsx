@@ -1,11 +1,11 @@
 import React, { Component } from "react";
+import { withRouter, RouteComponentProps } from "react-router";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withTranslation, WithTranslation } from "react-i18next";
 import {
   Container,
   Form,
-  Segment,
   Header,
   Icon,
   Transition
@@ -28,7 +28,7 @@ type State = {
   additionalFormErrors: InvalidParametersFormErrors;
 };
 
-type Props = WithTranslation & {
+type Props = WithTranslation & RouteComponentProps & {
   setRefreshToken: (token: string) => void;
   setAuthenticationToken: (token: string) => void;
 };
@@ -63,7 +63,7 @@ class LogInPage extends Component<Props, State> {
       if (result.status === HttpStatus.OK) {
         this.props.setRefreshToken(result.data.refreshToken);
         this.props.setAuthenticationToken(result.data.authenticationToken);
-        //this.setState({ done: true });
+        this.props.history.push("/me");
       }
     } catch (e) {
       console.warn("error when attempting to log in", e, e.response);
@@ -150,4 +150,4 @@ const mapDispatchToProps = (dispatch: any) =>
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(withTranslation()(LogInPage));
+)(withTranslation()(withRouter(LogInPage)));

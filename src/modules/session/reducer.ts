@@ -1,6 +1,6 @@
 import { persistReducer } from "redux-persist";
 import sessionStorage from "redux-persist/lib/storage/session";
-import { createReducer, getType, ActionType } from "typesafe-actions";
+import { createReducer, ActionType } from "typesafe-actions";
 import * as actions from "./actions";
 
 const sessionStoragePersistConfig = {
