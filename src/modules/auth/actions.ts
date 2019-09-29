@@ -1,34 +1,26 @@
-import * as types from "./actionTypes";
+import { createAction } from "typesafe-actions";
 
-export function setRememberMe(payload: boolean): types.AuthActionTypes {
-  return {
-    type: types.AUTH_REMEMBER_ME_SET,
-    payload
-  };
-}
+export const setRememberMe = createAction(
+  "auth/SET_REMEMBER_ME",
+  action => (rememberMe: boolean) => action(rememberMe)
+);
 
-export function setRefreshToken(payload: string): types.AuthActionTypes {
-  return {
-    type: types.AUTH_REFRESH_TOKEN_SET,
-    payload
-  };
-}
+export const setRefreshToken = createAction(
+  "auth/SET_REFRESH_TOKEN",
+  action => (token: string) => action({ token })
+);
 
-export function clearRefreshToken(): types.AuthActionTypes {
-  return {
-    type: types.AUTH_REFRESH_TOKEN_CLEAR
-  };
-}
+export const clearRefreshToken = createAction(
+  "auth/CLEAR_REFRESH_TOKEN",
+  action => () => action()
+);
 
-export function setAuthenticationToken(payload: string): types.AuthActionTypes {
-  return {
-    type: types.AUTH_AUTHENTICATION_TOKEN_SET,
-    payload
-  };
-}
+export const setAuthenticationToken = createAction(
+  "auth/SET_AUTHENTICATION_TOKEN",
+  action => (token: string) => action(token)
+);
 
-export function clearAuthenticationToken(): types.AuthActionTypes {
-  return {
-    type: types.AUTH_AUTHENTICATION_TOKEN_CLEAR
-  };
-}
+export const clearAuthenticationToken = createAction(
+  "auth/CLEAR_AUTHENTICATION_TOKEN",
+  action => () => action()
+);

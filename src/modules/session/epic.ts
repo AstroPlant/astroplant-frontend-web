@@ -16,10 +16,6 @@ const sessionInitializeEpic = (action$: any, state$: any) =>
     ),
     action$.pipe(
       ofType(REHYDRATE),
-      filter((action: any) => action.key === "channels")
-    ),
-    action$.pipe(
-      ofType(REHYDRATE),
       filter((action: any) => action.key === "session")
     )
   ).pipe(

@@ -1,23 +1,26 @@
-import * as types from "./actionTypes";
-import sessionStorage from "redux-persist/lib/storage/session";
 import { persistReducer } from "redux-persist";
-
-const initial = {
-  initialized: false
-};
+import sessionStorage from "redux-persist/lib/storage/session";
+import { createReducer, getType, ActionType } from "typesafe-actions";
+import * as actions from "./actions";
 
 const sessionStoragePersistConfig = {
   key: "session",
   storage: sessionStorage
 };
 
-function reducer(state: any = initial, action: any) {
-  switch (action.type) {
-    case types.SESSION_INITIALIZE:
-      return { ...state, initialized: true };
-    default:
-      return state;
-  }
+export interface SessionState {
+  initialized: boolean;
 }
+
+const initial: SessionState = {
+  initialized: false
+};
+
+export type SessionAction = ActionType<typeof actions>;
+
+const reducer = createReducer<SessionState, SessionAction>(initial)
+  .handleAction(actions.sessionInitialize, (state, action) => {
+    return { ...state, initialized: true };
+  });
 
 export default persistReducer(sessionStoragePersistConfig, reducer);

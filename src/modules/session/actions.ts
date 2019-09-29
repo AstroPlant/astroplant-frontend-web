@@ -1,3 +1,3 @@
-import * as types from './actionTypes';
+import { createAction } from "typesafe-actions";
 
-export const sessionInitialize = () => ({type: types.SESSION_INITIALIZE});
+export const sessionInitialize = createAction("session/INITIALIZE");
