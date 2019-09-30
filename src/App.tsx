@@ -70,14 +70,16 @@ class App extends Component<Props> {
             </Route>
             <Route path="/test" component={TestComponent} />
             <Route path="/analyze">
-
               <PageLoader page="Analyze" />
-              </Route>
+            </Route>
             <Route path="/log-in">
               <PageLoader page="LogIn" />
             </Route>
             <Route path="/sign-up">
               <PageLoader page="SignUp" />
+            </Route>
+            <Route path="/me">
+              <PageLoader page="Me" />
             </Route>
             <Route>
               <PageLoader page="NotFound" />

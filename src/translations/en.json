@@ -47,6 +47,12 @@
       "logIn": "Log in",
       "rememberMe": "Keep me logged in"
     },
+    "me": {
+      "header": "Hi {{displayName}}!",
+      "content": {
+        "usernameLabel": "Username: {{username}}"
+      }
+    },
     "mustBeLoggedIn": {
       "header": "Oh no!",
       "content": {
