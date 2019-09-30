@@ -1,11 +1,22 @@
-import React, { Component } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import { RootState, FullUser } from "types";
-import { WithValue, WithOption, withOption } from "./OptionGuard";
+import { WithValue, withOption } from "./OptionGuard";
 import MustBeLoggedIn from "../pages/MustBeLoggedIn";
 
 export interface WithAuthentication {
   me: FullUser;
+}
+
+const mapStateToProps = (state: RootState) => ({ option: state.me.details });
+
+function withAuthToValue<P>(
+  Component: React.ComponentType<P & WithAuthentication>
+): React.ComponentType<P & WithValue<FullUser>> {
+  return props => {
+    const { value, ...rest } = props;
+    return <Component {...rest as P} me={value} />;
+  };
 }
 
 /**
@@ -14,11 +25,15 @@ export interface WithAuthentication {
  * `MustBeLoggedIn` page.
  */
 export function withAuthentication<P>(): (
-  component: React.ComponentType<P & WithAuthentication>
-) => React.ComponentType<P & WithOption<FullUser>> {
-  return Component =>
-    withOption<FullUser, P>(MustBeLoggedIn)(props => {
-      const { value, ...rest } = props;
-      return <Component {...rest as P} me={value} />;
-    });
+  Component: React.ComponentType<P & WithAuthentication>
+) => React.ComponentType<P> {
+  return Component => {
+    const AuthComponent = withAuthToValue(Component); //: React.ComponentType<P & WithValue<FullUser>> = withAuthToValue<P>(Component);
+    const OptionComponent = withOption<FullUser, P>(MustBeLoggedIn)(
+      AuthComponent
+    );
+
+    // @ts-ignore
+    return connect(mapStateToProps)(OptionComponent) as React.ComponentType<P>;
+  };
 }

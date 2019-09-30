@@ -1,13 +1,13 @@
-import React, { Component } from "react";
+import React from "react";
 import Option from "../utils/option";
 
 type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
 
-export interface WithOption<T> {
+export type WithOption<T> = {
   option: Option<T>;
 }
 
-export interface WithValue<T> {
+export type WithValue<T> = {
   value: T;
 }
 
