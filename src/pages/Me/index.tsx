@@ -1,16 +1,17 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import { withTranslation, WithTranslation } from "react-i18next";
 import {
   Container,
   Divider,
-  Grid,
-  Segment,
   Card,
-  Image
+  Image,
+  Header
 } from "semantic-ui-react";
 
-import { RootState, FullUser } from "types";
+import { RootState } from "types";
+import { KitMembership } from "../../api";
 
 //import { withOption } from "../../Components/OptionGuard";
 import {
@@ -19,9 +20,11 @@ import {
 } from "../../Components/AuthenticatedGuard";
 import Gravatar from "../../Components/Gravatar";
 import HeadTitle from "../../Components/HeadTitle";
-import InfoBox from "../../Components/InfoBox";
 
-type Props = WithTranslation & WithAuthentication;
+type Props = WithTranslation &
+  WithAuthentication & {
+    kitMemberships: KitMembership[];
+  };
 
 class Me extends Component<Props> {
   render() {
@@ -35,6 +38,39 @@ class Me extends Component<Props> {
           })}
         />
         <Container text style={{ marginTop: "1em" }}>
+          <Header size="large">Your kits</Header>
+          {this.props.kitMemberships.length > 0 ? (
+            <>
+              <p>
+                <Link to="/create-kit">Create another.</Link>
+              </p>
+              <Card.Group>
+                {this.props.kitMemberships.map(
+                  (kitMembership: KitMembership, index) => {
+                    return (
+                      <Card fluid key={index} color="orange">
+                        <Card.Content>
+                          <Image floated="right" size="mini">
+                            <Gravatar identifier={kitMembership.kit.serial} />
+                          </Image>
+                          <Card.Header>{kitMembership.kit.name}</Card.Header>
+                          <Card.Meta>
+                            Serial: {kitMembership.kit.serial}
+                          </Card.Meta>
+                        </Card.Content>
+                      </Card>
+                    );
+                  }
+                )}
+              </Card.Group>
+            </>
+          ) : (
+            <div>
+              You have no kits yet.{" "}
+              <Link to="/create-kit">You can create one!</Link>
+            </div>
+          )}
+          <Divider />
           <Card centered raised>
             <Image>
               <Gravatar
@@ -62,9 +98,9 @@ class Me extends Component<Props> {
 }
 
 const mapStateToProps = (state: RootState) => {
-  return { option: state.me.details };
+  return { kitMemberships: state.me.kitMemberships };
 };
 
-export default connect(mapStateToProps)(
-  withAuthentication()(withTranslation()(Me))
+export default withAuthentication()(
+  connect(mapStateToProps)(withTranslation()(Me))
 );
