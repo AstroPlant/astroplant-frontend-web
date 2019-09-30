@@ -275,7 +275,19 @@ export interface Kit {
      * @type {string}
      * @memberof Kit
      */
+    serial: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Kit
+     */
     name: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof Kit
+     */
+    description?: string;
     /**
      * 
      * @type {number}
@@ -288,6 +300,18 @@ export interface Kit {
      * @memberof Kit
      */
     longitude?: number;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Kit
+     */
+    privacyPublicDashboard?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof Kit
+     */
+    privacyShowOnMap?: boolean;
 }
 /**
  * 
