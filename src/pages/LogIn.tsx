@@ -3,17 +3,14 @@ import { withRouter, RouteComponentProps } from "react-router";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withTranslation, WithTranslation } from "react-i18next";
-import {
-  Container,
-  Form,
-  Header,
-  Icon,
-  Transition
-} from "semantic-ui-react";
+import { Container, Form } from "semantic-ui-react";
 import { JSONSchema6 } from "json-schema";
 import RjsfForm from "../rjsf-theme-semantic-ui";
 
-import { setRefreshToken, setAuthenticationToken } from "../modules/auth/actions";
+import {
+  setRefreshToken,
+  setAuthenticationToken
+} from "../modules/auth/actions";
 
 import HeadTitle from "../Components/HeadTitle";
 
@@ -28,10 +25,11 @@ type State = {
   additionalFormErrors: InvalidParametersFormErrors;
 };
 
-type Props = WithTranslation & RouteComponentProps & {
-  setRefreshToken: (token: string) => void;
-  setAuthenticationToken: (token: string) => void;
-};
+type Props = WithTranslation &
+  RouteComponentProps & {
+    setRefreshToken: (token: string) => void;
+    setAuthenticationToken: (token: string) => void;
+  };
 
 class LogInPage extends Component<Props, State> {
   state = {
