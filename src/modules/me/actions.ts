@@ -10,3 +10,5 @@ export const setKitMemberships = createAction(
   "me/SET_KIT_MEMBERSHIPS",
   action => (payload: KitMembership[]) => action(payload)
 );
+
+export const kitCreated = createAction("me/KIT_CREATED");

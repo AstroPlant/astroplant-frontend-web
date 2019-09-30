@@ -5,6 +5,10 @@ type PageLoaderProps = {
   page: string;
 };
 
+/**
+ * Note! This page loader can *arbitrary reload components*. Only use it for
+ * trivial, stateless components.
+ */
 class PageLoader extends React.Component<PageLoaderProps, {}> {
   render() {
     console.log(this.props.page);

@@ -12,6 +12,11 @@ import Footer from "./Components/Footer";
 import PageLoader from "./PageLoader";
 import TestComponent from "./Components/Test/TestComponent";
 
+import LogIn from "./pages/LogIn";
+import SignUp from "./pages/SignUp";
+import Me from "./pages/Me";
+import CreateKit from "./pages/CreateKit";
+
 type Props = WithTranslation & {
   displayName: Option<string>;
 };
@@ -73,13 +78,16 @@ class App extends Component<Props> {
               <PageLoader page="Analyze" />
             </Route>
             <Route path="/log-in">
-              <PageLoader page="LogIn" />
+              <LogIn />
             </Route>
             <Route path="/sign-up">
-              <PageLoader page="SignUp" />
+              <SignUp />
             </Route>
             <Route path="/me">
-              <PageLoader page="Me" />
+              <Me />
+            </Route>
+            <Route path="/create-kit">
+              <CreateKit />
             </Route>
             <Route>
               <PageLoader page="NotFound" />

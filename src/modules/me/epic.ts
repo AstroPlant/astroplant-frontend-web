@@ -1,6 +1,6 @@
 import { isActionOf } from "typesafe-actions";
 import { Epic, combineEpics } from "redux-observable";
-import { tap, switchMap, map, filter, catchError } from "rxjs/operators";
+import { switchMap, map, filter, catchError } from "rxjs/operators";
 import { from, EMPTY } from "rxjs";
 import * as actions from "./actions";
 import * as authActions from "../auth/actions";
@@ -28,13 +28,15 @@ const fetchUserDetailsEpic: Epic = (action$, state$) =>
 
 const fetchUserKitsEpic: Epic = (actions$, state$) =>
   actions$.pipe(
-    filter(isActionOf(authActions.setAuthenticationToken)),
+    filter(
+      isActionOf([authActions.setAuthenticationToken, actions.kitCreated])
+    ),
     map(
       _action =>
         new MeApi({ accessToken: state$.value.auth.authenticationToken })
     ),
     switchMap(api =>
-              from(api.showMyKitMemberships()).pipe(
+      from(api.showMyKitMemberships()).pipe(
         map(resp => resp.data),
         map(actions.setKitMemberships),
         catchError(err => EMPTY)

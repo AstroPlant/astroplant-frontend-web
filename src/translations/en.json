@@ -7,7 +7,11 @@
       "signUp": "Sign up",
       "username": "Username",
       "password": "Password",
-      "emailAddress": "Email address"
+      "emailAddress": "Email address",
+      "name": "Name",
+      "description": "Description",
+      "latitude": "Latitude",
+      "longitude": "Longitude"
     },
     "home": {
       "header": "AstroPlant Prototype",
@@ -59,6 +63,14 @@
         "title": "You must be logged in",
         "body": "Please <1>log in</1> to view this page."
       }
+    },
+    "kit": {
+      "privacyPublicDashboard": "Make the kit's dashboard public",
+      "privacyShowOnMap": "Show the kit's location on the public map"
+    },
+    "createKit": {
+      "header": "Create a Kit",
+      "create": "Create the kit"
     },
     "invalidParameter": {
       "mustBeEmailAddress": "must be an email address",
