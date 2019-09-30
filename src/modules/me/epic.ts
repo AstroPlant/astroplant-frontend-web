@@ -1,12 +1,6 @@
 import { isActionOf } from "typesafe-actions";
 import { Epic, combineEpics } from "redux-observable";
-import {
-  tap,
-  switchMap,
-  map,
-  filter,
-  catchError
-} from "rxjs/operators";
+import { tap, switchMap, map, filter, catchError } from "rxjs/operators";
 import { from, EMPTY } from "rxjs";
 import * as actions from "./actions";
 import * as authActions from "../auth/actions";
@@ -19,7 +13,6 @@ import { MeApi } from "api";
 const fetchUserDetailsEpic: Epic = (action$, state$) =>
   action$.pipe(
     filter(isActionOf(authActions.setAuthenticationToken)),
-    tap(a => console.warn(a)),
     map(
       _action =>
         new MeApi({ accessToken: state$.value.auth.authenticationToken })
@@ -33,4 +26,20 @@ const fetchUserDetailsEpic: Epic = (action$, state$) =>
     )
   );
 
-export default combineEpics(fetchUserDetailsEpic);
+const fetchUserKitsEpic: Epic = (actions$, state$) =>
+  actions$.pipe(
+    filter(isActionOf(authActions.setAuthenticationToken)),
+    map(
+      _action =>
+        new MeApi({ accessToken: state$.value.auth.authenticationToken })
+    ),
+    switchMap(api =>
+              from(api.showMyKitMemberships()).pipe(
+        map(resp => resp.data),
+        map(actions.setKitMemberships),
+        catchError(err => EMPTY)
+      )
+    )
+  );
+
+export default combineEpics(fetchUserDetailsEpic, fetchUserKitsEpic);
