@@ -290,6 +290,49 @@ export interface Kit {
     longitude?: number;
 }
 /**
+ * 
+ * @export
+ * @interface KitMembership
+ */
+export interface KitMembership {
+    /**
+     * 
+     * @type {number}
+     * @memberof KitMembership
+     */
+    id: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof KitMembership
+     */
+    user: number;
+    /**
+     * 
+     * @type {Kit}
+     * @memberof KitMembership
+     */
+    kit: Kit;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof KitMembership
+     */
+    accessConfigure: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof KitMembership
+     */
+    accessSuper: boolean;
+    /**
+     * 
+     * @type {Date}
+     * @memberof KitMembership
+     */
+    datetimeLinked: Date;
+}
+/**
  * A basic problem report, conforming to RFC7807. Most problems will provide additional fields with information.
  * @export
  * @interface ProblemDetails
@@ -869,7 +912,7 @@ export const MeApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        showMyKitMemberships(options?: any): (axios?: AxiosInstance, basePath?: string) => AxiosPromise<object> {
+        showMyKitMemberships(options?: any): (axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<KitMembership>> {
             const localVarAxiosArgs = MeApiAxiosParamCreator(configuration).showMyKitMemberships(options);
             return (axios: AxiosInstance = globalAxios, basePath: string = BASE_PATH) => {
                 const axiosRequestArgs = {...localVarAxiosArgs.options, url: basePath + localVarAxiosArgs.url};
