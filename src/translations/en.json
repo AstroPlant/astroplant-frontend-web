@@ -47,6 +47,13 @@
       "logIn": "Log in",
       "rememberMe": "Keep me logged in"
     },
+    "mustBeLoggedIn": {
+      "header": "Oh no!",
+      "content": {
+        "title": "You must be logged in",
+        "body": "Please <1>log in</1> to view this page."
+      }
+    },
     "invalidParameter": {
       "mustBeEmailAddress": "must be an email address",
       "mustHaveLengthBetween": "must be between {{min}} and {{max}} characters",
