@@ -21,7 +21,7 @@ import RjsfForm from "../rjsf-theme-semantic-ui";
 import { RootState } from "types";
 
 import { KitsApi } from "astroplant-api";
-import { AuthConfiguration, rateLimit } from "utils/api";
+import { AuthConfiguration, requestWrapper } from "utils/api";
 import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
 
 import {
@@ -81,7 +81,7 @@ class CreateKit extends Component<Props, State> {
     try {
       const result = await api
         .createKit(formData)
-        .pipe(rateLimit)
+        .pipe(requestWrapper())
         .toPromise();
 
       this.props.kitCreated();

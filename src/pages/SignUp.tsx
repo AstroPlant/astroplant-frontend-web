@@ -15,7 +15,7 @@ import RjsfForm from "../rjsf-theme-semantic-ui";
 import HeadTitle from "../Components/HeadTitle";
 
 import { UserApi } from "astroplant-api";
-import { rateLimit } from "utils/api";
+import { requestWrapper } from "utils/api";
 import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
 
 type State = {
@@ -67,7 +67,7 @@ class SignUpPage extends Component<WithTranslation, State> {
             emailAddress: formData.emailAddress
           }
         })
-        .pipe(rateLimit)
+        .pipe(requestWrapper())
         .toPromise();
 
       this.setState({ done: true });

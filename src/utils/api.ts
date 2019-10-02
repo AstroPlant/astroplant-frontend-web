@@ -1,5 +1,6 @@
 import { Configuration, Middleware, RequestArgs } from "astroplant-api";
-import { Observable } from "rxjs";
+import { Observable, pipe, timer, throwError } from "rxjs";
+import { retryWhen, mergeMap } from "rxjs/operators";
 import RateLimiter from "rxjs-ratelimiter";
 import { store } from "store";
 
@@ -16,11 +17,11 @@ export class AuthConfiguration extends Configuration {
             ...request,
             headers: {
               ...request.headers,
-              Authorization: `Bearer ${token}`,
-            },
+              Authorization: `Bearer ${token}`
+            }
           };
-        },
-      },
+        }
+      }
     ];
 
     super({ middleware });
@@ -45,3 +46,35 @@ export const rateLimiter = new RateLimiter(2, 2000);
  * Utility function to rate-limit observables.
  */
 export const rateLimit = <T>(obs: Observable<T>) => rateLimiter.limit<T>(obs);
+
+/**
+ * Operator to wrap an observable API call. It provides rate limiting and
+ * automatic request retrying for termporal errors.
+ */
+export function requestWrapper() {
+  const MAX_RETRY = 3;
+  const RETRY_DELAY_INCREASE = 1000; // In milliseconds.
+  const RETRY_DELAY_START = 0; // In milliseconds.
+  const TEMPORAL_ERROR_STATUS_CODES = [0, 429, 503, 504];
+
+  return pipe(
+    rateLimit,
+    retryWhen((errors: Observable<any>) =>
+      errors.pipe(
+        mergeMap((error: any, i: number) => {
+          console.warn("Got an error in requestWrapper:", error, "i:", i);
+          if (
+            i >= MAX_RETRY ||
+            (typeof error.status !== "undefined" &&
+              !TEMPORAL_ERROR_STATUS_CODES.includes(error.status))
+          ) {
+            // We've exhausted our retries or error is non-temporal.
+            return throwError(error);
+          }
+
+          return timer(i * RETRY_DELAY_INCREASE + RETRY_DELAY_START);
+        })
+      )
+    )
+  );
+}

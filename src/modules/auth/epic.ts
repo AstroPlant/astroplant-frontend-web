@@ -1,10 +1,10 @@
 import { isActionOf } from "typesafe-actions";
 import { Epic, combineEpics } from "redux-observable";
-import { switchMap, map, filter, catchError, retry } from "rxjs/operators";
+import { switchMap, map, filter, catchError } from "rxjs/operators";
 import { timer, EMPTY } from "rxjs";
 import * as actions from "./actions";
 import { AuthenticateApi } from "astroplant-api";
-import { rateLimit } from "utils/api";
+import { requestWrapper } from "utils/api";
 
 import * as sessionActions from "../session/actions";
 
@@ -37,8 +37,7 @@ const refreshAuthenticationEpic: Epic = (action$, state$) =>
           }
         })
         .pipe(
-          rateLimit,
-          retry(3),
+          requestWrapper(),
           map(resp => resp),
           map(actions.setAuthenticationToken),
           catchError(err => EMPTY)

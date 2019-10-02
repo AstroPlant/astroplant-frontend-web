@@ -15,7 +15,7 @@ import {
 import HeadTitle from "../Components/HeadTitle";
 
 import { AuthenticateApi } from "astroplant-api";
-import { rateLimit } from "utils/api";
+import { requestWrapper } from "utils/api";
 import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
 
 type State = {
@@ -60,7 +60,7 @@ class LogInPage extends Component<Props, State> {
             password
           }
         })
-        .pipe(rateLimit)
+        .pipe(requestWrapper())
         .toPromise();
       console.log(result);
 
