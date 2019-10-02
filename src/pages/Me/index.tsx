@@ -20,9 +20,11 @@ import {
 } from "../../Components/AuthenticatedGuard";
 import Gravatar from "../../Components/Gravatar";
 import HeadTitle from "../../Components/HeadTitle";
+import PlaceholderSegment from "Components/PlaceholderSegment";
 
 type Props = WithTranslation &
   WithAuthentication & {
+    loadingKitMemberships: boolean;
     kitMemberships: KitMembership[];
   };
 
@@ -39,30 +41,40 @@ class Me extends Component<Props> {
         />
         <Container text style={{ marginTop: "1em" }}>
           <Header size="large">Your kits</Header>
-          {this.props.kitMemberships.length > 0 ? (
+          {this.props.kitMemberships.length > 0 ||
+          this.props.loadingKitMemberships ? (
             <>
               <p>
                 <Link to="/create-kit">Create another.</Link>
               </p>
-              <Card.Group>
-                {this.props.kitMemberships.map(
-                  (kitMembership: KitMembership, index) => {
-                    return (
-                      <Card fluid key={index} color="orange" as={Link} to={`/kit/${kitMembership.kit.serial}`}>
-                        <Card.Content>
-                          <Image floated="right" size="mini">
-                            <Gravatar identifier={kitMembership.kit.serial} />
-                          </Image>
-                          <Card.Header>{kitMembership.kit.name}</Card.Header>
-                          <Card.Meta>
-                            Serial: {kitMembership.kit.serial}
-                          </Card.Meta>
-                        </Card.Content>
-                      </Card>
-                    );
-                  }
-                )}
-              </Card.Group>
+              {this.props.kitMemberships.length > 0 && (
+                <Card.Group>
+                  {this.props.kitMemberships.map(
+                    (kitMembership: KitMembership, index) => {
+                      return (
+                        <Card
+                          fluid
+                          key={index}
+                          color="orange"
+                          as={Link}
+                          to={`/kit/${kitMembership.kit.serial}`}
+                        >
+                          <Card.Content>
+                            <Image floated="right" size="mini">
+                              <Gravatar identifier={kitMembership.kit.serial} />
+                            </Image>
+                            <Card.Header>{kitMembership.kit.name}</Card.Header>
+                            <Card.Meta>
+                              Serial: {kitMembership.kit.serial}
+                            </Card.Meta>
+                          </Card.Content>
+                        </Card>
+                      );
+                    }
+                  )}
+                </Card.Group>
+              )}
+              {this.props.loadingKitMemberships && <PlaceholderSegment />}
             </>
           ) : (
             <div>
@@ -98,7 +110,10 @@ class Me extends Component<Props> {
 }
 
 const mapStateToProps = (state: RootState) => {
-  return { kitMemberships: state.me.kitMemberships };
+  return {
+    loadingKitMemberships: state.me.loadingKitMemberships,
+    kitMemberships: state.me.kitMemberships
+  };
 };
 
 export default withAuthentication()(
