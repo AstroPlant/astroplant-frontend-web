@@ -1,6 +1,6 @@
 import { isActionOf } from "typesafe-actions";
 import { Epic, combineEpics } from "redux-observable";
-import { from, of, concat, EMPTY } from "rxjs";
+import { of, concat, EMPTY } from "rxjs";
 import { switchMap, map, filter, catchError, retry } from "rxjs/operators";
 import * as actions from "./actions";
 import * as authActions from "../auth/actions";
