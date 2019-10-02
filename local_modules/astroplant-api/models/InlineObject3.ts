@@ -11,6 +11,14 @@
  * Do not edit the class manually.
  */
 
-
-export * from "./api";
-export * from "./configuration";
+/**
+ * @export
+ * @interface InlineObject3
+ */
+export interface InlineObject3 {
+    /**
+     * @type {string}
+     * @memberof InlineObject3
+     */
+    refreshToken: string;
+}

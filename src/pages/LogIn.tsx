@@ -14,7 +14,7 @@ import {
 
 import HeadTitle from "../Components/HeadTitle";
 
-import { AuthenticateApi } from "../api";
+import { AuthenticateApi } from "astroplant-api";
 import HttpStatus from "http-status-codes";
 import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
 
@@ -54,20 +54,21 @@ class LogInPage extends Component<Props, State> {
 
     try {
       const result = await api.authenticateByCredentials({
-        username,
-        password
-      });
+        authUser: {
+          username,
+          password
+        }
+      }).toPromise();
       console.log(result);
-      if (result.status === HttpStatus.OK) {
-        this.props.setRefreshToken(result.data.refreshToken);
-        this.props.setAuthenticationToken(result.data.authenticationToken);
-        this.props.history.push("/me");
-      }
+
+      this.props.setRefreshToken(result.refreshToken);
+      this.props.setAuthenticationToken(result.authenticationToken);
+      this.props.history.push("/me");
     } catch (e) {
       console.warn("error when attempting to log in", e, e.response);
       const formErrors = PDInvalidParameters.toFormErrors(
         this.props.t,
-        e.response.data
+        e.response
       );
       if (formErrors !== null) {
         console.warn("form errors", formErrors);

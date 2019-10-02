@@ -11,7 +11,7 @@ import {
 } from "semantic-ui-react";
 
 import { RootState } from "types";
-import { KitMembership } from "../../api";
+import { KitMembership } from "astroplant-api";
 
 //import { withOption } from "../../Components/OptionGuard";
 import {
@@ -48,7 +48,7 @@ class Me extends Component<Props> {
                 {this.props.kitMemberships.map(
                   (kitMembership: KitMembership, index) => {
                     return (
-                      <Card fluid key={index} color="orange">
+                      <Card fluid key={index} color="orange" as={Link} to={`/kit/${kitMembership.kit.serial}`}>
                         <Card.Content>
                           <Image floated="right" size="mini">
                             <Gravatar identifier={kitMembership.kit.serial} />

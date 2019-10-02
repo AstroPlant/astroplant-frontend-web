@@ -1,5 +1,5 @@
 import { createAction } from "typesafe-actions";
-import { FullUser, KitMembership } from "../../api/api";
+import { FullUser, KitMembership } from "astroplant-api";
 
 export const setDetails = createAction(
   "me/SET_DETAILS",

@@ -14,7 +14,7 @@ import RjsfForm from "../rjsf-theme-semantic-ui";
 
 import HeadTitle from "../Components/HeadTitle";
 
-import { UserApi } from "../api";
+import { UserApi, Configuration } from "astroplant-api";
 import HttpStatus from "http-status-codes";
 import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
 
@@ -59,20 +59,22 @@ class SignUpPage extends Component<WithTranslation, State> {
     const api = new UserApi();
 
     try {
-      const result = await api.createUser({
-        username: formData.username,
-        password: formData.password,
-        emailAddress: formData.emailAddress
-      });
+      const result = await api
+        .createUser({
+          newUser: {
+            username: formData.username,
+            password: formData.password,
+            emailAddress: formData.emailAddress
+          }
+        })
+        .toPromise();
 
-      if (result.status === HttpStatus.CREATED) {
-        this.setState({ done: true });
-      }
+      this.setState({ done: true });
     } catch (e) {
       console.warn("error when attempting to create account", e, e.response);
       const formErrors = PDInvalidParameters.toFormErrors(
         this.props.t,
-        e.response.data
+        e.response
       );
       if (formErrors !== null) {
         console.warn("form errors", formErrors);
@@ -148,7 +150,7 @@ class SignUpPage extends Component<WithTranslation, State> {
                   schema={schema}
                   uiSchema={uiSchema}
                   validate={validate}
-                  onSubmit={({ formData }) => this.submit(formData) }
+                  onSubmit={({ formData }) => this.submit(formData)}
                   formData={this.state.formData}
                   disabled={this.state.submitting}
                   extraErrors={this.state.additionalFormErrors}

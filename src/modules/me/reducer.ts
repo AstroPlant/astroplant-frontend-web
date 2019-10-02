@@ -1,7 +1,7 @@
 import { createReducer, ActionType } from "typesafe-actions";
 import * as actions from "./actions";
 import Option from "../../utils/option";
-import { FullUser, KitMembership } from "../../api/api";
+import { FullUser, KitMembership } from "astroplant-api";
 
 export interface MeState {
   details: Option<FullUser>;

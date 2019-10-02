@@ -22,7 +22,8 @@ import RjsfForm from "../rjsf-theme-semantic-ui";
 
 import { RootState } from "types";
 
-import { KitsApi } from "../api";
+import { KitsApi, Configuration } from "astroplant-api";
+import { AuthConfiguration } from "ApiAuth";
 import HttpStatus from "http-status-codes";
 import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
 
@@ -77,22 +78,19 @@ class CreateKit extends Component<Props, State> {
       };
     });
 
-    const api = new KitsApi({ accessToken: this.props.authenticationToken! });
+    const api = new KitsApi(AuthConfiguration.Instance);
     console.warn(formData);
 
     try {
-      const result = await api.createKit(formData);
+      const result = await api.createKit(formData).toPromise();
 
-      if (result.status === HttpStatus.CREATED) {
-        this.props.kitCreated();
-        this.setState({ done: true, result: result.data });
-      }
-
+      this.props.kitCreated();
+      this.setState({ done: true, result: result });
     } catch (e) {
       console.warn("error when attempting to create account", e, e.response);
       const formErrors = PDInvalidParameters.toFormErrors(
         this.props.t,
-        e.response.data
+        e.response
       );
       if (formErrors !== null) {
         console.warn("form errors", formErrors);
@@ -152,8 +150,9 @@ class CreateKit extends Component<Props, State> {
                     <strong>This password will not be shown again.</strong>
                   </p>
                   <p>
-                    If you lose it, <strong>you can always generate a new password</strong> from the
-                    kit's configuration screen.
+                    If you lose it,{" "}
+                    <strong>you can always generate a new password</strong> from
+                    the kit's configuration screen.
                   </p>
                   <Card color="orange" centered raised fluid>
                     <Card.Content>
@@ -223,5 +222,10 @@ const mapDispatchToProps = (dispatch: any) =>
   );
 
 export default withAuthentication()(
-  withTranslation()(connect(mapStateToProps, mapDispatchToProps)(CreateKit))
+  withTranslation()(
+    connect(
+      mapStateToProps,
+      mapDispatchToProps
+    )(CreateKit)
+  )
 );
