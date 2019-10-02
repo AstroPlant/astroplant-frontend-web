@@ -14,8 +14,8 @@ import RjsfForm from "../rjsf-theme-semantic-ui";
 
 import HeadTitle from "../Components/HeadTitle";
 
-import { UserApi, Configuration } from "astroplant-api";
-import HttpStatus from "http-status-codes";
+import { UserApi } from "astroplant-api";
+import { rateLimit } from "utils/api";
 import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
 
 type State = {
@@ -59,7 +59,7 @@ class SignUpPage extends Component<WithTranslation, State> {
     const api = new UserApi();
 
     try {
-      const result = await api
+      await api
         .createUser({
           newUser: {
             username: formData.username,
@@ -67,6 +67,7 @@ class SignUpPage extends Component<WithTranslation, State> {
             emailAddress: formData.emailAddress
           }
         })
+        .pipe(rateLimit)
         .toPromise();
 
       this.setState({ done: true });

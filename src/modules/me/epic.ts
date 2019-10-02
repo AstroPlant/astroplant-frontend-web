@@ -1,12 +1,12 @@
 import { isActionOf } from "typesafe-actions";
 import { Epic, combineEpics } from "redux-observable";
+import { from, of, concat, EMPTY } from "rxjs";
 import { switchMap, map, filter, catchError, retry } from "rxjs/operators";
-import { from, EMPTY } from "rxjs";
 import * as actions from "./actions";
 import * as authActions from "../auth/actions";
 
-import { MeApi, Configuration } from "astroplant-api";
-import { AuthConfiguration } from "ApiAuth";
+import { MeApi } from "astroplant-api";
+import { AuthConfiguration, rateLimit } from "utils/api";
 
 /**
  * Listens to authentication token change, and fetch our user details.
@@ -17,6 +17,7 @@ const fetchUserDetailsEpic: Epic = (action$, state$) =>
     map(_action => new MeApi(AuthConfiguration.Instance)),
     switchMap(api =>
       api.showMe().pipe(
+        rateLimit,
         retry(3),
         map(resp => resp),
         catchError(err => {
@@ -34,14 +35,16 @@ const fetchUserKitsEpic: Epic = (actions$, state$) =>
       isActionOf([authActions.setAuthenticationToken, actions.kitCreated])
     ),
     map(_action => new MeApi(AuthConfiguration.Instance)),
-    switchMap(api =>
+    switchMap(api => concat(
+      of(actions.loadingKitMemberships()),
       api.showMyKitMemberships().pipe(
+        rateLimit,
         retry(3),
         map(resp => resp),
         map(actions.setKitMemberships),
         catchError(err => EMPTY)
-      )
-    )
+      ),
+    ))
   );
 
 export default combineEpics(fetchUserDetailsEpic, fetchUserKitsEpic);

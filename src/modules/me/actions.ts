@@ -6,6 +6,8 @@ export const setDetails = createAction(
   action => (payload: FullUser) => action(payload)
 );
 
+export const loadingKitMemberships = createAction("me/LOADING_KIT_MEMBERSHIPS");
+
 export const setKitMemberships = createAction(
   "me/SET_KIT_MEMBERSHIPS",
   action => (payload: KitMembership[]) => action(payload)

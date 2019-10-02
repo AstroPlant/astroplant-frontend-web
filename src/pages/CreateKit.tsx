@@ -5,8 +5,6 @@ import { Link } from "react-router-dom";
 import { withTranslation, WithTranslation } from "react-i18next";
 import {
   Container,
-  Divider,
-  Grid,
   Segment,
   Header,
   Form,
@@ -22,9 +20,8 @@ import RjsfForm from "../rjsf-theme-semantic-ui";
 
 import { RootState } from "types";
 
-import { KitsApi, Configuration } from "astroplant-api";
-import { AuthConfiguration } from "ApiAuth";
-import HttpStatus from "http-status-codes";
+import { KitsApi } from "astroplant-api";
+import { AuthConfiguration, rateLimit } from "utils/api";
 import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
 
 import {
@@ -82,7 +79,10 @@ class CreateKit extends Component<Props, State> {
     console.warn(formData);
 
     try {
-      const result = await api.createKit(formData).toPromise();
+      const result = await api
+        .createKit(formData)
+        .pipe(rateLimit)
+        .toPromise();
 
       this.props.kitCreated();
       this.setState({ done: true, result: result });

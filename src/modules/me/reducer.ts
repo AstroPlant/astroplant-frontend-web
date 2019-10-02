@@ -5,11 +5,13 @@ import { FullUser, KitMembership } from "astroplant-api";
 
 export interface MeState {
   details: Option<FullUser>;
+  loadingKitMemberships: boolean;
   kitMemberships: KitMembership[];
 }
 
 const initial: MeState = {
   details: Option.none(),
+  loadingKitMemberships: false,
   kitMemberships: []
 };
 
@@ -20,5 +22,8 @@ export default createReducer<MeState, MeAction>(initial)
     return { ...state, details: Option.some(action.payload) };
   })
   .handleAction(actions.setKitMemberships, (state, action) => {
-    return { ...state, kitMemberships: action.payload };
+    return { ...state, loadingKitMemberships: false, kitMemberships: action.payload };
+  })
+  .handleAction(actions.loadingKitMemberships, (state) => {
+    return { ...state, loadingKitMemberships: true };
   });

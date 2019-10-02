@@ -4,6 +4,7 @@ import { switchMap, map, filter, catchError, retry } from "rxjs/operators";
 import { from, timer, EMPTY } from "rxjs";
 import * as actions from "./actions";
 import { AuthenticateApi } from "astroplant-api";
+import { rateLimit } from "utils/api";
 
 import * as sessionActions from "../session/actions";
 
@@ -36,6 +37,7 @@ const refreshAuthenticationEpic: Epic = (action$, state$) =>
           }
         })
         .pipe(
+          rateLimit,
           retry(3),
           map(resp => resp),
           map(actions.setAuthenticationToken),

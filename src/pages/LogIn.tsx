@@ -15,7 +15,7 @@ import {
 import HeadTitle from "../Components/HeadTitle";
 
 import { AuthenticateApi } from "astroplant-api";
-import HttpStatus from "http-status-codes";
+import { rateLimit } from "utils/api";
 import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
 
 type State = {
@@ -53,12 +53,15 @@ class LogInPage extends Component<Props, State> {
     const { username, password } = formData;
 
     try {
-      const result = await api.authenticateByCredentials({
-        authUser: {
-          username,
-          password
-        }
-      }).toPromise();
+      const result = await api
+        .authenticateByCredentials({
+          authUser: {
+            username,
+            password
+          }
+        })
+        .pipe(rateLimit)
+        .toPromise();
       console.log(result);
 
       this.props.setRefreshToken(result.refreshToken);
