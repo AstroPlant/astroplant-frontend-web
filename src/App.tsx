@@ -16,6 +16,7 @@ import LogIn from "./pages/LogIn";
 import SignUp from "./pages/SignUp";
 import Me from "./pages/Me";
 import CreateKit from "./pages/CreateKit";
+import Kit from "./scenes/kit";
 
 type Props = WithTranslation & {
   displayName: Option<string>;
@@ -89,6 +90,7 @@ class App extends Component<Props> {
             <Route path="/create-kit">
               <CreateKit />
             </Route>
+            <Route path="/kit/:kitId" component={Kit} />
             <Route>
               <PageLoader page="NotFound" />
             </Route>
