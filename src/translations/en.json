@@ -77,6 +77,12 @@
       "mustHaveLengthBetween": "must be between {{min}} and {{max}} characters",
       "alreadyExists": "already exists and must be unique",
       "unexpected": "invalid for an unknown or unexpected reason"
+    },
+    "notification": {
+      "connectionIssue": {
+        "title": "Connection issue",
+        "body": "Could not connect to the server. Please check your internet connection."
+      }
     }
   }
 }

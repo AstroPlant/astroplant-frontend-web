@@ -7,6 +7,7 @@ import "./App.css";
 
 import { Switch, Route, Redirect, NavLink } from "react-router-dom";
 
+import Notifications from "./Components/Notifications";
 import NavigationBar from "./Components/NavigationBar";
 import Footer from "./Components/Footer";
 import PageLoader from "./PageLoader";
@@ -100,6 +101,7 @@ class App extends Component<Props> {
 
           <Footer />
         </NavigationBar>
+        <Notifications />
       </>
     );
   }

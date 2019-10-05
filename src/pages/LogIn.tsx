@@ -11,6 +11,8 @@ import {
   setRefreshToken,
   setAuthenticationToken
 } from "../modules/auth/actions";
+import { Notification, notificationError } from "../modules/notification";
+import { addNotificationRequest } from "../modules/notification/actions";
 
 import HeadTitle from "../Components/HeadTitle";
 
@@ -29,6 +31,10 @@ type Props = WithTranslation &
   RouteComponentProps & {
     setRefreshToken: (token: string) => void;
     setAuthenticationToken: (token: string) => void;
+    addNotificationRequest: (
+      notification: Notification,
+      timeout?: number | null
+    ) => void;
   };
 
 class LogInPage extends Component<Props, State> {
@@ -51,6 +57,7 @@ class LogInPage extends Component<Props, State> {
 
     const api = new AuthenticateApi();
     const { username, password } = formData;
+    const { t } = this.props;
 
     try {
       const result = await api
@@ -69,6 +76,15 @@ class LogInPage extends Component<Props, State> {
       this.props.history.push("/me");
     } catch (e) {
       console.warn("error when attempting to log in", e, e.response);
+      if (e.status === 0) {
+        this.props.addNotificationRequest(
+          notificationError(
+            t("notification.connectionIssue.title"),
+            t("notification.connectionIssue.body")
+          )
+        );
+      }
+
       const formErrors = PDInvalidParameters.toFormErrors(
         this.props.t,
         e.response
@@ -144,7 +160,8 @@ const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
       setRefreshToken,
-      setAuthenticationToken
+      setAuthenticationToken,
+      addNotificationRequest
     },
     dispatch
   );

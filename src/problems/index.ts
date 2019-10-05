@@ -26,9 +26,10 @@ export class PDInvalidParameters {
    */
   static toFormErrors(
     t: any, // TODO: improve type
-    problemDetails: ProblemDetails
+    problemDetails: ProblemDetails | null
   ): InvalidParametersFormErrors | null {
     if (
+      problemDetails &&
       PDInvalidParameters.is(problemDetails) &&
       problemDetails.invalidParameters !== undefined
     ) {
