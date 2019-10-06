@@ -3,99 +3,36 @@ import { withRouter, RouteComponentProps } from "react-router";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Container, Form } from "semantic-ui-react";
+import { Container } from "semantic-ui-react";
 import { JSONSchema6 } from "json-schema";
-import RjsfForm from "../rjsf-theme-semantic-ui";
+import ApiForm from "Components/ApiForm";
+import { AuthenticationTokens } from "astroplant-api";
 
 import {
   setRefreshToken,
   setAuthenticationToken
 } from "../modules/auth/actions";
-import { Notification, notificationError } from "../modules/notification";
-import { addNotificationRequest } from "../modules/notification/actions";
 
 import HeadTitle from "../Components/HeadTitle";
 
 import { AuthenticateApi } from "astroplant-api";
-import { requestWrapper } from "utils/api";
-import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
-
-type State = {
-  submitting: boolean;
-  formEpoch: number; // Hacky var to reset form errors on submission.
-  formData: any;
-  additionalFormErrors: InvalidParametersFormErrors;
-};
 
 type Props = WithTranslation &
   RouteComponentProps & {
     setRefreshToken: (token: string) => void;
     setAuthenticationToken: (token: string) => void;
-    addNotificationRequest: (
-      notification: Notification,
-      timeout?: number | null
-    ) => void;
   };
 
-class LogInPage extends Component<Props, State> {
-  state = {
-    submitting: false,
-    formEpoch: 0,
-    formData: {},
-    additionalFormErrors: {}
-  };
-
-  async submit(formData: any) {
-    this.setState(state => {
-      return {
-        submitting: true,
-        formEpoch: state.formEpoch + 1,
-        formData,
-        additionalFormErrors: {}
-      };
-    });
-
+class LogInPage extends Component<Props> {
+  send(data: any) {
     const api = new AuthenticateApi();
-    const { username, password } = formData;
-    const { t } = this.props;
+    return api.authenticateByCredentials({ authUser: data });
+  }
 
-    try {
-      const result = await api
-        .authenticateByCredentials({
-          authUser: {
-            username,
-            password
-          }
-        })
-        .pipe(requestWrapper())
-        .toPromise();
-      console.log(result);
-
-      this.props.setRefreshToken(result.refreshToken);
-      this.props.setAuthenticationToken(result.authenticationToken);
-      this.props.history.push("/me");
-    } catch (e) {
-      console.warn("error when attempting to log in", e, e.response);
-      if (e.status === 0) {
-        this.props.addNotificationRequest(
-          notificationError(
-            t("notification.connectionIssue.title"),
-            t("notification.connectionIssue.body")
-          )
-        );
-      }
-
-      const formErrors = PDInvalidParameters.toFormErrors(
-        this.props.t,
-        e.response
-      );
-      if (formErrors !== null) {
-        console.warn("form errors", formErrors);
-        this.setState({ additionalFormErrors: formErrors });
-      }
-    } finally {
-      this.setState({ submitting: false });
-    }
+  onResponse(response: AuthenticationTokens) {
+    this.props.setRefreshToken(response.refreshToken);
+    this.props.setAuthenticationToken(response.authenticationToken);
+    this.props.history.push("/me");
   }
 
   render() {
@@ -120,53 +57,35 @@ class LogInPage extends Component<Props, State> {
       }
     };
 
+    const LogInForm = ApiForm<any, AuthenticationTokens>();
+
     return (
       <>
         <HeadTitle main="Log in" />
         <Container text style={{ marginTop: "1em" }} width={2}>
-          {/* TODO: Waiting for
-                    https://github.com/rjsf-team/react-jsonschema-form/pull/1444
-                    to be merged
-                    // @ts-ignore */}
-          <RjsfForm
-            key={this.state.formEpoch}
+          <LogInForm
             schema={schema}
             uiSchema={uiSchema}
-            onSubmit={({ formData }) => this.submit(formData)}
-            formData={this.state.formData}
-            disabled={this.state.submitting}
-            extraErrors={this.state.additionalFormErrors}
-          >
-            <Form.Button
-              type="submit"
-              primary
-              disabled={this.state.submitting}
-              loading={this.state.submitting}
-            >
-              {t("logIn.logIn")}
-            </Form.Button>
-          </RjsfForm>
+            send={this.send}
+            onResponse={this.onResponse.bind(this)}
+            submitLabel={t("logIn.logIn")}
+          />
         </Container>
       </>
     );
   }
 }
 
-const mapStateToProps = (state: any) => {
-  return {};
-};
-
 const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
       setRefreshToken,
-      setAuthenticationToken,
-      addNotificationRequest
+      setAuthenticationToken
     },
     dispatch
   );
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(withTranslation()(withRouter(LogInPage)));

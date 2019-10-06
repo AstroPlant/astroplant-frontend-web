@@ -1,3 +1,5 @@
+import { TFunction } from "i18next";
+
 export enum NotificationKind {
   neutral,
   success,
@@ -33,4 +35,11 @@ export function notificationWarning(title: string, body: string): Notification {
 
 export function notificationError(title: string, body: string): Notification {
   return notification(title, body, NotificationKind.error);
+}
+
+export function notificationConnectionIssue(t: TFunction) {
+  return notificationError(
+    t("notification.connectionIssue.title"),
+    t("notification.connectionIssue.body")
+  );
 }

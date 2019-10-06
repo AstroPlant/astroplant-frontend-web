@@ -3,87 +3,47 @@ import { Link } from "react-router-dom";
 import { withTranslation, WithTranslation } from "react-i18next";
 import {
   Container,
-  Form,
   Segment,
   Header,
   Icon,
   Transition
 } from "semantic-ui-react";
 import { JSONSchema6 } from "json-schema";
-import RjsfForm from "../rjsf-theme-semantic-ui";
+import ApiForm from "Components/ApiForm";
 
 import HeadTitle from "../Components/HeadTitle";
 
 import { UserApi } from "astroplant-api";
-import { requestWrapper } from "utils/api";
-import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
 
 type State = {
-  submitting: boolean;
   done: boolean;
-  formEpoch: number; // Hacky var to reset form errors on submission.
-  formData: any;
-  additionalFormErrors: InvalidParametersFormErrors;
 };
-
-function validate(formData: any, errors: any) {
-  if (formData.password !== formData.passwordRepeat) {
-    errors.passwordRepeat.addError("passwords do not match");
-  }
-
-  if (!formData.termsOfService) {
-    errors.termsOfService.addError("you must agree to the Terms of Service");
-  }
-  return errors;
-}
 
 class SignUpPage extends Component<WithTranslation, State> {
   state = {
-    submitting: false,
-    done: false,
-    formEpoch: 0,
-    formData: {},
-    additionalFormErrors: {}
+    done: false
   };
 
-  async submit(formData: any) {
-    this.setState(state => {
-      return {
-        submitting: true,
-        formEpoch: state.formEpoch + 1,
-        formData,
-        additionalFormErrors: {}
-      };
-    });
-
-    const api = new UserApi();
-
-    try {
-      await api
-        .createUser({
-          newUser: {
-            username: formData.username,
-            password: formData.password,
-            emailAddress: formData.emailAddress
-          }
-        })
-        .pipe(requestWrapper())
-        .toPromise();
-
-      this.setState({ done: true });
-    } catch (e) {
-      console.warn("error when attempting to create account", e, e.response);
-      const formErrors = PDInvalidParameters.toFormErrors(
-        this.props.t,
-        e.response
-      );
-      if (formErrors !== null) {
-        console.warn("form errors", formErrors);
-        this.setState({ additionalFormErrors: formErrors });
-      }
-    } finally {
-      this.setState({ submitting: false });
+  validate(formData: any, errors: any) {
+    if (formData.password !== formData.passwordRepeat) {
+      errors.passwordRepeat.addError("passwords do not match");
     }
+
+    if (!formData.termsOfService) {
+      errors.termsOfService.addError("you must agree to the Terms of Service");
+    }
+    return errors;
+  }
+
+  onResponse() {
+    this.setState({ done: true });
+  }
+
+  send(data: any) {
+    const api = new UserApi();
+    return api.createUser({
+      newUser: data
+    });
   }
 
   render() {
@@ -117,6 +77,8 @@ class SignUpPage extends Component<WithTranslation, State> {
       }
     };
 
+    const SignUpForm = ApiForm();
+
     return (
       <>
         <HeadTitle
@@ -141,31 +103,14 @@ class SignUpPage extends Component<WithTranslation, State> {
                 </Container>
               </>
             ) : (
-              <>
-                {/* TODO: Waiting for
-                    https://github.com/rjsf-team/react-jsonschema-form/pull/1444
-                    to be merged
-                    // @ts-ignore */}
-                <RjsfForm
-                  key={this.state.formEpoch}
-                  schema={schema}
-                  uiSchema={uiSchema}
-                  validate={validate}
-                  onSubmit={({ formData }) => this.submit(formData)}
-                  formData={this.state.formData}
-                  disabled={this.state.submitting}
-                  extraErrors={this.state.additionalFormErrors}
-                >
-                  <Form.Button
-                    type="submit"
-                    primary
-                    disabled={this.state.submitting}
-                    loading={this.state.submitting}
-                  >
-                    {t("signUp.createAccount")}
-                  </Form.Button>
-                </RjsfForm>
-              </>
+              <SignUpForm
+                schema={schema}
+                uiSchema={uiSchema}
+                validate={this.validate}
+                send={this.send}
+                onResponse={this.onResponse.bind(this)}
+                submitLabel={t("signUp.createAccount")}
+              />
             )}
           </Segment>
         </Container>

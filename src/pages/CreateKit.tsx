@@ -7,7 +7,6 @@ import {
   Container,
   Segment,
   Header,
-  Form,
   Transition,
   Icon,
   Card,
@@ -16,13 +15,12 @@ import {
 import { kitCreated } from "../modules/me/actions";
 
 import { JSONSchema6 } from "json-schema";
-import RjsfForm from "../rjsf-theme-semantic-ui";
+import ApiForm from "Components/ApiForm";
 
 import { RootState } from "types";
 
 import { KitsApi } from "astroplant-api";
-import { AuthConfiguration, requestWrapper } from "utils/api";
-import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
+import { AuthConfiguration } from "utils/api";
 
 import {
   withAuthentication,
@@ -37,11 +35,7 @@ type Props = WithTranslation &
   };
 
 type State = {
-  submitting: boolean;
   done: boolean;
-  formEpoch: number; // Hacky var to reset form errors on submission.
-  formData: any;
-  additionalFormErrors: InvalidParametersFormErrors;
   result: { kitSerial: string | null; password: string | null };
 };
 function validate(formData: any, errors: any) {
@@ -50,55 +44,21 @@ function validate(formData: any, errors: any) {
 
 class CreateKit extends Component<Props, State> {
   state = {
-    submitting: false,
     done: false,
-    formEpoch: 0,
-    formData: {},
-    additionalFormErrors: {},
     result: {
       kitSerial: null,
       password: null
     }
   };
 
-  async submit(formData: any) {
-    this.setState(state => {
-      return {
-        submitting: true,
-        formEpoch: state.formEpoch + 1,
-        formData,
-        additionalFormErrors: {},
-        result: {
-          kitSerial: null,
-          password: null
-        }
-      };
-    });
+  onResponse(response: { kitSerial: string; password: string }) {
+    this.props.kitCreated();
+    this.setState({ done: true, result: response });
+  }
 
+  send(formData: any) {
     const api = new KitsApi(AuthConfiguration.Instance);
-    console.warn(formData);
-
-    try {
-      const result = await api
-        .createKit(formData)
-        .pipe(requestWrapper())
-        .toPromise();
-
-      this.props.kitCreated();
-      this.setState({ done: true, result: result });
-    } catch (e) {
-      console.warn("error when attempting to create account", e, e.response);
-      const formErrors = PDInvalidParameters.toFormErrors(
-        this.props.t,
-        e.response
-      );
-      if (formErrors !== null) {
-        console.warn("form errors", formErrors);
-        this.setState({ additionalFormErrors: formErrors });
-      }
-    } finally {
-      this.setState({ submitting: false });
-    }
+    return api.createKit({ newKit: formData });
   }
 
   render() {
@@ -127,6 +87,11 @@ class CreateKit extends Component<Props, State> {
     };
 
     const uiSchema = {};
+
+    const CreateKitForm = ApiForm<
+      any,
+      { kitSerial: string; password: string }
+    >();
 
     return (
       <>
@@ -177,29 +142,14 @@ class CreateKit extends Component<Props, State> {
               </>
             ) : (
               <>
-                {/* TODO: Waiting for
-              https://github.com/rjsf-team/react-jsonschema-form/pull/1444
-              to be merged
-              // @ts-ignore */}
-                <RjsfForm
-                  key={this.state.formEpoch}
+                <CreateKitForm
                   schema={schema}
                   uiSchema={uiSchema}
                   validate={validate}
-                  onSubmit={({ formData }) => this.submit(formData)}
-                  formData={this.state.formData}
-                  disabled={this.state.submitting}
-                  extraErrors={this.state.additionalFormErrors}
-                >
-                  <Form.Button
-                    type="submit"
-                    primary
-                    disabled={this.state.submitting}
-                    loading={this.state.submitting}
-                  >
-                    {t("createKit.create")}
-                  </Form.Button>
-                </RjsfForm>
+                  send={this.send.bind(this)}
+                  onResponse={this.onResponse.bind(this)}
+                  submitLabel={t("createKit.create")}
+                />
               </>
             )}
           </Segment>
