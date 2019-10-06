@@ -12,8 +12,8 @@ import {
 
 import { RootState } from "types";
 import { KitMembership } from "astroplant-api";
+import Option from "utils/option";
 
-//import { withOption } from "../../Components/OptionGuard";
 import {
   withAuthentication,
   WithAuthentication
@@ -25,7 +25,8 @@ import PlaceholderSegment from "Components/PlaceholderSegment";
 type Props = WithTranslation &
   WithAuthentication & {
     loadingKitMemberships: boolean;
-    kitMemberships: KitMembership[];
+    kitMemberships: RootState["me"]["kitMemberships"];
+    kits: RootState["kit"]["kits"];
   };
 
 class Me extends Component<Props> {
@@ -41,31 +42,33 @@ class Me extends Component<Props> {
         />
         <Container text style={{ marginTop: "1em" }}>
           <Header size="large">Your kits</Header>
-          {this.props.kitMemberships.length > 0 ||
+          {Object.keys(this.props.kitMemberships).length > 0 ||
           this.props.loadingKitMemberships ? (
             <>
               <p>
                 <Link to="/create-kit">Create another.</Link>
               </p>
-              {this.props.kitMemberships.length > 0 && (
+              {Object.keys(this.props.kitMemberships).length > 0 && (
                 <Card.Group>
-                  {this.props.kitMemberships.map(
-                    (kitMembership: KitMembership, index) => {
+                  {Object.keys(this.props.kitMemberships).map(
+                    serial => {
+                      console.warn(this.props.kits);
+                      const kit = Option.from(this.props.kits[serial]);
                       return (
                         <Card
                           fluid
-                          key={index}
+                          key={serial}
                           color="orange"
                           as={Link}
-                          to={`/kit/${kitMembership.kit.serial}`}
+                          to={`/kit/${serial}`}
                         >
                           <Card.Content>
                             <Image floated="right" size="mini">
-                              <Gravatar identifier={kitMembership.kit.serial} />
+                              <Gravatar identifier={serial} />
                             </Image>
-                            <Card.Header>{kitMembership.kit.name}</Card.Header>
+                            <Card.Header>{kit.map(kit => kit.name).unwrapOr("Unnamed")}</Card.Header>
                             <Card.Meta>
-                              Serial: {kitMembership.kit.serial}
+                              Serial: {serial}
                             </Card.Meta>
                           </Card.Content>
                         </Card>
@@ -112,7 +115,8 @@ class Me extends Component<Props> {
 const mapStateToProps = (state: RootState) => {
   return {
     loadingKitMemberships: state.me.loadingKitMemberships,
-    kitMemberships: state.me.kitMemberships
+    kitMemberships: state.me.kitMemberships,
+    kits: state.kit.kits,
   };
 };
 

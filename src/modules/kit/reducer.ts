@@ -19,17 +19,26 @@ export interface KitState extends Kit {
 }
 
 export interface KitsState {
-  [serial: string]: KitState;
+  kits: {[serial: string]: KitState};
 }
 
-// Kits must be added first by addKit, so will never be uninitialized.
-const initial: any = {};
+const initial: KitsState = {
+  // Kits must be added first by addKit, so will never be uninitialized.
+  kits: {}
+};
 
 export type KitAction = ActionType<typeof actions>;
 
-const kitReducer = createReducer<KitState, KitAction>(initial)
+const kitReducer = createReducer<KitState, KitAction>({} as any)
   .handleAction(actions.addKit, (state, action) => {
     return { ...action.payload, realTime: {} };
   });
 
-export default byId((action: any) => (action.payload || {}).serial, kitReducer as any);
+const kitReducerById = byId((action: any) => (action.payload || {}).serial, kitReducer as any);
+
+export default function(state = initial, action: any) {
+  const { kits, ...otherState } = state;
+  const newKits = kitReducerById(kits, action) as any;
+
+  return { kits: newKits, ...otherState };
+}
