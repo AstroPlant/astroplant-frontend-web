@@ -2,7 +2,7 @@ import { createReducer, ActionType } from "typesafe-actions";
 import { Moment } from "moment";
 import * as actions from "./actions";
 import Option from "utils/option";
-import { Notification, NotificationKind } from "./index";
+import { Notification } from "./index";
 
 export interface NotificationState {
   notifications: {
