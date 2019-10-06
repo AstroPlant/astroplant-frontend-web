@@ -91,7 +91,7 @@ class App extends Component<Props> {
             <Route path="/create-kit">
               <CreateKit />
             </Route>
-            <Route path="/kit/:kitId" component={Kit} />
+            <Route path="/kit/:kitSerial" component={Kit} />
             <Route>
               <PageLoader page="NotFound" />
             </Route>
