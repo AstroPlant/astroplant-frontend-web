@@ -1,8 +1,9 @@
 import { Configuration, Middleware, RequestArgs } from "astroplant-api";
-import { Observable, pipe, timer, throwError } from "rxjs";
-import { retryWhen, mergeMap } from "rxjs/operators";
+import { Observable, pipe, timer, throwError, of, concat, EMPTY } from "rxjs";
+import { retryWhen, mergeMap, switchMap } from "rxjs/operators";
 import RateLimiter from "rxjs-ratelimiter";
 import { store } from "store";
+import { recurse } from "./observables";
 
 export class AuthConfiguration extends Configuration {
   private static config: AuthConfiguration;
@@ -77,4 +78,26 @@ export function requestWrapper() {
       )
     )
   );
+}
+
+/**
+ * Walk over all pages. Assumes request creates an observable yielding exactly
+ * one result.
+ * TODO: the API returns an x-next header if there is a next page. It would be
+ * better to utilize that header.
+*/
+export function walkPages<T extends { id: number }>(
+  request: (page?: number) => Observable<Array<T>>
+): Observable<Array<T>> {
+  return recurse((result?: Array<T>) => {
+    if (typeof result === "undefined") {
+      return request().pipe(requestWrapper());
+    } else {
+      if (result.length === 0) {
+        return EMPTY;
+      } else {
+        return request(result[result.length - 1].id).pipe(requestWrapper());
+      }
+    }
+  });
 }
