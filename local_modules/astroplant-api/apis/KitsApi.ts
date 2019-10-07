@@ -12,7 +12,7 @@
  */
 
 import { Observable } from 'rxjs';
-import { BaseAPI, HttpHeaders, throwIfRequired, encodeURI } from '../runtime';
+import { BaseAPI, HttpHeaders, HttpQuery, throwIfRequired, encodeURI } from '../runtime';
 import {
     InlineResponse201,
     InlineResponse429,
@@ -24,6 +24,10 @@ import {
 
 export interface CreateKitRequest {
     newKit: NewKit;
+}
+
+export interface ListKitsRequest {
+    after?: number;
 }
 
 export interface ShowKitByIdRequest {
@@ -57,10 +61,16 @@ export class KitsApi extends BaseAPI {
     /**
      * List all public kits.
      */
-    listKits = (): Observable<Array<Kit>> => {
+    listKits = (requestParameters: ListKitsRequest): Observable<Array<Kit>> => {
+
+        const query: HttpQuery = {
+            ...(requestParameters.after && { 'after': requestParameters.after }),
+        };
+
         return this.request<Array<Kit>>({
             path: '/kits',
             method: 'GET',
+            query,
         });
     };
 

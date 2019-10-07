@@ -10,4 +10,5 @@ export * from './Kit';
 export * from './KitMembership';
 export * from './NewKit';
 export * from './NewUser';
+export * from './PeripheralDefinition';
 export * from './ProblemDetails';
