@@ -1,6 +1,6 @@
 import { Configuration, Middleware, RequestArgs } from "astroplant-api";
-import { Observable, pipe, timer, throwError, of, concat, EMPTY } from "rxjs";
-import { retryWhen, mergeMap, switchMap } from "rxjs/operators";
+import { Observable, pipe, timer, throwError, EMPTY } from "rxjs";
+import { retryWhen, mergeMap } from "rxjs/operators";
 import RateLimiter from "rxjs-ratelimiter";
 import { store } from "store";
 import { recurse } from "./observables";
