@@ -1,10 +1,8 @@
 import React from "react";
 import { Switch, Route, RouteComponentProps } from "react-router";
+import { Link } from "react-router-dom";
 import { Container } from "semantic-ui-react";
 import { KitState } from "modules/kit/reducer";
-import Create from "./create";
-import List from "./list";
-
 
 type Params = { kitSerial: string };
 
@@ -18,14 +16,10 @@ export default function KitConfigure(props: Props) {
 
   return (
     <Container text>
-      Configuration page for {kit.details.name || kit.details.serial}
-      <Switch>
-        <Route
-          path={`${path}/create`}
-          render={props => <Create {...props} kit={kit} />}
-        />
-        <Route render={props => <List {...props} kit={kit} />} />
-      </Switch>
+      <p>
+        <Link to={`${url}/create`}>Create a new configuration.</Link>
+      </p>
+      Configuration list for {kit.details.name || kit.details.serial}
     </Container>
   );
 }

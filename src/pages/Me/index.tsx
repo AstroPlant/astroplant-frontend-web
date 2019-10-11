@@ -66,7 +66,7 @@ class Me extends Component<Props> {
                             <Image floated="right" size="mini">
                               <Gravatar identifier={serial} />
                             </Image>
-                            <Card.Header>{kit.map(kit => kit.name).unwrapOr("Unnamed")}</Card.Header>
+                            <Card.Header>{kit.andThen(kit => Option.from(kit.details.name)).unwrapOr("Unnamed")}</Card.Header>
                             <Card.Meta>
                               Serial: {serial}
                             </Card.Meta>

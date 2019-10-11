@@ -14,7 +14,7 @@ export default function KitOverview(props: Props) {
 
   return (
     <Container text>
-      Overview page for {kit.name || kit.serial}
+      Overview page for {kit.details.name || kit.details.serial}
     </Container>
   );
 }
