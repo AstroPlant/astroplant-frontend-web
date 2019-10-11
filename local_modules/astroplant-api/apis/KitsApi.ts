@@ -18,26 +18,68 @@ import {
     InlineResponse429,
     InlineResponse500,
     Kit,
+    KitConfiguration,
+    KitConfigurationWithPeripherals,
     NewKit,
+    NewKitConfiguration,
+    Permission,
     ProblemDetails,
 } from '../models';
 
+export interface CreateConfigurationRequest {
+    kitSerial: string;
+    newKitConfiguration: NewKitConfiguration;
+}
+
 export interface CreateKitRequest {
     newKit: NewKit;
+}
+
+export interface ListConfigurationsRequest {
+    kitSerial: string;
 }
 
 export interface ListKitsRequest {
     after?: number;
 }
 
-export interface ShowKitByIdRequest {
-    kitId: string;
+export interface ListPermissionsRequest {
+    kitSerial?: string;
+}
+
+export interface ShowKitBySerialRequest {
+    kitSerial: string;
 }
 
 /**
  * no description
  */
 export class KitsApi extends BaseAPI {
+
+    /**
+     * Create a new configuration.
+     */
+    createConfiguration = (requestParameters: CreateConfigurationRequest): Observable<KitConfiguration> => {
+        throwIfRequired(requestParameters, 'kitSerial', 'createConfiguration');
+        throwIfRequired(requestParameters, 'newKitConfiguration', 'createConfiguration');
+
+        const headers: HttpHeaders = {
+            'Content-Type': 'application/json',
+            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+        };
+
+        const query: HttpQuery = {
+            ...(requestParameters.kitSerial && { 'kitSerial': requestParameters.kitSerial }),
+        };
+
+        return this.request<KitConfiguration>({
+            path: '/kit-configurations',
+            method: 'POST',
+            headers,
+            query,
+            body: requestParameters.newKitConfiguration,
+        });
+    };
 
     /**
      * Create a kit.
@@ -59,6 +101,28 @@ export class KitsApi extends BaseAPI {
     };
 
     /**
+     * The configurations of the specified kit.
+     */
+    listConfigurations = (requestParameters: ListConfigurationsRequest): Observable<Array<KitConfigurationWithPeripherals>> => {
+        throwIfRequired(requestParameters, 'kitSerial', 'listConfigurations');
+
+        const headers: HttpHeaders = {
+            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+        };
+
+        const query: HttpQuery = {
+            ...(requestParameters.kitSerial && { 'kitSerial': requestParameters.kitSerial }),
+        };
+
+        return this.request<Array<KitConfigurationWithPeripherals>>({
+            path: '/kit-configurations',
+            method: 'GET',
+            headers,
+            query,
+        });
+    };
+
+    /**
      * List all public kits.
      */
     listKits = (requestParameters: ListKitsRequest): Observable<Array<Kit>> => {
@@ -75,14 +139,40 @@ export class KitsApi extends BaseAPI {
     };
 
     /**
+     * List all actions you are permitted to perform on the specified kit.
+     */
+    listPermissions = (requestParameters: ListPermissionsRequest): Observable<Array<Permission>> => {
+
+        const headers: HttpHeaders = {
+            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+        };
+
+        const query: HttpQuery = {
+            ...(requestParameters.kitSerial && { 'kitSerial': requestParameters.kitSerial }),
+        };
+
+        return this.request<Array<Permission>>({
+            path: '/permissions',
+            method: 'GET',
+            headers,
+            query,
+        });
+    };
+
+    /**
      * Info for a specific kit.
      */
-    showKitById = (requestParameters: ShowKitByIdRequest): Observable<Kit> => {
-        throwIfRequired(requestParameters, 'kitId', 'showKitById');
+    showKitBySerial = (requestParameters: ShowKitBySerialRequest): Observable<Kit> => {
+        throwIfRequired(requestParameters, 'kitSerial', 'showKitBySerial');
+
+        const headers: HttpHeaders = {
+            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+        };
 
         return this.request<Kit>({
-            path: '/kits/{kitId}'.replace('{kitId}', encodeURI(requestParameters.kitId)),
+            path: '/kits/{kitSerial}'.replace('{kitSerial}', encodeURI(requestParameters.kitSerial)),
             method: 'GET',
+            headers,
         });
     };
 
