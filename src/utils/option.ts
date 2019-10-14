@@ -70,6 +70,14 @@ export default class Option<T> {
     }
   }
 
+  unwrapOrNull(): T | null {
+    if (this.isSome()) {
+      return this.unwrap();
+    } else {
+      return null;
+    }
+  }
+
   map<U>(f: (value: T) => U): Option<U> {
     if (this.isSome()) {
       return Option.some(f(this.unwrap()));
