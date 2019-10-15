@@ -63,7 +63,7 @@ class CreateConfiguration extends React.Component<Props, State> {
 
     const schema: JSONSchema6 = {
       type: "object",
-      title: "Configuration",
+      title: "Create configuration",
       required: [],
       properties: {
         description: { type: "string", title: t("common.description") }
@@ -76,7 +76,6 @@ class CreateConfiguration extends React.Component<Props, State> {
 
     return (
       <Container text>
-        Configuration creation for {kit.details.name || kit.details.serial}
         <Segment piled padded>
           {this.state.done ? (
             <>done...</>

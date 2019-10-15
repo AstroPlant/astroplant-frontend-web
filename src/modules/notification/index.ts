@@ -43,3 +43,10 @@ export function notificationConnectionIssue(t: TFunction) {
     t("notification.connectionIssue.body")
   );
 }
+
+export function notificationUnknownIssue(t: TFunction) {
+  return notificationError(
+    t("notification.unknownIssue.title"),
+    t("notification.unknownIssue.body")
+  );
+}

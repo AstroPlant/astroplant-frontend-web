@@ -11,7 +11,9 @@
       "name": "Name",
       "description": "Description",
       "latitude": "Latitude",
-      "longitude": "Longitude"
+      "longitude": "Longitude",
+      "activate": "Activate",
+      "deactivate": "Deactivate"
     },
     "home": {
       "header": "AstroPlant Prototype",
@@ -72,6 +74,18 @@
       "header": "Create a Kit",
       "create": "Create the kit"
     },
+    "kitConfiguration": {
+      "deactivate": {
+        "confirm": {
+          "content": "Are you sure you wish to deactivate configuration {{configurationDescription}} of kit {{kitName}}?"
+        }
+      },
+      "activate": {
+        "confirm": {
+          "content": "Are you sure you wish to activate configuration {{configurationDescription}} of kit {{kitName}}? You will no longer be able to change this configuration after activating it. If any other configuration is active, that one will be deactivated."
+        }
+      }
+    },
     "invalidParameter": {
       "mustBeEmailAddress": "must be an email address",
       "mustHaveLengthBetween": "must be between {{min}} and {{max}} characters",
@@ -82,6 +96,10 @@
       "connectionIssue": {
         "title": "Connection issue",
         "body": "Could not connect to the server. Please check your internet connection."
+      },
+      "unknownIssue": {
+        "title": "Unknown Issue",
+        "body": "An unknown issue occurred. Please try again."
       }
     },
     "form": {

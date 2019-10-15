@@ -56,14 +56,53 @@ const kitReducer = createReducer<KitState, KitAction>(initialKit)
       loadingConfigurations: false
     };
   })
+  .handleAction(actions.kitSetAllConfigurationsInactive, (state, action) => {
+    let configurations: { [id: string]: KitConfigurationWithPeripherals } = {};
+    for (const id of Object.keys(state.configurations)) {
+      const conf = state.configurations[id];
+      configurations[id] = { ...conf, active: false };
+    }
+
+    return { ...state, configurations };
+  })
   .handleAction(actions.kitConfigurationCreated, (state, action) => {
     const { configuration } = action.payload;
+    const configurationWithPeripherals = { ...configuration, peripherals: [] };
+
     let { configurations } = state;
-    configurations[configuration.id] = configuration;
+    configurations[configuration.id] = configurationWithPeripherals;
 
     return {
       ...state,
-      configurations
+      configurations: {
+        ...state.configurations,
+        [configuration.id]: configurationWithPeripherals
+      }
+    };
+  })
+  .handleAction(actions.kitConfigurationUpdated, (state, action) => {
+    const { configuration } = action.payload;
+    const existingConfiguration = state.configurations[configuration.id] || {};
+    const existingConfigurationPeripherals =
+      existingConfiguration.peripherals || [];
+
+    const newConfiguration = {
+      ...configuration,
+      peripherals: existingConfigurationPeripherals
+    };
+
+    let { configurations } = state;
+    configurations[configuration.id] = {
+      ...configurations[configuration.id],
+      ...configuration
+    };
+
+    return {
+      ...state,
+      configurations: {
+        ...state.configurations,
+        [configuration.id]: newConfiguration
+      }
     };
   });
 
@@ -77,5 +116,5 @@ export default function(state = initial, action: any) {
 
   const newKits = kitReducerById(kits, action) as any;
 
-  return { kits: newKits, ...otherState };
+  return { ...otherState, kits: newKits };
 }

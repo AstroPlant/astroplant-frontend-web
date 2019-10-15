@@ -92,6 +92,10 @@ class ApiForm<T = any, R = any> extends Component<AllProps<T, R>, State<T>> {
     }
   }
 
+  onChange(e: any) {
+    this.setState({formData: e.formData});
+  }
+
   render() {
     const { t } = this.props;
 
@@ -109,6 +113,7 @@ class ApiForm<T = any, R = any> extends Component<AllProps<T, R>, State<T>> {
           onSubmit={({ formData }) => this.submit(formData)}
           formData={this.state.formData}
           disabled={this.state.submitting}
+          onChange={e => this.onChange(e)}
           extraErrors={this.state.additionalFormErrors}
         >
           <Form.Button

@@ -39,3 +39,18 @@ export const kitConfigurationCreated = createAction(
     configuration: KitConfiguration;
   }) => action(payload)
 );
+
+export const kitSetAllConfigurationsInactive = createAction(
+  "kit/KIT_SET_ALL_CONFIGURATIONS_INACTIVE",
+  action => (payload: {
+    serial: string;
+  }) => action(payload)
+);
+
+export const kitConfigurationUpdated = createAction(
+  "kit/KIT_CONFIGURATION_UPDATED",
+  action => (payload: {
+    serial: string;
+    configuration: KitConfiguration;
+  }) => action(payload)
+);
