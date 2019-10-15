@@ -20,8 +20,6 @@ export default class Peripherals extends React.Component<Props> {
         {configuration.neverUsed && (
           <AddPeripheral kit={kit} configuration={configuration} />
         )}
-        <Icon name="pencil" />
-        {configuration.description}
       </>
     );
   }

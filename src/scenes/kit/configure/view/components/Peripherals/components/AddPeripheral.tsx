@@ -142,7 +142,7 @@ class AddPeripheral extends React.Component<PInner, State> {
 
     return (
       <Modal
-        trigger={<Button onClick={this.handleOpen}>Add Peripheral</Button>}
+        trigger={<Button primary onClick={this.handleOpen}>Add a peripheral</Button>}
         closeOnEscape={closeEasily}
         closeOnDimmerClick={closeEasily}
         open={this.state.open}

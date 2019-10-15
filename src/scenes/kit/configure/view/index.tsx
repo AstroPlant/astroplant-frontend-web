@@ -5,7 +5,7 @@ import { Switch, Route, RouteComponentProps } from "react-router";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { compose } from "recompose";
 
-import { Container, Segment, Header } from "semantic-ui-react";
+import { Container, Segment, Header, Divider } from "semantic-ui-react";
 import { KitState } from "modules/kit/reducer";
 
 import { JSONSchema6 } from "json-schema";
@@ -54,7 +54,11 @@ class ViewConfiguration extends React.Component<InternalProps, State> {
         <Container textAlign="right">
           <ActivateDeactivate kit={kit} configuration={configuration} />
         </Container>
-        <Peripherals kit={kit} configuration={configuration} />
+        <Divider />
+        <Container>
+          <Header>Peripherals</Header>
+          <Peripherals kit={kit} configuration={configuration} />
+        </Container>
       </Container>
     );
   }
