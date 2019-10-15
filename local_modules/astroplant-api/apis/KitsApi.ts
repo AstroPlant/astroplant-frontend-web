@@ -22,6 +22,9 @@ import {
     KitConfigurationWithPeripherals,
     NewKit,
     NewKitConfiguration,
+    NewPeripheral,
+    PatchKitConfiguration,
+    Peripheral,
     Permission,
     ProblemDetails,
 } from '../models';
@@ -35,6 +38,12 @@ export interface CreateKitRequest {
     newKit: NewKit;
 }
 
+export interface CreatePeripheralRequest {
+    kitSerial: string;
+    configurationId: number;
+    newPeripheral: NewPeripheral;
+}
+
 export interface ListConfigurationsRequest {
     kitSerial: string;
 }
@@ -45,6 +54,12 @@ export interface ListKitsRequest {
 
 export interface ListPermissionsRequest {
     kitSerial?: string;
+}
+
+export interface PatchConfigurationRequest {
+    kitSerial: string;
+    configurationId: number;
+    patchKitConfiguration: PatchKitConfiguration;
 }
 
 export interface ShowKitBySerialRequest {
@@ -97,6 +112,32 @@ export class KitsApi extends BaseAPI {
             method: 'POST',
             headers,
             body: requestParameters.newKit,
+        });
+    };
+
+    /**
+     * Add a peripheral to the configuration.
+     */
+    createPeripheral = (requestParameters: CreatePeripheralRequest): Observable<Peripheral> => {
+        throwIfRequired(requestParameters, 'kitSerial', 'createPeripheral');
+        throwIfRequired(requestParameters, 'configurationId', 'createPeripheral');
+        throwIfRequired(requestParameters, 'newPeripheral', 'createPeripheral');
+
+        const headers: HttpHeaders = {
+            'Content-Type': 'application/json',
+            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+        };
+
+        const query: HttpQuery = {
+            ...(requestParameters.kitSerial && { 'kitSerial': requestParameters.kitSerial }),
+        };
+
+        return this.request<Peripheral>({
+            path: '/kit-configurations/{configurationId}/peripherals'.replace('{configurationId}', encodeURI(requestParameters.configurationId)),
+            method: 'POST',
+            headers,
+            query,
+            body: requestParameters.newPeripheral,
         });
     };
 
@@ -156,6 +197,32 @@ export class KitsApi extends BaseAPI {
             method: 'GET',
             headers,
             query,
+        });
+    };
+
+    /**
+     * Update the configuration.
+     */
+    patchConfiguration = (requestParameters: PatchConfigurationRequest): Observable<KitConfiguration> => {
+        throwIfRequired(requestParameters, 'kitSerial', 'patchConfiguration');
+        throwIfRequired(requestParameters, 'configurationId', 'patchConfiguration');
+        throwIfRequired(requestParameters, 'patchKitConfiguration', 'patchConfiguration');
+
+        const headers: HttpHeaders = {
+            'Content-Type': 'application/json',
+            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+        };
+
+        const query: HttpQuery = {
+            ...(requestParameters.kitSerial && { 'kitSerial': requestParameters.kitSerial }),
+        };
+
+        return this.request<KitConfiguration>({
+            path: '/kit-configurations/{configurationId}'.replace('{configurationId}', encodeURI(requestParameters.configurationId)),
+            method: 'PATCH',
+            headers,
+            query,
+            body: requestParameters.patchKitConfiguration,
         });
     };
 
