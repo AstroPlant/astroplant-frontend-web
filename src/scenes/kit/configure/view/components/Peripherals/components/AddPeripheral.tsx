@@ -2,7 +2,15 @@ import React from "react";
 import { compose } from "recompose";
 import { connect } from "react-redux";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Modal, Card, Header, Button, Icon } from "semantic-ui-react";
+import {
+  Container,
+  Modal,
+  Card,
+  Header,
+  Button,
+  Icon,
+  Transition
+} from "semantic-ui-react";
 
 import { RootState } from "types";
 import { KitState } from "modules/kit/reducer";
@@ -79,7 +87,19 @@ class AddPeripheral extends React.Component<PInner, State> {
     const def = this.state.peripheralDefinition;
 
     if (this.state.done) {
-      content = <Header size="small">The peripheral has been added!</Header>;
+      content = (
+        <>
+          <Header size="huge" icon textAlign="center">
+            <Transition animation="drop" duration={450} transitionOnMount>
+              <Icon name="check" circular />
+            </Transition>
+            <Header.Content>Success!</Header.Content>
+          </Header>
+          <Container textAlign="center">
+            <p>The peripheral has been added.</p>
+          </Container>
+        </>
+      );
     } else if (def !== null) {
       const schema: JSONSchema6 = {
         type: "object",
@@ -142,7 +162,11 @@ class AddPeripheral extends React.Component<PInner, State> {
 
     return (
       <Modal
-        trigger={<Button primary onClick={this.handleOpen}>Add a peripheral</Button>}
+        trigger={
+          <Button primary onClick={this.handleOpen}>
+            Add a peripheral
+          </Button>
+        }
         closeOnEscape={closeEasily}
         closeOnDimmerClick={closeEasily}
         open={this.state.open}
