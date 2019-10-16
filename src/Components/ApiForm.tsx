@@ -32,6 +32,7 @@ export type Props<T, R> = {
   send: (data: any) => Observable<R>;
   onResponse: (response: R) => void;
   submitLabel?: string;
+  formData?: any;
 };
 
 type AllProps<T, R> = WithTranslation &
@@ -111,7 +112,7 @@ class ApiForm<T = any, R = any> extends Component<AllProps<T, R>, State<T>> {
           uiSchema={this.props.uiSchema}
           validate={this.props.validate}
           onSubmit={({ formData }) => this.submit(formData)}
-          formData={this.state.formData}
+          formData={this.state.formData || this.props.formData}
           disabled={this.state.submitting}
           onChange={e => this.onChange(e)}
           extraErrors={this.state.additionalFormErrors}
