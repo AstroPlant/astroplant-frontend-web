@@ -42,6 +42,8 @@ function validate(formData: any, errors: any) {
   return errors;
 }
 
+const CreateKitForm = ApiForm<any, { kitSerial: string; password: string }>();
+
 class CreateKit extends Component<Props, State> {
   state = {
     done: false,
@@ -87,11 +89,6 @@ class CreateKit extends Component<Props, State> {
     };
 
     const uiSchema = {};
-
-    const CreateKitForm = ApiForm<
-      any,
-      { kitSerial: string; password: string }
-    >();
 
     return (
       <>

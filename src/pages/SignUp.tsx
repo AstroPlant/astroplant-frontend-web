@@ -19,6 +19,8 @@ type State = {
   done: boolean;
 };
 
+const SignUpForm = ApiForm();
+
 class SignUpPage extends Component<WithTranslation, State> {
   state = {
     done: false
@@ -76,8 +78,6 @@ class SignUpPage extends Component<WithTranslation, State> {
         "ui:widget": "email"
       }
     };
-
-    const SignUpForm = ApiForm();
 
     return (
       <>
