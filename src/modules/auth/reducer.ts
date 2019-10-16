@@ -16,6 +16,9 @@ const initial: AuthState = {
 export type AuthAction = ActionType<typeof actions>;
 
 export default createReducer<AuthState, AuthAction>(initial)
+  .handleAction(actions.setRememberMe, (state, action) => {
+    return { ...state, rememberMe: action.payload };
+  })
   .handleAction(actions.setRefreshToken, (state, action) => {
     return { ...state, refreshToken: action.payload.token };
   })

@@ -9,6 +9,7 @@ import ApiForm from "Components/ApiForm";
 import { AuthenticationTokens } from "astroplant-api";
 
 import {
+  setRememberMe,
   setRefreshToken,
   setAuthenticationToken
 } from "../modules/auth/actions";
@@ -17,19 +18,34 @@ import HeadTitle from "../Components/HeadTitle";
 
 import { AuthenticateApi } from "astroplant-api";
 
+const LogInForm = ApiForm<any, AuthenticationTokens>();
+
+type State = {
+  rememberMe: boolean;
+};
+
 type Props = WithTranslation &
   RouteComponentProps & {
+    setRememberMe: (remember: boolean) => void;
     setRefreshToken: (token: string) => void;
     setAuthenticationToken: (token: string) => void;
   };
 
-class LogInPage extends Component<Props> {
-  send(data: any) {
+class LogInPage extends Component<Props, State> {
+  state: State = {
+    rememberMe: false
+  };
+
+  send = (data: any) => {
+    this.setState({ rememberMe: data.rememberMe });
     const api = new AuthenticateApi();
-    return api.authenticateByCredentials({ authUser: data });
+    return api.authenticateByCredentials({
+      authUser: { username: data.username, password: data.password }
+    });
   }
 
-  onResponse(response: AuthenticationTokens) {
+  onResponse = (response: AuthenticationTokens) => {
+    this.props.setRememberMe(this.state.rememberMe);
     this.props.setRefreshToken(response.refreshToken);
     this.props.setAuthenticationToken(response.authenticationToken);
     this.props.history.push("/me");
@@ -57,8 +73,6 @@ class LogInPage extends Component<Props> {
       }
     };
 
-    const LogInForm = ApiForm<any, AuthenticationTokens>();
-
     return (
       <>
         <HeadTitle main="Log in" />
@@ -67,7 +81,7 @@ class LogInPage extends Component<Props> {
             schema={schema}
             uiSchema={uiSchema}
             send={this.send}
-            onResponse={this.onResponse.bind(this)}
+            onResponse={this.onResponse}
             submitLabel={t("logIn.logIn")}
           />
         </Container>
@@ -79,6 +93,7 @@ class LogInPage extends Component<Props> {
 const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
+      setRememberMe,
       setRefreshToken,
       setAuthenticationToken
     },
