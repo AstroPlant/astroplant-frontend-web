@@ -24,5 +24,5 @@ export interface KitConfigurationWithPeripheralsAllOf {
      * @type {Array<Peripheral>}
      * @memberof KitConfigurationWithPeripheralsAllOf
      */
-    peripherals?: Array<Peripheral>;
+    peripherals: Array<Peripheral>;
 }

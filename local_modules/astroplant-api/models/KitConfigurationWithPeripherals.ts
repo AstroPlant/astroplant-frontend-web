@@ -51,5 +51,5 @@ export interface KitConfigurationWithPeripherals {
      * @type {Array<Peripheral>}
      * @memberof KitConfigurationWithPeripherals
      */
-    peripherals?: Array<Peripheral>;
+    peripherals: Array<Peripheral>;
 }
