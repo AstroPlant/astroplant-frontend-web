@@ -27,6 +27,8 @@ import ApiForm from "Components/ApiForm";
 import ApiButton from "Components/ApiButton";
 import RjsfForm from "rjsf-theme-semantic-ui";
 
+import PeripheralDefinitionCard from "Components/PeripheralDefinitionCard";
+
 type State = {
   editing: boolean;
 };
@@ -122,17 +124,7 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
         <Label attached="top">Peripheral #{peripheral.id}</Label>
         <Header>{peripheral.name}</Header>
         <p>Identifier: #{peripheral.id}</p>
-        <Card color="blue" fluid>
-          <Card.Content>
-            <Card.Header>{def.name}</Card.Header>
-            {def.description && (
-              <Card.Description>{def.description}</Card.Description>
-            )}
-            <Card.Meta>
-              {def.brand} - {def.model}
-            </Card.Meta>
-          </Card.Content>
-        </Card>
+        <PeripheralDefinitionCard peripheralDefinition={def} fluid />
         {this.state.editing ? (
           <>
             <PeripheralForm

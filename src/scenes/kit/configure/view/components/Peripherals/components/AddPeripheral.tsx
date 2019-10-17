@@ -22,6 +22,8 @@ import { AuthConfiguration } from "utils/api";
 import { JSONSchema6 } from "json-schema";
 import ApiForm from "Components/ApiForm";
 
+import PeripheralDefinitionCard from "Components/PeripheralDefinitionCard";
+
 type State = {
   open: boolean;
   done: boolean;
@@ -142,22 +144,10 @@ class AddPeripheral extends React.Component<PInner, State> {
             {Object.keys(this.props.peripheralDefinitions).map(id => {
               const def = this.props.peripheralDefinitions[id];
               return (
-                <Card
-                  key={id}
-                  color="blue"
-                  link
-                  onClick={() => this.selectPeripheralDefinition(def)}
-                >
-                  <Card.Content>
-                    <Card.Header>{def.name}</Card.Header>
-                    {def.description && (
-                      <Card.Description>{def.description}</Card.Description>
-                    )}
-                    <Card.Meta>
-                      {def.brand} - {def.model}
-                    </Card.Meta>
-                  </Card.Content>
-                </Card>
+                <PeripheralDefinitionCard
+                  key={def.id}
+                  peripheralDefinition={def}
+                />
               );
             })}
           </Card.Group>
