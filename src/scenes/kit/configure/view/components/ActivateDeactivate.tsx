@@ -69,7 +69,7 @@ class ActivateDeactivate extends React.Component<PInner> {
           label={t("common.deactivate")}
           buttonProps={{ negative: true }}
           confirm={() => ({
-            content: t("kitConfiguration.deactivate.confirm.content", {
+            content: t("kitConfiguration.deactivateConfirm", {
               kitName,
               configurationDescription
             })
@@ -84,10 +84,15 @@ class ActivateDeactivate extends React.Component<PInner> {
           label={t("common.activate")}
           buttonProps={{ positive: true }}
           confirm={() => ({
-            content: t("kitConfiguration.activate.confirm.content", {
-              kitName,
-              configurationDescription
-            })
+            content: t(
+              configuration.neverUsed
+                ? "kitConfiguration.activateConfirmNeverUsed"
+                : "kitConfiguration.activateConfirm",
+              {
+                kitName,
+                configurationDescription
+              }
+            )
           })}
         />
       );

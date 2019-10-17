@@ -78,16 +78,9 @@
       "peripherals": {
         "deleteConfirm": "Are you sure you wish to delete this peripheral?"
       },
-      "deactivate": {
-        "confirm": {
-          "content": "Are you sure you wish to deactivate configuration {{configurationDescription}} of kit {{kitName}}?"
-        }
-      },
-      "activate": {
-        "confirm": {
-          "content": "Are you sure you wish to activate configuration {{configurationDescription}} of kit {{kitName}}? You will no longer be able to change this configuration after activating it. If any other configuration is active, that one will be deactivated."
-        }
-      }
+      "deactivateConfirm": "Are you sure you wish to deactivate configuration {{configurationDescription}} of kit {{kitName}}?",
+      "activateConfirmNeverUsed":  "Are you sure you wish to activate configuration {{configurationDescription}} of kit {{kitName}}? You will no longer be able to change this configuration after activating it. If any other configuration is active, that one will be deactivated.",
+      "activateConfirm":  "Are you sure you wish to activate configuration {{configurationDescription}} of kit {{kitName}}? If any other configuration is active, that one will be deactivated."
     },
     "invalidParameter": {
       "mustBeEmailAddress": "must be an email address",
