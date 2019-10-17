@@ -75,6 +75,9 @@
       "create": "Create the kit"
     },
     "kitConfiguration": {
+      "peripherals": {
+        "deleteConfirm": "Are you sure you wish to delete this peripheral?"
+      },
       "deactivate": {
         "confirm": {
           "content": "Are you sure you wish to deactivate configuration {{configurationDescription}} of kit {{kitName}}?"

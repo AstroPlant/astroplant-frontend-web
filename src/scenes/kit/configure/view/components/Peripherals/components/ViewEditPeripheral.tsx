@@ -177,6 +177,11 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
                   labelPosition: "right",
                   floated: "right"
                 }}
+                confirm={() => ({
+                  content: t(
+                    "kitConfiguration.peripherals.deleteConfirm"
+                  )
+                })}
               >
                 <Icon name="delete" />
                 Delete
