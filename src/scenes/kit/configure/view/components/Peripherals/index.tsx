@@ -1,15 +1,14 @@
 import React from "react";
 import { Icon, Segment } from "semantic-ui-react";
 
-import { KitState } from "modules/kit/reducer";
-import { KitConfigurationWithPeripherals } from "astroplant-api";
+import { KitState, KitConfigurationState } from "modules/kit/reducer";
 
 import AddPeripheral from "./components/AddPeripheral";
 import ViewEditPeripheral from "./components/ViewEditPeripheral";
 
 export type Props = {
   kit: KitState;
-  configuration: KitConfigurationWithPeripherals;
+  configuration: KitConfigurationState;
 };
 
 export default class Peripherals extends React.Component<Props> {
@@ -21,7 +20,8 @@ export default class Peripherals extends React.Component<Props> {
         {configuration.neverUsed && (
           <AddPeripheral kit={kit} configuration={configuration} />
         )}
-        {configuration.peripherals.map(peripheral => {
+        {Object.keys(configuration.peripherals).map(peripheralId => {
+          const peripheral = configuration.peripherals[peripheralId];
           return (
             <ViewEditPeripheral
               key={peripheral.id}

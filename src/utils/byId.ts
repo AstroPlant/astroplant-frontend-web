@@ -44,3 +44,17 @@ export function compose<T>(
   return (state, action, id) =>
     itemReducers.reduce((agg, reducer) => reducer(agg, action, id), state);
 }
+
+/**
+ * Turn an array of items into an object of items, where the keys are provided
+ * by the keySelector function.
+ */
+export function arrayToObject<T>(
+  array: T[],
+  keySelector: (v: T) => string
+) {
+  return array.reduce((obj: { [id: string]: T }, v: T) => {
+    obj[keySelector(v)] = v;
+    return obj;
+  }, {});
+}

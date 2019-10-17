@@ -14,7 +14,7 @@ type Props = {
 class Notifications extends React.Component<Props> {
   render() {
     return (
-      <div style={{ position: "absolute", top: "3em", right: "3em" }}>
+      <div style={{ position: "fixed", top: "3em", right: "3em" }}>
         <Container text>
           <Transition.Group duration={500} animation="slide left" as={List}>
             {Object.entries(this.props.notifications).map(

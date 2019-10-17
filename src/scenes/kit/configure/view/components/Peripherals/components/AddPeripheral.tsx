@@ -1,5 +1,6 @@
 import React from "react";
 import { compose } from "recompose";
+import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { withTranslation, WithTranslation } from "react-i18next";
 import {
@@ -13,13 +14,9 @@ import {
 } from "semantic-ui-react";
 
 import { RootState } from "types";
-import { KitState } from "modules/kit/reducer";
-import {
-  KitsApi,
-  KitConfigurationWithPeripherals,
-  PeripheralDefinition,
-  Peripheral
-} from "astroplant-api";
+import { KitState, KitConfigurationState } from "modules/kit/reducer";
+import { peripheralCreated } from "modules/kit/actions";
+import { KitsApi, PeripheralDefinition, Peripheral } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 
 import { JSONSchema6 } from "json-schema";
@@ -33,12 +30,17 @@ type State = {
 
 export type Props = {
   kit: KitState;
-  configuration: KitConfigurationWithPeripherals;
+  configuration: KitConfigurationState;
 };
 
 type PInner = Props &
   WithTranslation & {
     peripheralDefinitions: { [id: string]: PeripheralDefinition };
+    peripheralCreated: (payload: {
+      serial: string;
+      configurationId: number;
+      peripheral: Peripheral;
+    }) => void;
   };
 
 const PeripheralForm = ApiForm<any, any>();
@@ -77,6 +79,12 @@ class AddPeripheral extends React.Component<PInner, State> {
   }
 
   onResponse(response: Peripheral) {
+    const { kit, configuration } = this.props;
+    this.props.peripheralCreated({
+      serial: kit.details.serial,
+      configurationId: configuration.id,
+      peripheral: response
+    });
     this.setState({ done: true });
   }
 
@@ -196,7 +204,18 @@ const mapStateToProps = (state: RootState) => {
   };
 };
 
+const mapDispatchToProps = (dispatch: any) =>
+  bindActionCreators(
+    {
+      peripheralCreated
+    },
+    dispatch
+  );
+
 export default compose<PInner, Props>(
-  connect(mapStateToProps),
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  ),
   withTranslation()
 )(AddPeripheral);

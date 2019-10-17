@@ -113,7 +113,7 @@ class ApiButton<R = any> extends Component<AllProps<R>, State> {
           disabled={this.state.submitting}
           loading={this.state.submitting}
         >
-          {this.props.label || t("form.submit")}
+          {this.props.children || this.props.label || t("form.submit")}
         </Button>
         <Confirm
           open={this.state.confirming}

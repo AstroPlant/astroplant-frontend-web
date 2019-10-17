@@ -1,5 +1,5 @@
 import { createAction } from "typesafe-actions";
-import { Kit, KitConfigurationWithPeripherals, KitConfiguration } from "astroplant-api";
+import { Kit, KitConfigurationWithPeripherals, KitConfiguration, Peripheral } from "astroplant-api";
 
 interface WithKitSerial {
   serial: string;
@@ -52,5 +52,29 @@ export const kitConfigurationUpdated = createAction(
   action => (payload: {
     serial: string;
     configuration: KitConfiguration;
+  }) => action(payload)
+);
+
+export const peripheralCreated = createAction(
+  "kit/PERIPHERAL_CREATED",
+  action => (payload: {
+    serial: string;
+    peripheral: Peripheral;
+  }) => action(payload)
+);
+
+export const peripheralUpdated = createAction(
+  "kit/PERIPHERAL_UPDATED",
+  action => (payload: {
+    serial: string;
+    peripheral: Peripheral;
+  }) => action(payload)
+);
+
+export const peripheralDeleted = createAction(
+  "kit/PERIPHERAL_DELETED",
+  action => (payload: {
+    serial: string;
+    peripheralId: string;
   }) => action(payload)
 );

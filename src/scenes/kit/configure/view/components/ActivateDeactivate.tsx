@@ -6,19 +6,18 @@ import { withTranslation, WithTranslation } from "react-i18next";
 
 import ApiButton from "Components/ApiButton";
 
-import { KitState } from "modules/kit/reducer";
+import { KitState, KitConfigurationState } from "modules/kit/reducer";
 import {
   kitSetAllConfigurationsInactive,
   kitConfigurationUpdated
 } from "modules/kit/actions";
-import { KitConfigurationWithPeripherals } from "astroplant-api";
 
 import { KitsApi, KitConfiguration } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 
 export type Props = {
   kit: KitState;
-  configuration: KitConfigurationWithPeripherals;
+  configuration: KitConfigurationState;
 };
 
 type PInner = WithTranslation &

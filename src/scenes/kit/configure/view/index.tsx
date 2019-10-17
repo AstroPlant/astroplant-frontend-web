@@ -6,7 +6,7 @@ import { withTranslation, WithTranslation } from "react-i18next";
 import { compose } from "recompose";
 
 import { Container, Segment, Header, Divider } from "semantic-ui-react";
-import { KitState } from "modules/kit/reducer";
+import { KitState, KitConfigurationState } from "modules/kit/reducer";
 
 import { JSONSchema6 } from "json-schema";
 import ApiForm from "Components/ApiForm";
@@ -14,7 +14,7 @@ import ApiForm from "Components/ApiForm";
 import { withOption, WithValue } from "Components/OptionGuard";
 import { propsMap } from "Components/PropsMap";
 
-import { KitsApi, KitConfigurationWithPeripherals } from "astroplant-api";
+import { KitsApi } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 import Option from "utils/option";
 
@@ -28,7 +28,7 @@ export type Props = RouteComponentProps<Params> & { kit: KitState };
 
 type InternalProps = Props &
   WithTranslation &
-  WithValue<KitConfigurationWithPeripherals>;
+  WithValue<KitConfigurationState>;
 
 type State = {
   done: boolean;

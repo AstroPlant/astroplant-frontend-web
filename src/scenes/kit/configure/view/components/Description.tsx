@@ -6,16 +6,15 @@ import { Icon } from "semantic-ui-react";
 import { JSONSchema6 } from "json-schema";
 import ApiForm from "Components/ApiForm";
 
-import { KitState } from "modules/kit/reducer";
+import { KitState, KitConfigurationState } from "modules/kit/reducer";
 import { kitConfigurationUpdated } from "modules/kit/actions";
-import { KitConfigurationWithPeripherals } from "astroplant-api";
 
 import { KitsApi, KitConfiguration } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 
 export type Props = {
   kit: KitState;
-  configuration: KitConfigurationWithPeripherals;
+  configuration: KitConfigurationState;
   kitConfigurationUpdated: (kitConfiguration: {
     serial: string;
     configuration: KitConfiguration;
