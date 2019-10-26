@@ -147,6 +147,7 @@ class AddPeripheral extends React.Component<PInner, State> {
                 <PeripheralDefinitionCard
                   key={def.id}
                   peripheralDefinition={def}
+                  onClick={() => this.selectPeripheralDefinition(def)}
                 />
               );
             })}
