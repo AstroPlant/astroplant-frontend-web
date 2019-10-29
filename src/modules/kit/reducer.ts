@@ -10,17 +10,24 @@ export type KitConfigurationState = KitConfiguration & {
   peripherals: { [peripheralId: string]: Peripheral };
 };
 
+
 export interface Measurement {
   physicalQuantity: string;
   physicalUnit: string;
   value: number;
 }
 
+export interface RawMeasurement extends Measurement {
+  kitSerial: string;
+  peripheral: number;
+  datetime: number;
+}
+
 export interface KitState {
   details: Kit;
   configurations: { [id: string]: KitConfigurationState };
   loadingConfigurations: boolean;
-  realTime: { [key: string]: Measurement };
+  rawMeasurements: { [key: string]: RawMeasurement };
 }
 
 export interface KitsState {
@@ -37,7 +44,7 @@ const initialKit: KitState = {
   details: {} as any,
   configurations: {},
   loadingConfigurations: false,
-  realTime: {}
+  rawMeasurements: {}
 };
 
 export type KitAction = ActionType<typeof actions>;
@@ -74,6 +81,12 @@ const kitReducer = createReducer<KitState, KitAction>(initialKit)
     }
 
     return { ...state, configurations };
+  })
+  .handleAction(actions.rawMeasurementReceived, (state, action) => {
+    let rawMeasurements = state.rawMeasurements;
+    rawMeasurements[action.payload.rawMeasurement.peripheral] = action.payload.rawMeasurement;
+
+    return { ...state, rawMeasurements };
   });
 
 const kitReducerWrapper = (state: KitState, action: any) => {

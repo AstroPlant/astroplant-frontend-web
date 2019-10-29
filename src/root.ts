@@ -14,6 +14,7 @@ import notificationReducer from "./modules/notification/reducer";
 import notificationEpic from "./modules/notification/epic";
 import sessionReducer from "./modules/session/reducer";
 import sessionEpic from "./modules/session/epic";
+import webSocketEpic from "./modules/websocket/epic";
 
 export const rootReducer = combineReducers({
   auth: authReducer,
@@ -32,7 +33,8 @@ export const rootEpic = (...args: any[]) =>
     kitEpic,
     peripheralDefinitionEpic,
     notificationEpic,
-    sessionEpic
+    sessionEpic,
+    webSocketEpic
   )(...args).pipe(
     tap({
       error: (e: any) =>

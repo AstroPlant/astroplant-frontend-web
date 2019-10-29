@@ -1,5 +1,6 @@
 import { createAction } from "typesafe-actions";
 import { Kit, KitConfigurationWithPeripherals, KitConfiguration, Peripheral } from "astroplant-api";
+import { RawMeasurement } from "./reducer";
 
 interface WithKitSerial {
   serial: string;
@@ -77,4 +78,10 @@ export const peripheralDeleted = createAction(
     serial: string;
     peripheralId: string;
   }) => action(payload)
+);
+
+export const rawMeasurementReceived = createAction(
+  "kit/RAW_MEASUREMENT",
+  action => (serial: string, rawMeasurement: RawMeasurement) =>
+    action({ serial, rawMeasurement })
 );
