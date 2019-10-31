@@ -16,31 +16,29 @@ import { BaseAPI, HttpQuery } from '../runtime';
 import {
     InlineResponse429,
     InlineResponse500,
-    PeripheralDefinition,
+    QuantityType,
 } from '../models';
 
-export interface ListPeripheralDefinitionsRequest {
+export interface ListQuantityTypesRequest {
     after?: number;
-    withExpectedQuantityTypes?: boolean;
 }
 
 /**
  * no description
  */
-export class PeripheralDefinitionApi extends BaseAPI {
+export class QuantityTypeApi extends BaseAPI {
 
     /**
-     * List all peripheral device definitions.
+     * List all quantity types.
      */
-    listPeripheralDefinitions = (requestParameters: ListPeripheralDefinitionsRequest): Observable<Array<PeripheralDefinition>> => {
+    listQuantityTypes = (requestParameters: ListQuantityTypesRequest): Observable<Array<QuantityType>> => {
 
         const query: HttpQuery = {
             ...(requestParameters.after && { 'after': requestParameters.after }),
-            ...(requestParameters.withExpectedQuantityTypes && { 'withExpectedQuantityTypes': requestParameters.withExpectedQuantityTypes }),
         };
 
-        return this.request<Array<PeripheralDefinition>>({
-            path: '/peripheral-definitions',
+        return this.request<Array<QuantityType>>({
+            path: '/quantity-types',
             method: 'GET',
             query,
         });

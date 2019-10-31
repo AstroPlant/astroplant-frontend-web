@@ -1,6 +1,7 @@
 export * from './AuthRefreshToken';
 export * from './AuthUser';
 export * from './AuthenticationTokens';
+export * from './ExpectedQuantityType';
 export * from './FullUser';
 export * from './InlineResponse201';
 export * from './InlineResponse429';
@@ -21,3 +22,4 @@ export * from './Peripheral';
 export * from './PeripheralDefinition';
 export * from './Permission';
 export * from './ProblemDetails';
+export * from './QuantityType';

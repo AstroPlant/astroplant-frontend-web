@@ -56,4 +56,9 @@ export interface PeripheralDefinition {
      * @memberof PeripheralDefinition
      */
     configurationSchema: object;
+    /**
+     * @type {Array<number>}
+     * @memberof PeripheralDefinition
+     */
+    expectedQuantityTypes?: Array<number>;
 }
