@@ -10,6 +10,8 @@ import kitReducer from "./modules/kit/reducer";
 import kitEpic from "./modules/kit/epic";
 import peripheralDefinitionReducer from "./modules/peripheral-definition/reducer";
 import peripheralDefinitionEpic from "./modules/peripheral-definition/epic";
+import quantityTypeReducer from "./modules/quantity-type/reducer";
+import quantityTypeEpic from "./modules/quantity-type/epic";
 import notificationReducer from "./modules/notification/reducer";
 import notificationEpic from "./modules/notification/epic";
 import sessionReducer from "./modules/session/reducer";
@@ -21,6 +23,7 @@ export const rootReducer = combineReducers({
   me: meReducer,
   kit: kitReducer,
   peripheralDefinition: peripheralDefinitionReducer,
+  quantityType: quantityTypeReducer,
   notification: notificationReducer,
   session: sessionReducer
 });
@@ -32,6 +35,7 @@ export const rootEpic = (...args: any[]) =>
     meEpic,
     kitEpic,
     peripheralDefinitionEpic,
+    quantityTypeEpic,
     notificationEpic,
     sessionEpic,
     webSocketEpic

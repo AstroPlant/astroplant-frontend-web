@@ -3,6 +3,8 @@ import { RouteComponentProps } from "react-router";
 import { Container } from "semantic-ui-react";
 import { KitState } from "modules/kit/reducer";
 
+import RawMeasurements from "./components/RawMeasurements";
+
 type Params = { kitSerial: string };
 
 export type Props = RouteComponentProps<Params> & {
@@ -14,7 +16,7 @@ export default function KitOverview(props: Props) {
 
   return (
     <Container text>
-      Overview page for {kit.details.name || kit.details.serial}
+      <RawMeasurements kit={kit} />
     </Container>
   );
 }

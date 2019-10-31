@@ -12,8 +12,7 @@ export type KitConfigurationState = KitConfiguration & {
 
 
 export interface Measurement {
-  physicalQuantity: string;
-  physicalUnit: string;
+  quantityType: number;
   value: number;
 }
 
@@ -84,7 +83,8 @@ const kitReducer = createReducer<KitState, KitAction>(initialKit)
   })
   .handleAction(actions.rawMeasurementReceived, (state, action) => {
     let rawMeasurements = state.rawMeasurements;
-    rawMeasurements[action.payload.rawMeasurement.peripheral] = action.payload.rawMeasurement;
+    const { peripheral, quantityType } = action.payload.rawMeasurement;
+    rawMeasurements[peripheral + "." + quantityType] = action.payload.rawMeasurement;
 
     return { ...state, rawMeasurements };
   });
