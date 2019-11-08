@@ -25,5 +25,5 @@ export interface AuthenticationTokens {
      * @type {string}
      * @memberof AuthenticationTokens
      */
-    authenticationToken: string;
+    accessToken: string;
 }

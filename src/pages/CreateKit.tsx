@@ -30,7 +30,7 @@ import HeadTitle from "../Components/HeadTitle";
 
 type Props = WithTranslation &
   WithAuthentication & {
-    authenticationToken: string | null;
+    accessToken: string | null;
     kitCreated: () => any;
   };
 
@@ -157,7 +157,7 @@ class CreateKit extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  authenticationToken: state.auth.authenticationToken
+  accessToken: state.auth.accessToken
 });
 
 const mapDispatchToProps = (dispatch: any) =>

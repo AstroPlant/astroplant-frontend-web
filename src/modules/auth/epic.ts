@@ -31,7 +31,7 @@ const refreshAuthenticationEpic: Epic = (action$, state$) =>
     map(_action => new AuthenticateApi()),
     switchMap((api: AuthenticateApi) =>
       api
-        .obtainAuthenticationTokenFromRefreshToken({
+        .obtainAccessTokenFromRefreshToken({
           authRefreshToken: {
             refreshToken: state$.value.auth.refreshToken
           }
@@ -39,7 +39,7 @@ const refreshAuthenticationEpic: Epic = (action$, state$) =>
         .pipe(
           requestWrapper(),
           map(resp => resp),
-          map(actions.setAuthenticationToken),
+          map(actions.setAccessToken),
           catchError(err => EMPTY)
         )
     )

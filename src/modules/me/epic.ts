@@ -13,7 +13,7 @@ import { AuthConfiguration, requestWrapper } from "utils/api";
  */
 const fetchUserDetailsEpic: Epic = (action$, state$) =>
   action$.pipe(
-    filter(isActionOf(authActions.setAuthenticationToken)),
+    filter(isActionOf(authActions.setAccessToken)),
     map(_action => new MeApi(AuthConfiguration.Instance)),
     switchMap(api =>
       api.showMe().pipe(
@@ -31,7 +31,7 @@ const fetchUserDetailsEpic: Epic = (action$, state$) =>
 const fetchUserKitsEpic: Epic = (actions$, state$) =>
   actions$.pipe(
     filter(
-      isActionOf([authActions.setAuthenticationToken, actions.kitCreated])
+      isActionOf([authActions.setAccessToken, actions.kitCreated])
     ),
     map(_action => new MeApi(AuthConfiguration.Instance)),
     switchMap(api =>

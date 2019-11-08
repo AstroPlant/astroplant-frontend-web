@@ -15,13 +15,13 @@ export const clearRefreshToken = createAction(
   action => () => action()
 );
 
-export const setAuthenticationToken = createAction(
-  "auth/SET_AUTHENTICATION_TOKEN",
+export const setAccessToken = createAction(
+  "auth/SET_ACCESS_TOKEN",
   action => (token: string) => action(token)
 );
 
-export const clearAuthenticationToken = createAction(
-  "auth/CLEAR_AUTHENTICATION_TOKEN",
+export const clearAccessToken = createAction(
+  "auth/CLEAR_ACCESS_TOKEN",
   action => () => action()
 );
 

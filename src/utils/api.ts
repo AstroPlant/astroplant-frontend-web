@@ -12,7 +12,7 @@ export class AuthConfiguration extends Configuration {
     const middleware: Middleware[] = [
       {
         pre(request: RequestArgs): RequestArgs {
-          const token = store.getState().auth.authenticationToken;
+          const token = store.getState().auth.accessToken;
 
           return {
             ...request,

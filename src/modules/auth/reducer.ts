@@ -4,13 +4,13 @@ import * as actions from "./actions";
 export interface AuthState {
   rememberMe: boolean;
   refreshToken: string | null;
-  authenticationToken: string | null;
+  accessToken: string | null;
 }
 
 const initial: AuthState = {
   rememberMe: false,
   refreshToken: null,
-  authenticationToken: null
+  accessToken: null
 };
 
 export type AuthAction = ActionType<typeof actions>;
@@ -25,11 +25,11 @@ export default createReducer<AuthState, AuthAction>(initial)
   .handleAction(actions.clearRefreshToken, (state, _) => {
     return { ...state, refreshToken: null };
   })
-  .handleAction(actions.setAuthenticationToken, (state, action) => {
-    return { ...state, authenticationToken: action.payload };
+  .handleAction(actions.setAccessToken, (state, action) => {
+    return { ...state, accessToken: action.payload };
   })
-  .handleAction(actions.clearAuthenticationToken, (state, _) => {
-    return { ...state, authenticationToken: null };
+  .handleAction(actions.clearAccessToken, (state, _) => {
+    return { ...state, accessToken: null };
   })
   .handleAction(actions.clearTokens, (state, _) => {
     return { ...state, refreshToken: null, authenticationToken: null };

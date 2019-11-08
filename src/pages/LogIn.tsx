@@ -11,7 +11,7 @@ import { AuthenticationTokens } from "astroplant-api";
 import {
   setRememberMe,
   setRefreshToken,
-  setAuthenticationToken
+  setAccessToken
 } from "../modules/auth/actions";
 
 import HeadTitle from "../Components/HeadTitle";
@@ -28,7 +28,7 @@ type Props = WithTranslation &
   RouteComponentProps & {
     setRememberMe: (remember: boolean) => void;
     setRefreshToken: (token: string) => void;
-    setAuthenticationToken: (token: string) => void;
+    setAccessToken: (token: string) => void;
   };
 
 class LogInPage extends Component<Props, State> {
@@ -47,7 +47,7 @@ class LogInPage extends Component<Props, State> {
   onResponse = (response: AuthenticationTokens) => {
     this.props.setRememberMe(this.state.rememberMe);
     this.props.setRefreshToken(response.refreshToken);
-    this.props.setAuthenticationToken(response.authenticationToken);
+    this.props.setAccessToken(response.accessToken);
     this.props.history.push("/me");
   }
 
@@ -95,7 +95,7 @@ const mapDispatchToProps = (dispatch: any) =>
     {
       setRememberMe,
       setRefreshToken,
-      setAuthenticationToken
+      setAccessToken
     },
     dispatch
   );

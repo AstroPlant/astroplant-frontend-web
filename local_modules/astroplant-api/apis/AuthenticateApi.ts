@@ -26,7 +26,7 @@ export interface AuthenticateByCredentialsRequest {
     authUser: AuthUser;
 }
 
-export interface ObtainAuthenticationTokenFromRefreshTokenRequest {
+export interface ObtainAccessTokenFromRefreshTokenRequest {
     authRefreshToken: AuthRefreshToken;
 }
 
@@ -54,10 +54,10 @@ export class AuthenticateApi extends BaseAPI {
     };
 
     /**
-     * Obtain an authentication token from a refresh token.
+     * Obtain an access token from a refresh token.
      */
-    obtainAuthenticationTokenFromRefreshToken = (requestParameters: ObtainAuthenticationTokenFromRefreshTokenRequest): Observable<string> => {
-        throwIfRequired(requestParameters, 'authRefreshToken', 'obtainAuthenticationTokenFromRefreshToken');
+    obtainAccessTokenFromRefreshToken = (requestParameters: ObtainAccessTokenFromRefreshTokenRequest): Observable<string> => {
+        throwIfRequired(requestParameters, 'authRefreshToken', 'obtainAccessTokenFromRefreshToken');
 
         const headers: HttpHeaders = {
             'Content-Type': 'application/json',
