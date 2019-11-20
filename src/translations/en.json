@@ -82,6 +82,10 @@
       "activateConfirmNeverUsed":  "Are you sure you wish to activate configuration {{configurationDescription}} of kit {{kitName}}? You will no longer be able to change this configuration after activating it. If any other configuration is active, that one will be deactivated.",
       "activateConfirm":  "Are you sure you wish to activate configuration {{configurationDescription}} of kit {{kitName}}? If any other configuration is active, that one will be deactivated."
     },
+    "kitAccess": {
+      "resetPassword": "Reset Kit password",
+      "resetPasswordConfirm": "Are you sure you wish to reset the password of kit {{kitName}}? Your kit will be unable to connect until you update the credentials on the kit."
+    },
     "invalidParameter": {
       "mustBeEmailAddress": "must be an email address",
       "mustHaveLengthBetween": "must be between {{min}} and {{max}} characters",

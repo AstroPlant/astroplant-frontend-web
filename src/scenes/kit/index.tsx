@@ -15,6 +15,7 @@ import { KitMembership } from "modules/me/reducer";
 
 import Overview from "./overview";
 import Configure from "./configure";
+import Access from "./access";
 
 type Params = { kitSerial: string };
 
@@ -42,6 +43,9 @@ class Kit extends React.Component<Props & WithValue<KitState>> {
     const canConfigure = this.props.membership
       .map(m => m.accessSuper || m.accessConfigure)
       .unwrapOr(false);
+    const canConfigureAccess = this.props.membership
+      .map(m => m.accessSuper)
+      .unwrapOr(false);
 
     return (
       <>
@@ -56,11 +60,22 @@ class Kit extends React.Component<Props & WithValue<KitState>> {
                 to={`${url}/configure`}
               />
             )}
+            {canConfigureAccess && (
+              <Menu.Item
+                name="Access"
+                as={NavLink}
+                to={`${url}/access`}
+              />
+            )}
           </Menu>
           <Switch>
             <Route
               path={`${path}/configure`}
               render={props => <Configure {...props} kit={kit} />}
+            />
+            <Route
+              path={`${path}/access`}
+              render={props => <Access {...props} kit={kit} />}
             />
             <Route render={props => <Overview {...props} kit={kit} />} />
           </Switch>

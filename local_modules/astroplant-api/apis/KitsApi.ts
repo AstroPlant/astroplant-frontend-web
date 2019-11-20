@@ -76,6 +76,10 @@ export interface PatchPeripheralRequest {
     patchPeripheral: PatchPeripheral;
 }
 
+export interface ResetPasswordRequest {
+    kitSerial: string;
+}
+
 export interface ShowKitBySerialRequest {
     kitSerial: string;
 }
@@ -288,6 +292,23 @@ export class KitsApi extends BaseAPI {
             headers,
             query,
             body: requestParameters.patchPeripheral,
+        });
+    };
+
+    /**
+     * Reset the kit\'s password.
+     */
+    resetPassword = (requestParameters: ResetPasswordRequest): Observable<string> => {
+        throwIfRequired(requestParameters, 'kitSerial', 'resetPassword');
+
+        const headers: HttpHeaders = {
+            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+        };
+
+        return this.request<string>({
+            path: '/kits/{kitSerial}/password'.replace('{kitSerial}', encodeURI(requestParameters.kitSerial)),
+            method: 'POST',
+            headers,
         });
     };
 
