@@ -19,6 +19,7 @@ import { AuthConfiguration } from "utils/api";
 import Option from "utils/option";
 
 import Description from "./components/Description";
+import Rules from "./components/Rules";
 import ActivateDeactivate from "./components/ActivateDeactivate";
 import Peripherals from "./components/Peripherals";
 
@@ -26,9 +27,7 @@ type Params = { configurationId: string };
 
 export type Props = RouteComponentProps<Params> & { kit: KitState };
 
-type InternalProps = Props &
-  WithTranslation &
-  WithValue<KitConfigurationState>;
+type InternalProps = Props & WithTranslation & WithValue<KitConfigurationState>;
 
 type State = {
   done: boolean;
@@ -53,6 +52,11 @@ class ViewConfiguration extends React.Component<InternalProps, State> {
         </Segment>
         <Container textAlign="right">
           <ActivateDeactivate kit={kit} configuration={configuration} />
+        </Container>
+        <Divider />
+        <Container>
+          <Header>{t("rules.header")}</Header>
+          <Rules kit={kit} configuration={configuration} />
         </Container>
         <Divider />
         <Container>

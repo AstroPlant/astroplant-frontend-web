@@ -38,6 +38,21 @@ export interface KitConfigurationWithPeripherals {
      */
     description?: string;
     /**
+     * @type {string}
+     * @memberof KitConfigurationWithPeripherals
+     */
+    rulesSupervisorModuleName: string;
+    /**
+     * @type {string}
+     * @memberof KitConfigurationWithPeripherals
+     */
+    rulesSupervisorClassName: string;
+    /**
+     * @type {object}
+     * @memberof KitConfigurationWithPeripherals
+     */
+    rules: object;
+    /**
      * @type {boolean}
      * @memberof KitConfigurationWithPeripherals
      */

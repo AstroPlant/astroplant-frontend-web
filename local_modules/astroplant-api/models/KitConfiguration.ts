@@ -32,6 +32,21 @@ export interface KitConfiguration {
      */
     description?: string;
     /**
+     * @type {string}
+     * @memberof KitConfiguration
+     */
+    rulesSupervisorModuleName: string;
+    /**
+     * @type {string}
+     * @memberof KitConfiguration
+     */
+    rulesSupervisorClassName: string;
+    /**
+     * @type {object}
+     * @memberof KitConfiguration
+     */
+    rules: object;
+    /**
      * @type {boolean}
      * @memberof KitConfiguration
      */

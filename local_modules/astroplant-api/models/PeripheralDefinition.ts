@@ -57,6 +57,11 @@ export interface PeripheralDefinition {
      */
     configurationSchema: object;
     /**
+     * @type {object}
+     * @memberof PeripheralDefinition
+     */
+    commandSchema: object;
+    /**
      * @type {Array<number>}
      * @memberof PeripheralDefinition
      */

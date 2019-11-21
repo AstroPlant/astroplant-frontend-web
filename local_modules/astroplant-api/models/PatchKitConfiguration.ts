@@ -22,6 +22,21 @@ export interface PatchKitConfiguration {
      */
     description?: string;
     /**
+     * @type {string}
+     * @memberof PatchKitConfiguration
+     */
+    rulesSupervisorModuleName?: string;
+    /**
+     * @type {string}
+     * @memberof PatchKitConfiguration
+     */
+    rulesSupervisorClassName?: string;
+    /**
+     * @type {object}
+     * @memberof PatchKitConfiguration
+     */
+    rules?: object;
+    /**
      * @type {boolean}
      * @memberof PatchKitConfiguration
      */

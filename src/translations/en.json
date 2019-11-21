@@ -86,6 +86,10 @@
       "resetPassword": "Reset Kit password",
       "resetPasswordConfirm": "Are you sure you wish to reset the password of kit {{kitName}}? Your kit will be unable to connect until you update the credentials on the kit."
     },
+    "rules": {
+      "header": "Rules",
+      "explanation": "Rules can be configured for each actuator. Rules are applied for each actuator separately. The conditions for the most recent passed time are tested in order until one matches. All actions under the first-matching condition are commanded."
+    },
     "invalidParameter": {
       "mustBeEmailAddress": "must be an email address",
       "mustHaveLengthBetween": "must be between {{min}} and {{max}} characters",
