@@ -88,7 +88,11 @@ class CreateKit extends Component<Props, State> {
       }
     };
 
-    const uiSchema = {};
+    const uiSchema = {
+      description: {
+        "ui:widget": "textarea",
+      }
+    };
 
     return (
       <>
