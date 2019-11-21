@@ -1,6 +1,6 @@
 {
-  "name": "astroplant",
-  "version": "0.1.0",
+  "name": "astroplant-frontend",
+  "version": "1.0.0-alpha.1",
   "private": true,
   "dependencies": {
     "@types/md5": "^2.1.33",
