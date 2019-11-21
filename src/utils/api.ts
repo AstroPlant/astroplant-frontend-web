@@ -37,11 +37,8 @@ export class AuthConfiguration extends Configuration {
  * Rate-limit observables, by calling rateLimiter.limit() with an observable.
  * E.g.: rateLimiter.limit(of("this is rate limited")). The limits are applied
  * globally, i.e. all observables share the same limit.
- *
- * TODO: Increase limits. This is currently set to a low limit, to more easily
- * spot inefficiencies.
  */
-export const rateLimiter = new RateLimiter(2, 2000);
+export const rateLimiter = new RateLimiter(15, 10000);
 
 /**
  * Utility function to rate-limit observables.
