@@ -36,7 +36,7 @@ class App extends Component<Props> {
               to: "/home",
               key: "home"
             },
-            { as: NavLink, content: t("common.map"), to: "/map", key: "map" }
+            //{ as: NavLink, content: t("common.map"), to: "/map", key: "map" }
           ]}
           rightItems={
             this.props.displayName.isSome()
@@ -76,9 +76,6 @@ class App extends Component<Props> {
               <PageLoader page="Map" />
             </Route>
             <Route path="/test" component={TestComponent} />
-            <Route path="/analyze">
-              <PageLoader page="Analyze" />
-            </Route>
             <Route path="/log-in">
               <LogIn />
             </Route>

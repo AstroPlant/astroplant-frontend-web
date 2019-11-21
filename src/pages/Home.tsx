@@ -22,6 +22,7 @@ class Home extends Component<WithTranslation> {
           <p>{t("home.content.body3")}</p>
         </Container>
 
+      {/*
         <Divider />
 
         <Container>
@@ -59,6 +60,7 @@ class Home extends Component<WithTranslation> {
             </Grid>
           </Segment>
         </Container>
+       */}
       </>
     );
   }
