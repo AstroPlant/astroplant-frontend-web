@@ -14,13 +14,19 @@ export class AuthConfiguration extends Configuration {
         pre(request: RequestArgs): RequestArgs {
           const token = store.getState().auth.accessToken;
 
-          return {
-            ...request,
-            headers: {
-              ...request.headers,
-              Authorization: `Bearer ${token}`
-            }
-          };
+          if (token) {
+            return {
+              ...request,
+              headers: {
+                ...request.headers,
+                Authorization: `Bearer ${token}`
+              }
+            };
+          } else {
+            return {
+              ...request
+            };
+          }
         }
       }
     ];
@@ -82,7 +88,7 @@ export function requestWrapper() {
  * one result.
  * TODO: the API returns an x-next header if there is a next page. It would be
  * better to utilize that header.
-*/
+ */
 export function walkPages<T extends { id: number }>(
   request: (page?: number) => Observable<Array<T>>
 ): Observable<Array<T>> {

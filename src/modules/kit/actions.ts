@@ -1,10 +1,20 @@
 import { createAction } from "typesafe-actions";
-import { Kit, KitConfigurationWithPeripherals, KitConfiguration, Peripheral } from "astroplant-api";
+import {
+  Kit,
+  KitConfigurationWithPeripherals,
+  KitConfiguration,
+  Peripheral
+} from "astroplant-api";
 import { RawMeasurement } from "./reducer";
 
 interface WithKitSerial {
   serial: string;
 }
+
+export const fetchKit = createAction(
+  "kit/FETCH",
+  action => (payload: { serial: string }) => action(payload)
+);
 
 export const addKit = createAction("kit/ADD", action => (payload: Kit) =>
   action(payload)
@@ -35,49 +45,37 @@ export const kitConfigurationsSuccess = createAction(
 
 export const kitConfigurationCreated = createAction(
   "kit/KIT_CONFIGURATION_CREATED",
-  action => (payload: {
-    serial: string;
-    configuration: KitConfiguration;
-  }) => action(payload)
+  action => (payload: { serial: string; configuration: KitConfiguration }) =>
+    action(payload)
 );
 
 export const kitSetAllConfigurationsInactive = createAction(
   "kit/KIT_SET_ALL_CONFIGURATIONS_INACTIVE",
-  action => (payload: {
-    serial: string;
-  }) => action(payload)
+  action => (payload: { serial: string }) => action(payload)
 );
 
 export const kitConfigurationUpdated = createAction(
   "kit/KIT_CONFIGURATION_UPDATED",
-  action => (payload: {
-    serial: string;
-    configuration: KitConfiguration;
-  }) => action(payload)
+  action => (payload: { serial: string; configuration: KitConfiguration }) =>
+    action(payload)
 );
 
 export const peripheralCreated = createAction(
   "kit/PERIPHERAL_CREATED",
-  action => (payload: {
-    serial: string;
-    peripheral: Peripheral;
-  }) => action(payload)
+  action => (payload: { serial: string; peripheral: Peripheral }) =>
+    action(payload)
 );
 
 export const peripheralUpdated = createAction(
   "kit/PERIPHERAL_UPDATED",
-  action => (payload: {
-    serial: string;
-    peripheral: Peripheral;
-  }) => action(payload)
+  action => (payload: { serial: string; peripheral: Peripheral }) =>
+    action(payload)
 );
 
 export const peripheralDeleted = createAction(
   "kit/PERIPHERAL_DELETED",
-  action => (payload: {
-    serial: string;
-    peripheralId: string;
-  }) => action(payload)
+  action => (payload: { serial: string; peripheralId: string }) =>
+    action(payload)
 );
 
 export const rawMeasurementReceived = createAction(

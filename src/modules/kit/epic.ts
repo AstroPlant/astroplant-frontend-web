@@ -25,6 +25,22 @@ const addKitFromKitMemberships: Epic = (actions$, state$) =>
     map(actions.addKit)
   );
 
+const fetchKit: Epic = (actions$, state$) =>
+  actions$.pipe(
+    filter(isActionOf(actions.fetchKit)),
+    map(action => action.payload.serial),
+    map(kitSerial => {
+      const api = new KitsApi(AuthConfiguration.Instance);
+      return { serial: kitSerial, req: api.showKitBySerial({ kitSerial }) };
+    }),
+    mergeMap(({ serial, req }) =>
+      req.pipe(
+        map(kit => actions.addKit(kit)),
+        catchError(err => EMPTY)
+      )
+    )
+  );
+
 const kitWatching: Epic = (actions$, state$) =>
   actions$.pipe(
     filter(isActionOf(actions.startWatching)),
@@ -64,6 +80,7 @@ const kitConfigurationsRequest: Epic = (actions$, state$) =>
 
 export default combineEpics(
   addKitFromKitMemberships,
+  fetchKit,
   kitWatching,
   kitConfigurationsRequest
 );

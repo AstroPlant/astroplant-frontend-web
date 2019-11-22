@@ -10,7 +10,7 @@ import { withOption, WithValue } from "Components/OptionGuard";
 import HeadTitle from "Components/HeadTitle";
 
 import { KitState } from "modules/kit/reducer";
-import { startWatching, stopWatching } from "modules/kit/actions";
+import { startWatching, stopWatching, fetchKit } from "modules/kit/actions";
 import { KitMembership } from "modules/me/reducer";
 
 import Overview from "./overview";
@@ -20,12 +20,16 @@ import Access from "./access";
 type Params = { kitSerial: string };
 
 export type Props = RouteComponentProps<Params> & {
+  fetchKit: (payload: { serial: string }) => void;
+};
+
+export type InnerProps = RouteComponentProps<Params> & {
   membership: Option<KitMembership>;
   startWatching: (payload: { serial: string }) => void;
   stopWatching: (payload: { serial: string }) => void;
 };
 
-class Kit extends React.Component<Props & WithValue<KitState>> {
+class InnerKit extends React.Component<InnerProps & WithValue<KitState>> {
   componentWillMount() {
     const kit = this.props.value;
     this.props.startWatching({ serial: kit.details.serial });
@@ -61,11 +65,7 @@ class Kit extends React.Component<Props & WithValue<KitState>> {
               />
             )}
             {canConfigureAccess && (
-              <Menu.Item
-                name="Access"
-                as={NavLink}
-                to={`${url}/access`}
-              />
+              <Menu.Item name="Access" as={NavLink} to={`${url}/access`} />
             )}
           </Menu>
           <Switch>
@@ -105,7 +105,31 @@ const mapDispatchToProps = (dispatch: any) =>
     dispatch
   );
 
-export default connect(
+const innerKit = connect(
   mapStateToProps,
   mapDispatchToProps
-)(withOption<KitState, Props>()(Kit));
+)(withOption<KitState, InnerProps>()(InnerKit));
+
+class Kit extends React.Component<Props> {
+    async componentDidMount() {
+        this.props.fetchKit({ serial: this.props.match.params.kitSerial });
+    }
+
+  render() {
+    const K = innerKit;
+    return <K {...this.props} />;
+  }
+}
+
+const outerMapDispatchToProps = (dispatch: any) =>
+  bindActionCreators(
+    {
+      fetchKit
+    },
+    dispatch
+  );
+
+export default connect(
+  null,
+  outerMapDispatchToProps
+)(Kit);
