@@ -16,6 +16,7 @@ import { KitMembership } from "modules/me/reducer";
 import Overview from "./overview";
 import Configure from "./configure";
 import Access from "./access";
+import Rpc from "./rpc";
 
 type Params = { kitSerial: string };
 
@@ -50,6 +51,9 @@ class InnerKit extends React.Component<InnerProps & WithValue<KitState>> {
     const canConfigureAccess = this.props.membership
       .map(m => m.accessSuper)
       .unwrapOr(false);
+    const canQueryRpc = this.props.membership
+      .map(m => m.accessSuper)
+      .unwrapOr(false);
 
     return (
       <>
@@ -67,6 +71,9 @@ class InnerKit extends React.Component<InnerProps & WithValue<KitState>> {
             {canConfigureAccess && (
               <Menu.Item name="Access" as={NavLink} to={`${url}/access`} />
             )}
+            {canQueryRpc && (
+              <Menu.Item name="RPC" as={NavLink} to={`${url}/rpc`} />
+            )}
           </Menu>
           <Switch>
             <Route
@@ -76,6 +83,10 @@ class InnerKit extends React.Component<InnerProps & WithValue<KitState>> {
             <Route
               path={`${path}/access`}
               render={props => <Access {...props} kit={kit} />}
+            />
+            <Route
+              path={`${path}/rpc`}
+              render={props => <Rpc {...props} kit={kit} />}
             />
             <Route render={props => <Overview {...props} kit={kit} />} />
           </Switch>
