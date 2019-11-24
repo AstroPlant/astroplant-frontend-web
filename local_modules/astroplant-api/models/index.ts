@@ -1,3 +1,4 @@
+export * from './AggregateMeasurement';
 export * from './AuthRefreshToken';
 export * from './AuthUser';
 export * from './AuthenticationTokens';

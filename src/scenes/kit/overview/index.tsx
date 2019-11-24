@@ -4,6 +4,7 @@ import { Container } from "semantic-ui-react";
 import { KitState } from "modules/kit/reducer";
 
 import RawMeasurements from "./components/RawMeasurements";
+import AggregateMeasurements from "./components/AggregateMeasurements";
 
 type Params = { kitSerial: string };
 
@@ -15,8 +16,11 @@ export default function KitOverview(props: Props) {
   const { kit } = props;
 
   return (
-    <Container text>
+      <Container text>
+      <h2>Current measurements</h2>
       <RawMeasurements kit={kit} />
+      <h2>Past measurements</h2>
+      <AggregateMeasurements kit={kit} />
     </Container>
   );
 }
