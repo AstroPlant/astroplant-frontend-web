@@ -27,7 +27,6 @@ export default function KitConfigure(props: Props) {
         <Card.Group>
           {Object.keys(kit.configurations).map(id => {
             const configuration = Option.from(kit.configurations[id]);
-            console.warn(configuration);
             return configuration
               .map(configuration => (
                 <Card
