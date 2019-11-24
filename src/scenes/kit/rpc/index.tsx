@@ -75,8 +75,8 @@ export default class KitRpc extends React.Component<Props, State> {
           Query kit version
         </Button>
         <Input
-          readonly
-          value={this.state.versionResponse}
+          readOnly
+          value={this.state.versionResponse || ""}
           placeholder="kit response"
         />
         <Divider />
@@ -89,8 +89,8 @@ export default class KitRpc extends React.Component<Props, State> {
           Query kit uptime
         </Button>
         <Input
-          readonly
-          value={this.state.uptimeResponse}
+          readOnly
+          value={this.state.uptimeResponse || ""}
           placeholder="kit response"
         />
       </Container>
