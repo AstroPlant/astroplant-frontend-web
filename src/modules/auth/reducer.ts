@@ -32,5 +32,5 @@ export default createReducer<AuthState, AuthAction>(initial)
     return { ...state, accessToken: null };
   })
   .handleAction(actions.clearTokens, (state, _) => {
-    return { ...state, refreshToken: null, authenticationToken: null };
+    return { ...state, refreshToken: null, accessToken: null };
   });
