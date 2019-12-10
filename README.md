@@ -8,8 +8,9 @@ It communicates with the AstroPlant API to allow configuring and viewing data of
 During the build process, environment variables are used to configure the servers the front-end communicates with.
 
 | Variable | Description | Default |
-|-|-|-|
-| `REACT_APP_WEBSOCKET_URLDATABASE_URL` | The websocket url. | `ws://localhost:8081` |
+| --- | --- | --- |
+| `REACT_APP_API_URL` | The API url. | `http://localhost:8080` |
+| `REACT_APP_WEBSOCKET_URL` | The websocket url. | `ws://localhost:8081` |
 
 In the project directory, you can run:
 
