@@ -106,6 +106,10 @@
         "body": "An unknown issue occurred. Please try again."
       }
     },
+    "permanentConnectionIssue": {
+      "title": "Connection issue",
+      "body": "Could not connect to the API. This page will not work as expected. Please check your internet connectivity and try refreshing the page."
+    },
     "form": {
       "submit": "Submit"
     }

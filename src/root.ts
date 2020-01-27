@@ -1,6 +1,7 @@
 import { combineReducers } from "redux";
 import { combineEpics } from "redux-observable";
 import { tap } from "rxjs/operators";
+import genericReducer from "./modules/generic/reducer";
 //import intlReducer from "./modules/intl/reducer";
 import authReducer from "./modules/auth/reducer";
 import authEpic from "./modules/auth/epic";
@@ -19,6 +20,7 @@ import sessionEpic from "./modules/session/epic";
 import webSocketEpic from "./modules/websocket/epic";
 
 export const rootReducer = combineReducers({
+  generic: genericReducer,
   auth: authReducer,
   me: meReducer,
   kit: kitReducer,

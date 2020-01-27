@@ -11,6 +11,7 @@ import {
 } from "rxjs/operators";
 import * as actions from "./actions";
 import * as meActions from "../me/actions";
+import * as genericActions from "../generic/actions";
 
 import { KitsApi } from "astroplant-api";
 import { AuthConfiguration, requestWrapper } from "utils/api";
@@ -36,7 +37,7 @@ const fetchKit: Epic = (actions$, state$) =>
     mergeMap(({ serial, req }) =>
       req.pipe(
         map(kit => actions.addKit(kit)),
-        catchError(err => EMPTY)
+        catchError(err => of(genericActions.setApiConnectionFailed(true)))
       )
     )
   );
@@ -73,7 +74,7 @@ const kitConfigurationsRequest: Epic = (actions$, state$) =>
         map(configurations =>
           actions.kitConfigurationsSuccess({ serial, configurations })
         ),
-        catchError(err => EMPTY)
+        catchError(err => of(genericActions.setApiConnectionFailed(true)))
       )
     )
   );

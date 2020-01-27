@@ -4,6 +4,7 @@ import { of, concat, EMPTY } from "rxjs";
 import { switchMap, map, filter, catchError } from "rxjs/operators";
 import * as actions from "./actions";
 import * as authActions from "../auth/actions";
+import * as genericActions from "../generic/actions";
 
 import { MeApi } from "astroplant-api";
 import { AuthConfiguration, requestWrapper } from "utils/api";
@@ -20,7 +21,7 @@ const fetchUserDetailsEpic: Epic = (action$, state$) =>
         requestWrapper(),
         map(resp => resp),
         catchError(err => {
-          console.warn("errrr", err);
+          console.warn("error fetching user details", err);
           return EMPTY;
         })
       )
@@ -30,9 +31,7 @@ const fetchUserDetailsEpic: Epic = (action$, state$) =>
 
 const fetchUserKitsEpic: Epic = (actions$, state$) =>
   actions$.pipe(
-    filter(
-      isActionOf([authActions.setAccessToken, actions.kitCreated])
-    ),
+    filter(isActionOf([authActions.setAccessToken, actions.kitCreated])),
     map(_action => new MeApi(AuthConfiguration.Instance)),
     switchMap(api =>
       concat(
@@ -41,7 +40,7 @@ const fetchUserKitsEpic: Epic = (actions$, state$) =>
           requestWrapper(),
           map(resp => resp),
           map(actions.setKitMemberships),
-          catchError(err => EMPTY)
+          catchError(err => of(genericActions.setApiConnectionFailed(true)))
         )
       )
     )
