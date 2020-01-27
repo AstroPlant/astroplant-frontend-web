@@ -1,7 +1,7 @@
 import React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Switch, Route, RouteComponentProps } from "react-router";
+import { Switch, Route, RouteComponentProps, Redirect } from "react-router";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Container, Segment } from "semantic-ui-react";
 import { KitState } from "modules/kit/reducer";
@@ -13,6 +13,7 @@ import { kitConfigurationCreated } from "modules/kit/actions";
 
 import { KitsApi, KitConfiguration } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
+import Option from "utils/option";
 
 type Params = { kitSerial: string };
 
@@ -27,18 +28,18 @@ export type Props = WithTranslation &
 
 type State = {
   done: boolean;
-  result: any;
+  result: Option<KitConfiguration>;
 };
 
 class CreateConfiguration extends React.Component<Props, State> {
-  state = {
+  state: State = {
     done: false,
-    result: null
+    result: Option.none()
   };
 
   onResponse(response: KitConfiguration) {
     const { kit } = this.props;
-    this.setState({ done: true, result: response });
+    this.setState({ done: true, result: Option.some(response) });
     this.props.kitConfigurationCreated({
       serial: kit.details.serial,
       configuration: response
@@ -78,7 +79,11 @@ class CreateConfiguration extends React.Component<Props, State> {
       <Container text>
         <Segment piled padded>
           {this.state.done ? (
-            <>done...</>
+            <Redirect
+              to={`/kit/${kit.details.serial}/configure/${
+                this.state.result.unwrap().id
+              }`}
+            />
           ) : (
             <>
               <CreateConfigurationForm
