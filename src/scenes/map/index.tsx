@@ -61,8 +61,8 @@ class KitMap extends React.Component<Props, State> {
               .map(kits =>
                 kits.map(kit => {
                   if (
-                    typeof kit.latitude !== "undefined" &&
-                    typeof kit.longitude !== "undefined"
+                    typeof kit.latitude == "number" &&
+                    typeof kit.longitude == "number"
                   ) {
                     return (
                       <Marker
