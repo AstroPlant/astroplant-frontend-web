@@ -206,7 +206,7 @@ export class KitsApi extends BaseAPI {
     };
 
     /**
-     * List all public kits.
+     * List all kits set to be shown on the public map.
      */
     listKits = (requestParameters: ListKitsRequest): Observable<Array<Kit>> => {
 
