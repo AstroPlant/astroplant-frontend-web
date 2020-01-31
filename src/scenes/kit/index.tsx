@@ -3,9 +3,11 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { Switch, Route, RouteComponentProps } from "react-router";
 import { NavLink } from "react-router-dom";
+import { compose } from "recompose";
 import { Container, Menu } from "semantic-ui-react";
 import { RootState } from "types";
 import Option from "utils/option";
+import { awaitAuthentication } from "Components/AuthenticatedGuard";
 import { withOption, WithValue } from "Components/OptionGuard";
 import HeadTitle from "Components/HeadTitle";
 
@@ -122,9 +124,9 @@ const innerKit = connect(
 )(withOption<KitState, InnerProps>()(InnerKit));
 
 class Kit extends React.Component<Props> {
-    async componentDidMount() {
-        this.props.fetchKit({ serial: this.props.match.params.kitSerial });
-    }
+  async componentDidMount() {
+    this.props.fetchKit({ serial: this.props.match.params.kitSerial });
+  }
 
   render() {
     const K = innerKit;
@@ -140,7 +142,10 @@ const outerMapDispatchToProps = (dispatch: any) =>
     dispatch
   );
 
-export default connect(
-  null,
-  outerMapDispatchToProps
+export default compose<any, any>(
+  awaitAuthentication(),
+  connect(
+    null,
+    outerMapDispatchToProps
+  )
 )(Kit);

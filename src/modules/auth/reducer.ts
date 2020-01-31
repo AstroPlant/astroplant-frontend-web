@@ -4,6 +4,7 @@ import { createReducer, ActionType } from "typesafe-actions";
 import * as actions from "./actions";
 
 export interface AuthState {
+  authenticationRan: boolean;
   rememberMe: boolean;
   refreshToken: string | null;
   accessToken: string | null;
@@ -16,6 +17,7 @@ const persistConfig = {
 };
 
 const initial: AuthState = {
+  authenticationRan: false,
   rememberMe: false,
   refreshToken: null,
   accessToken: null
@@ -37,7 +39,7 @@ const reducer = createReducer<AuthState, AuthAction>(initial)
     return { ...state, refreshToken: null };
   })
   .handleAction(actions.setAccessToken, (state, action) => {
-    return { ...state, accessToken: action.payload };
+    return { ...state, accessToken: action.payload, authenticationRan: true };
   })
   .handleAction(actions.clearAccessToken, (state, _) => {
     return { ...state, accessToken: null };

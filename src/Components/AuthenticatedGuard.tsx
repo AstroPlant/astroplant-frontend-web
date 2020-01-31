@@ -1,6 +1,13 @@
 import React from "react";
 import { connect } from "react-redux";
 import { RootState, FullUser } from "types";
+import {
+  Container,
+  Segment,
+  Dimmer,
+  Loader,
+  Placeholder
+} from "semantic-ui-react";
 import { WithValue, withOption } from "./OptionGuard";
 import MustBeLoggedIn from "../pages/MustBeLoggedIn";
 
@@ -15,7 +22,7 @@ function withAuthToValue<P>(
 ): React.ComponentType<P & WithValue<FullUser>> {
   return props => {
     const { value, ...rest } = props;
-    return <Component {...rest as P} me={value} />;
+    return <Component {...(rest as P)} me={value} />;
   };
 }
 
@@ -37,5 +44,43 @@ export function withAuthentication<P>(): (
 
     // @ts-ignore
     return connect(mapStateToProps)(OptionComponent) as React.ComponentType<P>;
+  };
+}
+
+const mapStateToAwaitAuthenticationProps = (state: RootState) => ({
+  auth: state.auth
+});
+
+export function awaitAuthentication<P>(): (
+  Component: React.ComponentType<P>
+) => React.ComponentType<P> {
+  return Component => {
+    // @ts-ignore
+    return connect(mapStateToAwaitAuthenticationProps)(props => {
+      // @ts-ignore
+      const { auth, ...rest } = props;
+      // @ts-ignore
+      if (auth.authenticationRan) {
+        return <Component {...rest} />;
+      } else {
+        return (
+          <>
+            <div style={{ height: "2em" }} />
+            <Container>
+              <Segment>
+                <Placeholder fluid={true}>
+                  <Placeholder.Paragraph>
+                    <Placeholder.Line />
+                    <Placeholder.Line />
+                    <Placeholder.Line />
+                    <Placeholder.Line />
+                  </Placeholder.Paragraph>
+                </Placeholder>
+              </Segment>
+            </Container>
+          </>
+        );
+      }
+    }) as React.ComponentType<P>;
   };
 }

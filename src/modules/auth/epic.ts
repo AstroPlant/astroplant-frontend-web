@@ -1,7 +1,7 @@
 import { isActionOf } from "typesafe-actions";
 import { Epic, combineEpics } from "redux-observable";
 import { switchMap, map, filter, catchError } from "rxjs/operators";
-import { timer, EMPTY } from "rxjs";
+import { of, timer, EMPTY } from "rxjs";
 import * as actions from "./actions";
 import { AuthenticateApi } from "astroplant-api";
 import { requestWrapper } from "utils/api";
@@ -27,22 +27,28 @@ const refreshAuthenticationEpic: Epic = (action$, state$) =>
   action$.pipe(
     filter(isActionOf(sessionActions.sessionInitialized)),
     switchMap(() => timer(0, 5 * 60 * 1000)),
-    filter(() => state$.value.auth.refreshToken),
-    map(_action => new AuthenticateApi()),
-    switchMap((api: AuthenticateApi) =>
-      api
-        .obtainAccessTokenFromRefreshToken({
-          authRefreshToken: {
-            refreshToken: state$.value.auth.refreshToken
-          }
-        })
-        .pipe(
-          requestWrapper(),
-          map(resp => resp),
-          map(actions.setAccessToken),
-          catchError(err => EMPTY)
-        )
-    )
+    switchMap(() => {
+      if (state$.value.auth.refreshToken) {
+        return of(new AuthenticateApi()).pipe(
+          switchMap((api: AuthenticateApi) =>
+            api
+              .obtainAccessTokenFromRefreshToken({
+                authRefreshToken: {
+                  refreshToken: state$.value.auth.refreshToken
+                }
+              })
+              .pipe(
+                requestWrapper(),
+                map(resp => resp),
+                map(actions.setAccessToken),
+                catchError(err => of(actions.notAuthenticated()))
+              )
+          )
+        );
+      } else {
+        return of(actions.notAuthenticated());
+      }
+    })
   );
 
 export default combineEpics(clearRefreshTokenEpic, refreshAuthenticationEpic);

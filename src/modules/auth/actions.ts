@@ -1,5 +1,7 @@
 import { createAction } from "typesafe-actions";
 
+export const notAuthenticated = createAction("auth/NOT_AUTHENTICATED");
+
 export const setRememberMe = createAction(
   "auth/SET_REMEMBER_ME",
   action => (rememberMe: boolean) => action(rememberMe)
@@ -25,7 +27,6 @@ export const clearAccessToken = createAction(
   action => () => action()
 );
 
-export const clearTokens = createAction(
-  "auth/CLEAR_TOKENS",
-  action => () => action()
+export const clearTokens = createAction("auth/CLEAR_TOKENS", action => () =>
+  action()
 );
