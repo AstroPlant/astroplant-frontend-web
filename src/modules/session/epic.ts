@@ -13,7 +13,7 @@ const sessionInitializeEpic = (action$: any, state$: any) =>
   combineLatest(
     action$.pipe(
       ofType(REHYDRATE),
-      filter((action: any) => action.key === "root")
+      filter((action: any) => action.key === "auth")
     ),
     action$.pipe(
       ofType(REHYDRATE),

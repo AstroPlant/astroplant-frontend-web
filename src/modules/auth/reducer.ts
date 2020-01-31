@@ -1,3 +1,5 @@
+import { persistReducer } from "redux-persist";
+import localStorage from "redux-persist/lib/storage";
 import { createReducer, ActionType } from "typesafe-actions";
 import * as actions from "./actions";
 
@@ -7,6 +9,12 @@ export interface AuthState {
   accessToken: string | null;
 }
 
+const persistConfig = {
+  key: "auth",
+  whitelist: ["rememberMe", "refreshToken"],
+  storage: localStorage
+};
+
 const initial: AuthState = {
   rememberMe: false,
   refreshToken: null,
@@ -15,7 +23,10 @@ const initial: AuthState = {
 
 export type AuthAction = ActionType<typeof actions>;
 
-export default createReducer<AuthState, AuthAction>(initial)
+const reducer = createReducer<AuthState, AuthAction>(initial)
+  .handleAction(actions.notAuthenticated, (state, _) => {
+    return { ...state, authenticationRan: true };
+  })
   .handleAction(actions.setRememberMe, (state, action) => {
     return { ...state, rememberMe: action.payload };
   })
@@ -34,3 +45,5 @@ export default createReducer<AuthState, AuthAction>(initial)
   .handleAction(actions.clearTokens, (state, _) => {
     return { ...state, refreshToken: null, accessToken: null };
   });
+
+export default persistReducer(persistConfig, reducer);

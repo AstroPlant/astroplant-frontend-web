@@ -1,14 +1,7 @@
 import { createStore, applyMiddleware } from "redux";
 import { createEpicMiddleware } from "redux-observable";
-import { persistStore, persistReducer } from "redux-persist";
-import localStorage from "redux-persist/lib/storage";
+import { persistStore } from "redux-persist";
 import { rootReducer, rootEpic } from "./root";
-
-const localStoragePersistConfig = {
-  key: "root",
-  whitelist: ["auth", "intl"],
-  storage: localStorage
-};
 
 const logger = (store: any) => (next: any) => (action: any) => {
   console.group(action.type);
@@ -20,10 +13,9 @@ const logger = (store: any) => (next: any) => (action: any) => {
 };
 
 const epicMiddleware = createEpicMiddleware();
-const persistedReducer = persistReducer(localStoragePersistConfig, rootReducer);
 
 export const store = createStore(
-  persistedReducer,
+  rootReducer,
   applyMiddleware(logger, epicMiddleware)
 );
 export const persistor = persistStore(store);
