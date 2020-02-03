@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, CardProps, Statistic, Loader } from "semantic-ui-react";
-import { KitState, RawMeasurement } from "modules/kit/reducer";
+import { RawMeasurement } from "modules/kit/reducer";
 import { Peripheral, PeripheralDefinition, QuantityType } from "astroplant-api";
 import Option from "utils/option";
 

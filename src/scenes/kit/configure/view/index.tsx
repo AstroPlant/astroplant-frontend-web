@@ -1,21 +1,14 @@
 import React from "react";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import { Switch, Route, RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { compose } from "recompose";
 
 import { Container, Segment, Header, Divider } from "semantic-ui-react";
 import { KitState, KitConfigurationState } from "modules/kit/reducer";
 
-import { JSONSchema6 } from "json-schema";
-import ApiForm from "Components/ApiForm";
-
 import { withOption, WithValue } from "Components/OptionGuard";
 import { propsMap } from "Components/PropsMap";
 
-import { KitsApi } from "astroplant-api";
-import { AuthConfiguration } from "utils/api";
 import Option from "utils/option";
 
 import Description from "./components/Description";
@@ -42,7 +35,6 @@ class ViewConfiguration extends React.Component<InternalProps, State> {
 
   render() {
     const { kit, value: configuration, t } = this.props;
-    const { path, url } = this.props.match;
 
     return (
       <Container text>

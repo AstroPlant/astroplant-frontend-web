@@ -1,7 +1,7 @@
 import { isActionOf } from "typesafe-actions";
 import { Epic, combineEpics } from "redux-observable";
 import { switchMap, map, filter, catchError } from "rxjs/operators";
-import { EMPTY, of } from "rxjs";
+import { of } from "rxjs";
 import * as genericActions from "modules/generic/actions";
 import * as actions from "./actions";
 

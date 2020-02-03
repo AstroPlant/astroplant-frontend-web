@@ -16,7 +16,7 @@ export type Props = RouteComponentProps<Params> & {
 
 export default function KitConfigure(props: Props) {
   const { kit } = props;
-  const { path, url } = props.match;
+  const { path } = props.match;
 
   return (
     <Container text>

@@ -1,13 +1,11 @@
 import React from "react";
 import { connect } from "react-redux";
 import { Container, Card } from "semantic-ui-react";
-import moment, { Moment } from "moment";
 import { RootState } from "types";
 import Option from "utils/option";
 import { KitState } from "modules/kit/reducer";
 
 import {
-  AggregateMeasurement,
   PeripheralDefinition,
   QuantityType,
   MeasurementsApi

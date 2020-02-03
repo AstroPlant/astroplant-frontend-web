@@ -1,7 +1,7 @@
 import { isActionOf } from "typesafe-actions";
 import { Epic, combineEpics } from "redux-observable";
 import { switchMap, map, filter, catchError } from "rxjs/operators";
-import { of, timer, EMPTY } from "rxjs";
+import { of, timer } from "rxjs";
 import * as actions from "./actions";
 import { AuthenticateApi } from "astroplant-api";
 import { requestWrapper } from "utils/api";

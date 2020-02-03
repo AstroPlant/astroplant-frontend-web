@@ -1,20 +1,16 @@
 import { isActionOf } from "typesafe-actions";
 import { Epic, combineEpics } from "redux-observable";
-import { Observable, of, concat } from "rxjs";
+import { Observable } from "rxjs";
 import {
   mergeMap,
   switchMap,
   filter,
-  delay,
   share,
-  tap,
   map,
   finalize,
   takeUntil
 } from "rxjs/operators";
 import { webSocket } from "rxjs/webSocket";
-import moment, { Moment } from "moment";
-import Option from "utils/option";
 import * as kitActions from "../kit/actions";
 import { RawMeasurement } from "../kit/reducer";
 
@@ -51,7 +47,7 @@ const rpcSubscription = (method: string, params: any) => {
         ),
         map((message: any) => message.params.result),
         finalize(() => {
-          const [id, request] = prepareRpcRequest("unsubscribe_" + method, [subId]);
+          const [, request] = prepareRpcRequest("unsubscribe_" + method, [subId]);
           webSocketSubject.next(request);
         })
       );

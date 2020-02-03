@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Route, RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router";
 import { Container, Button, Input, Divider } from "semantic-ui-react";
 import { KitState } from "modules/kit/reducer";
 
@@ -62,8 +62,6 @@ export default class KitRpc extends React.Component<Props, State> {
   }
 
   render() {
-    const { kit } = this.props;
-
     return (
       <Container text>
         <Button

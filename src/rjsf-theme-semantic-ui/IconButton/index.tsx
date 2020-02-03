@@ -1,5 +1,4 @@
 import React from "react";
-import { AddButtonProps } from "react-jsonschema-form";
 import { Button, Icon } from "semantic-ui-react";
 
 const mappings: any = {

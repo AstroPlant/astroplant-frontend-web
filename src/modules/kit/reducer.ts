@@ -1,6 +1,5 @@
 import { createReducer, ActionType } from "typesafe-actions";
 import * as actions from "./actions";
-import Option from "utils/option";
 import { byId, arrayToObject } from "utils/byId";
 
 import { Kit } from "astroplant-api";

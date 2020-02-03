@@ -3,18 +3,7 @@ import { compose } from "recompose";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { withTranslation, WithTranslation } from "react-i18next";
-import {
-  Grid,
-  Segment,
-  Label,
-  Container,
-  Modal,
-  Card,
-  Header,
-  Button,
-  Icon,
-  Transition
-} from "semantic-ui-react";
+import { Segment, Label, Header, Button, Icon } from "semantic-ui-react";
 
 import { RootState } from "types";
 import { KitState, KitConfigurationState } from "modules/kit/reducer";
@@ -75,7 +64,7 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
   };
 
   responseUpdate = (response: Peripheral) => {
-    const { kit, configuration, peripheral } = this.props;
+    const { kit, configuration } = this.props;
     this.props.peripheralUpdated({
       serial: kit.details.serial,
       configurationId: configuration.id,
@@ -170,9 +159,7 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
                   floated: "right"
                 }}
                 confirm={() => ({
-                  content: t(
-                    "kitConfiguration.peripherals.deleteConfirm"
-                  )
+                  content: t("kitConfiguration.peripherals.deleteConfirm")
                 })}
               >
                 <Icon name="delete" />

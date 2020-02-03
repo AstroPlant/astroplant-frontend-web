@@ -11,7 +11,6 @@ import {
 } from "semantic-ui-react";
 
 import { RootState } from "types";
-import { KitMembership } from "astroplant-api";
 import Option from "utils/option";
 
 import {

@@ -1,9 +1,8 @@
 import React, { Component } from "react";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Container, Divider, Grid, Segment } from "semantic-ui-react";
+import { Container } from "semantic-ui-react";
 
 import HeadTitle from "../Components/HeadTitle";
-import InfoBox from "../Components/InfoBox";
 
 type HomeProps = WithTranslation;
 

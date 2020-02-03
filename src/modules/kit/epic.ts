@@ -1,6 +1,6 @@
 import { isActionOf } from "typesafe-actions";
 import { Epic, combineEpics } from "redux-observable";
-import { from, of, concat, EMPTY, timer } from "rxjs";
+import { from, of, concat, timer } from "rxjs";
 import {
   mergeMap,
   switchMap,

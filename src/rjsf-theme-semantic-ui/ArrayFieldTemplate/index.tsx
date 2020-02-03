@@ -10,7 +10,7 @@ import {
 } from "react-jsonschema-form/lib/utils";
 import { ArrayFieldTemplateProps, IdSchema } from "react-jsonschema-form";
 
-import { Container, Segment, Grid, Divider, Button } from "semantic-ui-react";
+import { Segment, Divider, Button } from "semantic-ui-react";
 
 import AddButton from "../AddButton";
 import IconButton from "../IconButton";

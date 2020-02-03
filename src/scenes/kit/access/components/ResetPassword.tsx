@@ -1,6 +1,4 @@
 import React from "react";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
 import { compose } from "recompose";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Card, Icon, Input } from "semantic-ui-react";
@@ -27,7 +25,6 @@ class ResetPassword extends React.Component<PInner, State> {
   state: State = {};
 
   onResponse(response: string) {
-    const { kit } = this.props;
     this.setState({ password: response });
   }
 

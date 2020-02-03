@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Route, RouteComponentProps } from "react-router";
+import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { Container, Card, Image, Icon } from "semantic-ui-react";
 import { KitState } from "modules/kit/reducer";
@@ -14,7 +14,7 @@ export type Props = RouteComponentProps<Params> & {
 
 export default function KitConfigure(props: Props) {
   const { kit } = props;
-  const { path, url } = props.match;
+  const { url } = props.match;
 
   const numConfigurations = Object.keys(kit.configurations).length;
 

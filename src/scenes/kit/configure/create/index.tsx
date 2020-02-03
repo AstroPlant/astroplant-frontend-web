@@ -1,7 +1,7 @@
 import React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Switch, Route, RouteComponentProps, Redirect } from "react-router";
+import { RouteComponentProps, Redirect } from "react-router";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Container, Segment } from "semantic-ui-react";
 import { KitState } from "modules/kit/reducer";
@@ -60,7 +60,6 @@ class CreateConfiguration extends React.Component<Props, State> {
 
   render() {
     const { kit, t } = this.props;
-    const { path, url } = this.props.match;
 
     const schema: JSONSchema6 = {
       type: "object",

@@ -1,6 +1,5 @@
 import React from "react";
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Container, Message } from "semantic-ui-react";
 import { RootState } from "types";

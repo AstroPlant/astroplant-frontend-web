@@ -1,5 +1,4 @@
 import React from "react";
-import { Icon, Segment } from "semantic-ui-react";
 
 import { KitState, KitConfigurationState } from "modules/kit/reducer";
 

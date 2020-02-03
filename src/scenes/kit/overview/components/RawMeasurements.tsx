@@ -2,7 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import { Container, Card } from "semantic-ui-react";
 import { RootState } from "types";
-import { KitState, RawMeasurement } from "modules/kit/reducer";
+import { KitState } from "modules/kit/reducer";
 import { PeripheralDefinition, QuantityType } from "astroplant-api";
 import Option from "utils/option";
 
