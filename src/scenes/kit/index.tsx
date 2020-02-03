@@ -7,7 +7,7 @@ import { compose } from "recompose";
 import { Container, Menu } from "semantic-ui-react";
 import { RootState } from "types";
 import Option from "utils/option";
-import { awaitAuthentication } from "Components/AuthenticatedGuard";
+import { awaitAuthenticationRan } from "Components/AuthenticatedGuard";
 import { withOption, WithValue } from "Components/OptionGuard";
 import HeadTitle from "Components/HeadTitle";
 
@@ -143,7 +143,7 @@ const outerMapDispatchToProps = (dispatch: any) =>
   );
 
 export default compose<any, any>(
-  awaitAuthentication(),
+  awaitAuthenticationRan(),
   connect(
     null,
     outerMapDispatchToProps

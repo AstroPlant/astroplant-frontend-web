@@ -51,7 +51,7 @@ const mapStateToAwaitAuthenticationProps = (state: RootState) => ({
   auth: state.auth
 });
 
-export function awaitAuthentication<P>(): (
+export function awaitAuthenticationRan<P>(): (
   Component: React.ComponentType<P>
 ) => React.ComponentType<P> {
   return Component => {
