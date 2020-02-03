@@ -2,9 +2,9 @@ import React from "react";
 import { connect } from "react-redux";
 import { compose } from "recompose";
 import { RootState, FullUser } from "types";
-import { Container, Segment, Placeholder } from "semantic-ui-react";
 import { WithValue, withOption } from "./OptionGuard";
 import MustBeLoggedIn from "../pages/MustBeLoggedIn";
+import Loading from "./Loading";
 
 export interface WithAuthentication {
   me: FullUser;
@@ -82,18 +82,7 @@ export function awaitAuthenticationRan<P>(): (
         return (
           <>
             <div style={{ height: "2em" }} />
-            <Container>
-              <Segment>
-                <Placeholder fluid={true}>
-                  <Placeholder.Paragraph>
-                    <Placeholder.Line />
-                    <Placeholder.Line />
-                    <Placeholder.Line />
-                    <Placeholder.Line />
-                  </Placeholder.Paragraph>
-                </Placeholder>
-              </Segment>
-            </Container>
+            <Loading />
           </>
         );
       }
