@@ -6,9 +6,9 @@ import { withTranslation, WithTranslation } from "react-i18next";
 import { Segment, Label, Header, Button, Icon } from "semantic-ui-react";
 
 import { RootState } from "types";
-import { KitState, KitConfigurationState } from "modules/kit/reducer";
+import { KitConfigurationState } from "modules/kit/reducer";
 import { peripheralDeleted, peripheralUpdated } from "modules/kit/actions";
-import { KitsApi, PeripheralDefinition, Peripheral } from "astroplant-api";
+import { Kit, KitsApi, PeripheralDefinition, Peripheral } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 
 import { JSONSchema6 } from "json-schema";
@@ -23,7 +23,7 @@ type State = {
 };
 
 export type Props = {
-  kit: KitState;
+  kit: Kit;
   configuration: KitConfigurationState;
   peripheral: Peripheral;
 };
@@ -56,7 +56,7 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
 
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.patchPeripheral({
-      kitSerial: kit.details.serial,
+      kitSerial: kit.serial,
       configurationId: configuration.id,
       peripheralId: peripheral.id,
       patchPeripheral: formData
@@ -66,7 +66,7 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
   responseUpdate = (response: Peripheral) => {
     const { kit, configuration } = this.props;
     this.props.peripheralUpdated({
-      serial: kit.details.serial,
+      serial: kit.serial,
       configurationId: configuration.id,
       peripheral: response
     });
@@ -78,7 +78,7 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
 
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.deletePeripheral({
-      kitSerial: kit.details.serial,
+      kitSerial: kit.serial,
       configurationId: configuration.id,
       peripheralId: peripheral.id
     });
@@ -87,7 +87,7 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
   responseDelete = () => {
     const { kit, configuration, peripheral } = this.props;
     this.props.peripheralDeleted({
-      serial: kit.details.serial,
+      serial: kit.serial,
       configurationId: configuration.id,
       peripheralId: peripheral.id
     });

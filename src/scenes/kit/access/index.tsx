@@ -8,15 +8,15 @@ import ResetPassword from "./components/ResetPassword";
 type Params = { kitSerial: string };
 
 export type Props = RouteComponentProps<Params> & {
-  kit: KitState;
+  kitState: KitState;
 };
 
 export default function KitConfigure(props: Props) {
-  const { kit } = props;
+  const { kitState } = props;
 
   return (
     <Container text>
-        <ResetPassword kit={kit} />
+        <ResetPassword kit={kitState.details.unwrap()} />
     </Container>
   );
 }

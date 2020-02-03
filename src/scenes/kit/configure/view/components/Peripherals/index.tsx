@@ -1,12 +1,13 @@
 import React from "react";
 
-import { KitState, KitConfigurationState } from "modules/kit/reducer";
+import { KitConfigurationState } from "modules/kit/reducer";
+import { Kit } from "astroplant-api";
 
 import AddPeripheral from "./components/AddPeripheral";
 import ViewEditPeripheral from "./components/ViewEditPeripheral";
 
 export type Props = {
-  kit: KitState;
+  kit: Kit;
   configuration: KitConfigurationState;
 };
 

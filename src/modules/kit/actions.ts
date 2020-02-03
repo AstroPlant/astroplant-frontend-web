@@ -20,6 +20,15 @@ export const addKit = createAction("kit/ADD", action => (payload: Kit) =>
   action(payload)
 );
 
+export const notFound = createAction(
+  "kit/NOT_FOUND",
+  action => (payload: { serial: string }) => action(payload)
+);
+export const notAuthorized = createAction(
+  "kit/NOT_AUTHORIZED",
+  action => (payload: { serial: string }) => action(payload)
+);
+
 export const startWatching = createAction(
   "kit/START_WATCHING",
   action => (payload: { serial: string }) => action(payload)

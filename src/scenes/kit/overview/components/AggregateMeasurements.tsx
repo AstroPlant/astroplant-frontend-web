@@ -19,7 +19,7 @@ import AggregateMeasurementsChart, {
 type Params = { kitSerial: string };
 
 export type Props = {
-  kit: KitState;
+  kitState: KitState;
   peripheralDefinitions: { [id: string]: PeripheralDefinition };
   quantityTypes: { [id: string]: QuantityType };
 };
@@ -34,12 +34,12 @@ class AggregateMeasurements extends React.Component<Props> {
   };
 
   async componentDidMount() {
-    const { kit } = this.props;
+    const { kitState } = this.props;
     try {
       const api = new MeasurementsApi(AuthConfiguration.Instance);
       const aggregateMeasurements = await api
         .listAggregateMeasurements({
-          kitSerial: kit.details.serial
+          kitSerial: kitState.details.unwrap().serial
         })
         .toPromise();
 
@@ -87,10 +87,10 @@ class AggregateMeasurements extends React.Component<Props> {
   }
 
   render() {
-    const { kit, peripheralDefinitions, quantityTypes } = this.props;
+    const { kitState, peripheralDefinitions, quantityTypes } = this.props;
     const { aggregateMeasurements } = this.state;
     let activeConfiguration = null;
-    for (const configuration of Object.values(kit.configurations)) {
+    for (const configuration of Object.values(kitState.configurations)) {
       if (configuration.active) {
         activeConfiguration = configuration;
       }

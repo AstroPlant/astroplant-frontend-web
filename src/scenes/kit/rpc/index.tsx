@@ -1,15 +1,14 @@
 import React from "react";
 import { RouteComponentProps } from "react-router";
 import { Container, Button, Input, Divider } from "semantic-ui-react";
-import { KitState } from "modules/kit/reducer";
 
-import { KitRpcApi } from "astroplant-api";
+import { Kit, KitRpcApi } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 
 type Params = { kitSerial: string };
 
 export type Props = RouteComponentProps<Params> & {
-  kit: KitState;
+  kit: Kit;
 };
 
 type State = {
@@ -35,7 +34,7 @@ export default class KitRpc extends React.Component<Props, State> {
       const api = new KitRpcApi(AuthConfiguration.Instance);
       const versionResponse = await api
         .version({
-          kitSerial: kit.details.serial
+          kitSerial: kit.serial
         })
         .toPromise();
       this.setState({ versionResponse });
@@ -52,7 +51,7 @@ export default class KitRpc extends React.Component<Props, State> {
       const api = new KitRpcApi(AuthConfiguration.Instance);
       const uptimeResponse = await api
         .uptime({
-          kitSerial: kit.details.serial
+          kitSerial: kit.serial
         })
         .toPromise();
       this.setState({ uptimeResponse: `${uptimeResponse} seconds` });

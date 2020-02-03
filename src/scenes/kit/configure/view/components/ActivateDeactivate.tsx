@@ -6,17 +6,17 @@ import { withTranslation, WithTranslation } from "react-i18next";
 
 import ApiButton from "Components/ApiButton";
 
-import { KitState, KitConfigurationState } from "modules/kit/reducer";
+import { KitConfigurationState } from "modules/kit/reducer";
 import {
   kitSetAllConfigurationsInactive,
   kitConfigurationUpdated
 } from "modules/kit/actions";
 
-import { KitsApi, KitConfiguration } from "astroplant-api";
+import { Kit, KitsApi, KitConfiguration } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 
 export type Props = {
-  kit: KitState;
+  kit: Kit;
   configuration: KitConfigurationState;
 };
 
@@ -34,9 +34,9 @@ const Button = ApiButton<any>();
 class ActivateDeactivate extends React.Component<PInner> {
   onResponse(response: KitConfiguration) {
     const { kit } = this.props;
-    this.props.kitSetAllConfigurationsInactive({ serial: kit.details.serial });
+    this.props.kitSetAllConfigurationsInactive({ serial: kit.serial });
     this.props.kitConfigurationUpdated({
-      serial: kit.details.serial,
+      serial: kit.serial,
       configuration: response
     });
   }
@@ -46,7 +46,7 @@ class ActivateDeactivate extends React.Component<PInner> {
 
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.patchConfiguration({
-      kitSerial: kit.details.serial,
+      kitSerial: kit.serial,
       configurationId: configuration.id,
       patchKitConfiguration: {
         active: !configuration.active
@@ -57,7 +57,7 @@ class ActivateDeactivate extends React.Component<PInner> {
   render() {
     const { t, kit, configuration } = this.props;
 
-    const kitName = kit.details.name || "Unnamed";
+    const kitName = kit.name || "Unnamed";
     const configurationDescription =
       configuration.description || configuration.id;
 

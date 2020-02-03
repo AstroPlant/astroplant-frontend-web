@@ -6,14 +6,14 @@ import { Icon } from "semantic-ui-react";
 import { JSONSchema6 } from "json-schema";
 import ApiForm from "Components/ApiForm";
 
-import { KitState, KitConfigurationState } from "modules/kit/reducer";
+import { KitConfigurationState } from "modules/kit/reducer";
 import { kitConfigurationUpdated } from "modules/kit/actions";
 
-import { KitsApi, KitConfiguration } from "astroplant-api";
+import { Kit, KitsApi, KitConfiguration } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 
 export type Props = {
-  kit: KitState;
+  kit: Kit;
   configuration: KitConfigurationState;
   kitConfigurationUpdated: (kitConfiguration: {
     serial: string;
@@ -36,7 +36,7 @@ class Description extends React.Component<Props, State> {
     const { kit } = this.props;
     this.setState({ editing: false });
     this.props.kitConfigurationUpdated({
-      serial: kit.details.serial,
+      serial: kit.serial,
       configuration: response
     });
   }
@@ -46,7 +46,7 @@ class Description extends React.Component<Props, State> {
 
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.patchConfiguration({
-      kitSerial: kit.details.serial,
+      kitSerial: kit.serial,
       configurationId: configuration.id,
       patchKitConfiguration: {
         description: formData

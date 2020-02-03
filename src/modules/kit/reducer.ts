@@ -1,6 +1,7 @@
 import { createReducer, ActionType } from "typesafe-actions";
 import * as actions from "./actions";
 import { byId, arrayToObject } from "utils/byId";
+import Option from "utils/option";
 
 import { Kit } from "astroplant-api";
 import { KitConfiguration, Peripheral } from "astroplant-api";
@@ -21,10 +22,11 @@ export interface RawMeasurement extends Measurement {
 }
 
 export interface KitState {
-  details: Kit;
+  details: Option<Kit>;
   configurations: { [id: string]: KitConfigurationState };
   loadingConfigurations: boolean;
   rawMeasurements: { [key: string]: RawMeasurement };
+  status: "None" | "Fetching" | "NotFound" | "NotAuthorized" | "Fetched";
 }
 
 export interface KitsState {
@@ -38,17 +40,27 @@ const initial: KitsState = {
 };
 
 const initialKit: KitState = {
-  details: {} as any,
+  details: Option.none(),
   configurations: {},
   loadingConfigurations: false,
-  rawMeasurements: {}
+  rawMeasurements: {},
+  status: "None"
 };
 
 export type KitAction = ActionType<typeof actions>;
 
 const kitReducer = createReducer<KitState, KitAction>(initialKit)
+  .handleAction(actions.fetchKit, (state, action) => {
+    return { ...state, status: "Fetching" };
+  })
+  .handleAction(actions.notFound, (state, action) => {
+    return { ...state, status: "NotFound" };
+  })
+  .handleAction(actions.notAuthorized, (state, action) => {
+    return { ...state, status: "NotAuthorized" };
+  })
   .handleAction(actions.addKit, (state, action) => {
-    return { ...state, details: action.payload };
+    return { ...state, details: Option.some(action.payload), status: "Fetched" };
   })
   .handleAction(actions.kitConfigurationsRequest, (state, action) => {
     return { ...state, loadingConfigurations: true };
@@ -89,10 +101,10 @@ const kitReducer = createReducer<KitState, KitAction>(initialKit)
   });
 
 const kitReducerWrapper = (state: KitState, action: any) => {
-    const state2 = kitReducer(state, action) as any;
-    if (Object.entries(state2.details).length === 0) {
-        return;
-    }
+  const state2 = kitReducer(state, action) as any;
+  //if (Object.entries(state2.details).length === 0) {
+  //  return;
+  //}
   const newConfigurations = kitConfigurationReducerById(
     state2.configurations,
     action

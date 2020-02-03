@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { Switch, Route, RouteComponentProps } from "react-router";
 import { NavLink } from "react-router-dom";
+import { withTranslation, WithTranslation, Trans } from "react-i18next";
 import { compose } from "recompose";
 import { Container, Menu } from "semantic-ui-react";
 import { RootState } from "types";
@@ -10,6 +11,7 @@ import Option from "utils/option";
 import { awaitAuthenticationRan } from "Components/AuthenticatedGuard";
 import { withOption, WithValue } from "Components/OptionGuard";
 import HeadTitle from "Components/HeadTitle";
+import Loading from "Components/Loading";
 
 import { KitState } from "modules/kit/reducer";
 import { startWatching, stopWatching, fetchKit } from "modules/kit/actions";
@@ -26,25 +28,27 @@ export type Props = RouteComponentProps<Params> & {
   fetchKit: (payload: { serial: string }) => void;
 };
 
-export type InnerProps = RouteComponentProps<Params> & {
-  membership: Option<KitMembership>;
-  startWatching: (payload: { serial: string }) => void;
-  stopWatching: (payload: { serial: string }) => void;
-};
+export type InnerProps = RouteComponentProps<Params> &
+  WithTranslation &
+  WithValue<KitState> & {
+    membership: Option<KitMembership>;
+    startWatching: (payload: { serial: string }) => void;
+    stopWatching: (payload: { serial: string }) => void;
+  };
 
-class InnerKit extends React.Component<InnerProps & WithValue<KitState>> {
+class KitDashboard extends React.Component<InnerProps & WithValue<KitState>> {
   componentWillMount() {
-    const kit = this.props.value;
-    this.props.startWatching({ serial: kit.details.serial });
+    const kitState = this.props.value;
+    this.props.startWatching({ serial: kitState.details.unwrap().serial });
   }
 
   componentWillUnmount() {
-    const kit = this.props.value;
-    this.props.stopWatching({ serial: kit.details.serial });
+    const kitState = this.props.value;
+    this.props.stopWatching({ serial: kitState.details.unwrap().serial });
   }
 
   render() {
-    const kit = this.props.value;
+    const kitState = this.props.value;
     const { path, url } = this.props.match;
 
     const canConfigure = this.props.membership
@@ -57,9 +61,10 @@ class InnerKit extends React.Component<InnerProps & WithValue<KitState>> {
       .map(m => m.accessSuper)
       .unwrapOr(false);
 
+    const kit = kitState.details.unwrap();
     return (
       <>
-        <HeadTitle main={kit.details.name || kit.details.serial} />
+        <HeadTitle main={kit.name || kit.serial} />
         <Container>
           <Menu pointing secondary>
             <Menu.Item name="Overview" as={NavLink} exact to={`${url}`} />
@@ -80,21 +85,70 @@ class InnerKit extends React.Component<InnerProps & WithValue<KitState>> {
           <Switch>
             <Route
               path={`${path}/configure`}
-              render={props => <Configure {...props} kit={kit} />}
+              render={props => <Configure {...props} kitState={kitState} />}
             />
             <Route
               path={`${path}/access`}
-              render={props => <Access {...props} kit={kit} />}
+              render={props => <Access {...props} kitState={kitState} />}
             />
             <Route
               path={`${path}/rpc`}
-              render={props => <Rpc {...props} kit={kit} />}
+              render={props => (
+                <Rpc {...props} kit={kitState.details.unwrap()} />
+              )}
             />
-            <Route render={props => <Overview {...props} kit={kit} />} />
+            <Route
+              render={props => <Overview {...props} kitState={kitState} />}
+            />
           </Switch>
         </Container>
       </>
     );
+  }
+}
+
+class KitStatusWrapper extends React.Component<
+  InnerProps & WithValue<KitState>
+> {
+  render() {
+    const kitState = this.props.value;
+    const { kitSerial } = this.props.match.params;
+    const { t } = this.props;
+
+    if (kitState.status === "None" || kitState.status === "Fetching") {
+      return <Loading />;
+    } else if (kitState.status === "NotFound") {
+      return (
+        <>
+          <HeadTitle main={t("kit.notFound.header")} />
+          <Container text>
+            <p>
+              <Trans i18nKey="kit.notFound.body">
+                Sorry, the kit with serial <code>{{ serial: kitSerial }}</code>{" "}
+                could not be found.
+              </Trans>
+            </p>
+          </Container>
+        </>
+      );
+    } else if (kitState.status === "NotAuthorized") {
+      return (
+        <>
+          <HeadTitle main={t("kit.notAuthorized.header")} />
+          <Container text>
+            <Trans i18nKey="kit.notAuthorized.body">
+              Sorry, you are not authorized to access kit with serial{" "}
+              <code>{{ serial: kitSerial }}</code>. Please ensure you are logged
+              in with the correct account.
+            </Trans>
+          </Container>
+        </>
+      );
+    } else if (kitState.status === "Fetched") {
+      return <KitDashboard {...this.props} />;
+    } else {
+      throw new Error("Unknown Kit status");
+    }
   }
 }
 
@@ -118,10 +172,14 @@ const mapDispatchToProps = (dispatch: any) =>
     dispatch
   );
 
-const innerKit = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(withOption<KitState, InnerProps>()(InnerKit));
+const innerKit = compose<InnerProps, Props>(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  ),
+  withOption<KitState, InnerProps>(),
+  withTranslation()
+)(KitStatusWrapper);
 
 class Kit extends React.Component<Props> {
   async componentDidMount() {

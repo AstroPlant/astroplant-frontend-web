@@ -15,6 +15,7 @@ import * as genericActions from "../generic/actions";
 
 import { KitsApi } from "astroplant-api";
 import { AuthConfiguration, requestWrapper } from "utils/api";
+import { PDNotFound, PDForbidden } from "../../problems";
 
 const addKitFromKitMemberships: Epic = (actions$, state$) =>
   actions$.pipe(
@@ -38,7 +39,15 @@ const fetchKit: Epic = (actions$, state$) =>
       req.pipe(
         requestWrapper(),
         map(kit => actions.addKit(kit)),
-        catchError(err => of(genericActions.setApiConnectionFailed(true)))
+        catchError(err => {
+          if (PDNotFound.is(err.response)) {
+            return of(actions.notFound({ serial }));
+          } else if (PDForbidden.is(err.response)) {
+            return of(actions.notAuthorized({ serial }));
+          } else {
+            return of(genericActions.setApiConnectionFailed(true));
+          }
+        })
       )
     )
   );

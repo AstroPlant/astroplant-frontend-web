@@ -11,11 +11,11 @@ import View from "./view";
 type Params = { kitSerial: string };
 
 export type Props = RouteComponentProps<Params> & {
-  kit: KitState;
+  kitState: KitState;
 };
 
 export default function KitConfigure(props: Props) {
-  const { kit } = props;
+  const { kitState } = props;
   const { path } = props.match;
 
   return (
@@ -23,13 +23,13 @@ export default function KitConfigure(props: Props) {
       <Switch>
         <Route
           path={`${path}/create`}
-          render={props => <Create {...props} kit={kit} />}
+          render={props => <Create {...props} kit={kitState.details.unwrap()} />}
         />
         <Route
           path={`${path}/:configurationId`}
-          render={props => <View {...props} kit={kit} />}
+          render={props => <View {...props} kitState={kitState} />}
         />
-        <Route render={props => <List {...props} kit={kit} />} />
+        <Route render={props => <List {...props} kitState={kitState} />} />
       </Switch>
     </Container>
   );

@@ -5,8 +5,7 @@ import { Card, Icon, Input } from "semantic-ui-react";
 
 import ApiButton from "Components/ApiButton";
 
-import { KitState } from "modules/kit/reducer";
-import { KitsApi } from "astroplant-api";
+import { KitsApi, Kit } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 
 type State = {
@@ -14,7 +13,7 @@ type State = {
 };
 
 export type Props = {
-  kit: KitState;
+  kit: Kit;
 };
 
 type PInner = WithTranslation & Props;
@@ -33,14 +32,14 @@ class ResetPassword extends React.Component<PInner, State> {
 
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.resetPassword({
-      kitSerial: kit.details.serial
+      kitSerial: kit.serial
     });
   }
 
   render() {
     const { t, kit } = this.props;
 
-    const kitName = kit.details.name || "Unnamed";
+    const kitName = kit.name || "Unnamed";
 
     return (
       <Card color="orange" centered raised fluid>

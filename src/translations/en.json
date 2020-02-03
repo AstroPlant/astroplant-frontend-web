@@ -72,7 +72,15 @@
     },
     "kit": {
       "privacyPublicDashboard": "Make the kit's dashboard public",
-      "privacyShowOnMap": "Show the kit's location on the public map"
+      "privacyShowOnMap": "Show the kit's location on the public map",
+      "notFound": {
+        "header": "Kit not found",
+        "body": "Sorry, the kit with serial <1>{{serial}}</1> could not be found."
+      },
+      "notAuthorized": {
+        "header": "Kit is private",
+        "body": "Sorry, you are not authorized to access kit with serial <2>{{serial}}</2>. Please ensure you are logged in with the correct account"
+      }
     },
     "createKit": {
       "header": "Create a Kit",

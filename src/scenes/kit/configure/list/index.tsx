@@ -9,14 +9,14 @@ import Option from "utils/option";
 type Params = { kitSerial: string };
 
 export type Props = RouteComponentProps<Params> & {
-  kit: KitState;
+  kitState: KitState;
 };
 
 export default function KitConfigure(props: Props) {
-  const { kit } = props;
+  const { kitState } = props;
   const { url } = props.match;
 
-  const numConfigurations = Object.keys(kit.configurations).length;
+  const numConfigurations = Object.keys(kitState.configurations).length;
 
   return (
     <Container text>
@@ -25,8 +25,8 @@ export default function KitConfigure(props: Props) {
       </p>
       {numConfigurations > 0 ? (
         <Card.Group>
-          {Object.keys(kit.configurations).map(id => {
-            const configuration = Option.from(kit.configurations[id]);
+          {Object.keys(kitState.configurations).map(id => {
+            const configuration = Option.from(kitState.configurations[id]);
             return configuration
               .map(configuration => (
                 <Card

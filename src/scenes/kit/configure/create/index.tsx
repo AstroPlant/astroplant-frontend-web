@@ -4,14 +4,13 @@ import { connect } from "react-redux";
 import { RouteComponentProps, Redirect } from "react-router";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Container, Segment } from "semantic-ui-react";
-import { KitState } from "modules/kit/reducer";
 
 import { JSONSchema6 } from "json-schema";
 import ApiForm from "Components/ApiForm";
 
 import { kitConfigurationCreated } from "modules/kit/actions";
 
-import { KitsApi, KitConfiguration } from "astroplant-api";
+import { KitsApi, KitConfiguration, Kit } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 import Option from "utils/option";
 
@@ -19,7 +18,7 @@ type Params = { kitSerial: string };
 
 export type Props = WithTranslation &
   RouteComponentProps<Params> & {
-    kit: KitState;
+    kit: Kit;
     kitConfigurationCreated: (payload: {
       serial: string;
       configuration: KitConfiguration;
@@ -41,7 +40,7 @@ class CreateConfiguration extends React.Component<Props, State> {
     const { kit } = this.props;
     this.setState({ done: true, result: Option.some(response) });
     this.props.kitConfigurationCreated({
-      serial: kit.details.serial,
+      serial: kit.serial,
       configuration: response
     });
   }
@@ -51,7 +50,7 @@ class CreateConfiguration extends React.Component<Props, State> {
 
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.createConfiguration({
-      kitSerial: kit.details.serial,
+      kitSerial: kit.serial,
       newKitConfiguration: {
         description: formData.description
       }
@@ -79,7 +78,7 @@ class CreateConfiguration extends React.Component<Props, State> {
         <Segment piled padded>
           {this.state.done ? (
             <Redirect
-              to={`/kit/${kit.details.serial}/configure/${
+              to={`/kit/${kit.serial}/configure/${
                 this.state.result.unwrap().id
               }`}
             />

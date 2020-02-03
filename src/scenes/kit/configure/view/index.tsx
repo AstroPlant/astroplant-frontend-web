@@ -18,7 +18,7 @@ import Peripherals from "./components/Peripherals";
 
 type Params = { configurationId: string };
 
-export type Props = RouteComponentProps<Params> & { kit: KitState };
+export type Props = RouteComponentProps<Params> & { kitState: KitState };
 
 type InternalProps = Props & WithTranslation & WithValue<KitConfigurationState>;
 
@@ -34,26 +34,26 @@ class ViewConfiguration extends React.Component<InternalProps, State> {
   };
 
   render() {
-    const { kit, value: configuration, t } = this.props;
+    const { kitState, value: configuration, t } = this.props;
 
     return (
       <Container text>
         <Segment raised>
           <Header>Description</Header>
-          <Description kit={kit} configuration={configuration} />
+          <Description kit={kitState.details.unwrap()} configuration={configuration} />
         </Segment>
         <Container textAlign="right">
-          <ActivateDeactivate kit={kit} configuration={configuration} />
+          <ActivateDeactivate kit={kitState.details.unwrap()} configuration={configuration} />
         </Container>
         <Divider />
         <Container>
           <Header>{t("rules.header")}</Header>
-          <Rules kit={kit} configuration={configuration} />
+          <Rules kit={kitState.details.unwrap()} configuration={configuration} />
         </Container>
         <Divider />
         <Container>
           <Header>Peripherals</Header>
-          <Peripherals kit={kit} configuration={configuration} />
+          <Peripherals kit={kitState.details.unwrap()} configuration={configuration} />
         </Container>
       </Container>
     );
@@ -62,11 +62,11 @@ class ViewConfiguration extends React.Component<InternalProps, State> {
 
 const map = (props: Props) => {
   const { configurationId } = props.match.params;
-  const { kit } = props;
+  const { kitState } = props;
 
   return {
     ...props,
-    option: Option.from(kit.configurations[configurationId])
+    option: Option.from(kitState.configurations[configurationId])
   };
 };
 

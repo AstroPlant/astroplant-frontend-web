@@ -11,16 +11,16 @@ import RawMeasurementComp from "./RawMeasurement";
 type Params = { kitSerial: string };
 
 export type Props = {
-  kit: KitState;
+  kitState: KitState;
   peripheralDefinitions: { [id: string]: PeripheralDefinition };
   quantityTypes: { [id: string]: QuantityType };
 };
 
 function RawMeasurements(props: Props) {
-  const { kit, peripheralDefinitions, quantityTypes } = props;
-  const rawMeasurements = kit.rawMeasurements;
+  const { kitState, peripheralDefinitions, quantityTypes } = props;
+  const rawMeasurements = kitState.rawMeasurements;
   let activeConfiguration = null;
-  for (const configuration of Object.values(kit.configurations)) {
+  for (const configuration of Object.values(kitState.configurations)) {
     if (configuration.active) {
       activeConfiguration = configuration;
     }

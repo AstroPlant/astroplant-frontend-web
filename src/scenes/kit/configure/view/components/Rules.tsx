@@ -9,10 +9,11 @@ import { JSONSchema6 } from "json-schema";
 import ApiForm from "Components/ApiForm";
 
 import { RootState } from "types";
-import { KitState, KitConfigurationState } from "modules/kit/reducer";
+import { KitConfigurationState } from "modules/kit/reducer";
 import { kitConfigurationUpdated } from "modules/kit/actions";
 
 import {
+  Kit,
   PeripheralDefinition,
   QuantityType,
   KitsApi,
@@ -21,7 +22,7 @@ import {
 import { AuthConfiguration } from "utils/api";
 
 export type Props = WithTranslation & {
-  kit: KitState;
+  kit: Kit;
   configuration: KitConfigurationState;
   peripheralDefinitions: { [id: string]: PeripheralDefinition };
   quantityTypes: { [id: string]: QuantityType };
@@ -46,7 +47,7 @@ class Rules extends React.Component<Props, State> {
     const { kit } = this.props;
     this.setState({ editing: false });
     this.props.kitConfigurationUpdated({
-      serial: kit.details.serial,
+      serial: kit.serial,
       configuration: response
     });
   }
@@ -56,7 +57,7 @@ class Rules extends React.Component<Props, State> {
 
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.patchConfiguration({
-      kitSerial: kit.details.serial,
+      kitSerial: kit.serial,
       configurationId: configuration.id,
       patchKitConfiguration: {
         rules: formData

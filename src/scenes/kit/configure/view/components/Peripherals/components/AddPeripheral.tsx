@@ -14,9 +14,9 @@ import {
 } from "semantic-ui-react";
 
 import { RootState } from "types";
-import { KitState, KitConfigurationState } from "modules/kit/reducer";
+import { KitConfigurationState } from "modules/kit/reducer";
 import { peripheralCreated } from "modules/kit/actions";
-import { KitsApi, PeripheralDefinition, Peripheral } from "astroplant-api";
+import { Kit, KitsApi, PeripheralDefinition, Peripheral } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 
 import { JSONSchema6 } from "json-schema";
@@ -31,7 +31,7 @@ type State = {
 };
 
 export type Props = {
-  kit: KitState;
+  kit: Kit;
   configuration: KitConfigurationState;
 };
 
@@ -71,7 +71,7 @@ class AddPeripheral extends React.Component<PInner, State> {
 
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.createPeripheral({
-      kitSerial: kit.details.serial,
+      kitSerial: kit.serial,
       configurationId: configuration.id,
       newPeripheral: {
         ...formData,
@@ -83,7 +83,7 @@ class AddPeripheral extends React.Component<PInner, State> {
   onResponse(response: Peripheral) {
     const { kit, configuration } = this.props;
     this.props.peripheralCreated({
-      serial: kit.details.serial,
+      serial: kit.serial,
       configurationId: configuration.id,
       peripheral: response
     });
