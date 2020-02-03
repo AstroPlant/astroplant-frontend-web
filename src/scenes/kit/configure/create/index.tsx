@@ -14,6 +14,8 @@ import { KitsApi, KitConfiguration, Kit } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 import Option from "utils/option";
 
+const CreateConfigurationForm = ApiForm<any, KitConfiguration>();
+
 type Params = { kitSerial: string };
 
 export type Props = WithTranslation &
@@ -70,8 +72,6 @@ class CreateConfiguration extends React.Component<Props, State> {
     };
 
     const uiSchema = {};
-
-    const CreateConfigurationForm = ApiForm<any, KitConfiguration>();
 
     return (
       <Container text>
