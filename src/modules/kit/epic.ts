@@ -36,6 +36,7 @@ const fetchKit: Epic = (actions$, state$) =>
     }),
     mergeMap(({ serial, req }) =>
       req.pipe(
+        requestWrapper(),
         map(kit => actions.addKit(kit)),
         catchError(err => of(genericActions.setApiConnectionFailed(true)))
       )
