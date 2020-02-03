@@ -44,7 +44,7 @@ type AllProps<T, R> = WithTranslation &
   };
 
 class ApiForm<T = any, R = any> extends Component<AllProps<T, R>, State<T>> {
-  state = {
+  state: State<T> = {
     submitting: false,
     formEpoch: 0,
     formData: null,
