@@ -71,3 +71,19 @@ export class PDInvalidParameters {
     return problemDetails.type === "/probs/invalid-parameters";
   }
 }
+
+export class PDNotFound {
+  static is(problemDetails: ProblemDetails): boolean {
+    return (
+      problemDetails.type === "about:blank" && problemDetails.status === 404
+    );
+  }
+}
+
+export class PDForbidden {
+  static is(problemDetails: ProblemDetails): boolean {
+    return (
+      problemDetails.type === "about:blank" && problemDetails.status === 403
+    );
+  }
+}
