@@ -1,13 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
+import { compose } from "recompose";
 import { RootState, FullUser } from "types";
-import {
-  Container,
-  Segment,
-  Dimmer,
-  Loader,
-  Placeholder
-} from "semantic-ui-react";
+import { Container, Segment, Placeholder } from "semantic-ui-react";
 import { WithValue, withOption } from "./OptionGuard";
 import MustBeLoggedIn from "../pages/MustBeLoggedIn";
 
@@ -28,10 +23,13 @@ function withAuthToValue<P>(
 
 /**
  * HOC to inject the authenticated user into the component through the `me` prop
- * if the user is authenticated. IF the user is not authenticated, renders the
- * `MustBeLoggedIn` page.
+ * if the user is authenticated. If the user is not authenticated, renders the
+ * `MustBeLoggedIn` page. If `showLoading` is true and authentication has not been
+ * ran yet, shows a loading page.
  */
-export function withAuthentication<P>(): (
+export function withAuthentication<P>(
+  showLoading: boolean = true
+): (
   Component: React.ComponentType<P & WithAuthentication>
 ) => React.ComponentType<P> {
   console.info("Authentication guard instantiated");
@@ -42,8 +40,15 @@ export function withAuthentication<P>(): (
       AuthComponent
     );
 
-    // @ts-ignore
-    return connect(mapStateToProps)(OptionComponent) as React.ComponentType<P>;
+    if (showLoading) {
+      return compose<any, any>(
+        awaitAuthenticationRan(),
+        connect(mapStateToProps)
+      )(OptionComponent);
+    } else {
+      // @ts-ignore
+      return connect(mapStateToProps)(OptionComponent);
+    }
   };
 }
 
