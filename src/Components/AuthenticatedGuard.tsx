@@ -53,9 +53,16 @@ export function withAuthentication<P>(
 }
 
 const mapStateToAwaitAuthenticationProps = (state: RootState) => ({
-  auth: state.auth
+  auth: state.auth,
+  me: state.me
 });
 
+/**
+ * HOC to wait until authentication has been ran (either successfully authenticating the
+ * user, or failing authentication due to missing or invalid credentials or connectivity
+ * issues). Waits until state.auth.authenticationRan is true. If the access token is set,
+ * also waits until state.me.details.isSome().
+ */
 export function awaitAuthenticationRan<P>(): (
   Component: React.ComponentType<P>
 ) => React.ComponentType<P> {
@@ -63,9 +70,13 @@ export function awaitAuthenticationRan<P>(): (
     // @ts-ignore
     return connect(mapStateToAwaitAuthenticationProps)(props => {
       // @ts-ignore
-      const { auth, ...rest } = props;
-      // @ts-ignore
-      if (auth.authenticationRan) {
+      const { auth, me, ...rest } = props;
+      if (
+        // @ts-ignore
+        auth.authenticationRan &&
+        // @ts-ignore
+        (!auth.accessToken || me.details.isSome())
+      ) {
         return <Component {...rest} />;
       } else {
         return (
