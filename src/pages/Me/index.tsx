@@ -2,13 +2,10 @@ import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import { withTranslation, WithTranslation } from "react-i18next";
-import {
-  Container,
-  Divider,
-  Card,
-  Image,
-  Header
-} from "semantic-ui-react";
+import { Container, Divider, Card, Image, Header } from "semantic-ui-react";
+
+import { KitState } from "modules/kit/reducer";
+import { Kit } from "astroplant-api";
 
 import { RootState } from "types";
 import Option from "utils/option";
@@ -25,7 +22,7 @@ type Props = WithTranslation &
   WithAuthentication & {
     loadingKitMemberships: boolean;
     kitMemberships: RootState["me"]["kitMemberships"];
-    kits: RootState["kit"]["kits"];
+    kitStates: RootState["kit"]["kits"];
   };
 
 class Me extends Component<Props> {
@@ -49,31 +46,31 @@ class Me extends Component<Props> {
               </p>
               {Object.keys(this.props.kitMemberships).length > 0 && (
                 <Card.Group>
-                  {Object.keys(this.props.kitMemberships).map(
-                    serial => {
-                      console.warn(this.props.kits);
-                      const kit = Option.from(this.props.kits[serial]);
-                      return (
-                        <Card
-                          fluid
-                          key={serial}
-                          color="orange"
-                          as={Link}
-                          to={`/kit/${serial}`}
-                        >
-                          <Card.Content>
-                            <Image floated="right" size="mini">
-                              <Gravatar identifier={serial} />
-                            </Image>
-                            <Card.Header>{kit.andThen(kit => Option.from(kit.details.name)).unwrapOr("Unnamed")}</Card.Header>
-                            <Card.Meta>
-                              Serial: {serial}
-                            </Card.Meta>
-                          </Card.Content>
-                        </Card>
-                      );
-                    }
-                  )}
+                  {Object.keys(this.props.kitMemberships).map(serial => {
+                    const kitState: Option<KitState> = Option.from(this.props.kitStates[serial]);
+                    return (
+                      <Card
+                        fluid
+                        key={serial}
+                        color="orange"
+                        as={Link}
+                        to={`/kit/${serial}`}
+                      >
+                        <Card.Content>
+                          <Image floated="right" size="mini">
+                            <Gravatar identifier={serial} />
+                          </Image>
+                          <Card.Header>
+                            {kitState
+                              .andThen(kitState => kitState.details)
+                              .map((kit: Kit) => kit.name)
+                              .unwrapOr("Unnamed")}
+                          </Card.Header>
+                          <Card.Meta>Serial: {serial}</Card.Meta>
+                        </Card.Content>
+                      </Card>
+                    );
+                  })}
                 </Card.Group>
               )}
               {this.props.loadingKitMemberships && <PlaceholderSegment />}
@@ -115,7 +112,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     loadingKitMemberships: state.me.loadingKitMemberships,
     kitMemberships: state.me.kitMemberships,
-    kits: state.kit.kits,
+    kitStates: state.kit.kits
   };
 };
 
