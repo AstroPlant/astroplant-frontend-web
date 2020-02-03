@@ -142,7 +142,7 @@ const outerMapDispatchToProps = (dispatch: any) =>
     dispatch
   );
 
-export default compose<any, any>(
+export default compose<Props, {}>(
   awaitAuthenticationRan(),
   connect(
     null,
