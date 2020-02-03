@@ -14,7 +14,6 @@
     "@types/recharts": "^1.1.21",
     "@types/recompose": "^0.30.7",
     "astroplant-api": "file:local_modules/astroplant-api",
-    "google-map-react": "^1.1.4",
     "http-status-codes": "^1.3.2",
     "i18next": "^17.0.16",
     "json-schema": "^0.2.3",
