@@ -1,7 +1,7 @@
 import React from "react";
 import { RouteComponentProps, Route, Switch } from "react-router-dom";
 import { bindActionCreators } from "redux";
-import { connect, MapDispatchToProps } from "react-redux";
+import { connect } from "react-redux";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { compose } from "recompose";
 import {
