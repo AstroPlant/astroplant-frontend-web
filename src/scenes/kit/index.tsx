@@ -18,6 +18,7 @@ import { startWatching, stopWatching, fetchKit } from "modules/kit/actions";
 import { KitMembership } from "modules/me/reducer";
 
 import Overview from "./overview";
+import Details from "./details";
 import Configure from "./configure";
 import Access from "./access";
 import Rpc from "./rpc";
@@ -51,6 +52,9 @@ class KitDashboard extends React.Component<InnerProps & WithValue<KitState>> {
     const kitState = this.props.value;
     const { path, url } = this.props.match;
 
+    const canEditDetails = this.props.membership
+      .map(m => m.accessSuper)
+      .unwrapOr(false);
     const canConfigure = this.props.membership
       .map(m => m.accessSuper || m.accessConfigure)
       .unwrapOr(false);
@@ -68,6 +72,9 @@ class KitDashboard extends React.Component<InnerProps & WithValue<KitState>> {
         <Container>
           <Menu pointing secondary>
             <Menu.Item name="Overview" as={NavLink} exact to={`${url}`} />
+            {canEditDetails && (
+              <Menu.Item name="Details" as={NavLink} to={`${url}/details`} />
+            )}
             {canConfigure && (
               <Menu.Item
                 name="Configuration"
@@ -83,6 +90,10 @@ class KitDashboard extends React.Component<InnerProps & WithValue<KitState>> {
             )}
           </Menu>
           <Switch>
+            <Route
+              path={`${path}/details`}
+              render={props => <Details {...props} kit={kitState.details.unwrap()} />}
+            />
             <Route
               path={`${path}/configure`}
               render={props => <Configure {...props} kitState={kitState} />}
