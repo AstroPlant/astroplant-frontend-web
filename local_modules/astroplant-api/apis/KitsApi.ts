@@ -23,6 +23,7 @@ import {
     NewKit,
     NewKitConfiguration,
     NewPeripheral,
+    PatchKit,
     PatchKitConfiguration,
     PatchPeripheral,
     Peripheral,
@@ -67,6 +68,11 @@ export interface PatchConfigurationRequest {
     kitSerial: string;
     configurationId: number;
     patchKitConfiguration: PatchKitConfiguration;
+}
+
+export interface PatchKitRequest {
+    kitSerial: string;
+    patchKit: PatchKit;
 }
 
 export interface PatchPeripheralRequest {
@@ -265,6 +271,26 @@ export class KitsApi extends BaseAPI {
             headers,
             query,
             body: requestParameters.patchKitConfiguration,
+        });
+    };
+
+    /**
+     * Update the kit details.
+     */
+    patchKit = (requestParameters: PatchKitRequest): Observable<Kit> => {
+        throwIfRequired(requestParameters, 'kitSerial', 'patchKit');
+        throwIfRequired(requestParameters, 'patchKit', 'patchKit');
+
+        const headers: HttpHeaders = {
+            'Content-Type': 'application/json',
+            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+        };
+
+        return this.request<Kit>({
+            path: '/kits/{kitSerial}'.replace('{kitSerial}', encodeURI(requestParameters.kitSerial)),
+            method: 'PATCH',
+            headers,
+            body: requestParameters.patchKit,
         });
     };
 

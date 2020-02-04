@@ -17,6 +17,7 @@ export * from './NewKit';
 export * from './NewKitConfiguration';
 export * from './NewPeripheral';
 export * from './NewUser';
+export * from './PatchKit';
 export * from './PatchKitConfiguration';
 export * from './PatchPeripheral';
 export * from './Peripheral';
