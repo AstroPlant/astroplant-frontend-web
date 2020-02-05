@@ -59,8 +59,7 @@ class Description extends React.Component<Props, State> {
 
     if (this.state.editing) {
       const schema: JSONSchema6 = {
-        type: "string",
-        default: configuration.description
+        type: "string"
       };
       const uiSchema = {};
 
@@ -71,6 +70,7 @@ class Description extends React.Component<Props, State> {
             uiSchema={uiSchema}
             send={this.send.bind(this)}
             onResponse={this.onResponse.bind(this)}
+            formData={configuration.description}
           />
         </div>
       );
