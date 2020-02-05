@@ -94,7 +94,7 @@ class ApiForm<T = any, R = any> extends Component<AllProps<T, R>, State<T>> {
   }
 
   onChange(e: any) {
-    this.setState({formData: e.formData});
+    this.setState({ formData: e.formData });
   }
 
   render() {
@@ -102,10 +102,6 @@ class ApiForm<T = any, R = any> extends Component<AllProps<T, R>, State<T>> {
 
     return (
       <>
-        {/* TODO: Waiting for
-          https://github.com/rjsf-team/react-jsonschema-form/pull/1444
-          to be merged
-          // @ts-ignore */}
         <RjsfForm
           key={this.state.formEpoch}
           schema={this.props.schema}
@@ -115,6 +111,7 @@ class ApiForm<T = any, R = any> extends Component<AllProps<T, R>, State<T>> {
           formData={this.state.formData || this.props.formData}
           disabled={this.state.submitting}
           onChange={e => this.onChange(e)}
+          // @ts-ignore
           extraErrors={this.state.additionalFormErrors}
         >
           <Form.Button
