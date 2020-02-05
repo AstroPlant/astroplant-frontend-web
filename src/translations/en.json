@@ -60,6 +60,7 @@
       }
     },
     "map": {
+      "description": "This map shows kits configured to be public.",
       "privateDashboard": "Dashboard is private",
       "goToDashboard": "View dashboard"
     },
