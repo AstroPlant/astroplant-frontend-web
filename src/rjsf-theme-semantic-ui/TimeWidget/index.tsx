@@ -8,7 +8,6 @@ function processInput(input: string): string {
     moment.HTML5_FMT.TIME,
     moment.HTML5_FMT.TIME_SECONDS
   ]);
-  console.warn(m);
   if (m && m.isValid()) {
     return m.format("HH:mm:ss");
   } else {
