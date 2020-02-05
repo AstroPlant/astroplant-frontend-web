@@ -1,7 +1,7 @@
 import React from "react";
 import moment from "moment";
 import { WidgetProps } from "react-jsonschema-form";
-import { Input, InputProps } from "semantic-ui-react";
+import { Input } from "semantic-ui-react";
 
 function processInput(input: string): string {
   const m = moment(input, [
@@ -28,10 +28,11 @@ export function TextWidget(props: any) {
     onFocus,
     options
   }: WidgetProps) => {
-    const _onChange = (
-      _: React.ChangeEvent<HTMLInputElement>,
-      data: InputProps
-    ) => onChange(value === "" ? options.emptyValue : data.value);
+    const _onChange = ({
+      target: { value }
+    }: React.ChangeEvent<HTMLInputElement>) => {
+      onChange(value === "" ? options.emptyValue : value);
+    };
     const _onBlur = ({
       target: { value }
     }: React.FocusEvent<HTMLInputElement>) => {
