@@ -12,12 +12,15 @@ import Notifications from "./Components/Notifications";
 import ConnectionStatus from "./Components/ConnectionStatus";
 import NavigationBar from "./Components/NavigationBar";
 import Footer from "./Components/Footer";
-import PageLoader from "./PageLoader";
 import TestComponent from "./Components/Test/TestComponent";
 
-import LogIn from "./pages/LogIn";
-import SignUp from "./pages/SignUp";
-import Me from "./pages/Me";
+import Home from "./pages/Home";
+import NotFound from "./pages/NotFound";
+import TermsAndConditions from "./pages/TermsAndConditions";
+
+import LogIn from "./scenes/LogIn";
+import SignUp from "./scenes/SignUp";
+import Me from "./scenes/Me";
 import CreateKit from "./pages/CreateKit";
 import Kit from "./scenes/kit";
 import Map from "./scenes/map";
@@ -86,30 +89,20 @@ class App extends Component<Props> {
         >
           <Switch>
             <Redirect exact from="/" to="home" />
-            <Route exact path="/home">
-              <PageLoader page="Home" />
-            </Route>
-            <Route exact path="/terms-and-conditions">
-              <PageLoader page="TermsAndConditions" />
-            </Route>
+            <Route exact path="/home" component={Home} />
+            <Route
+              exact
+              path="/terms-and-conditions"
+              component={TermsAndConditions}
+            />
             <Route path="/test" component={TestComponent} />
             <Route path="/map" component={Map} />
-            <Route path="/log-in">
-              <LogIn />
-            </Route>
-            <Route path="/sign-up">
-              <SignUp />
-            </Route>
-            <Route path="/me">
-              <Me />
-            </Route>
-            <Route path="/create-kit">
-              <CreateKit />
-            </Route>
+            <Route path="/log-in" component={LogIn} />
+            <Route path="/sign-up" component={SignUp} />
+            <Route path="/me" component={Me} />
+            <Route path="/create-kit" component={CreateKit} />
             <Route path="/kit/:kitSerial" component={Kit} />
-            <Route>
-              <PageLoader page="NotFound" />
-            </Route>
+            <Route component={NotFound} />
           </Switch>
 
           <div style={{ minHeight: "1rem", flex: "auto" }} />
