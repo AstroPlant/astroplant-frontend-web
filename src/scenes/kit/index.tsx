@@ -92,7 +92,9 @@ class KitDashboard extends React.Component<InnerProps & WithValue<KitState>> {
           <Switch>
             <Route
               path={`${path}/details`}
-              render={props => <Details {...props} kit={kitState.details.unwrap()} />}
+              render={props => (
+                <Details {...props} kit={kitState.details.unwrap()} />
+              )}
             />
             <Route
               path={`${path}/configure`}
@@ -126,7 +128,12 @@ class KitStatusWrapper extends React.Component<
     const { kitSerial } = this.props.match.params;
     const { t } = this.props;
 
-    if (kitState.status === "None" || kitState.status === "Fetching") {
+    if (
+      kitState.status === "Fetched" ||
+      (kitState.status === "Fetching" && kitState.details.isSome())
+    ) {
+      return <KitDashboard {...this.props} />;
+    } else if (kitState.status === "None" || kitState.status === "Fetching") {
       return <Loading />;
     } else if (kitState.status === "NotFound") {
       return (
@@ -155,8 +162,6 @@ class KitStatusWrapper extends React.Component<
           </Container>
         </>
       );
-    } else if (kitState.status === "Fetched") {
-      return <KitDashboard {...this.props} />;
     } else {
       throw new Error("Unknown Kit status");
     }
