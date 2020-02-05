@@ -38,7 +38,7 @@ export type InnerProps = RouteComponentProps<Params> &
   };
 
 class KitDashboard extends React.Component<InnerProps & WithValue<KitState>> {
-  componentWillMount() {
+  componentDidMount() {
     const kitState = this.props.value;
     this.props.startWatching({ serial: kitState.details.unwrap().serial });
   }
