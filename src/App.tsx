@@ -12,7 +12,6 @@ import Notifications from "./Components/Notifications";
 import ConnectionStatus from "./Components/ConnectionStatus";
 import NavigationBar from "./Components/NavigationBar";
 import Footer from "./Components/Footer";
-import TestComponent from "./Components/Test/TestComponent";
 
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
@@ -95,7 +94,6 @@ class App extends Component<Props> {
               path="/terms-and-conditions"
               component={TermsAndConditions}
             />
-            <Route path="/test" component={TestComponent} />
             <Route path="/map" component={Map} />
             <Route path="/log-in" component={LogIn} />
             <Route path="/sign-up" component={SignUp} />
