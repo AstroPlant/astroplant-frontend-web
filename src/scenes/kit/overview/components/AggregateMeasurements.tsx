@@ -112,22 +112,21 @@ class AggregateMeasurements extends React.Component<Props> {
                     );
                     return qt
                       .map(qt => {
-                        const measurements = Option.from(
+                        const measurements: Option<
+                          Array<Measurements>
+                        > = Option.from(
                           aggregateMeasurements[peripheral.id + "." + qt.id]
                         );
-                        return measurements
-                          .map((measurements: Array<Measurements>) => {
-                            return (
-                              <AggregateMeasurementsChart
-                                key={peripheral.id + "." + qt.id}
-                                peripheral={peripheral}
-                                peripheralDefinition={def}
-                                quantityType={qt}
-                                measurements={measurements}
-                              />
-                            );
-                          })
-                          .unwrapOrNull();
+
+                        return (
+                          <AggregateMeasurementsChart
+                            key={peripheral.id + "." + qt.id}
+                            peripheral={peripheral}
+                            peripheralDefinition={def}
+                            quantityType={qt}
+                            measurements={measurements}
+                          />
+                        );
                       })
                       .unwrapOrNull();
                   })
