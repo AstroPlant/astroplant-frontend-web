@@ -18,8 +18,10 @@ import { removeNull, undefinedToNull, emptyStringToNull } from "utils/form";
 import { pushUpOne } from "utils/router";
 
 import { addKit } from "modules/kit/actions";
+import { KitMembership } from "modules/me/reducer";
 import { Kit, KitsApi } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
+import Option from "utils/option";
 
 import {
   schema as patchSchema,
@@ -32,6 +34,7 @@ const PatchKitForm = ApiForm<any, Kit>();
 
 export type Props = {
   kit: Kit;
+  membership: Option<KitMembership>;
 };
 
 export type InnerProps = WithTranslation &
@@ -76,8 +79,10 @@ class KitConfigure extends React.Component<InnerProps, State> {
   }
 
   render() {
-    const { t, kit } = this.props;
+    const { t, kit, membership } = this.props;
     const { url, path } = this.props.match;
+
+    const canEditDetails = membership.map(m => m.accessSuper).unwrapOr(false);
 
     return (
       <Container text>
@@ -117,12 +122,14 @@ class KitConfigure extends React.Component<InnerProps, State> {
                     </>
                   )}
                   <div>
-                    <Button
-                      onClick={() => this.props.history.push(`${url}/edit`)}
-                      primary
-                    >
-                      Edit kit details
-                    </Button>
+                    {canEditDetails && (
+                      <Button
+                        onClick={() => this.props.history.push(`${url}/edit`)}
+                        primary
+                      >
+                        Edit kit details
+                      </Button>
+                    )}
                     <h3>{kit.name || kit.serial}</h3>
                     <ReactMarkdown source={kit.description} />
                     {typeof kit.latitude === "number" &&
