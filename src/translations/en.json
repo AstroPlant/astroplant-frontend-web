@@ -74,6 +74,7 @@
       }
     },
     "kit": {
+      "unnamed": "Unnamed Kit",
       "privacyPublicDashboard": "Make the kit's dashboard public",
       "privacyShowOnMap": "Show the kit's location on the public map",
       "notFound": {

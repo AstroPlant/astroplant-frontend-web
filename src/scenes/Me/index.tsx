@@ -47,7 +47,9 @@ class Me extends Component<Props> {
               {Object.keys(this.props.kitMemberships).length > 0 && (
                 <Card.Group>
                   {Object.keys(this.props.kitMemberships).map(serial => {
-                    const kitState: Option<KitState> = Option.from(this.props.kitStates[serial]);
+                    const kitState: Option<KitState> = Option.from(
+                      this.props.kitStates[serial]
+                    );
                     return (
                       <Card
                         fluid
@@ -63,8 +65,8 @@ class Me extends Component<Props> {
                           <Card.Header>
                             {kitState
                               .andThen(kitState => kitState.details)
-                              .map((kit: Kit) => kit.name)
-                              .unwrapOr("Unnamed")}
+                              .andThen((kit: Kit) => Option.from(kit.name))
+                              .unwrapOr(t("kit.unnamed"))}
                           </Card.Header>
                           <Card.Meta>Serial: {serial}</Card.Meta>
                         </Card.Content>

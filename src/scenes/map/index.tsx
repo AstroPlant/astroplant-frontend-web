@@ -74,7 +74,7 @@ class KitMap extends React.Component<Props, State> {
                           key={kit.id}
                         >
                           <Popup>
-                            <h3>{kit.name}</h3>
+                            <h3>{kit.name || t("kit.unnamed")}</h3>
                             {kit.description && (
                               <>
                                 <Divider />
