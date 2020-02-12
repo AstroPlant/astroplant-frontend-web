@@ -20,7 +20,7 @@ import TermsAndConditions from "./pages/TermsAndConditions";
 import LogIn from "./scenes/LogIn";
 import SignUp from "./scenes/SignUp";
 import Me from "./scenes/Me";
-import CreateKit from "./pages/CreateKit";
+import CreateKit from "./scenes/CreateKit";
 import Kit from "./scenes/kit";
 import Map from "./scenes/map";
 
