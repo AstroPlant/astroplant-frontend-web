@@ -12,6 +12,7 @@ import TextWidget from "./TextWidget";
 import EmailWidget from "./EmailWidget";
 import TimeWidget from "./TimeWidget";
 import PasswordWidget from "./PasswordWidget";
+import CoordinateField from "./CoordinateField";
 
 export const Theme: ThemeProps = {
   className: "ui warning form",
@@ -20,7 +21,8 @@ export const Theme: ThemeProps = {
   ObjectFieldTemplate,
   ErrorList,
   fields: {
-    TitleField
+    TitleField,
+    Coordinate: CoordinateField
   },
   widgets: {
     CheckboxWidget,

@@ -13,7 +13,9 @@
       "latitude": "Latitude",
       "longitude": "Longitude",
       "activate": "Activate",
-      "deactivate": "Deactivate"
+      "deactivate": "Deactivate",
+      "remove": "Remove",
+      "position": "Position"
     },
     "home": {
       "header": "AstroPlant Prototype",

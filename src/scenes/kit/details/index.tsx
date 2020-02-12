@@ -52,10 +52,25 @@ class KitConfigure extends React.Component<InnerProps, State> {
     done: false
   };
 
+  patchTransform(formData: any) {
+    const { coordinate, ...rest } = formData;
+    if (typeof coordinate === "undefined") {
+      return {
+        latitude: null,
+        longitude: null,
+        ...rest
+      };
+    } else {
+      return {
+        latitude: coordinate.latitude,
+        longitude: coordinate.longitude,
+        ...rest
+      };
+    }
+  }
+
   patchSend(formData: any) {
     const { kit } = this.props;
-
-    console.warn(formData);
 
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.patchKit({
@@ -95,9 +110,23 @@ class KitConfigure extends React.Component<InnerProps, State> {
                   <PatchKitForm
                     schema={patchSchema(t) as any}
                     uiSchema={patchUiSchema as any}
+                    transform={formData => this.patchTransform(formData)}
                     send={formData => this.patchSend(formData)}
                     onResponse={formData => this.onPatchResponse(formData)}
-                    formData={removeNull(kit)}
+                    formData={removeNull({
+                      name: kit.name,
+                      description: kit.description,
+                      coordinate:
+                        typeof kit.latitude === "number" &&
+                        typeof kit.longitude === "number"
+                          ? {
+                              latitude: kit.latitude,
+                              longitude: kit.longitude
+                            }
+                          : null,
+                      privacyPublicDashboard: kit.privacyPublicDashboard,
+                      privacyShowOnMap: kit.privacyShowOnMap
+                    })}
                   />
                 );
               }}

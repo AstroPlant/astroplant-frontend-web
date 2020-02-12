@@ -58,6 +58,23 @@ class CreateKit extends Component<Props, State> {
     this.setState({ done: true, result: response });
   }
 
+  transform(formData: any) {
+    const { coordinate, ...rest } = formData;
+    if (typeof coordinate === "undefined") {
+      return {
+        latitude: null,
+        longitude: null,
+        ...rest
+      };
+    } else {
+      return {
+        latitude: coordinate.latitude,
+        longitude: coordinate.longitude,
+        ...rest
+      };
+    }
+  }
+
   send(formData: any) {
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.createKit({ newKit: formData });
@@ -73,8 +90,14 @@ class CreateKit extends Component<Props, State> {
       properties: {
         name: { type: "string", title: t("common.name") },
         description: { type: "string", title: t("common.description") },
-        latitude: { type: "number", title: t("common.latitude") },
-        longitude: { type: "number", title: t("common.longitude") },
+        coordinate: {
+          type: "object",
+          required: ["latitude", "longitude"],
+          properties: {
+            latitude: { type: "number", title: t("common.latitude") },
+            longitude: { type: "number", title: t("common.longitude") }
+          }
+        },
         privacyPublicDashboard: {
           type: "boolean",
           default: false,
@@ -90,7 +113,10 @@ class CreateKit extends Component<Props, State> {
 
     const uiSchema = {
       description: {
-        "ui:widget": "textarea",
+        "ui:widget": "textarea"
+      },
+      coordinate: {
+        "ui:field": "Coordinate"
       }
     };
 
@@ -147,6 +173,7 @@ class CreateKit extends Component<Props, State> {
                   schema={schema}
                   uiSchema={uiSchema}
                   validate={validate}
+                  transform={this.transform.bind(this)}
                   send={this.send.bind(this)}
                   onResponse={this.onResponse.bind(this)}
                   submitLabel={t("createKit.create")}
