@@ -141,7 +141,14 @@ class KitConfigure extends React.Component<InnerProps, State> {
                               latitude: kit.latitude,
                               longitude: kit.longitude
                             }}
-                          />
+                          >
+                            <p>
+                              {t("common.latitude")}: {kit.latitude.toFixed(4)}
+                              <br />
+                              {t("common.longitude")}:{" "}
+                              {kit.longitude.toFixed(4)}
+                            </p>
+                          </MapWithMarker>
                         </>
                       )}
                   </div>
