@@ -100,12 +100,12 @@ class CreateKit extends Component<Props, State> {
         },
         privacyPublicDashboard: {
           type: "boolean",
-          default: false,
+          default: true,
           title: t("kit.privacyPublicDashboard")
         },
         privacyShowOnMap: {
           type: "boolean",
-          default: false,
+          default: true,
           title: t("kit.privacyShowOnMap")
         }
       }
