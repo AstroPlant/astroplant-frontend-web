@@ -36,6 +36,7 @@ const AggregateMeasurementsChart = (props: Props) => {
     quantityType,
     measurements,
     t,
+    tReady,
     ...rest
   } = props;
   return (
