@@ -10,7 +10,7 @@ During the build process, environment variables are used to configure the server
 | Variable | Description | Default |
 | --- | --- | --- |
 | `REACT_APP_API_URL` | The API url. | `http://localhost:8080` |
-| `REACT_APP_WEBSOCKET_URL` | The websocket url. | `ws://localhost:8081` |
+| `REACT_APP_WEBSOCKET_URL` | The websocket url. | `ws://localhost:8080/ws` |
 
 In the project directory, you can run:
 

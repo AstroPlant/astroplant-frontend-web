@@ -14,7 +14,7 @@ import { webSocket } from "rxjs/webSocket";
 import * as kitActions from "../kit/actions";
 import { RawMeasurement } from "../kit/reducer";
 
-const webSocketSubject = webSocket(process.env.REACT_APP_WEBSOCKET_URL || "ws://localhost:8081");
+const webSocketSubject = webSocket(process.env.REACT_APP_WEBSOCKET_URL || "ws://localhost:8080/ws");
 const webSocketMessages: Observable<any> = webSocketSubject.pipe(
   share(),
 );
