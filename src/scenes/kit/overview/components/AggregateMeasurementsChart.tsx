@@ -39,13 +39,20 @@ const AggregateMeasurementsChart = (props: Props) => {
     tReady,
     ...rest
   } = props;
+  const transformedMeasurements = measurements.map(measurements =>
+    measurements.map(({ datetimeStart, datetimeEnd, ...rest }) => ({
+      datetimeStart: new Date(datetimeStart).getTime(),
+      datetimeEnd: new Date(datetimeEnd).getTime(),
+      ...rest
+    }))
+  );
   return (
     <Card color="blue" fluid {...rest}>
       <Card.Content>
         <Card.Header>{quantityType.physicalQuantity}</Card.Header>
         <Card.Description textAlign="center">
           <ResponsiveContainer height={300} width="100%">
-            <ComposedChart data={measurements.unwrapOr([])}>
+            <ComposedChart data={transformedMeasurements.unwrapOr([])}>
               <Tooltip
                 formatter={(value: any, name: any) =>
                   parseFloat(value.toPrecision(4))
@@ -56,6 +63,7 @@ const AggregateMeasurementsChart = (props: Props) => {
                 dataKey="datetimeStart"
                 tickFormatter={tick => moment(tick).calendar()}
                 minTickGap={40}
+                scale="linear"
               />
               <YAxis
                 yAxisId="left"
