@@ -66,7 +66,7 @@ const map = (props: Props) => {
 
   return {
     ...props,
-    option: Option.from(kitState.configurations[configurationId])
+    option: Option.from(kitState.configurations.unwrap()[configurationId])
   };
 };
 

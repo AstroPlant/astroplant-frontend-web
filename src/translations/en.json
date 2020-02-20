@@ -77,6 +77,7 @@
       "unnamed": "Unnamed Kit",
       "privacyPublicDashboard": "Make the kit's dashboard public",
       "privacyShowOnMap": "Show the kit's location on the public map",
+      "noActiveConfiguration": "This kit has no active configuration",
       "notFound": {
         "header": "Kit not found",
         "body": "Sorry, the kit with serial <1>{{serial}}</1> could not be found."

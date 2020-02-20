@@ -23,7 +23,7 @@ export interface RawMeasurement extends Measurement {
 
 export interface KitState {
   details: Option<Kit>;
-  configurations: { [id: string]: KitConfigurationState };
+  configurations: Option<{ [id: string]: KitConfigurationState }>;
   loadingConfigurations: boolean;
   rawMeasurements: { [key: string]: RawMeasurement };
   status: "None" | "Fetching" | "NotFound" | "NotAuthorized" | "Fetched";
@@ -41,7 +41,7 @@ const initial: KitsState = {
 
 const initialKit: KitState = {
   details: Option.none(),
-  configurations: {},
+  configurations: Option.none(),
   loadingConfigurations: false,
   rawMeasurements: {},
   status: "None"
@@ -60,7 +60,11 @@ const kitReducer = createReducer<KitState, KitAction>(initialKit)
     return { ...state, status: "NotAuthorized" };
   })
   .handleAction(actions.addKit, (state, action) => {
-    return { ...state, details: Option.some(action.payload), status: "Fetched" };
+    return {
+      ...state,
+      details: Option.some(action.payload),
+      status: "Fetched"
+    };
   })
   .handleAction(actions.kitConfigurationsRequest, (state, action) => {
     return { ...state, loadingConfigurations: true };
@@ -78,18 +82,23 @@ const kitReducer = createReducer<KitState, KitAction>(initialKit)
     }
     return {
       ...state,
-      configurations,
+      configurations: Option.some(configurations),
       loadingConfigurations: false
     };
   })
   .handleAction(actions.kitSetAllConfigurationsInactive, (state, action) => {
-    let configurations: { [id: string]: KitConfigurationState } = {};
-    for (const id of Object.keys(state.configurations)) {
-      const conf = state.configurations[id];
-      configurations[id] = { ...conf, active: false };
-    }
+    if (state.configurations.isNone()) {
+      return state;
+    } else {
+      const oldConfigurations = state.configurations.unwrap();
+      let configurations: { [id: string]: KitConfigurationState } = {};
+      for (const id of Object.keys(oldConfigurations)) {
+        const conf = oldConfigurations[id];
+        configurations[id] = { ...conf, active: false };
+      }
 
-    return { ...state, configurations };
+      return { ...state, configurations: Option.some(configurations) };
+    }
   })
   .handleAction(actions.rawMeasurementReceived, (state, action) => {
     let rawMeasurements = state.rawMeasurements;
@@ -105,10 +114,13 @@ const kitReducerWrapper = (state: KitState, action: any) => {
   //if (Object.entries(state2.details).length === 0) {
   //  return;
   //}
-  const newConfigurations = kitConfigurationReducerById(
-    state2.configurations,
+  let newConfigurations = Option.some(kitConfigurationReducerById(
+    state2.configurations.unwrapOr({}),
     action
-  ) as any;
+  ) as any);
+  if (state2.configurations.isNone() && newConfigurations.unwrap() === {}) {
+    newConfigurations = Option.none();
+  }
   return { ...state2, configurations: newConfigurations };
 };
 
