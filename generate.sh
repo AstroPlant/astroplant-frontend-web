@@ -1,7 +1,9 @@
 #!/usr/bin/env sh
 set -e
 
-npx openapi-generator generate -i ../../server/rs-api/openapi.yaml -g typescript-rxjs -c generate.yaml -o ./local_modules/astroplant-api/
+# FIXME This points to the astroplant/astroplant-api repository.
+# Perhaps that repository should be added as a git module, for the API specification it provides.
+npx openapi-generator generate -i ../server/rs-api/openapi.yaml -g typescript-rxjs -c generate.yaml -o ./local_modules/astroplant-api/
 
 # Remove previously created types.d.ts if it exists.
 types="./local_modules/astroplant-api/types.d.ts"
