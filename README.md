@@ -12,18 +12,29 @@ During the build process, environment variables are used to configure the server
 | `REACT_APP_API_URL` | The API url. | `http://localhost:8080` |
 | `REACT_APP_WEBSOCKET_URL` | The websocket url. | `ws://localhost:8080/ws` |
 
-In the project directory, you can run:
+### Development server
 
-### `npm start`
+To run the development server, run:
 
-Runs the app in the development mode.
+```sh
+npm start
+```
 
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+This starts the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload if you make edits.
+The page will reload if you make edits. You will also see any lint errors in the console.
 
-You will also see any lint errors in the console.
+### Building
 
-### `npm run build`
+To build the static files, run:
 
-Builds the app for production to the `build` folder.<br>
+```sh
+npm run build
+```
+
+This builds the app for production to the `./build` folder.
+
+## AstroPlant API client module
+This project includes a client for the AstroPlant API as a local module in `./local_modules/astroplant-api`. It is generated automatically from [the openapi.yaml file in the AstroPlant API repository](https://github.com/AstroPlant/astroplant-api/blob/master/openapi.yaml).
+
+To regenerate the API client module, clone the AstroPlant API repository and make your changes to `openapi.yaml`. Make sure the path in `./generate.sh` points to the correct location. Then execute `./generate.sh` in your shell.
