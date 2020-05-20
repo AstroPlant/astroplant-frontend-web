@@ -39,7 +39,7 @@
     "redux-devtools-extension": "^2.13.8",
     "redux-observable": "^1.2.0",
     "redux-persist": "^6.0.0",
-    "rxjs": "^6.5.4",
+    "rxjs": "6.5.5",
     "rxjs-ratelimiter": "^1.0.1",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.88.2",

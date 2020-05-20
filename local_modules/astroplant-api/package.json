@@ -10,7 +10,7 @@
     "prepare": "npm run build"
   },
   "dependencies": {
-    "rxjs": "^6.3.3"
+    "rxjs": "6.5.5"
   },
   "devDependencies": {
     "typescript": "^3.0.1"
