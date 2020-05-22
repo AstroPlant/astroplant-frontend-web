@@ -10,7 +10,7 @@ COPY local_modules ./local_modules
 COPY public ./public
 
 RUN npm install
-RUN (cd ./local_modules/astroplant-api && npm install && npm run build)
+RUN (cd ./local_modules/astroplant-api && npm install)
 
 EXPOSE 3000
 
