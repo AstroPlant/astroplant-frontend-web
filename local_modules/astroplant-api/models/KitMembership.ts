@@ -26,10 +26,10 @@ export interface KitMembership {
      */
     id: number;
     /**
-     * @type {number}
+     * @type {string}
      * @memberof KitMembership
      */
-    user: number;
+    user: string;
     /**
      * @type {Kit}
      * @memberof KitMembership
@@ -46,8 +46,8 @@ export interface KitMembership {
      */
     accessSuper: boolean;
     /**
-     * @type {Date}
+     * @type {string}
      * @memberof KitMembership
      */
-    datetimeLinked: Date;
+    datetimeLinked: string;
 }

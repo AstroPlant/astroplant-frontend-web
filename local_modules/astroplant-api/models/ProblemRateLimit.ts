@@ -12,29 +12,29 @@
  */
 
 import {
-    InlineResponse429ErrorValue,
+    ProblemRateLimitErrorValue,
 } from './';
 
 /**
  * @export
- * @interface InlineResponse429
+ * @interface ProblemRateLimit
  */
-export interface InlineResponse429 {
+export interface ProblemRateLimit {
     /**
      * The error code for rate limit errors: 2
      * @type {number}
-     * @memberof InlineResponse429
+     * @memberof ProblemRateLimit
      */
     errorCode?: number;
     /**
      * The error name for rate limit errors: rateLimit
      * @type {string}
-     * @memberof InlineResponse429
+     * @memberof ProblemRateLimit
      */
     errorName?: string;
     /**
-     * @type {InlineResponse429ErrorValue}
-     * @memberof InlineResponse429
+     * @type {ProblemRateLimitErrorValue}
+     * @memberof ProblemRateLimit
      */
-    errorValue?: InlineResponse429ErrorValue;
+    errorValue?: ProblemRateLimitErrorValue;
 }

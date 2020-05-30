@@ -13,7 +13,7 @@ import ApiForm from "Components/ApiForm";
 
 import HeadTitle from "../Components/HeadTitle";
 
-import { UserApi } from "astroplant-api";
+import { UsersApi } from "astroplant-api";
 
 type State = {
   done: boolean;
@@ -42,7 +42,7 @@ class SignUpPage extends Component<WithTranslation, State> {
   }
 
   send(data: any) {
-    const api = new UserApi();
+    const api = new UsersApi();
     return api.createUser({
       newUser: data
     });

@@ -12,10 +12,11 @@
  */
 
 import { Observable } from 'rxjs';
-import { BaseAPI, HttpHeaders, throwIfRequired, encodeURI } from '../runtime';
+import { BaseAPI, HttpHeaders, throwIfNullOrUndefined, encodeURI } from '../runtime';
 import {
-    InlineResponse429,
-    InlineResponse500,
+    ProblemDetails,
+    ProblemInternalServer,
+    ProblemRateLimit,
 } from '../models';
 
 export interface UptimeRequest {
@@ -34,15 +35,15 @@ export class KitRpcApi extends BaseAPI {
     /**
      * Query the kit for its uptime.
      */
-    uptime = (requestParameters: UptimeRequest): Observable<number> => {
-        throwIfRequired(requestParameters, 'kitSerial', 'uptime');
+    uptime = ({ kitSerial }: UptimeRequest): Observable<number> => {
+        throwIfNullOrUndefined(kitSerial, 'uptime');
 
         const headers: HttpHeaders = {
-            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
         return this.request<number>({
-            path: '/kit-rpc/{kitSerial}/uptime'.replace('{kitSerial}', encodeURI(requestParameters.kitSerial)),
+            path: '/kit-rpc/{kitSerial}/uptime'.replace('{kitSerial}', encodeURI(kitSerial)),
             method: 'GET',
             headers,
         });
@@ -51,15 +52,15 @@ export class KitRpcApi extends BaseAPI {
     /**
      * Query the kit for the version it is running.
      */
-    version = (requestParameters: VersionRequest): Observable<string> => {
-        throwIfRequired(requestParameters, 'kitSerial', 'version');
+    version = ({ kitSerial }: VersionRequest): Observable<string> => {
+        throwIfNullOrUndefined(kitSerial, 'version');
 
         const headers: HttpHeaders = {
-            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
         return this.request<string>({
-            path: '/kit-rpc/{kitSerial}/version'.replace('{kitSerial}', encodeURI(requestParameters.kitSerial)),
+            path: '/kit-rpc/{kitSerial}/version'.replace('{kitSerial}', encodeURI(kitSerial)),
             method: 'GET',
             headers,
         });

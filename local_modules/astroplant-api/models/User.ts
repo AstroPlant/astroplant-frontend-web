@@ -13,12 +13,22 @@
 
 /**
  * @export
- * @interface InlineObject3
+ * @interface User
  */
-export interface InlineObject3 {
+export interface User {
     /**
      * @type {string}
-     * @memberof InlineObject3
+     * @memberof User
      */
-    refreshToken: string;
+    username: string;
+    /**
+     * @type {string}
+     * @memberof User
+     */
+    displayName: string;
+    /**
+     * @type {string}
+     * @memberof User
+     */
+    gravatar: string;
 }

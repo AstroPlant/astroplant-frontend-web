@@ -12,11 +12,10 @@
  */
 
 import { Observable } from 'rxjs';
-import { BaseAPI, HttpHeaders, HttpQuery, throwIfRequired, encodeURI } from '../runtime';
+import { BaseAPI, HttpHeaders, HttpQuery, throwIfNullOrUndefined, encodeURI } from '../runtime';
 import {
+    AggregateMeasurement,
     InlineResponse201,
-    InlineResponse429,
-    InlineResponse500,
     Kit,
     KitConfiguration,
     KitConfigurationWithPeripherals,
@@ -29,6 +28,8 @@ import {
     Peripheral,
     Permission,
     ProblemDetails,
+    ProblemInternalServer,
+    ProblemRateLimit,
 } from '../models';
 
 export interface CreateConfigurationRequest {
@@ -50,6 +51,10 @@ export interface DeletePeripheralRequest {
     kitSerial: string;
     configurationId: number;
     peripheralId: number;
+}
+
+export interface ListAggregateMeasurementsRequest {
+    kitSerial: string;
 }
 
 export interface ListConfigurationsRequest {
@@ -98,17 +103,17 @@ export class KitsApi extends BaseAPI {
     /**
      * Create a new configuration.
      */
-    createConfiguration = (requestParameters: CreateConfigurationRequest): Observable<KitConfiguration> => {
-        throwIfRequired(requestParameters, 'kitSerial', 'createConfiguration');
-        throwIfRequired(requestParameters, 'newKitConfiguration', 'createConfiguration');
+    createConfiguration = ({ kitSerial, newKitConfiguration }: CreateConfigurationRequest): Observable<KitConfiguration> => {
+        throwIfNullOrUndefined(kitSerial, 'createConfiguration');
+        throwIfNullOrUndefined(newKitConfiguration, 'createConfiguration');
 
         const headers: HttpHeaders = {
             'Content-Type': 'application/json',
-            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
-        const query: HttpQuery = {
-            ...(requestParameters.kitSerial && { 'kitSerial': requestParameters.kitSerial }),
+        const query: HttpQuery = { // required parameters are used directly since they are already checked by throwIfNullOrUndefined
+            'kitSerial': kitSerial,
         };
 
         return this.request<KitConfiguration>({
@@ -116,73 +121,73 @@ export class KitsApi extends BaseAPI {
             method: 'POST',
             headers,
             query,
-            body: requestParameters.newKitConfiguration,
+            body: newKitConfiguration,
         });
     };
 
     /**
      * Create a kit.
      */
-    createKit = (requestParameters: CreateKitRequest): Observable<InlineResponse201> => {
-        throwIfRequired(requestParameters, 'newKit', 'createKit');
+    createKit = ({ newKit }: CreateKitRequest): Observable<InlineResponse201> => {
+        throwIfNullOrUndefined(newKit, 'createKit');
 
         const headers: HttpHeaders = {
             'Content-Type': 'application/json',
-            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
         return this.request<InlineResponse201>({
             path: '/kits',
             method: 'POST',
             headers,
-            body: requestParameters.newKit,
+            body: newKit,
         });
     };
 
     /**
      * Add a peripheral to the configuration.
      */
-    createPeripheral = (requestParameters: CreatePeripheralRequest): Observable<Peripheral> => {
-        throwIfRequired(requestParameters, 'kitSerial', 'createPeripheral');
-        throwIfRequired(requestParameters, 'configurationId', 'createPeripheral');
-        throwIfRequired(requestParameters, 'newPeripheral', 'createPeripheral');
+    createPeripheral = ({ kitSerial, configurationId, newPeripheral }: CreatePeripheralRequest): Observable<Peripheral> => {
+        throwIfNullOrUndefined(kitSerial, 'createPeripheral');
+        throwIfNullOrUndefined(configurationId, 'createPeripheral');
+        throwIfNullOrUndefined(newPeripheral, 'createPeripheral');
 
         const headers: HttpHeaders = {
             'Content-Type': 'application/json',
-            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
-        const query: HttpQuery = {
-            ...(requestParameters.kitSerial && { 'kitSerial': requestParameters.kitSerial }),
+        const query: HttpQuery = { // required parameters are used directly since they are already checked by throwIfNullOrUndefined
+            'kitSerial': kitSerial,
         };
 
         return this.request<Peripheral>({
-            path: '/kit-configurations/{configurationId}/peripherals'.replace('{configurationId}', encodeURI(requestParameters.configurationId)),
+            path: '/kit-configurations/{configurationId}/peripherals'.replace('{configurationId}', encodeURI(configurationId)),
             method: 'POST',
             headers,
             query,
-            body: requestParameters.newPeripheral,
+            body: newPeripheral,
         });
     };
 
     /**
      * Delete a peripheral.
      */
-    deletePeripheral = (requestParameters: DeletePeripheralRequest): Observable<void> => {
-        throwIfRequired(requestParameters, 'kitSerial', 'deletePeripheral');
-        throwIfRequired(requestParameters, 'configurationId', 'deletePeripheral');
-        throwIfRequired(requestParameters, 'peripheralId', 'deletePeripheral');
+    deletePeripheral = ({ kitSerial, configurationId, peripheralId }: DeletePeripheralRequest): Observable<void> => {
+        throwIfNullOrUndefined(kitSerial, 'deletePeripheral');
+        throwIfNullOrUndefined(configurationId, 'deletePeripheral');
+        throwIfNullOrUndefined(peripheralId, 'deletePeripheral');
 
         const headers: HttpHeaders = {
-            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
-        const query: HttpQuery = {
-            ...(requestParameters.kitSerial && { 'kitSerial': requestParameters.kitSerial }),
+        const query: HttpQuery = { // required parameters are used directly since they are already checked by throwIfNullOrUndefined
+            'kitSerial': kitSerial,
         };
 
         return this.request<void>({
-            path: '/kit-configurations/{configurationId}/peripherals/{peripheralId}'.replace('{configurationId}', encodeURI(requestParameters.configurationId)).replace('{peripheralId}', encodeURI(requestParameters.peripheralId)),
+            path: '/kit-configurations/{configurationId}/peripherals/{peripheralId}'.replace('{configurationId}', encodeURI(configurationId)).replace('{peripheralId}', encodeURI(peripheralId)),
             method: 'DELETE',
             headers,
             query,
@@ -190,17 +195,34 @@ export class KitsApi extends BaseAPI {
     };
 
     /**
-     * The configurations of the specified kit.
+     * Aggregate measurements made by a kit in the last 5 days.
      */
-    listConfigurations = (requestParameters: ListConfigurationsRequest): Observable<Array<KitConfigurationWithPeripherals>> => {
-        throwIfRequired(requestParameters, 'kitSerial', 'listConfigurations');
+    listAggregateMeasurements = ({ kitSerial }: ListAggregateMeasurementsRequest): Observable<Array<AggregateMeasurement>> => {
+        throwIfNullOrUndefined(kitSerial, 'listAggregateMeasurements');
 
         const headers: HttpHeaders = {
-            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
-        const query: HttpQuery = {
-            ...(requestParameters.kitSerial && { 'kitSerial': requestParameters.kitSerial }),
+        return this.request<Array<AggregateMeasurement>>({
+            path: '/kits/{kitSerial}/aggregate-measurements'.replace('{kitSerial}', encodeURI(kitSerial)),
+            method: 'GET',
+            headers,
+        });
+    };
+
+    /**
+     * The configurations of the specified kit.
+     */
+    listConfigurations = ({ kitSerial }: ListConfigurationsRequest): Observable<Array<KitConfigurationWithPeripherals>> => {
+        throwIfNullOrUndefined(kitSerial, 'listConfigurations');
+
+        const headers: HttpHeaders = {
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
+        };
+
+        const query: HttpQuery = { // required parameters are used directly since they are already checked by throwIfNullOrUndefined
+            'kitSerial': kitSerial,
         };
 
         return this.request<Array<KitConfigurationWithPeripherals>>({
@@ -214,11 +236,11 @@ export class KitsApi extends BaseAPI {
     /**
      * List all kits set to be shown on the public map.
      */
-    listKits = (requestParameters: ListKitsRequest): Observable<Array<Kit>> => {
+    listKits = ({ after }: ListKitsRequest): Observable<Array<Kit>> => {
 
-        const query: HttpQuery = {
-            ...(requestParameters.after && { 'after': requestParameters.after }),
-        };
+        const query: HttpQuery = {};
+
+        if (after != null) { query['after'] = after; }
 
         return this.request<Array<Kit>>({
             path: '/kits',
@@ -230,15 +252,15 @@ export class KitsApi extends BaseAPI {
     /**
      * List all actions you are permitted to perform on the specified kit.
      */
-    listPermissions = (requestParameters: ListPermissionsRequest): Observable<Array<Permission>> => {
+    listPermissions = ({ kitSerial }: ListPermissionsRequest): Observable<Array<Permission>> => {
 
         const headers: HttpHeaders = {
-            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
-        const query: HttpQuery = {
-            ...(requestParameters.kitSerial && { 'kitSerial': requestParameters.kitSerial }),
-        };
+        const query: HttpQuery = {};
+
+        if (kitSerial != null) { query['kitSerial'] = kitSerial; }
 
         return this.request<Array<Permission>>({
             path: '/permissions',
@@ -251,88 +273,88 @@ export class KitsApi extends BaseAPI {
     /**
      * Update the configuration.
      */
-    patchConfiguration = (requestParameters: PatchConfigurationRequest): Observable<KitConfiguration> => {
-        throwIfRequired(requestParameters, 'kitSerial', 'patchConfiguration');
-        throwIfRequired(requestParameters, 'configurationId', 'patchConfiguration');
-        throwIfRequired(requestParameters, 'patchKitConfiguration', 'patchConfiguration');
+    patchConfiguration = ({ kitSerial, configurationId, patchKitConfiguration }: PatchConfigurationRequest): Observable<KitConfiguration> => {
+        throwIfNullOrUndefined(kitSerial, 'patchConfiguration');
+        throwIfNullOrUndefined(configurationId, 'patchConfiguration');
+        throwIfNullOrUndefined(patchKitConfiguration, 'patchConfiguration');
 
         const headers: HttpHeaders = {
             'Content-Type': 'application/json',
-            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
-        const query: HttpQuery = {
-            ...(requestParameters.kitSerial && { 'kitSerial': requestParameters.kitSerial }),
+        const query: HttpQuery = { // required parameters are used directly since they are already checked by throwIfNullOrUndefined
+            'kitSerial': kitSerial,
         };
 
         return this.request<KitConfiguration>({
-            path: '/kit-configurations/{configurationId}'.replace('{configurationId}', encodeURI(requestParameters.configurationId)),
+            path: '/kit-configurations/{configurationId}'.replace('{configurationId}', encodeURI(configurationId)),
             method: 'PATCH',
             headers,
             query,
-            body: requestParameters.patchKitConfiguration,
+            body: patchKitConfiguration,
         });
     };
 
     /**
      * Update the kit details.
      */
-    patchKit = (requestParameters: PatchKitRequest): Observable<Kit> => {
-        throwIfRequired(requestParameters, 'kitSerial', 'patchKit');
-        throwIfRequired(requestParameters, 'patchKit', 'patchKit');
+    patchKit = ({ kitSerial, patchKit }: PatchKitRequest): Observable<Kit> => {
+        throwIfNullOrUndefined(kitSerial, 'patchKit');
+        throwIfNullOrUndefined(patchKit, 'patchKit');
 
         const headers: HttpHeaders = {
             'Content-Type': 'application/json',
-            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
         return this.request<Kit>({
-            path: '/kits/{kitSerial}'.replace('{kitSerial}', encodeURI(requestParameters.kitSerial)),
+            path: '/kits/{kitSerial}'.replace('{kitSerial}', encodeURI(kitSerial)),
             method: 'PATCH',
             headers,
-            body: requestParameters.patchKit,
+            body: patchKit,
         });
     };
 
     /**
      * Update a peripheral.
      */
-    patchPeripheral = (requestParameters: PatchPeripheralRequest): Observable<void> => {
-        throwIfRequired(requestParameters, 'kitSerial', 'patchPeripheral');
-        throwIfRequired(requestParameters, 'configurationId', 'patchPeripheral');
-        throwIfRequired(requestParameters, 'peripheralId', 'patchPeripheral');
-        throwIfRequired(requestParameters, 'patchPeripheral', 'patchPeripheral');
+    patchPeripheral = ({ kitSerial, configurationId, peripheralId, patchPeripheral }: PatchPeripheralRequest): Observable<void> => {
+        throwIfNullOrUndefined(kitSerial, 'patchPeripheral');
+        throwIfNullOrUndefined(configurationId, 'patchPeripheral');
+        throwIfNullOrUndefined(peripheralId, 'patchPeripheral');
+        throwIfNullOrUndefined(patchPeripheral, 'patchPeripheral');
 
         const headers: HttpHeaders = {
             'Content-Type': 'application/json',
-            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
-        const query: HttpQuery = {
-            ...(requestParameters.kitSerial && { 'kitSerial': requestParameters.kitSerial }),
+        const query: HttpQuery = { // required parameters are used directly since they are already checked by throwIfNullOrUndefined
+            'kitSerial': kitSerial,
         };
 
         return this.request<void>({
-            path: '/kit-configurations/{configurationId}/peripherals/{peripheralId}'.replace('{configurationId}', encodeURI(requestParameters.configurationId)).replace('{peripheralId}', encodeURI(requestParameters.peripheralId)),
+            path: '/kit-configurations/{configurationId}/peripherals/{peripheralId}'.replace('{configurationId}', encodeURI(configurationId)).replace('{peripheralId}', encodeURI(peripheralId)),
             method: 'PATCH',
             headers,
             query,
-            body: requestParameters.patchPeripheral,
+            body: patchPeripheral,
         });
     };
 
     /**
      * Reset the kit\'s password.
      */
-    resetPassword = (requestParameters: ResetPasswordRequest): Observable<string> => {
-        throwIfRequired(requestParameters, 'kitSerial', 'resetPassword');
+    resetPassword = ({ kitSerial }: ResetPasswordRequest): Observable<string> => {
+        throwIfNullOrUndefined(kitSerial, 'resetPassword');
 
         const headers: HttpHeaders = {
-            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
         return this.request<string>({
-            path: '/kits/{kitSerial}/password'.replace('{kitSerial}', encodeURI(requestParameters.kitSerial)),
+            path: '/kits/{kitSerial}/password'.replace('{kitSerial}', encodeURI(kitSerial)),
             method: 'POST',
             headers,
         });
@@ -341,15 +363,15 @@ export class KitsApi extends BaseAPI {
     /**
      * Info for a specific kit.
      */
-    showKitBySerial = (requestParameters: ShowKitBySerialRequest): Observable<Kit> => {
-        throwIfRequired(requestParameters, 'kitSerial', 'showKitBySerial');
+    showKitBySerial = ({ kitSerial }: ShowKitBySerialRequest): Observable<Kit> => {
+        throwIfNullOrUndefined(kitSerial, 'showKitBySerial');
 
         const headers: HttpHeaders = {
-            ...(this.configuration.username && this.configuration.password && { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` }),
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
         return this.request<Kit>({
-            path: '/kits/{kitSerial}'.replace('{kitSerial}', encodeURI(requestParameters.kitSerial)),
+            path: '/kits/{kitSerial}'.replace('{kitSerial}', encodeURI(kitSerial)),
             method: 'GET',
             headers,
         });

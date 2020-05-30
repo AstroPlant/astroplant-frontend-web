@@ -18,53 +18,7 @@ import {
 } from './';
 
 /**
+ * @type KitConfigurationWithPeripherals
  * @export
- * @interface KitConfigurationWithPeripherals
  */
-export interface KitConfigurationWithPeripherals {
-    /**
-     * @type {number}
-     * @memberof KitConfigurationWithPeripherals
-     */
-    id: number;
-    /**
-     * @type {number}
-     * @memberof KitConfigurationWithPeripherals
-     */
-    kitId: number;
-    /**
-     * @type {string}
-     * @memberof KitConfigurationWithPeripherals
-     */
-    description?: string;
-    /**
-     * @type {string}
-     * @memberof KitConfigurationWithPeripherals
-     */
-    rulesSupervisorModuleName: string;
-    /**
-     * @type {string}
-     * @memberof KitConfigurationWithPeripherals
-     */
-    rulesSupervisorClassName: string;
-    /**
-     * @type {object}
-     * @memberof KitConfigurationWithPeripherals
-     */
-    rules: object;
-    /**
-     * @type {boolean}
-     * @memberof KitConfigurationWithPeripherals
-     */
-    active: boolean;
-    /**
-     * @type {boolean}
-     * @memberof KitConfigurationWithPeripherals
-     */
-    neverUsed: boolean;
-    /**
-     * @type {Array<Peripheral>}
-     * @memberof KitConfigurationWithPeripherals
-     */
-    peripherals: Array<Peripheral>;
-}
+export type KitConfigurationWithPeripherals = KitConfiguration & KitConfigurationWithPeripheralsAllOf;

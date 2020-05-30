@@ -52,13 +52,13 @@ export interface AggregateMeasurement {
      */
     value: number;
     /**
-     * @type {Date}
+     * @type {string}
      * @memberof AggregateMeasurement
      */
-    datetimeStart: Date;
+    datetimeStart: string;
     /**
-     * @type {Date}
+     * @type {string}
      * @memberof AggregateMeasurement
      */
-    datetimeEnd: Date;
+    datetimeEnd: string;
 }

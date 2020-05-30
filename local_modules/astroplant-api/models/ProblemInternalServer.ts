@@ -13,17 +13,19 @@
 
 /**
  * @export
- * @interface InlineObject2
+ * @interface ProblemInternalServer
  */
-export interface InlineObject2 {
+export interface ProblemInternalServer {
     /**
-     * @type {string}
-     * @memberof InlineObject2
+     * The error code for internal server errors: 1
+     * @type {number}
+     * @memberof ProblemInternalServer
      */
-    username: string;
+    errorCode?: number;
     /**
+     * The error name for internal server errors: internalServer
      * @type {string}
-     * @memberof InlineObject2
+     * @memberof ProblemInternalServer
      */
-    password: string;
+    errorName?: string;
 }

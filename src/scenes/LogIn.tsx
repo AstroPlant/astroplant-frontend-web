@@ -16,7 +16,7 @@ import {
 
 import HeadTitle from "../Components/HeadTitle";
 
-import { AuthenticateApi } from "astroplant-api";
+import { AccessApi } from "astroplant-api";
 
 const LogInForm = ApiForm<any, AuthenticationTokens>();
 
@@ -38,7 +38,7 @@ class LogInPage extends Component<Props, State> {
 
   send = (data: any) => {
     this.setState({ rememberMe: data.rememberMe });
-    const api = new AuthenticateApi();
+    const api = new AccessApi();
     return api.authenticateByCredentials({
       authUser: { username: data.username, password: data.password }
     });

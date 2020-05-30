@@ -13,19 +13,12 @@
 
 /**
  * @export
- * @interface InlineResponse500
+ * @interface ProblemRateLimitErrorValue
  */
-export interface InlineResponse500 {
+export interface ProblemRateLimitErrorValue {
     /**
-     * The error code for internal server errors: 1
      * @type {number}
-     * @memberof InlineResponse500
+     * @memberof ProblemRateLimitErrorValue
      */
-    errorCode?: number;
-    /**
-     * The error name for internal server errors: internalServer
-     * @type {string}
-     * @memberof InlineResponse500
-     */
-    errorName?: string;
+    waitTimeMillis?: number;
 }

@@ -13,12 +13,12 @@
 
 /**
  * @export
- * @interface InlineResponse429ErrorValue
+ * @interface ProblemInvalidParametersAllOf
  */
-export interface InlineResponse429ErrorValue {
+export interface ProblemInvalidParametersAllOf {
     /**
-     * @type {number}
-     * @memberof InlineResponse429ErrorValue
+     * @type {{ [key: string]: Array<string | object>; }}
+     * @memberof ProblemInvalidParametersAllOf
      */
-    waitTimeMillis?: number;
+    invalidParameters?: { [key: string]: Array<string | object>; };
 }

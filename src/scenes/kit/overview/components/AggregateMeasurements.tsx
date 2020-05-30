@@ -8,7 +8,7 @@ import { KitState } from "modules/kit/reducer";
 import {
   PeripheralDefinition,
   QuantityType,
-  MeasurementsApi
+  KitsApi,
 } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 
@@ -36,7 +36,7 @@ class AggregateMeasurements extends React.Component<Props> {
   async componentDidMount() {
     const { kitState } = this.props;
     try {
-      const api = new MeasurementsApi(AuthConfiguration.Instance);
+      const api = new KitsApi(AuthConfiguration.Instance);
       const aggregateMeasurements = await api
         .listAggregateMeasurements({
           kitSerial: kitState.details.unwrap().serial
@@ -63,8 +63,8 @@ class AggregateMeasurements extends React.Component<Props> {
           idxAggregateMeasurements[idxPerQt][idxMeasurement] =
             stateAggregateMeasurements[idxPerQt].length;
           stateAggregateMeasurements[idxPerQt].push({
-            datetimeStart: aggregateMeasurement.datetimeStart,
-            datetimeEnd: aggregateMeasurement.datetimeEnd,
+            datetimeStart: new Date(aggregateMeasurement.datetimeStart),
+            datetimeEnd: new Date(aggregateMeasurement.datetimeEnd),
             values: {}
           });
         }

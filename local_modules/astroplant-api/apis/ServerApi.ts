@@ -14,8 +14,8 @@
 import { Observable } from 'rxjs';
 import { BaseAPI } from '../runtime';
 import {
-    InlineResponse429,
-    InlineResponse500,
+    ProblemInternalServer,
+    ProblemRateLimit,
 } from '../models';
 
 /**

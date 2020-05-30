@@ -12,14 +12,15 @@
  */
 
 import { Observable } from 'rxjs';
-import { BaseAPI, HttpHeaders, throwIfRequired } from '../runtime';
+import { BaseAPI, HttpHeaders, throwIfNullOrUndefined } from '../runtime';
 import {
     AuthRefreshToken,
     AuthUser,
     AuthenticationTokens,
-    InlineResponse429,
-    InlineResponse500,
-    ProblemDetails,
+    FullUser,
+    ProblemInternalServer,
+    ProblemInvalidParameters,
+    ProblemRateLimit,
 } from '../models';
 
 export interface AuthenticateByCredentialsRequest {
@@ -33,13 +34,13 @@ export interface ObtainAccessTokenFromRefreshTokenRequest {
 /**
  * no description
  */
-export class AuthenticateApi extends BaseAPI {
+export class AccessApi extends BaseAPI {
 
     /**
      * Authenticate yourself by username and password.
      */
-    authenticateByCredentials = (requestParameters: AuthenticateByCredentialsRequest): Observable<AuthenticationTokens> => {
-        throwIfRequired(requestParameters, 'authUser', 'authenticateByCredentials');
+    authenticateByCredentials = ({ authUser }: AuthenticateByCredentialsRequest): Observable<AuthenticationTokens> => {
+        throwIfNullOrUndefined(authUser, 'authenticateByCredentials');
 
         const headers: HttpHeaders = {
             'Content-Type': 'application/json',
@@ -49,15 +50,15 @@ export class AuthenticateApi extends BaseAPI {
             path: '/me/auth',
             method: 'POST',
             headers,
-            body: requestParameters.authUser,
+            body: authUser,
         });
     };
 
     /**
      * Obtain an access token from a refresh token.
      */
-    obtainAccessTokenFromRefreshToken = (requestParameters: ObtainAccessTokenFromRefreshTokenRequest): Observable<string> => {
-        throwIfRequired(requestParameters, 'authRefreshToken', 'obtainAccessTokenFromRefreshToken');
+    obtainAccessTokenFromRefreshToken = ({ authRefreshToken }: ObtainAccessTokenFromRefreshTokenRequest): Observable<string> => {
+        throwIfNullOrUndefined(authRefreshToken, 'obtainAccessTokenFromRefreshToken');
 
         const headers: HttpHeaders = {
             'Content-Type': 'application/json',
@@ -67,7 +68,22 @@ export class AuthenticateApi extends BaseAPI {
             path: '/me/refresh',
             method: 'POST',
             headers,
-            body: requestParameters.authRefreshToken,
+            body: authRefreshToken,
+        });
+    };
+
+    /**
+     * Your user information.
+     */
+    showMe = (): Observable<FullUser> => {
+        const headers: HttpHeaders = {
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
+        };
+
+        return this.request<FullUser>({
+            path: '/me',
+            method: 'GET',
+            headers,
         });
     };
 

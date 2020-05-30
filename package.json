@@ -62,7 +62,7 @@
     "not op_mini all"
   ],
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "0.0.19-4.1.2",
+    "@openapitools/openapi-generator-cli": "^1.0.13-4.3.1",
     "openapi-to-typescript": "^4.0.0",
     "typescript": "^3.7.5"
   }

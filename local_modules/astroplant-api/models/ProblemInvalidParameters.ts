@@ -11,24 +11,13 @@
  * Do not edit the class manually.
  */
 
+import {
+    ProblemDetails,
+    ProblemInvalidParametersAllOf,
+} from './';
+
 /**
+ * @type ProblemInvalidParameters
  * @export
- * @interface InlineObject1
  */
-export interface InlineObject1 {
-    /**
-     * @type {string}
-     * @memberof InlineObject1
-     */
-    username: string;
-    /**
-     * @type {string}
-     * @memberof InlineObject1
-     */
-    password: string;
-    /**
-     * @type {string}
-     * @memberof InlineObject1
-     */
-    emailAddress: string;
-}
+export type ProblemInvalidParameters = ProblemDetails & ProblemInvalidParametersAllOf;
