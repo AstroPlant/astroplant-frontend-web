@@ -9,7 +9,7 @@ import ApiButton from "Components/ApiButton";
 import { KitConfigurationState } from "modules/kit/reducer";
 import {
   kitSetAllConfigurationsInactive,
-  kitConfigurationUpdated
+  kitConfigurationUpdated,
 } from "modules/kit/actions";
 
 import { Kit, KitsApi, KitConfiguration } from "astroplant-api";
@@ -37,20 +37,19 @@ class ActivateDeactivate extends React.Component<PInner> {
     this.props.kitSetAllConfigurationsInactive({ serial: kit.serial });
     this.props.kitConfigurationUpdated({
       serial: kit.serial,
-      configuration: response
+      configuration: response,
     });
   }
 
   send() {
-    const { kit, configuration } = this.props;
+    const { configuration } = this.props;
 
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.patchConfiguration({
-      kitSerial: kit.serial,
       configurationId: configuration.id,
       patchKitConfiguration: {
-        active: !configuration.active
-      }
+        active: !configuration.active,
+      },
     });
   }
 
@@ -71,8 +70,8 @@ class ActivateDeactivate extends React.Component<PInner> {
           confirm={() => ({
             content: t("kitConfiguration.deactivateConfirm", {
               kitName,
-              configurationDescription
-            })
+              configurationDescription,
+            }),
           })}
         />
       );
@@ -90,9 +89,9 @@ class ActivateDeactivate extends React.Component<PInner> {
                 : "kitConfiguration.activateConfirm",
               {
                 kitName,
-                configurationDescription
+                configurationDescription,
               }
-            )
+            ),
           })}
         />
       );
@@ -104,15 +103,12 @@ const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
       kitConfigurationUpdated,
-      kitSetAllConfigurationsInactive
+      kitSetAllConfigurationsInactive,
     },
     dispatch
   );
 
 export default compose<PInner, Props>(
-  connect(
-    null,
-    mapDispatchToProps
-  ),
+  connect(null, mapDispatchToProps),
   withTranslation()
 )(ActivateDeactivate);

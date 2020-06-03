@@ -17,7 +17,7 @@ import {
   PeripheralDefinition,
   QuantityType,
   KitsApi,
-  KitConfiguration
+  KitConfiguration,
 } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 
@@ -40,7 +40,7 @@ const RulesForm = ApiForm<any, KitConfiguration>();
 
 class Rules extends React.Component<Props, State> {
   state = {
-    editing: false
+    editing: false,
   };
 
   onResponse(response: KitConfiguration) {
@@ -48,32 +48,36 @@ class Rules extends React.Component<Props, State> {
     this.setState({ editing: false });
     this.props.kitConfigurationUpdated({
       serial: kit.serial,
-      configuration: response
+      configuration: response,
     });
   }
 
   send(formData: any) {
-    const { kit, configuration } = this.props;
+    const { configuration } = this.props;
 
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.patchConfiguration({
-      kitSerial: kit.serial,
       configurationId: configuration.id,
       patchKitConfiguration: {
-        rules: formData
-      }
+        rules: formData,
+      },
     });
   }
 
   render() {
-    const { configuration, quantityTypes, peripheralDefinitions, t } = this.props;
+    const {
+      configuration,
+      quantityTypes,
+      peripheralDefinitions,
+      t,
+    } = this.props;
 
     if (this.state.editing) {
       const conditionSchema: JSONSchema6 = {
         oneOf: [
           {
             title: "Always",
-            type: "null"
+            type: "null",
           },
           {
             title: "Measurement",
@@ -82,41 +86,41 @@ class Rules extends React.Component<Props, State> {
               peripheral: {
                 type: "string",
                 enum: Object.values(configuration.peripherals).map(
-                  peripheral => peripheral.name
-                )
+                  (peripheral) => peripheral.name
+                ),
               },
               quantityType: {
                 type: "number",
                 enum: Object.values(quantityTypes).map(
-                  quantityType => quantityType.id
+                  (quantityType) => quantityType.id
                 ),
                 enumNames: Object.values(quantityTypes).map(
-                  quantityType =>
+                  (quantityType) =>
                     quantityType.physicalQuantity +
                     " in " +
                     quantityType.physicalUnit +
                     (quantityType.physicalUnitSymbol
                       ? " (" + quantityType.physicalUnitSymbol + ")"
                       : "")
-                )
+                ),
               },
               comparison: {
                 type: "string",
                 enum: ["lt", "eq", "gt"],
-                enumNames: ["Less than", "Equal to", "Greater than"]
+                enumNames: ["Less than", "Equal to", "Greater than"],
               },
               value: {
-                type: "number"
-              }
+                type: "number",
+              },
             },
-            required: ["peripheral", "quantityType", "comparison", "value"]
-          }
-        ]
+            required: ["peripheral", "quantityType", "comparison", "value"],
+          },
+        ],
       } as any;
 
       let schema: JSONSchema6 = {
         type: "object",
-        properties: {}
+        properties: {},
       };
 
       let uiSchema: UiSchema = {};
@@ -130,7 +134,7 @@ class Rules extends React.Component<Props, State> {
               time: {
                 type: "string",
                 format: "time",
-                title: "From time"
+                title: "From time",
               },
               conditionalActions: {
                 type: "array",
@@ -140,14 +144,14 @@ class Rules extends React.Component<Props, State> {
                     condition: conditionSchema,
                     actions: {
                       type: "array",
-                      items: commandSchema
-                    }
+                      items: commandSchema,
+                    },
                   },
-                  required: ["condition", "actions"]
-                }
-              }
-            }
-          }
+                  required: ["condition", "actions"],
+                },
+              },
+            },
+          },
         } as JSONSchema6);
 
       for (const peripheral of Object.values(configuration.peripherals)) {
@@ -162,9 +166,9 @@ class Rules extends React.Component<Props, State> {
           uiSchema[peripheral.name] = {
             items: {
               time: {
-                "ui:widget": "TimeWidget"
-              }
-            }
+                "ui:widget": "TimeWidget",
+              },
+            },
           };
         }
       }
@@ -195,19 +199,18 @@ class Rules extends React.Component<Props, State> {
 const mapStateToProps = (state: RootState) => {
   return {
     peripheralDefinitions: state.peripheralDefinition.definitions,
-    quantityTypes: state.quantityType.quantityTypes
+    quantityTypes: state.quantityType.quantityTypes,
   };
 };
 
 const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
-      kitConfigurationUpdated
+      kitConfigurationUpdated,
     },
     dispatch
   );
 
-export default withTranslation()(connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Rules));
+export default withTranslation()(
+  connect(mapStateToProps, mapDispatchToProps)(Rules)
+);

@@ -48,18 +48,16 @@ const DeletePeripheralButton = ApiButton<any>();
 
 class ViewEditPeripheral extends React.Component<PInner, State> {
   state: State = {
-    editing: false
+    editing: false,
   };
 
   sendUpdate = (formData: any) => {
-    const { kit, configuration, peripheral } = this.props;
+    const { peripheral } = this.props;
 
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.patchPeripheral({
-      kitSerial: kit.serial,
-      configurationId: configuration.id,
       peripheralId: peripheral.id,
-      patchPeripheral: formData
+      patchPeripheral: formData,
     });
   };
 
@@ -68,19 +66,17 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
     this.props.peripheralUpdated({
       serial: kit.serial,
       configurationId: configuration.id,
-      peripheral: response
+      peripheral: response,
     });
     this.setState({ editing: false });
   };
 
   sendDelete = () => {
-    const { kit, configuration, peripheral } = this.props;
+    const { peripheral } = this.props;
 
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.deletePeripheral({
-      kitSerial: kit.serial,
-      configurationId: configuration.id,
-      peripheralId: peripheral.id
+      peripheralId: peripheral.id,
     });
   };
 
@@ -89,7 +85,7 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
     this.props.peripheralDeleted({
       serial: kit.serial,
       configurationId: configuration.id,
-      peripheralId: peripheral.id
+      peripheralId: peripheral.id,
     });
   };
 
@@ -104,8 +100,8 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
       required: ["name", "configuration"],
       properties: {
         name: { type: "string", title: t("common.name") },
-        configuration: def.configurationSchema
-      }
+        configuration: def.configurationSchema,
+      },
     };
 
     return (
@@ -121,9 +117,9 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
               uiSchema={{}}
               send={this.sendUpdate}
               onResponse={this.responseUpdate}
-              transform={formData => ({
+              transform={(formData) => ({
                 ...formData,
-                peripheralDefinitionId: def.id
+                peripheralDefinitionId: def.id,
               })}
               formData={peripheral}
             />
@@ -156,10 +152,10 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
                   negative: true,
                   icon: true,
                   labelPosition: "right",
-                  floated: "right"
+                  floated: "right",
                 }}
                 confirm={() => ({
-                  content: t("kitConfiguration.peripherals.deleteConfirm")
+                  content: t("kitConfiguration.peripherals.deleteConfirm"),
                 })}
               >
                 <Icon name="delete" />
@@ -175,7 +171,7 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
 
 const mapStateToProps = (state: RootState) => {
   return {
-    peripheralDefinitions: state.peripheralDefinition.definitions
+    peripheralDefinitions: state.peripheralDefinition.definitions,
   };
 };
 
@@ -183,15 +179,12 @@ const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
       peripheralDeleted,
-      peripheralUpdated
+      peripheralUpdated,
     },
     dispatch
   );
 
 export default compose<PInner, Props>(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withTranslation()
 )(ViewEditPeripheral);

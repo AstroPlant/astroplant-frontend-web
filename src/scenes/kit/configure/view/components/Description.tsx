@@ -29,7 +29,7 @@ const DescriptionForm = ApiForm<string, KitConfiguration>();
 
 class Description extends React.Component<Props, State> {
   state = {
-    editing: false
+    editing: false,
   };
 
   onResponse(response: KitConfiguration) {
@@ -37,20 +37,19 @@ class Description extends React.Component<Props, State> {
     this.setState({ editing: false });
     this.props.kitConfigurationUpdated({
       serial: kit.serial,
-      configuration: response
+      configuration: response,
     });
   }
 
   send(formData: string) {
-    const { kit, configuration } = this.props;
+    const { configuration } = this.props;
 
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.patchConfiguration({
-      kitSerial: kit.serial,
       configurationId: configuration.id,
       patchKitConfiguration: {
-        description: formData
-      }
+        description: formData,
+      },
     });
   }
 
@@ -59,7 +58,7 @@ class Description extends React.Component<Props, State> {
 
     if (this.state.editing) {
       const schema: JSONSchema6 = {
-        type: "string"
+        type: "string",
       };
       const uiSchema = {};
 
@@ -88,12 +87,9 @@ class Description extends React.Component<Props, State> {
 const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
-      kitConfigurationUpdated
+      kitConfigurationUpdated,
     },
     dispatch
   );
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(Description);
+export default connect(null, mapDispatchToProps)(Description);

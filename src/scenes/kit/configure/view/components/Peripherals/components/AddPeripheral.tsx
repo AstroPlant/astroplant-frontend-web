@@ -10,7 +10,7 @@ import {
   Header,
   Button,
   Icon,
-  Transition
+  Transition,
 } from "semantic-ui-react";
 
 import { RootState } from "types";
@@ -51,7 +51,7 @@ class AddPeripheral extends React.Component<PInner, State> {
   state: State = {
     open: false,
     done: false,
-    peripheralDefinition: null
+    peripheralDefinition: null,
   };
 
   handleClose = () => {
@@ -67,16 +67,15 @@ class AddPeripheral extends React.Component<PInner, State> {
   }
 
   send(formData: any) {
-    const { kit, configuration } = this.props;
+    const { configuration } = this.props;
 
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.createPeripheral({
-      kitSerial: kit.serial,
       configurationId: configuration.id,
       newPeripheral: {
         ...formData,
-        peripheralDefinitionId: this.state.peripheralDefinition!.id
-      }
+        peripheralDefinitionId: this.state.peripheralDefinition!.id,
+      },
     });
   }
 
@@ -85,7 +84,7 @@ class AddPeripheral extends React.Component<PInner, State> {
     this.props.peripheralCreated({
       serial: kit.serial,
       configurationId: configuration.id,
-      peripheral: response
+      peripheral: response,
     });
     this.setState({ done: true });
   }
@@ -117,8 +116,8 @@ class AddPeripheral extends React.Component<PInner, State> {
         required: ["name", "configuration"],
         properties: {
           name: { type: "string", title: t("common.name") },
-          configuration: def.configurationSchema
-        }
+          configuration: def.configurationSchema,
+        },
       };
       content = (
         <>
@@ -127,9 +126,9 @@ class AddPeripheral extends React.Component<PInner, State> {
             uiSchema={{}}
             send={this.send.bind(this)}
             onResponse={this.onResponse.bind(this)}
-            transform={formData => ({
+            transform={(formData) => ({
               ...formData,
-              peripheralDefinitionId: def.id
+              peripheralDefinitionId: def.id,
             })}
           />
         </>
@@ -141,7 +140,7 @@ class AddPeripheral extends React.Component<PInner, State> {
             Please select the type of peripheral to add.
           </Header>
           <Card.Group centered>
-            {Object.keys(this.props.peripheralDefinitions).map(id => {
+            {Object.keys(this.props.peripheralDefinitions).map((id) => {
               const def = this.props.peripheralDefinitions[id];
               return (
                 <PeripheralDefinitionCard
@@ -191,22 +190,19 @@ class AddPeripheral extends React.Component<PInner, State> {
 
 const mapStateToProps = (state: RootState) => {
   return {
-    peripheralDefinitions: state.peripheralDefinition.definitions
+    peripheralDefinitions: state.peripheralDefinition.definitions,
   };
 };
 
 const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
-      peripheralCreated
+      peripheralCreated,
     },
     dispatch
   );
 
 export default compose<PInner, Props>(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withTranslation()
 )(AddPeripheral);
