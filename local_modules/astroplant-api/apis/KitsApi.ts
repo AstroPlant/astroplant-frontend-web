@@ -52,6 +52,7 @@ export interface DeletePeripheralRequest {
 
 export interface ListAggregateMeasurementsRequest {
     kitSerial: string;
+    cursor?: string;
 }
 
 export interface ListConfigurationsRequest {
@@ -173,17 +174,22 @@ export class KitsApi extends BaseAPI {
     /**
      * Aggregate measurements made by a kit in the last 5 days.
      */
-    listAggregateMeasurements = ({ kitSerial }: ListAggregateMeasurementsRequest): Observable<Array<AggregateMeasurement>> => {
+    listAggregateMeasurements = ({ kitSerial, cursor }: ListAggregateMeasurementsRequest): Observable<Array<AggregateMeasurement>> => {
         throwIfNullOrUndefined(kitSerial, 'listAggregateMeasurements');
 
         const headers: HttpHeaders = {
             ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
         };
 
+        const query: HttpQuery = {};
+
+        if (cursor != null) { query['cursor'] = cursor; }
+
         return this.request<Array<AggregateMeasurement>>({
             path: '/kits/{kitSerial}/aggregate-measurements'.replace('{kitSerial}', encodeURI(kitSerial)),
             method: 'GET',
             headers,
+            query,
         });
     };
 
