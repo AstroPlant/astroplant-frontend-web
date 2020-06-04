@@ -15,14 +15,14 @@ i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
     resources: {
-      en
+      en,
     },
     lng: "en",
     fallbackLng: "en",
 
     interpolation: {
-      escapeValue: false
-    }
+      escapeValue: false,
+    },
   });
 
 store.dispatch(actions.pageInitializationSuccess());

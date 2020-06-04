@@ -1,0 +1,176 @@
+/**
+ * Currently there are two API client implementations living side-by-side in this codebase:
+ * ./local_modules/astroplant-api, which is automatically generated, and the implementation
+ * here, which is created manually.
+ *
+ * This manual implementation provides more features, such as utilities for following pages
+ * in Link headers. However, this implementation does not yet provide all endpoints and its
+ * interface is subject to change.
+ *
+ * The intention is to, over time, complete this manual implementation and remove the
+ * implementation at ./local_modules/astroplant-api.
+ */
+
+import { ajax, AjaxResponse } from "rxjs/ajax";
+import { map } from "rxjs/operators";
+import { Observable } from "rxjs";
+import parseLinkHeader from "parse-link-header";
+
+import Option from "utils/option";
+import { components } from "./schema";
+type schemas = components["schemas"];
+
+export const BASE_PATH =
+  process.env.REACT_APP_API_URL || "http://localhost:8080";
+
+export interface ConfigurationParameters {
+  basePath?: string; // override base path
+  accessToken?: string | (() => string | null); // parameter for oauth2 security
+}
+
+export class Configuration {
+  constructor(private configuration: ConfigurationParameters = {}) {}
+
+  get basePath(): string {
+    return this.configuration.basePath || BASE_PATH;
+  }
+
+  get accessToken(): () => string | null {
+    const accessToken = this.configuration.accessToken;
+    if (!accessToken) {
+      return () => null;
+    }
+    return typeof accessToken === "string" ? () => accessToken : accessToken;
+  }
+}
+
+export class Response<T> {
+  private status: number;
+  private uri_next: string | null = null;
+  public content: T;
+
+  constructor(private api: BaseApi, ajaxResponse: AjaxResponse) {
+    this.status = ajaxResponse.status;
+    this.content = ajaxResponse.response;
+
+    const link = ajaxResponse.xhr.getResponseHeader("link");
+    if (link !== null) {
+      const parsed = parseLinkHeader(link);
+      this.uri_next = ((parsed || {}).next || {}).url || null;
+    }
+  }
+
+  get statusCode(): number {
+    return this.status;
+  }
+
+  has_next(): boolean {
+    return this.uri_next !== null;
+  }
+
+  next(): Option<Observable<Response<T>>> {
+    if (this.uri_next === null) {
+      return Option.none();
+    } else {
+      return Option.some(this.api.getPath(this.uri_next));
+    }
+  }
+}
+
+export class BaseApi {
+  constructor(protected configuration = new Configuration()) {}
+
+  private createRequestArguments = (options: RequestOptions): any => {
+    let url = this.configuration.basePath + options.path;
+
+    if (
+      options.query !== undefined &&
+      Object.keys(options.query).length !== 0
+    ) {
+      url += "?" + queryString(options.query);
+    }
+
+    let headers = options.headers || {};
+    const accessToken = this.configuration.accessToken();
+    if (accessToken !== null) {
+      headers = { ...headers, Authorization: `Bearer ${accessToken}` };
+    }
+
+    return {
+      url,
+      method: options.method,
+      headers,
+      body: JSON.stringify(options.body),
+    };
+  };
+
+  protected request = <T>(options: RequestOptions): Observable<Response<T>> => {
+    return ajax(this.createRequestArguments(options)).pipe(
+      map((res) => {
+        if (res.status >= 200 && res.status < 300) {
+          return new Response(this, res);
+        }
+        throw res;
+      })
+    );
+  };
+
+  getPath = <T>(url: string): Observable<Response<T>> => {
+    return this.request({ path: url, method: "GET" });
+  };
+}
+
+export class KitsApi extends BaseApi {
+  listAggregateMeasurements = ({
+    kitSerial,
+  }: {
+    kitSerial: string;
+  }): Observable<Response<Array<schemas["AggregateMeasurement"]>>> => {
+    return this.request<Array<schemas["AggregateMeasurement"]>>({
+      path: `/kits/${encodeUri(kitSerial)}/aggregate-measurements`,
+      method: "GET",
+    });
+  };
+}
+
+export type HttpMethod =
+  | "GET"
+  | "POST"
+  | "PUT"
+  | "PATCH"
+  | "DELETE"
+  | "OPTIONS";
+export type HttpHeaders = { [key: string]: string };
+export type HttpQuery = {
+  [key: string]:
+    | string
+    | number
+    | boolean
+    | null
+    | Array<string | number | null | boolean>;
+};
+export type HttpBody = any;
+
+export interface RequestOptions {
+  path: string;
+  method: HttpMethod;
+  headers?: HttpHeaders;
+  query?: HttpQuery;
+  body?: HttpBody;
+}
+
+export const encodeUri = (value: any) => encodeURIComponent(String(value));
+
+const queryString = (params: HttpQuery): string =>
+  Object.keys(params)
+    .map((key) => {
+      const value = params[key];
+      return value instanceof Array
+        ? value.map((val) => `${encodeUri(key)}=${encodeUri(val)}`).join("&")
+        : `${encodeUri(key)}=${encodeUri(value)}`;
+    })
+    .join("&");
+
+// obs$.subscribe(x => console.log(x));
+
+export default 0;

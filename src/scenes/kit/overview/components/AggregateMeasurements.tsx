@@ -5,15 +5,12 @@ import { RootState } from "types";
 import Option from "utils/option";
 import { KitState } from "modules/kit/reducer";
 
-import {
-  PeripheralDefinition,
-  QuantityType,
-  KitsApi,
-} from "astroplant-api";
-import { AuthConfiguration } from "utils/api";
+import { PeripheralDefinition, QuantityType } from "astroplant-api";
+import { KitsApi } from "api";
+import { configuration } from "utils/api";
 
 import AggregateMeasurementsChart, {
-  Measurements
+  Measurements,
 } from "./AggregateMeasurementsChart";
 
 type Params = { kitSerial: string };
@@ -30,18 +27,20 @@ type State = {
 
 class AggregateMeasurements extends React.Component<Props> {
   state: State = {
-    aggregateMeasurements: {}
+    aggregateMeasurements: {},
   };
 
   async componentDidMount() {
     const { kitState } = this.props;
     try {
-      const api = new KitsApi(AuthConfiguration.Instance);
-      const aggregateMeasurements = await api
-        .listAggregateMeasurements({
-          kitSerial: kitState.details.unwrap().serial
-        })
-        .toPromise();
+      const api = new KitsApi(configuration);
+      const aggregateMeasurements = (
+        await api
+          .listAggregateMeasurements({
+            kitSerial: kitState.details.unwrap().serial,
+          })
+          .toPromise()
+      ).content;
 
       let stateAggregateMeasurements: {
         [index: string]: Array<Measurements>;
@@ -65,7 +64,7 @@ class AggregateMeasurements extends React.Component<Props> {
           stateAggregateMeasurements[idxPerQt].push({
             datetimeStart: new Date(aggregateMeasurement.datetimeStart),
             datetimeEnd: new Date(aggregateMeasurement.datetimeEnd),
-            values: {}
+            values: {},
           });
         }
         const idx = idxAggregateMeasurements[idxPerQt][idxMeasurement];
@@ -90,7 +89,9 @@ class AggregateMeasurements extends React.Component<Props> {
     const { kitState, peripheralDefinitions, quantityTypes } = this.props;
     const { aggregateMeasurements } = this.state;
     let activeConfiguration = null;
-    for (const configuration of Object.values(kitState.configurations.unwrap())) {
+    for (const configuration of Object.values(
+      kitState.configurations.unwrap()
+    )) {
       if (configuration.active) {
         activeConfiguration = configuration;
       }
