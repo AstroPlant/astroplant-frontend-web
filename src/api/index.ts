@@ -171,6 +171,4 @@ const queryString = (params: HttpQuery): string =>
     })
     .join("&");
 
-// obs$.subscribe(x => console.log(x));
-
 export default 0;
