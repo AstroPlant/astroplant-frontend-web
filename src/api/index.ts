@@ -46,7 +46,7 @@ export class Configuration {
 
 export class Response<T> {
   private status: number;
-  private uri_next: string | null = null;
+  private uriNext: string | null = null;
   public content: T;
 
   constructor(private api: BaseApi, ajaxResponse: AjaxResponse) {
@@ -56,7 +56,7 @@ export class Response<T> {
     const link = ajaxResponse.xhr.getResponseHeader("link");
     if (link !== null) {
       const parsed = parseLinkHeader(link);
-      this.uri_next = ((parsed || {}).next || {}).url || null;
+      this.uriNext = ((parsed || {}).next || {}).url || null;
     }
   }
 
@@ -64,15 +64,15 @@ export class Response<T> {
     return this.status;
   }
 
-  has_next(): boolean {
-    return this.uri_next !== null;
+  hasNext(): boolean {
+    return this.uriNext !== null;
   }
 
   next(): Option<Observable<Response<T>>> {
-    if (this.uri_next === null) {
+    if (this.uriNext === null) {
       return Option.none();
     } else {
-      return Option.some(this.api.getPath(this.uri_next));
+      return Option.some(this.api.getPath(this.uriNext));
     }
   }
 }
