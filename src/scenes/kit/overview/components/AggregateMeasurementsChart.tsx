@@ -1,6 +1,6 @@
 import React from "react";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Card, CardProps } from "semantic-ui-react";
+import { Card, CardProps, Button } from "semantic-ui-react";
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -10,12 +10,13 @@ import {
   YAxis,
 } from "recharts";
 import moment from "moment";
-import { map } from "rxjs/operators";
+import { map, tap } from "rxjs/operators";
+import { Observable } from "rxjs";
 import { Peripheral, PeripheralDefinition, QuantityType } from "astroplant-api";
 import Option from "utils/option";
 import { KitState } from "modules/kit/reducer";
 
-import { KitsApi } from "api";
+import { KitsApi, Response, schemas } from "api";
 import { rateLimit, configuration } from "utils/api";
 
 export type Measurements = {
@@ -37,24 +38,28 @@ export type Props = CardProps &
 
 type State = {
   measurements: Option<Array<Measurements>>;
+  loading: boolean;
+  requestNext: Option<
+    Observable<Response<Array<schemas["AggregateMeasurement"]>>>
+  >;
 };
 
 class AggregateMeasurementsChart extends React.Component<Props, State> {
   state: State = {
     measurements: Option.none(),
+    loading: false,
+    requestNext: Option.none(),
   };
 
-  async componentDidMount() {
-    const { kitState, peripheral, quantityType } = this.props;
+  async load(
+    request: Observable<Response<Array<schemas["AggregateMeasurement"]>>>
+  ) {
+    this.setState({ loading: true });
+
     try {
-      const api = new KitsApi(configuration);
-      const aggregateMeasurements = await api
-        .listAggregateMeasurements({
-          kitSerial: kitState.details.unwrap().serial,
-          peripheral: peripheral.id,
-          quantityType: quantityType.id,
-        })
+      const aggregateMeasurements = await request
         .pipe(
+          tap((response) => this.setState({ requestNext: response.next() })),
           map((response) => response.content.reverse()),
           rateLimit
         )
@@ -82,10 +87,36 @@ class AggregateMeasurementsChart extends React.Component<Props, State> {
         ] = aggregateMeasurement.value;
       }
 
-      this.setState({ measurements: Option.some(stateAggregateMeasurements) });
+      this.setState({
+        measurements: Option.some(
+          this.state.measurements
+            .map((measurements) => [
+              ...stateAggregateMeasurements,
+              ...measurements,
+            ])
+            .unwrapOrElse(() => stateAggregateMeasurements)
+        ),
+      });
     } finally {
-      //this.setState({ versionRequesting: false });
+      this.setState({ loading: false });
     }
+  }
+
+  async loadNext() {
+    if (this.state.requestNext.isSome()) {
+      await this.load(this.state.requestNext.unwrap());
+    }
+  }
+
+  async componentDidMount() {
+    const { kitState, peripheral, quantityType } = this.props;
+    const api = new KitsApi(configuration);
+    const request = await api.listAggregateMeasurements({
+      kitSerial: kitState.details.unwrap().serial,
+      peripheral: peripheral.id,
+      quantityType: quantityType.id,
+    });
+    await this.load(request);
   }
 
   render() {
@@ -151,7 +182,7 @@ class AggregateMeasurementsChart extends React.Component<Props, State> {
                 />
               </ComposedChart>
             </ResponsiveContainer>
-            {measurements.isNone() && (
+            {measurements.isNone() ? (
               <div
                 style={{
                   position: "absolute",
@@ -170,6 +201,14 @@ class AggregateMeasurementsChart extends React.Component<Props, State> {
                   {t("kit.aggregateMeasurements.noMeasurements")}
                 </h2>
               </div>
+            ) : (
+              <Button
+                disabled={!this.state.requestNext.isSome() || this.state.loading}
+                loading={this.state.loading}
+                onClick={() => this.loadNext()}
+              >
+                Load more
+              </Button>
             )}
           </Card.Description>
           <Card.Meta>
