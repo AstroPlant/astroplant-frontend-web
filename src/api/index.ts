@@ -18,7 +18,7 @@ import parseLinkHeader from "parse-link-header";
 
 import Option from "utils/option";
 import { components } from "./schema";
-type schemas = components["schemas"];
+export type schemas = components["schemas"];
 
 export const BASE_PATH =
   process.env.REACT_APP_API_URL || "http://localhost:8080";
