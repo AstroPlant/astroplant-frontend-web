@@ -123,12 +123,17 @@ export class BaseApi {
 export class KitsApi extends BaseApi {
   listAggregateMeasurements = ({
     kitSerial,
+    ...query
   }: {
     kitSerial: string;
+    configuration?: number;
+    peripheral?: number;
+    quantityType?: number;
   }): Observable<Response<Array<schemas["AggregateMeasurement"]>>> => {
     return this.request<Array<schemas["AggregateMeasurement"]>>({
       path: `/kits/${encodeUri(kitSerial)}/aggregate-measurements`,
       method: "GET",
+      query: query as HttpQuery,
     });
   };
 }

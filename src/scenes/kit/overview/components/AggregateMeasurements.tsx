@@ -6,14 +6,8 @@ import Option from "utils/option";
 import { KitState } from "modules/kit/reducer";
 
 import { PeripheralDefinition, QuantityType } from "astroplant-api";
-import { KitsApi } from "api";
-import { configuration } from "utils/api";
 
-import AggregateMeasurementsChart, {
-  Measurements,
-} from "./AggregateMeasurementsChart";
-
-type Params = { kitSerial: string };
+import AggregateMeasurementsChart from "./AggregateMeasurementsChart";
 
 export type Props = {
   kitState: KitState;
@@ -21,73 +15,9 @@ export type Props = {
   quantityTypes: { [id: string]: QuantityType };
 };
 
-type State = {
-  aggregateMeasurements: { [index: string]: Array<Measurements> };
-};
-
 class AggregateMeasurements extends React.Component<Props> {
-  state: State = {
-    aggregateMeasurements: {},
-  };
-
-  async componentDidMount() {
-    const { kitState } = this.props;
-    try {
-      const api = new KitsApi(configuration);
-      const aggregateMeasurements = (
-        await api
-          .listAggregateMeasurements({
-            kitSerial: kitState.details.unwrap().serial,
-          })
-          .toPromise()
-      ).content;
-
-      let stateAggregateMeasurements: {
-        [index: string]: Array<Measurements>;
-      } = {};
-      let idxAggregateMeasurements: {
-        [index: string]: {
-          [index: string]: number; // index into stateAggregatemeasurements
-        };
-      } = {};
-
-      for (const aggregateMeasurement of aggregateMeasurements) {
-        const idxPerQt = `${aggregateMeasurement.peripheralId}.${aggregateMeasurement.quantityTypeId}`;
-        const idxMeasurement = `${aggregateMeasurement.datetimeStart}.${aggregateMeasurement.datetimeEnd}`;
-        if (!(idxPerQt in idxAggregateMeasurements)) {
-          idxAggregateMeasurements[idxPerQt] = {};
-          stateAggregateMeasurements[idxPerQt] = [];
-        }
-        if (!(idxMeasurement in idxAggregateMeasurements[idxPerQt])) {
-          idxAggregateMeasurements[idxPerQt][idxMeasurement] =
-            stateAggregateMeasurements[idxPerQt].length;
-          stateAggregateMeasurements[idxPerQt].push({
-            datetimeStart: new Date(aggregateMeasurement.datetimeStart),
-            datetimeEnd: new Date(aggregateMeasurement.datetimeEnd),
-            values: {},
-          });
-        }
-        const idx = idxAggregateMeasurements[idxPerQt][idxMeasurement];
-        stateAggregateMeasurements[idxPerQt][idx].values[
-          aggregateMeasurement.aggregateType
-        ] = aggregateMeasurement.value;
-      }
-
-      for (let measurements of Object.values(stateAggregateMeasurements)) {
-        while (measurements.length >= 100) {
-          measurements.shift();
-        }
-      }
-
-      this.setState({ aggregateMeasurements: stateAggregateMeasurements });
-    } finally {
-      //this.setState({ versionRequesting: false });
-    }
-  }
-
   render() {
     const { kitState, peripheralDefinitions, quantityTypes } = this.props;
-    const { aggregateMeasurements } = this.state;
     let activeConfiguration = null;
     for (const configuration of Object.values(
       kitState.configurations.unwrap()
@@ -101,39 +31,35 @@ class AggregateMeasurements extends React.Component<Props> {
       return (
         <Container>
           <Card.Group centered>
-            {Object.values(activeConfiguration.peripherals).map(peripheral => {
-              const def: Option<PeripheralDefinition> = Option.from(
-                peripheralDefinitions[peripheral.peripheralDefinitionId]
-              );
-              return def
-                .map((def: PeripheralDefinition) =>
-                  def.expectedQuantityTypes!.map(quantityType => {
-                    const qt: Option<QuantityType> = Option.from(
-                      quantityTypes[quantityType]
-                    );
-                    return qt
-                      .map(qt => {
-                        const measurements: Option<
-                          Array<Measurements>
-                        > = Option.from(
-                          aggregateMeasurements[peripheral.id + "." + qt.id]
-                        );
-
-                        return (
-                          <AggregateMeasurementsChart
-                            key={peripheral.id + "." + qt.id}
-                            peripheral={peripheral}
-                            peripheralDefinition={def}
-                            quantityType={qt}
-                            measurements={measurements}
-                          />
-                        );
-                      })
-                      .unwrapOrNull();
-                  })
-                )
-                .unwrapOrNull();
-            })}
+            {Object.values(activeConfiguration.peripherals).map(
+              (peripheral) => {
+                const def: Option<PeripheralDefinition> = Option.from(
+                  peripheralDefinitions[peripheral.peripheralDefinitionId]
+                );
+                return def
+                  .map((def: PeripheralDefinition) =>
+                    def.expectedQuantityTypes!.map((quantityType) => {
+                      const qt: Option<QuantityType> = Option.from(
+                        quantityTypes[quantityType]
+                      );
+                      return qt
+                        .map((qt) => {
+                          return (
+                            <AggregateMeasurementsChart
+                              key={peripheral.id + "." + qt.id}
+                              kitState={kitState}
+                              peripheral={peripheral}
+                              peripheralDefinition={def}
+                              quantityType={qt}
+                            />
+                          );
+                        })
+                        .unwrapOrNull();
+                    })
+                  )
+                  .unwrapOrNull();
+              }
+            )}
           </Card.Group>
         </Container>
       );
@@ -146,7 +72,7 @@ class AggregateMeasurements extends React.Component<Props> {
 const mapStateToProps = (state: RootState) => {
   return {
     peripheralDefinitions: state.peripheralDefinition.definitions,
-    quantityTypes: state.quantityType.quantityTypes
+    quantityTypes: state.quantityType.quantityTypes,
   };
 };
 
