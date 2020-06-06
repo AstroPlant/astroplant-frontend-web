@@ -8,6 +8,7 @@ import {
   Area,
   XAxis,
   YAxis,
+  Brush,
 } from "recharts";
 import moment from "moment";
 import { map, tap } from "rxjs/operators";
@@ -19,9 +20,11 @@ import { KitState } from "modules/kit/reducer";
 import { KitsApi, Response, schemas } from "api";
 import { rateLimit, configuration } from "utils/api";
 
-export type Measurements = {
+export type Aggregate = {
   datetimeStart: Date;
+  datetimeStartNumber: number;
   datetimeEnd: Date;
+  datetimeEndNumber: number;
   values: {
     [aggregateType: string]: number;
   };
@@ -33,11 +36,11 @@ export type Props = CardProps &
     peripheral: Peripheral;
     peripheralDefinition: PeripheralDefinition;
     quantityType: QuantityType;
-    measurements: Option<Array<Measurements>>;
+    measurements: Option<Array<Aggregate>>;
   };
 
 type State = {
-  measurements: Option<Array<Measurements>>;
+  measurements: Option<Array<Aggregate>>;
   loading: boolean;
   requestNext: Option<
     Observable<Response<Array<schemas["AggregateMeasurement"]>>>
@@ -67,7 +70,9 @@ class AggregateMeasurementsChart extends React.PureComponent<Props, State> {
 
       const newMeasurements = result.map((measurement) => ({
         datetimeStart: new Date(measurement.datetimeStart),
+        datetimeStartNumber: new Date(measurement.datetimeStart).getTime(),
         datetimeEnd: new Date(measurement.datetimeEnd),
+        datetimeEndNumber: new Date(measurement.datetimeEnd).getTime(),
         values: measurement.values,
       }));
 
@@ -100,8 +105,42 @@ class AggregateMeasurementsChart extends React.PureComponent<Props, State> {
     await this.load(request);
   }
 
+  /**
+   * Uses some heuristics to calculate the starting index of the chart brush;
+   * this ensures charts are zoomed in if there are big gaps in measurement
+   * datetimes.
+   */
+  calculateWindowStartIndex(measurements: Array<Aggregate>) {
+    if (measurements.length < 2) {
+      return 0;
+    }
+
+    let minGap = Infinity;
+    let prevDatetime = measurements[0].datetimeStart;
+    for (const measurement of measurements.slice(1)) {
+      const gap = measurement.datetimeStart.getTime() - prevDatetime.getTime();
+      prevDatetime = measurement.datetimeStart;
+      if (gap < minGap) {
+        minGap = gap;
+      }
+    }
+
+    let startIdx = 0;
+    prevDatetime = measurements[0].datetimeStart;
+    for (const [idx, measurement] of measurements.slice(1).entries()) {
+      const gap = measurement.datetimeStart.getTime() - prevDatetime.getTime();
+      prevDatetime = measurement.datetimeStart;
+      if (gap >= 15 * minGap) {
+        startIdx = idx + 1;
+      }
+    }
+
+    return startIdx;
+  }
+
   render() {
     const {
+      kitState,
       peripheral,
       peripheralDefinition,
       quantityType,
@@ -110,20 +149,13 @@ class AggregateMeasurementsChart extends React.PureComponent<Props, State> {
       ...rest
     } = this.props;
     const { measurements } = this.state;
-    const transformedMeasurements = measurements.map((measurements) =>
-      measurements.map(({ datetimeStart, datetimeEnd, ...rest }) => ({
-        datetimeStart: new Date(datetimeStart).getTime(),
-        datetimeEnd: new Date(datetimeEnd).getTime(),
-        ...rest,
-      }))
-    );
     return (
       <Card color="blue" fluid {...rest}>
         <Card.Content>
           <Card.Header>{quantityType.physicalQuantity}</Card.Header>
           <Card.Description textAlign="center">
             <ResponsiveContainer height={300} width="100%">
-              <ComposedChart data={transformedMeasurements.unwrapOr([])}>
+              <ComposedChart data={measurements.unwrapOr([])}>
                 <Tooltip
                   formatter={(value: any, name: any) =>
                     parseFloat(value.toPrecision(4))
@@ -131,7 +163,7 @@ class AggregateMeasurementsChart extends React.PureComponent<Props, State> {
                   labelFormatter={(time: any) => moment(time).format("L LTS")}
                 />
                 <XAxis
-                  dataKey="datetimeStart"
+                  dataKey="datetimeStartNumber"
                   tickFormatter={(tick) => moment(tick).calendar()}
                   minTickGap={40}
                   scale="linear"
@@ -160,6 +192,14 @@ class AggregateMeasurementsChart extends React.PureComponent<Props, State> {
                   yAxisId="left"
                   dataKey="values.maximum"
                   name={t("kit.aggregateMeasurements.maximum") as string}
+                />
+                <Brush
+                  dataKey="datetimeStartNumber"
+                  height={40}
+                  tickFormatter={(time: any) => moment(time).format("L")}
+                  startIndex={this.calculateWindowStartIndex(
+                    measurements.unwrapOr([])
+                  )}
                 />
               </ComposedChart>
             </ResponsiveContainer>
