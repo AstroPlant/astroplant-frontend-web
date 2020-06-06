@@ -37,7 +37,7 @@ export type InnerProps = RouteComponentProps<Params> &
     stopWatching: (payload: { serial: string }) => void;
   };
 
-class KitDashboard extends React.Component<InnerProps & WithValue<KitState>> {
+class KitDashboard extends React.PureComponent<InnerProps & WithValue<KitState>> {
   componentDidMount() {
     const kitState = this.props.value;
     this.props.startWatching({ serial: kitState.details.unwrap().serial });
@@ -115,7 +115,7 @@ class KitDashboard extends React.Component<InnerProps & WithValue<KitState>> {
   }
 }
 
-class KitStatusWrapper extends React.Component<
+class KitStatusWrapper extends React.PureComponent<
   InnerProps & WithValue<KitState>
 > {
   render() {
@@ -192,7 +192,7 @@ const innerKit = compose<InnerProps, Props>(
   withTranslation()
 )(KitStatusWrapper);
 
-class Kit extends React.Component<Props> {
+class Kit extends React.PureComponent<Props> {
   async componentDidMount() {
     this.props.fetchKit({ serial: this.props.match.params.kitSerial });
   }

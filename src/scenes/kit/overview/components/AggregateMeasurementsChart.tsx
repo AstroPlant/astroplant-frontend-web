@@ -44,7 +44,7 @@ type State = {
   >;
 };
 
-class AggregateMeasurementsChart extends React.Component<Props, State> {
+class AggregateMeasurementsChart extends React.PureComponent<Props, State> {
   state: State = {
     measurements: Option.none(),
     loading: false,

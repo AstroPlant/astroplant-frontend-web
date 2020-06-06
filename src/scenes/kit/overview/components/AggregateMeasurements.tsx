@@ -15,7 +15,7 @@ export type Props = {
   quantityTypes: { [id: string]: QuantityType };
 };
 
-class AggregateMeasurements extends React.Component<Props> {
+class AggregateMeasurements extends React.PureComponent<Props> {
   render() {
     const { kitState, peripheralDefinitions, quantityTypes } = this.props;
     let activeConfiguration = null;

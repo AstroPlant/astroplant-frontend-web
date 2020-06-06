@@ -47,7 +47,7 @@ type State = {
   done: boolean;
 };
 
-class KitConfigure extends React.Component<InnerProps, State> {
+class KitDetails extends React.PureComponent<InnerProps, State> {
   state: State = {
     done: false
   };
@@ -205,4 +205,4 @@ export default compose<InnerProps, Props>(
     null,
     mapDispatchToProps
   )
-)(KitConfigure);
+)(KitDetails);
