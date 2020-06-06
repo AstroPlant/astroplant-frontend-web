@@ -45,20 +45,15 @@ export interface AggregateMeasurement {
      * @type {string}
      * @memberof AggregateMeasurement
      */
-    aggregateType: string;
-    /**
-     * @type {number}
-     * @memberof AggregateMeasurement
-     */
-    value: number;
-    /**
-     * @type {string}
-     * @memberof AggregateMeasurement
-     */
     datetimeStart: string;
     /**
      * @type {string}
      * @memberof AggregateMeasurement
      */
     datetimeEnd: string;
+    /**
+     * @type {{ [key: string]: number; }}
+     * @memberof AggregateMeasurement
+     */
+    values: { [key: string]: number; };
 }

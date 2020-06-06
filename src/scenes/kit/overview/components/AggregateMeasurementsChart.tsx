@@ -57,7 +57,7 @@ class AggregateMeasurementsChart extends React.Component<Props, State> {
     this.setState({ loading: true });
 
     try {
-      const aggregateMeasurements = await request
+      const result = await request
         .pipe(
           tap((response) => this.setState({ requestNext: response.next() })),
           map((response) => response.content.reverse()),
@@ -65,36 +65,17 @@ class AggregateMeasurementsChart extends React.Component<Props, State> {
         )
         .toPromise();
 
-      let stateAggregateMeasurements: Array<Measurements> = [];
-      let idxAggregateMeasurements: {
-        [index: string]: number; // index into stateAggregatemeasurements
-      } = {};
-
-      for (const aggregateMeasurement of aggregateMeasurements) {
-        const idxMeasurement = `${aggregateMeasurement.datetimeStart}.${aggregateMeasurement.datetimeEnd}`;
-        if (!(idxMeasurement in idxAggregateMeasurements)) {
-          idxAggregateMeasurements[idxMeasurement] =
-            stateAggregateMeasurements.length;
-          stateAggregateMeasurements.push({
-            datetimeStart: new Date(aggregateMeasurement.datetimeStart),
-            datetimeEnd: new Date(aggregateMeasurement.datetimeEnd),
-            values: {},
-          });
-        }
-        const idx = idxAggregateMeasurements[idxMeasurement];
-        stateAggregateMeasurements[idx].values[
-          aggregateMeasurement.aggregateType
-        ] = aggregateMeasurement.value;
-      }
+      const newMeasurements = result.map((measurement) => ({
+        datetimeStart: new Date(measurement.datetimeStart),
+        datetimeEnd: new Date(measurement.datetimeEnd),
+        values: measurement.values,
+      }));
 
       this.setState({
         measurements: Option.some(
           this.state.measurements
-            .map((measurements) => [
-              ...stateAggregateMeasurements,
-              ...measurements,
-            ])
-            .unwrapOrElse(() => stateAggregateMeasurements)
+            .map((measurements) => [...newMeasurements, ...measurements])
+            .unwrapOrElse(() => newMeasurements)
         ),
       });
     } finally {
@@ -203,7 +184,9 @@ class AggregateMeasurementsChart extends React.Component<Props, State> {
               </div>
             ) : (
               <Button
-                disabled={!this.state.requestNext.isSome() || this.state.loading}
+                disabled={
+                  !this.state.requestNext.isSome() || this.state.loading
+                }
                 loading={this.state.loading}
                 onClick={() => this.loadNext()}
               >

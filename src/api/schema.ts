@@ -36,7 +36,7 @@ export interface components {
       errorValue?: { waitTimeMillis?: number };
     };
     ProblemInvalidParameters: components["schemas"]["ProblemDetails"] & {
-      invalidParameters?: { [key: string]: components["schemas"]["ProblemInvalidParameters"] };
+      invalidParameters?: { [key: string]: components["schemas"]["InvalidParameter"] };
     };
     InvalidParameter: (Partial<
       "mustBeEmailAddress" | "mustBeUrl" | "alreadyExists" | "other"
@@ -173,10 +173,9 @@ export interface components {
       kitId: number;
       kitConfigurationId: number;
       quantityTypeId: number;
-      aggregateType: string;
-      value: number;
       datetimeStart: string;
       datetimeEnd: string;
+      values: { [key: string]: number };
     };
   };
 }
