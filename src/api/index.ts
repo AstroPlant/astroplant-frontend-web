@@ -48,10 +48,13 @@ export class Response<T> {
   private status: number;
   private uriNext: string | null = null;
   public content: T;
+  public mediaType: string | null;
 
-  constructor(private api: BaseApi, ajaxResponse: AjaxResponse) {
+  constructor(private api: BaseApi, public ajaxResponse: AjaxResponse) {
     this.status = ajaxResponse.status;
     this.content = ajaxResponse.response;
+
+    this.mediaType = ajaxResponse.xhr.getResponseHeader("content-type");
 
     const link = ajaxResponse.xhr.getResponseHeader("link");
     if (link !== null) {
@@ -101,6 +104,7 @@ export class BaseApi {
       method: options.method,
       headers,
       body: JSON.stringify(options.body),
+      responseType: options.responseType || "",
     };
   };
 
@@ -138,6 +142,25 @@ export class KitsApi extends BaseApi {
   };
 }
 
+export class KitRpcApi extends BaseApi {
+  peripheralCommand = ({
+    kitSerial,
+    peripheral,
+    command,
+  }: {
+    kitSerial: string;
+    peripheral: string;
+    command: string;
+  }): Observable<Response<any>> => {
+    return this.request<Array<schemas["AggregateMeasurement"]>>({
+      path: `/kit-rpc/${encodeUri(kitSerial)}/peripheral-command`,
+      method: "POST",
+      body: { peripheral, command },
+      responseType: "blob",
+    });
+  };
+}
+
 export type HttpMethod =
   | "GET"
   | "POST"
@@ -162,6 +185,7 @@ export interface RequestOptions {
   headers?: HttpHeaders;
   query?: HttpQuery;
   body?: HttpBody;
+  responseType?: string;
 }
 
 export const encodeUri = (value: any) => encodeURIComponent(String(value));
