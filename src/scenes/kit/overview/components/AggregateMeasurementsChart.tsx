@@ -193,14 +193,19 @@ class AggregateMeasurementsChart extends React.PureComponent<Props, State> {
                   dataKey="values.maximum"
                   name={t("kit.aggregateMeasurements.maximum") as string}
                 />
-                <Brush
-                  dataKey="datetimeStartNumber"
-                  height={40}
-                  tickFormatter={(time: any) => moment(time).format("L")}
-                  startIndex={this.calculateWindowStartIndex(
-                    measurements.unwrapOr([])
-                  )}
-                />
+                {
+                  // see https://github.com/recharts/recharts/issues/1187 and https://github.com/recharts/recharts/issues/2093
+                }
+                {this.state.measurements.unwrapOr([]).length > 0 && (
+                  <Brush
+                    dataKey="datetimeStartNumber"
+                    height={40}
+                    tickFormatter={(time: any) => moment(time).format("L")}
+                    startIndex={this.calculateWindowStartIndex(
+                      measurements.unwrapOr([])
+                    )}
+                  />
+                )}
               </ComposedChart>
             </ResponsiveContainer>
             {measurements.isNone() ? (
