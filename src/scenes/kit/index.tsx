@@ -5,7 +5,7 @@ import { Switch, Route, RouteComponentProps } from "react-router";
 import { NavLink } from "react-router-dom";
 import { withTranslation, WithTranslation, Trans } from "react-i18next";
 import { compose } from "recompose";
-import { Container, Menu } from "semantic-ui-react";
+import { Container, Menu, Icon } from "semantic-ui-react";
 import { RootState } from "types";
 import Option from "utils/option";
 import { awaitAuthenticationRan } from "Components/AuthenticatedGuard";
@@ -37,7 +37,9 @@ export type InnerProps = RouteComponentProps<Params> &
     stopWatching: (payload: { serial: string }) => void;
   };
 
-class KitDashboard extends React.PureComponent<InnerProps & WithValue<KitState>> {
+class KitDashboard extends React.PureComponent<
+  InnerProps & WithValue<KitState>
+> {
   componentDidMount() {
     const kitState = this.props.value;
     this.props.startWatching({ serial: kitState.details.unwrap().serial });
@@ -53,13 +55,13 @@ class KitDashboard extends React.PureComponent<InnerProps & WithValue<KitState>>
     const { path, url } = this.props.match;
 
     const canConfigure = this.props.membership
-      .map(m => m.accessSuper || m.accessConfigure)
+      .map((m) => m.accessSuper || m.accessConfigure)
       .unwrapOr(false);
     const canConfigureAccess = this.props.membership
-      .map(m => m.accessSuper)
+      .map((m) => m.accessSuper)
       .unwrapOr(false);
     const canQueryRpc = this.props.membership
-      .map(m => m.accessSuper)
+      .map((m) => m.accessSuper)
       .unwrapOr(false);
 
     const kit = kitState.details.unwrap();
@@ -68,45 +70,60 @@ class KitDashboard extends React.PureComponent<InnerProps & WithValue<KitState>>
         <HeadTitle main={kit.name || kit.serial} />
         <Container>
           <Menu pointing secondary>
-            <Menu.Item name="Overview" as={NavLink} exact to={`${url}`} />
-            <Menu.Item name="Details" as={NavLink} to={`${url}/details`} />
+            <Menu.Item as={NavLink} exact to={`${url}`}>
+              <Icon name="chart bar" />
+              Overview
+            </Menu.Item>
+            <Menu.Item as={NavLink} to={`${url}/details`}>
+              <Icon name="clipboard" />
+              Details
+            </Menu.Item>
             {canConfigure && (
-              <Menu.Item
-                name="Configuration"
-                as={NavLink}
-                to={`${url}/configure`}
-              />
+              <Menu.Item as={NavLink} to={`${url}/configure`}>
+                <Icon name="setting" />
+                Configure
+              </Menu.Item>
             )}
             {canConfigureAccess && (
-              <Menu.Item name="Access" as={NavLink} to={`${url}/access`} />
+              <Menu.Item as={NavLink} to={`${url}/access`}>
+                <Icon name="lock open" />
+                Access
+              </Menu.Item>
             )}
             {canQueryRpc && (
-              <Menu.Item name="RPC" as={NavLink} to={`${url}/rpc`} />
+              <Menu.Item as={NavLink} to={`${url}/rpc`}>
+                <Icon name="tty" />
+                RPC
+              </Menu.Item>
             )}
           </Menu>
           <Switch>
             <Route
               path={`${path}/details`}
-              render={props => (
-                <Details {...props} kit={kitState.details.unwrap()} membership={this.props.membership} />
+              render={(props) => (
+                <Details
+                  {...props}
+                  kit={kitState.details.unwrap()}
+                  membership={this.props.membership}
+                />
               )}
             />
             <Route
               path={`${path}/configure`}
-              render={props => <Configure {...props} kitState={kitState} />}
+              render={(props) => <Configure {...props} kitState={kitState} />}
             />
             <Route
               path={`${path}/access`}
-              render={props => <Access {...props} kitState={kitState} />}
+              render={(props) => <Access {...props} kitState={kitState} />}
             />
             <Route
               path={`${path}/rpc`}
-              render={props => (
+              render={(props) => (
                 <Rpc {...props} kit={kitState.details.unwrap()} />
               )}
             />
             <Route
-              render={props => <Overview {...props} kitState={kitState} />}
+              render={(props) => <Overview {...props} kitState={kitState} />}
             />
           </Switch>
         </Container>
@@ -170,7 +187,7 @@ const mapStateToProps = (state: RootState, ownProps: Props) => {
 
   return {
     option,
-    membership
+    membership,
   };
 };
 
@@ -178,16 +195,13 @@ const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
       startWatching,
-      stopWatching
+      stopWatching,
     },
     dispatch
   );
 
 const innerKit = compose<InnerProps, Props>(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  ),
+  connect(mapStateToProps, mapDispatchToProps),
   withOption<KitState, InnerProps>(),
   withTranslation()
 )(KitStatusWrapper);
@@ -206,15 +220,12 @@ class Kit extends React.PureComponent<Props> {
 const outerMapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
-      fetchKit
+      fetchKit,
     },
     dispatch
   );
 
 export default compose<Props, {}>(
   awaitAuthenticationRan(),
-  connect(
-    null,
-    outerMapDispatchToProps
-  )
+  connect(null, outerMapDispatchToProps)
 )(Kit);
