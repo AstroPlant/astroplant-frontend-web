@@ -27,7 +27,7 @@ function KitOverview(props: Props) {
 
   if (activeConfiguration !== null) {
     return (
-      <Container text>
+      <Container>
         <h2>Current measurements</h2>
         <RawMeasurements kitState={kitState} />
         <h2>Past measurements</h2>
