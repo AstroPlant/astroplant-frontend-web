@@ -29,7 +29,7 @@ function RawMeasurements(props: Props) {
   if (activeConfiguration !== null) {
     return (
       <Container>
-        <Card.Group centered>
+        <Card.Group centered stackable itemsPerRow={4}>
           {Object.values(activeConfiguration.peripherals).map(peripheral => {
             const def: Option<PeripheralDefinition> = Option.from(
               peripheralDefinitions[peripheral.peripheralDefinitionId]
