@@ -104,7 +104,7 @@ export class BaseApi {
       method: options.method,
       headers,
       body: JSON.stringify(options.body),
-      responseType: options.responseType || "",
+      responseType: options.responseType || "json",
     };
   };
 
