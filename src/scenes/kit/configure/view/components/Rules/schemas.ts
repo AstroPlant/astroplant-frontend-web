@@ -56,7 +56,7 @@ export type FuzzyRule = {
   activeTo: string;
 };
 
-export type FuzzyRules = {
+export type FuzzyControl = {
   input: {
     [peripheralName: string]: { [quantityTypeId: string]: InputSettings };
   };

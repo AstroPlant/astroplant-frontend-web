@@ -30,7 +30,7 @@ import { AuthConfiguration } from "utils/api";
 import Option from "utils/option";
 
 import {
-  FuzzyRules,
+  FuzzyControl,
   FuzzyRule,
   InputSettings,
   OutputSettings,
@@ -61,18 +61,18 @@ type State = {
   editingOutput: Option<[Peripheral, string, JSONSchema6]>;
   editingRule: Option<number>;
   inputSettings: any;
-  fuzzyRules: FuzzyRules;
+  fuzzyControl: FuzzyControl;
 };
 
-function parseConfiguration(configuration: KitConfigurationState): FuzzyRules {
-  let fuzzyRules: FuzzyRules = { input: {}, output: {}, rules: [] };
+function parseConfiguration(configuration: KitConfigurationState): FuzzyControl {
+  let fuzzyControl: FuzzyControl = { input: {}, output: {}, rules: [] };
 
   const rules = configuration.rules as any;
   try {
     for (const [peripheralName, qtSettings] of Object.entries(
-      rules.fuzzyRules.input
+      rules.fuzzyControl.input
     )) {
-      fuzzyRules.input[peripheralName] = {};
+      fuzzyControl.input[peripheralName] = {};
       for (const [quantityTypeId, settings] of Object.entries(
         qtSettings as any
       )) {
@@ -83,7 +83,7 @@ function parseConfiguration(configuration: KitConfigurationState): FuzzyRules {
           interpolation,
           setpoints,
         } = settings as any;
-        fuzzyRules.input[peripheralName][quantityTypeId] = {
+        fuzzyControl.input[peripheralName][quantityTypeId] = {
           nominalRange,
           nominalDeltaRange,
           deltaMeasurements,
@@ -93,20 +93,20 @@ function parseConfiguration(configuration: KitConfigurationState): FuzzyRules {
       }
     }
     for (const [peripheralName, commandSettings] of Object.entries(
-      rules.fuzzyRules.output
+      rules.fuzzyControl.output
     )) {
-      fuzzyRules.output[peripheralName] = {};
+      fuzzyControl.output[peripheralName] = {};
       for (const [command, settings] of Object.entries(
         commandSettings as any
       )) {
         const { type, continuous } = settings as any;
-        fuzzyRules.output[peripheralName][command] = {
+        fuzzyControl.output[peripheralName][command] = {
           type,
           continuous,
         };
       }
     }
-    for (const fuzzyRule of rules.fuzzyRules.rules) {
+    for (const fuzzyRule of rules.fuzzyControl.rules) {
       let newFuzzyRule: FuzzyRule = {
         condition: [],
         implication: [],
@@ -124,11 +124,11 @@ function parseConfiguration(configuration: KitConfigurationState): FuzzyRules {
           fuzzyVariable,
         } = cond;
 
-        if (!(peripheral in fuzzyRules.input)) {
+        if (!(peripheral in fuzzyControl.input)) {
           continue;
         }
 
-        if (!(quantityType in fuzzyRules.input[peripheral])) {
+        if (!(quantityType in fuzzyControl.input[peripheral])) {
           continue;
         }
 
@@ -145,11 +145,11 @@ function parseConfiguration(configuration: KitConfigurationState): FuzzyRules {
       for (const impl of fuzzyRule.implication) {
         const { peripheral, command, fuzzyVariable } = impl;
 
-        if (!(peripheral in fuzzyRules.output)) {
+        if (!(peripheral in fuzzyControl.output)) {
           continue;
         }
 
-        if (!(command in fuzzyRules.output[peripheral])) {
+        if (!(command in fuzzyControl.output[peripheral])) {
           continue;
         }
 
@@ -164,12 +164,12 @@ function parseConfiguration(configuration: KitConfigurationState): FuzzyRules {
         newFuzzyRule.condition.length > 0 ||
         newFuzzyRule.implication.length > 0
       ) {
-        fuzzyRules.rules.push(newFuzzyRule);
+        fuzzyControl.rules.push(newFuzzyRule);
       }
     }
   } catch (e) {}
 
-  return fuzzyRules;
+  return fuzzyControl;
 }
 
 class Rules extends React.Component<Props, State> {
@@ -184,7 +184,7 @@ class Rules extends React.Component<Props, State> {
       editingOutput: Option.none(),
       editingRule: Option.none(),
       inputSettings: {},
-      fuzzyRules: parseConfiguration(configuration),
+      fuzzyControl: parseConfiguration(configuration),
     };
   }
 
@@ -209,10 +209,10 @@ class Rules extends React.Component<Props, State> {
     });
   }
 
-  async update(fuzzyRules: FuzzyRules) {
+  async update(fuzzyControl: FuzzyControl) {
     const { configuration } = this.props;
 
-    this.setState({ loading: true, fuzzyRules });
+    this.setState({ loading: true, fuzzyControl });
 
     const api = new KitsApi(AuthConfiguration.Instance);
     await api
@@ -220,7 +220,7 @@ class Rules extends React.Component<Props, State> {
         configurationId: configuration.id,
         patchKitConfiguration: {
           rules: {
-            fuzzyRules,
+            fuzzyControl,
           },
         },
       })
@@ -229,7 +229,7 @@ class Rules extends React.Component<Props, State> {
   }
 
   addEmptyInput = (peripheral: Peripheral, quantityType: QuantityType) => {
-    const fuzzyRules = produce(this.state.fuzzyRules, (draft) => {
+    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
       if (!(peripheral.name in draft.input)) {
         draft.input[peripheral.name] = {};
       }
@@ -243,7 +243,7 @@ class Rules extends React.Component<Props, State> {
     });
 
     this.setState({
-      fuzzyRules,
+      fuzzyControl,
       editingInput: Option.some([peripheral, quantityType]),
     });
   };
@@ -253,7 +253,7 @@ class Rules extends React.Component<Props, State> {
     command: string,
     schema: JSONSchema6
   ) => {
-    const fuzzyRules = produce(this.state.fuzzyRules, (draft) => {
+    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
       if (!(peripheral.name in draft.output)) {
         draft.output[peripheral.name] = {};
       }
@@ -267,13 +267,13 @@ class Rules extends React.Component<Props, State> {
     });
 
     this.setState({
-      fuzzyRules,
+      fuzzyControl,
       editingOutput: Option.some([peripheral, command, schema]),
     });
   };
 
   addEmptyRule = () => {
-    const fuzzyRules = produce(this.state.fuzzyRules, (draft) => {
+    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
       draft.rules.push({
         condition: [],
         implication: [],
@@ -283,8 +283,8 @@ class Rules extends React.Component<Props, State> {
     });
 
     this.setState({
-      fuzzyRules,
-      editingRule: Option.some(fuzzyRules.rules.length - 1),
+      fuzzyControl,
+      editingRule: Option.some(fuzzyControl.rules.length - 1),
     });
   };
 
@@ -305,11 +305,11 @@ class Rules extends React.Component<Props, State> {
       });
     });
 
-    const fuzzyRules = produce(this.state.fuzzyRules, (draft) => {
+    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
       draft.input[peripheral.name][quantityType.id] = inputSettingsSorted;
     });
 
-    this.update(fuzzyRules);
+    this.update(fuzzyControl);
   };
 
   editOutput = (
@@ -317,49 +317,49 @@ class Rules extends React.Component<Props, State> {
     command: string,
     outputSettings: OutputSettings
   ) => {
-    const fuzzyRules = produce(this.state.fuzzyRules, (draft) => {
+    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
       draft.output[peripheral.name][command] = outputSettings;
     });
 
-    this.update(fuzzyRules);
+    this.update(fuzzyControl);
   };
 
   editRule = (index: number, rule: FuzzyRule) => {
-    const fuzzyRules = produce(this.state.fuzzyRules, (draft) => {
+    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
       draft.rules[index] = rule;
     });
 
-    this.update(fuzzyRules);
+    this.update(fuzzyControl);
   };
 
   deleteInput = (peripheral: Peripheral, quantityType: QuantityType) => {
-    const fuzzyRules = produce(this.state.fuzzyRules, (draft) => {
+    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
       delete draft.input[peripheral.name][quantityType.id];
       if (Object.values(draft.input[peripheral.name]).length === 0) {
         delete draft.input[peripheral.name];
       }
     });
 
-    this.update(fuzzyRules);
+    this.update(fuzzyControl);
   };
 
   deleteOutput = (peripheral: Peripheral, command: string) => {
-    const fuzzyRules = produce(this.state.fuzzyRules, (draft) => {
+    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
       delete draft.output[peripheral.name][command];
       if (Object.values(draft.output[peripheral.name]).length === 0) {
         delete draft.output[peripheral.name];
       }
     });
 
-    this.update(fuzzyRules);
+    this.update(fuzzyControl);
   };
 
   deleteRule = (index: number) => {
-    const fuzzyRules = produce(this.state.fuzzyRules, (draft) => {
+    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
       delete draft.rules[index];
     });
 
-    this.update(fuzzyRules);
+    this.update(fuzzyControl);
   };
 
   render() {
@@ -369,7 +369,7 @@ class Rules extends React.Component<Props, State> {
       peripheralDefinitions,
       t,
     } = this.props;
-    const { fuzzyRules } = this.state;
+    const { fuzzyControl } = this.state;
 
     let undefinedPeripheralQuantityTypes: [Peripheral, QuantityType][] = [];
     for (const peripheral of Object.values(configuration.peripherals)) {
@@ -379,8 +379,8 @@ class Rules extends React.Component<Props, State> {
 
       for (const quantityType of peripheralDefinition.expectedQuantityTypes!) {
         if (
-          !(peripheral.name in fuzzyRules.input) ||
-          !(quantityType in fuzzyRules.input[peripheral.name])
+          !(peripheral.name in fuzzyControl.input) ||
+          !(quantityType in fuzzyControl.input[peripheral.name])
         ) {
           undefinedPeripheralQuantityTypes.push([
             peripheral,
@@ -408,8 +408,8 @@ class Rules extends React.Component<Props, State> {
       for (const [key, val] of Object.entries(schema.properties) as any) {
         if (val.type === "number") {
           if (
-            !(peripheral.name in fuzzyRules.output) ||
-            !(key in fuzzyRules.output[peripheral.name])
+            !(peripheral.name in fuzzyControl.output) ||
+            !(key in fuzzyControl.output[peripheral.name])
           ) {
             undefinedPeripheralCommands.push([peripheral, key, val]);
           }
@@ -435,7 +435,7 @@ class Rules extends React.Component<Props, State> {
             <Icon name="thermometer" /> Inputs
           </Header>
 
-          {Object.entries(fuzzyRules.input).map(([peripheralName, qtInput]) => (
+          {Object.entries(fuzzyControl.input).map(([peripheralName, qtInput]) => (
             <Segment key={peripheralName}>
               <Header as="h4">{peripheralName}</Header>
               {Object.entries(qtInput).map(([quantityTypeId, settings]) => {
@@ -476,7 +476,7 @@ class Rules extends React.Component<Props, State> {
 
           {this.state.editingInput
             .map(([peripheral, quantityType]) => {
-              const inputSettings = fuzzyRules.input[peripheral.name]![
+              const inputSettings = fuzzyControl.input[peripheral.name]![
                 quantityType.id
               ]!;
               return (
@@ -512,7 +512,7 @@ class Rules extends React.Component<Props, State> {
             <Icon name="settings" /> Outputs
           </Header>
 
-          {Object.entries(fuzzyRules.output).map(
+          {Object.entries(fuzzyControl.output).map(
             ([peripheralName, commandOutput]) => (
               <Segment key={peripheralName}>
                 <Header as="h4">{peripheralName}</Header>
@@ -560,7 +560,7 @@ class Rules extends React.Component<Props, State> {
 
           {this.state.editingOutput
             .map(([peripheral, command, schema]) => {
-              const outputSettings = fuzzyRules.output[peripheral.name]![
+              const outputSettings = fuzzyControl.output[peripheral.name]![
                 command
               ]!;
               // const peripheralDefinition =
@@ -603,7 +603,7 @@ class Rules extends React.Component<Props, State> {
 
           <p>{t("control.explanation")}</p>
 
-          {fuzzyRules.rules.map((rule, index) => (
+          {fuzzyControl.rules.map((rule, index) => (
             <Segment key={index}>
               <Header as="h4">Rule #{index + 1}</Header>
               <ViewRule index={index} fuzzyRule={rule} />
@@ -627,11 +627,11 @@ class Rules extends React.Component<Props, State> {
 
           {this.state.editingRule
             .map((index) => {
-              const rule = fuzzyRules.rules[index];
+              const rule = fuzzyControl.rules[index];
               let conditionChoices: [string, QuantityType][] = [];
               let implicationChoices: [string, string][] = [];
               for (const [peripheralName, qtSettings] of Object.entries(
-                fuzzyRules.input
+                fuzzyControl.input
               )) {
                 for (const quantityTypeId of Object.keys(qtSettings)) {
                   conditionChoices.push([
@@ -641,7 +641,7 @@ class Rules extends React.Component<Props, State> {
                 }
               }
               for (const [peripheralName, commandSettings] of Object.entries(
-                fuzzyRules.output
+                fuzzyControl.output
               )) {
                 for (const command of Object.keys(commandSettings)) {
                   implicationChoices.push([peripheralName, command]);
