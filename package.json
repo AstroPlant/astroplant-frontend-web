@@ -17,6 +17,7 @@
     "astroplant-api": "file:./local_modules/astroplant-api",
     "http-status-codes": "^1.4.0",
     "i18next": "^17.3.1",
+    "immer": "^7.0.1",
     "json-schema": "^0.2.5",
     "leaflet": "^1.6.0",
     "md5": "^2.2.1",

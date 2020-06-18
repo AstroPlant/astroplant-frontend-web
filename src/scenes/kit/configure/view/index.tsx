@@ -47,7 +47,7 @@ class ViewConfiguration extends React.Component<InternalProps, State> {
         </Container>
         <Divider />
         <Container>
-          <Header>{t("rules.header")}</Header>
+          <Header>{t("control.header")}</Header>
           <Rules kit={kitState.details.unwrap()} configuration={configuration} />
         </Container>
         <Divider />
