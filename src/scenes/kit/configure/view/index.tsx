@@ -37,7 +37,7 @@ class ViewConfiguration extends React.Component<InternalProps, State> {
     const { kitState, value: configuration, t } = this.props;
 
     return (
-      <Container text>
+      <Container>
         <Segment raised>
           <Header>Description</Header>
           <Description kit={kitState.details.unwrap()} configuration={configuration} />

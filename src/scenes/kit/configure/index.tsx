@@ -25,7 +25,7 @@ export default function KitConfigure(props: Props) {
     );
   } else {
     return (
-      <Container text>
+      <Container>
         <Switch>
           <Route
             path={`${path}/create`}
