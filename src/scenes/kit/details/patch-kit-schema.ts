@@ -27,6 +27,6 @@ export const uiSchema = {
     "ui:widget": "textarea"
   },
   coordinate: {
-    "ui:field": "Coordinate"
+    "ui:field": "CoordinateField"
   }
 };

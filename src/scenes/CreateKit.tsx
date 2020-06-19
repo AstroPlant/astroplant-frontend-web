@@ -116,7 +116,7 @@ class CreateKit extends Component<Props, State> {
         "ui:widget": "textarea",
       },
       coordinate: {
-        "ui:field": "Coordinate",
+        "ui:field": "CoordinateField",
       },
     };
 

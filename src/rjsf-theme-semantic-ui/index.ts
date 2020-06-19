@@ -1,4 +1,4 @@
-import { withTheme, ThemeProps } from "@rjsf/core";
+import { withTheme, ThemeProps, utils } from "@rjsf/core";
 
 import FieldTemplate from "./FieldTemplate";
 import ArrayFieldTemplate from "./ArrayFieldTemplate";
@@ -14,23 +14,25 @@ import TimeWidget from "./TimeWidget";
 import PasswordWidget from "./PasswordWidget";
 import CoordinateField from "./CoordinateField";
 
+const { getDefaultRegistry } = utils;
+
+const { fields, widgets } = getDefaultRegistry();
+
 export const Theme: ThemeProps = {
   className: "ui warning form",
-  FieldTemplate,
   ArrayFieldTemplate,
+  fields: { ...fields, TitleField, CoordinateField },
+  FieldTemplate,
   ObjectFieldTemplate,
-  ErrorList,
-  fields: {
-    TitleField,
-    Coordinate: CoordinateField
-  },
   widgets: {
+    ...widgets,
     CheckboxWidget,
     TextWidget,
     EmailWidget,
-    TimeWidget,
-    PasswordWidget
-  }
+    PasswordWidget,
+    time: TimeWidget,
+  },
+  ErrorList,
 };
 
 export default withTheme(Theme);

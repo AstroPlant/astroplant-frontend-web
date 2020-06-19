@@ -146,12 +146,10 @@ class EditPeripheral extends React.Component<PInner, State> {
       activeFrom: {
         "ui:title": "Active from",
         "ui:description": "Time-of-day from which the rule becomes active.",
-        "ui:widget": "TimeWidget",
       },
       activeTo: {
         "ui:title": "Active to",
         "ui:description": "Time-of-day until which the rule is active.",
-        "ui:widget": "TimeWidget",
       },
     };
     const schema = produce(fuzzyRuleSchema, (draft) => {

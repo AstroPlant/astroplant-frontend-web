@@ -108,7 +108,6 @@ export const setpointUiSchema = {
   items: {
     time: {
       "ui:title": "Time",
-      "ui:widget": "TimeWidget",
     },
     value: {
       "ui:title": "Value",
