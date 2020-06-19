@@ -10,11 +10,11 @@ import {
   Transition,
   Icon,
   Card,
-  Input
+  Input,
 } from "semantic-ui-react";
 import { kitCreated } from "../modules/me/actions";
 
-import { JSONSchema6 } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 import ApiForm from "Components/ApiForm";
 
 import { RootState } from "types";
@@ -24,7 +24,7 @@ import { AuthConfiguration } from "utils/api";
 
 import {
   withAuthentication,
-  WithAuthentication
+  WithAuthentication,
 } from "../Components/AuthenticatedGuard";
 import HeadTitle from "../Components/HeadTitle";
 
@@ -49,8 +49,8 @@ class CreateKit extends Component<Props, State> {
     done: false,
     result: {
       kitSerial: null,
-      password: null
-    }
+      password: null,
+    },
   };
 
   onResponse(response: { kitSerial: string; password: string }) {
@@ -64,13 +64,13 @@ class CreateKit extends Component<Props, State> {
       return {
         latitude: null,
         longitude: null,
-        ...rest
+        ...rest,
       };
     } else {
       return {
         latitude: coordinate.latitude,
         longitude: coordinate.longitude,
-        ...rest
+        ...rest,
       };
     }
   }
@@ -83,7 +83,7 @@ class CreateKit extends Component<Props, State> {
   render() {
     const { t } = this.props;
 
-    const schema: JSONSchema6 = {
+    const schema: JSONSchema7 = {
       type: "object",
       title: "Kit details",
       required: [],
@@ -95,29 +95,29 @@ class CreateKit extends Component<Props, State> {
           required: ["latitude", "longitude"],
           properties: {
             latitude: { type: "number", title: t("common.latitude") },
-            longitude: { type: "number", title: t("common.longitude") }
-          }
+            longitude: { type: "number", title: t("common.longitude") },
+          },
         },
         privacyPublicDashboard: {
           type: "boolean",
           default: true,
-          title: t("kit.privacyPublicDashboard")
+          title: t("kit.privacyPublicDashboard"),
         },
         privacyShowOnMap: {
           type: "boolean",
           default: true,
-          title: t("kit.privacyShowOnMap")
-        }
-      }
+          title: t("kit.privacyShowOnMap"),
+        },
+      },
     };
 
     const uiSchema = {
       description: {
-        "ui:widget": "textarea"
+        "ui:widget": "textarea",
       },
       coordinate: {
-        "ui:field": "Coordinate"
-      }
+        "ui:field": "Coordinate",
+      },
     };
 
     return (
@@ -188,22 +188,17 @@ class CreateKit extends Component<Props, State> {
 }
 
 const mapStateToProps = (state: RootState) => ({
-  accessToken: state.auth.accessToken
+  accessToken: state.auth.accessToken,
 });
 
 const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
-      kitCreated
+      kitCreated,
     },
     dispatch
   );
 
 export default withAuthentication()(
-  withTranslation()(
-    connect(
-      mapStateToProps,
-      mapDispatchToProps
-    )(CreateKit)
-  )
+  withTranslation()(connect(mapStateToProps, mapDispatchToProps)(CreateKit))
 );

@@ -5,7 +5,7 @@ import { RouteComponentProps, Redirect } from "react-router";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Container, Segment } from "semantic-ui-react";
 
-import { JSONSchema6 } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 import ApiForm from "Components/ApiForm";
 
 import { kitConfigurationCreated } from "modules/kit/actions";
@@ -62,7 +62,7 @@ class CreateConfiguration extends React.Component<Props, State> {
   render() {
     const { kit, t } = this.props;
 
-    const schema: JSONSchema6 = {
+    const schema: JSONSchema7 = {
       type: "object",
       title: "Create configuration",
       required: [],

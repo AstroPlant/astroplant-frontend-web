@@ -1,19 +1,18 @@
 /* Based on
- * https://github.com/rjsf-team/react-jsonschema-form/blob/master/themes/material-ui/src/ArrayFieldTemplate/ArrayFieldTemplate.tsx
+ * https://github.com/rjsf-team/react-jsonschema-form/blob/599a360bc51f9fbe9ab7efde4cf82fa3853b474c/packages/material-ui/src/ArrayFieldTemplate/ArrayFieldTemplate.tsx
  */
 
 import React from "react";
 
-import {
-  isMultiSelect,
-  getDefaultRegistry
-} from "react-jsonschema-form/lib/utils";
-import { ArrayFieldTemplateProps, IdSchema } from "react-jsonschema-form";
+import { utils } from "@rjsf/core";
+import { ArrayFieldTemplateProps, IdSchema } from "@rjsf/core";
 
 import { Segment, Divider, Button } from "semantic-ui-react";
 
 import AddButton from "../AddButton";
 import IconButton from "../IconButton";
+
+const { isMultiSelect, getDefaultRegistry } = utils;
 
 const ArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
   const { schema, registry = getDefaultRegistry() } = props;
@@ -36,7 +35,7 @@ const ArrayFieldTitle = ({
   TitleField,
   idSchema,
   title,
-  required
+  required,
 }: ArrayFieldTitleProps) => {
   if (!title) {
     return <div />;
@@ -55,7 +54,7 @@ type ArrayFieldDescriptionProps = {
 const ArrayFieldDescription = ({
   DescriptionField,
   idSchema,
-  description
+  description,
 }: ArrayFieldDescriptionProps) => {
   if (!description) {
     return <div />;
@@ -71,7 +70,7 @@ const DefaultArrayItem = (props: any) => {
     flex: 1,
     paddingLeft: 6,
     paddingRight: 6,
-    fontWeight: "bold"
+    fontWeight: "bold",
   };
   return (
     <>
@@ -176,7 +175,7 @@ const DefaultNormalArrayFieldTemplate = (props: ArrayFieldTemplateProps) => {
       )}
 
       <div key={`array-item-list-${props.idSchema.$id}`}>
-        {props.items && props.items.map(p => DefaultArrayItem(p))}
+        {props.items && props.items.map((p) => DefaultArrayItem(p))}
 
         {props.canAdd && (
           <>

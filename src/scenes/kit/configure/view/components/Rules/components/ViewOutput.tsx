@@ -1,6 +1,6 @@
 import React from "react";
 import { Table } from "semantic-ui-react";
-import { JSONSchema6 } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 
 import { Peripheral } from "astroplant-api";
 
@@ -9,7 +9,7 @@ import { OutputSettings } from "../schemas";
 export type Props = {
   peripheral: Peripheral;
   command: string;
-  schema: JSONSchema6;
+  schema: JSONSchema7;
   outputSettings: OutputSettings;
 };
 

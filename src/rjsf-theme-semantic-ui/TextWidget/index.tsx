@@ -1,6 +1,6 @@
 import React from "react";
 
-import { WidgetProps } from "react-jsonschema-form";
+import { WidgetProps } from "@rjsf/core";
 import { Input } from "semantic-ui-react";
 
 export function TextWidget(props: any) {

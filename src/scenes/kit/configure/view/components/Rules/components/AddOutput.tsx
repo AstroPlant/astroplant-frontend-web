@@ -3,14 +3,14 @@ import { compose } from "recompose";
 import { connect } from "react-redux";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Modal, Card, Header, Button, Icon } from "semantic-ui-react";
-import { JSONSchema6 } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 
 import { RootState } from "types";
 import { PeripheralDefinition, Peripheral } from "astroplant-api";
 
 export type Props = {
-  choices: [Peripheral, string, JSONSchema6][];
-  add: (peripheral: Peripheral, command: string, schema: JSONSchema6) => void;
+  choices: [Peripheral, string, JSONSchema7][];
+  add: (peripheral: Peripheral, command: string, schema: JSONSchema7) => void;
 };
 
 type PInner = Props &
@@ -38,7 +38,7 @@ class AddPeripheral extends React.Component<PInner, State> {
   selectPeripheralCommand(
     peripheral: Peripheral,
     command: string,
-    schema: JSONSchema6
+    schema: JSONSchema7
   ) {
     this.props.add(peripheral, command, schema);
     this.handleClose();

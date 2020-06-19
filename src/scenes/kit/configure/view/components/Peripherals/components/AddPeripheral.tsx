@@ -19,7 +19,7 @@ import { peripheralCreated } from "modules/kit/actions";
 import { Kit, KitsApi, PeripheralDefinition, Peripheral } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 
-import { JSONSchema6 } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 import ApiForm from "Components/ApiForm";
 
 import PeripheralDefinitionCard from "Components/PeripheralDefinitionCard";
@@ -110,7 +110,7 @@ class AddPeripheral extends React.Component<PInner, State> {
         </>
       );
     } else if (def !== null) {
-      const schema: JSONSchema6 = {
+      const schema: JSONSchema7 = {
         type: "object",
         title: "Peripheral",
         required: ["name", "configuration"],

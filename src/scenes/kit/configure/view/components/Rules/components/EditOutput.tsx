@@ -3,7 +3,7 @@ import { compose } from "recompose";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Form, Modal, Header, Button, Icon } from "semantic-ui-react";
 import produce from "immer";
-import { JSONSchema6 } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 import RjsfForm from "rjsf-theme-semantic-ui";
 
 import { Peripheral } from "astroplant-api";
@@ -17,7 +17,7 @@ import {
 export type Props = {
   peripheral: Peripheral;
   command: string;
-  schema: JSONSchema6;
+  schema: JSONSchema7;
   outputSettings: OutputSettings;
   edit: (
     peripheral: Peripheral,

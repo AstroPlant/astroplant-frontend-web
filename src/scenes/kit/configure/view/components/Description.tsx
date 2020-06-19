@@ -3,7 +3,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Icon } from "semantic-ui-react";
 
-import { JSONSchema6 } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 import ApiForm from "Components/ApiForm";
 
 import { KitConfigurationState } from "modules/kit/reducer";
@@ -57,7 +57,7 @@ class Description extends React.Component<Props, State> {
     const { configuration } = this.props;
 
     if (this.state.editing) {
-      const schema: JSONSchema6 = {
+      const schema: JSONSchema7 = {
         type: "string",
       };
       const uiSchema = {};

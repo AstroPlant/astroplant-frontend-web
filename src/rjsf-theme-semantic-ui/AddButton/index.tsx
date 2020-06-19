@@ -1,5 +1,5 @@
 import React from "react";
-import { AddButtonProps } from "react-jsonschema-form";
+import { AddButtonProps } from "@rjsf/core";
 import { Button, Icon } from "semantic-ui-react";
 
 const AddButton = (props: AddButtonProps) => {

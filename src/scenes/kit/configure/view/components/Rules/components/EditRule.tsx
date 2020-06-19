@@ -3,7 +3,7 @@ import { compose } from "recompose";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Form, Modal, Header, Button, Icon } from "semantic-ui-react";
 import produce from "immer";
-import { JSONSchema6 } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 import RjsfForm from "rjsf-theme-semantic-ui";
 
 import {
@@ -27,7 +27,7 @@ type PInner = Props & WithTranslation;
 
 type State = {};
 
-export const fuzzyRuleConditionSchema: JSONSchema6 = {
+export const fuzzyRuleConditionSchema: JSONSchema7 = {
   type: "object",
   properties: {
     negation: { type: "boolean" },
@@ -38,7 +38,7 @@ export const fuzzyRuleConditionSchema: JSONSchema6 = {
   },
 };
 
-export const fuzzyRuleImplicationSchema: JSONSchema6 = {
+export const fuzzyRuleImplicationSchema: JSONSchema7 = {
   type: "object",
   properties: {
     peripheralCommand: { type: "string" },
@@ -46,7 +46,7 @@ export const fuzzyRuleImplicationSchema: JSONSchema6 = {
   },
 };
 
-export const fuzzyRuleSchema: JSONSchema6 = {
+export const fuzzyRuleSchema: JSONSchema7 = {
   type: "object",
   properties: {
     condition: { type: "array", items: fuzzyRuleConditionSchema },

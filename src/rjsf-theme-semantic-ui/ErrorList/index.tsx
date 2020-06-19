@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ErrorListProps } from "react-jsonschema-form";
+import { ErrorListProps } from "@rjsf/core";
 import { Message } from "semantic-ui-react";
 
 export default function ErrorList(props: ErrorListProps) {

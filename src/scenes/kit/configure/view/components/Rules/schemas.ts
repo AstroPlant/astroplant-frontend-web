@@ -1,4 +1,4 @@
-import { JSONSchema6 } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 
 export type Setpoint = {
   time: string;
@@ -66,7 +66,7 @@ export type FuzzyControl = {
   rules: FuzzyRule[];
 };
 
-export const inputFuzzySetSchema: JSONSchema6 = {
+export const inputFuzzySetSchema: JSONSchema7 = {
   type: "string",
   enum: [
     "largeNegative",
@@ -77,17 +77,17 @@ export const inputFuzzySetSchema: JSONSchema6 = {
   ],
 };
 
-export const outputFuzzySetSchema: JSONSchema6 = {
+export const outputFuzzySetSchema: JSONSchema7 = {
   type: "string",
   enum: ["minimal", "low", "medium", "high", "maximal"],
 };
 
-export const hedgeSchema: JSONSchema6 = {
+export const hedgeSchema: JSONSchema7 = {
   type: "string",
   enum: ["very", "slightly"],
 };
 
-export const setpointSchema: JSONSchema6 = {
+export const setpointSchema: JSONSchema7 = {
   type: "object",
   required: ["time", "value"],
   properties: {
@@ -116,7 +116,7 @@ export const setpointUiSchema = {
   },
 };
 
-export const inputSettingsSchema: JSONSchema6 = {
+export const inputSettingsSchema: JSONSchema7 = {
   type: "object",
   required: [
     "nominalRange",
@@ -168,7 +168,7 @@ export const inputSettingsUiSchema = {
   setpoints: setpointUiSchema,
 };
 
-export const outputSettingsSchema: JSONSchema6 = {
+export const outputSettingsSchema: JSONSchema7 = {
   type: "object",
   properties: {
     type: {
@@ -200,7 +200,7 @@ export const outputSettingsUiSchema = {
   },
 };
 
-export const fuzzyRuleCondition: JSONSchema6 = {
+export const fuzzyRuleCondition: JSONSchema7 = {
   type: "object",
   properties: {
     negation: { type: "boolean" },
@@ -212,7 +212,7 @@ export const fuzzyRuleCondition: JSONSchema6 = {
   },
 };
 
-export const fuzzyRuleImplication: JSONSchema6 = {
+export const fuzzyRuleImplication: JSONSchema7 = {
   type: "object",
   properties: {
     peripheral: { type: "string" },
@@ -221,7 +221,7 @@ export const fuzzyRuleImplication: JSONSchema6 = {
   },
 };
 
-export const fuzzyRule: JSONSchema6 = {
+export const fuzzyRule: JSONSchema7 = {
   type: "object",
   properties: {
     condition: { type: "array", items: fuzzyRuleCondition },
@@ -231,7 +231,7 @@ export const fuzzyRule: JSONSchema6 = {
   },
 };
 
-export const fuzzyControlSchema: JSONSchema6 = {
+export const fuzzyControlSchema: JSONSchema7 = {
   type: "object",
   properties: {
     input: {

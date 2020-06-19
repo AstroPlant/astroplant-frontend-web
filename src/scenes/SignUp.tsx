@@ -8,7 +8,7 @@ import {
   Icon,
   Transition
 } from "semantic-ui-react";
-import { JSONSchema6 } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 import ApiForm from "Components/ApiForm";
 
 import HeadTitle from "../Components/HeadTitle";
@@ -51,7 +51,7 @@ class SignUpPage extends Component<WithTranslation, State> {
   render() {
     const { t } = this.props;
 
-    const schema: JSONSchema6 = {
+    const schema: JSONSchema7 = {
       type: "object",
       title: "Account details",
       required: ["username", "password", "passwordRepeat", "emailAddress"],

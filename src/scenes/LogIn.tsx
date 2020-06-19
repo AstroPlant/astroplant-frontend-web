@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Container } from "semantic-ui-react";
-import { JSONSchema6 } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 import ApiForm from "Components/ApiForm";
 import { AuthenticationTokens } from "astroplant-api";
 
@@ -54,7 +54,7 @@ class LogInPage extends Component<Props, State> {
   render() {
     const { t } = this.props;
 
-    const schema: JSONSchema6 = {
+    const schema: JSONSchema7 = {
       type: "object",
       required: ["username", "password"],
       properties: {

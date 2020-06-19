@@ -12,7 +12,7 @@ import {
   Loader,
 } from "semantic-ui-react";
 import produce from "immer";
-import { JSONSchema6 } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 
 import { RootState } from "types";
 import { KitConfigurationState } from "modules/kit/reducer";
@@ -58,13 +58,15 @@ type State = {
   editing: boolean;
   loading: boolean;
   editingInput: Option<[Peripheral, QuantityType]>;
-  editingOutput: Option<[Peripheral, string, JSONSchema6]>;
+  editingOutput: Option<[Peripheral, string, JSONSchema7]>;
   editingRule: Option<number>;
   inputSettings: any;
   fuzzyControl: FuzzyControl;
 };
 
-function parseConfiguration(configuration: KitConfigurationState): FuzzyControl {
+function parseConfiguration(
+  configuration: KitConfigurationState
+): FuzzyControl {
   let fuzzyControl: FuzzyControl = { input: {}, output: {}, rules: [] };
 
   const rules = configuration.controlRules as any;
@@ -251,7 +253,7 @@ class Rules extends React.Component<Props, State> {
   addEmptyOutput = (
     peripheral: Peripheral,
     command: string,
-    schema: JSONSchema6
+    schema: JSONSchema7
   ) => {
     const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
       if (!(peripheral.name in draft.output)) {
@@ -390,7 +392,7 @@ class Rules extends React.Component<Props, State> {
       }
     }
 
-    let undefinedPeripheralCommands: [Peripheral, string, JSONSchema6][] = [];
+    let undefinedPeripheralCommands: [Peripheral, string, JSONSchema7][] = [];
     for (const peripheral of Object.values(configuration.peripherals)) {
       const peripheralDefinition = peripheralDefinitions[
         peripheral.peripheralDefinitionId
@@ -435,44 +437,46 @@ class Rules extends React.Component<Props, State> {
             <Icon name="thermometer" /> Inputs
           </Header>
 
-          {Object.entries(fuzzyControl.input).map(([peripheralName, qtInput]) => (
-            <Segment key={peripheralName}>
-              <Header as="h4">{peripheralName}</Header>
-              {Object.entries(qtInput).map(([quantityTypeId, settings]) => {
-                const peripheral = Object.values(
-                  configuration.peripherals
-                ).filter((p) => p.name === peripheralName)[0];
-                const quantityType = quantityTypes[quantityTypeId]!;
-                return (
-                  <div key={quantityTypeId}>
-                    <ViewInput
-                      peripheral={peripheral}
-                      quantityType={quantityType}
-                      inputSettings={settings}
-                    />
-                    <div>
-                      <Button
-                        icon
-                        labelPosition="left"
-                        onClick={() =>
-                          this.setState({
-                            editingInput: Option.some([
-                              peripheral,
-                              quantityType,
-                            ]),
-                          })
-                        }
-                      >
-                        <Icon name="pencil" />
-                        Edit
-                      </Button>
+          {Object.entries(fuzzyControl.input).map(
+            ([peripheralName, qtInput]) => (
+              <Segment key={peripheralName}>
+                <Header as="h4">{peripheralName}</Header>
+                {Object.entries(qtInput).map(([quantityTypeId, settings]) => {
+                  const peripheral = Object.values(
+                    configuration.peripherals
+                  ).filter((p) => p.name === peripheralName)[0];
+                  const quantityType = quantityTypes[quantityTypeId]!;
+                  return (
+                    <div key={quantityTypeId}>
+                      <ViewInput
+                        peripheral={peripheral}
+                        quantityType={quantityType}
+                        inputSettings={settings}
+                      />
+                      <div>
+                        <Button
+                          icon
+                          labelPosition="left"
+                          onClick={() =>
+                            this.setState({
+                              editingInput: Option.some([
+                                peripheral,
+                                quantityType,
+                              ]),
+                            })
+                          }
+                        >
+                          <Icon name="pencil" />
+                          Edit
+                        </Button>
+                      </div>
+                      <Divider />
                     </div>
-                    <Divider />
-                  </div>
-                );
-              })}
-            </Segment>
-          ))}
+                  );
+                })}
+              </Segment>
+            )
+          )}
 
           {this.state.editingInput
             .map(([peripheral, quantityType]) => {
@@ -523,7 +527,7 @@ class Rules extends React.Component<Props, State> {
                   const peripheralDefinition =
                     peripheralDefinitions[peripheral.peripheralDefinitionId];
                   const schema = (peripheralDefinition.commandSchema as any)
-                    .properties[command] as JSONSchema6;
+                    .properties[command] as JSONSchema7;
                   return (
                     <div key={command}>
                       <ViewOutput
@@ -563,10 +567,6 @@ class Rules extends React.Component<Props, State> {
               const outputSettings = fuzzyControl.output[peripheral.name]![
                 command
               ]!;
-              // const peripheralDefinition =
-              //   peripheralDefinitions[peripheral.peripheralDefinitionId];
-              // const schema = (peripheralDefinition.commandSchema as any)
-              //   .properties[command] as JSONSchema6;
               return (
                 <EditOutput
                   peripheral={peripheral}

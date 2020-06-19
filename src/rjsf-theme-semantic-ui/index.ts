@@ -1,4 +1,4 @@
-import { withTheme, ThemeProps } from "react-jsonschema-form";
+import { withTheme, ThemeProps } from "@rjsf/core";
 
 import FieldTemplate from "./FieldTemplate";
 import ArrayFieldTemplate from "./ArrayFieldTemplate";

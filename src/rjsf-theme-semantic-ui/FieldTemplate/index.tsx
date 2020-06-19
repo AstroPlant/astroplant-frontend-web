@@ -1,6 +1,6 @@
 import React from "react";
 
-import { FieldTemplateProps } from "react-jsonschema-form";
+import { FieldTemplateProps } from "@rjsf/core";
 import { Form, Label, List } from "semantic-ui-react";
 
 export default function FieldTemplate(props: FieldTemplateProps) {

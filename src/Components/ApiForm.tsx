@@ -4,8 +4,8 @@ import { bindActionCreators } from "redux";
 import { Observable } from "rxjs";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Form } from "semantic-ui-react";
-import { JSONSchema6 } from "json-schema";
-import { UiSchema, FormValidation } from "react-jsonschema-form";
+import { JSONSchema7 } from "json-schema";
+import { UiSchema, FormValidation } from "@rjsf/core";
 import RjsfForm from "../rjsf-theme-semantic-ui";
 
 import {
@@ -25,7 +25,7 @@ type State<T> = {
 };
 
 export type Props<T, R> = {
-  schema: JSONSchema6;
+  schema: JSONSchema7;
   uiSchema: UiSchema;
   validate?: (formData: T, errors: FormValidation) => FormValidation;
   transform?: (formData: T) => any;

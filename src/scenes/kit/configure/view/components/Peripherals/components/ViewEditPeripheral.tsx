@@ -11,7 +11,7 @@ import { peripheralDeleted, peripheralUpdated } from "modules/kit/actions";
 import { Kit, KitsApi, PeripheralDefinition, Peripheral } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 
-import { JSONSchema6 } from "json-schema";
+import { JSONSchema7 } from "json-schema";
 import ApiForm from "Components/ApiForm";
 import ApiButton from "Components/ApiButton";
 import RjsfForm from "rjsf-theme-semantic-ui";
@@ -95,7 +95,7 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
       peripheral.peripheralDefinitionId
     ];
 
-    const schema: JSONSchema6 = {
+    const schema: JSONSchema7 = {
       type: "object",
       required: ["name", "configuration"],
       properties: {

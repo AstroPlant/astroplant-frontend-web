@@ -1,6 +1,6 @@
 import React from "react";
 
-import { FieldProps } from "react-jsonschema-form";
+import { FieldProps } from "@rjsf/core";
 import { Header } from "semantic-ui-react";
 
 export default function TitleField({ title }: FieldProps) {

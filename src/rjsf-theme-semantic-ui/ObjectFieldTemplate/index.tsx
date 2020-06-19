@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ObjectFieldTemplateProps } from "react-jsonschema-form";
+import { ObjectFieldTemplateProps } from "@rjsf/core";
 import { Segment } from "semantic-ui-react";
 
 export default function ObjectFieldTemplate(props: ObjectFieldTemplateProps) {
