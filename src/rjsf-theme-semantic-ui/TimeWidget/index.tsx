@@ -15,7 +15,7 @@ function processInput(input: string): string {
   }
 }
 
-export function TextWidget(props: any) {
+export function TimeWidget(props: any) {
   return ({
     id,
     autofocus,
@@ -63,4 +63,4 @@ export function TextWidget(props: any) {
   };
 }
 
-export default TextWidget({});
+export default TimeWidget({});
