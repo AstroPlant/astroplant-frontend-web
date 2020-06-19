@@ -14,10 +14,14 @@
 import { Observable } from 'rxjs';
 import { BaseAPI, HttpHeaders, throwIfNullOrUndefined, encodeURI } from '../runtime';
 import {
-    ProblemDetails,
     ProblemInternalServer,
+    ProblemKitRpc,
     ProblemRateLimit,
 } from '../models';
+
+export interface PeripheralCommandRequest {
+    kitSerial: string;
+}
 
 export interface UptimeRequest {
     kitSerial: string;
@@ -31,6 +35,23 @@ export interface VersionRequest {
  * no description
  */
 export class KitRpcApi extends BaseAPI {
+
+    /**
+     * Send a command to a peripheral device on the kit.
+     */
+    peripheralCommand = ({ kitSerial }: PeripheralCommandRequest): Observable<void> => {
+        throwIfNullOrUndefined(kitSerial, 'peripheralCommand');
+
+        const headers: HttpHeaders = {
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
+        };
+
+        return this.request<void>({
+            path: '/kit-rpc/{kitSerial}/peripheral-command'.replace('{kitSerial}', encodeURI(kitSerial)),
+            method: 'POST',
+            headers,
+        });
+    };
 
     /**
      * Query the kit for its uptime.

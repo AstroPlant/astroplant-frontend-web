@@ -11,21 +11,12 @@
  * Do not edit the class manually.
  */
 
+import {
+    ProblemDetails,
+} from './';
+
 /**
+ * @type ProblemInternalServer
  * @export
- * @interface ProblemInternalServer
  */
-export interface ProblemInternalServer {
-    /**
-     * The error code for internal server errors: 1
-     * @type {number}
-     * @memberof ProblemInternalServer
-     */
-    errorCode?: number;
-    /**
-     * The error name for internal server errors: internalServer
-     * @type {string}
-     * @memberof ProblemInternalServer
-     */
-    errorName?: string;
-}
+export type ProblemInternalServer = ProblemDetails;

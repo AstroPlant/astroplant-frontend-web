@@ -11,13 +11,14 @@
  * Do not edit the class manually.
  */
 
-import {
-    ProblemDetails,
-    ProblemRateLimitAllOf,
-} from './';
-
 /**
- * @type ProblemRateLimit
  * @export
+ * @interface ProblemRateLimitAllOf
  */
-export type ProblemRateLimit = ProblemDetails & ProblemRateLimitAllOf;
+export interface ProblemRateLimitAllOf {
+    /**
+     * @type {number}
+     * @memberof ProblemRateLimitAllOf
+     */
+    waitTimeMillis: number;
+}

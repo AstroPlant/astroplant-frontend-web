@@ -14,26 +14,11 @@ export interface components {
       status?: number;
       detail?: string;
     };
-    ProblemInternalServer: {
-      /**
-       * The error code for internal server errors: 1
-       */
-      errorCode?: number;
-      /**
-       * The error name for internal server errors: internalServer
-       */
-      errorName?: string;
+    ProblemInternalServer: components["schemas"]["ProblemDetails"] & {
+      [key: string]: any;
     };
-    ProblemRateLimit: {
-      /**
-       * The error code for rate limit errors: 2
-       */
-      errorCode?: number;
-      /**
-       * The error name for rate limit errors: rateLimit
-       */
-      errorName?: string;
-      errorValue?: { waitTimeMillis?: number };
+    ProblemRateLimit: components["schemas"]["ProblemDetails"] & {
+      waitTimeMillis: number;
     };
     ProblemInvalidParameters: components["schemas"]["ProblemDetails"] & {
       invalidParameters?: { [key: string]: components["schemas"]["InvalidParameter"] };
@@ -50,6 +35,9 @@ export interface components {
       Partial<{
         invalidToken: { category: "missing" | "malformed" | "expired" };
       }>)[];
+    ProblemKitRpc: components["schemas"]["ProblemDetails"] & {
+      [key: string]: any;
+    };
     Kit: {
       id: number;
       serial: string;

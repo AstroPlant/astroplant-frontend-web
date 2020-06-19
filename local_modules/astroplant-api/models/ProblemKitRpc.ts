@@ -13,11 +13,10 @@
 
 import {
     ProblemDetails,
-    ProblemRateLimitAllOf,
 } from './';
 
 /**
- * @type ProblemRateLimit
+ * @type ProblemKitRpc
  * @export
  */
-export type ProblemRateLimit = ProblemDetails & ProblemRateLimitAllOf;
+export type ProblemKitRpc = ProblemDetails;
