@@ -29,10 +29,11 @@ type State = {};
 
 export const fuzzyRuleConditionSchema: JSONSchema7 = {
   type: "object",
+  required: ["negation", "delta", "peripheralQuantityType", "fuzzyVariable"],
   properties: {
-    negation: { type: "boolean" },
+    negation: { type: "boolean", default: false },
     hedge: hedgeSchema,
-    delta: { type: "boolean" },
+    delta: { type: "boolean", default: false },
     peripheralQuantityType: { type: "string" },
     fuzzyVariable: inputFuzzySetSchema,
   },
@@ -40,6 +41,7 @@ export const fuzzyRuleConditionSchema: JSONSchema7 = {
 
 export const fuzzyRuleImplicationSchema: JSONSchema7 = {
   type: "object",
+  required: ["peripheralCommand", "fuzzyVariable"],
   properties: {
     peripheralCommand: { type: "string" },
     fuzzyVariable: outputFuzzySetSchema,

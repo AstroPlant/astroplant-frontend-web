@@ -68,18 +68,24 @@ export type FuzzyControl = {
 
 export const inputFuzzySetSchema: JSONSchema7 = {
   type: "string",
-  enum: [
-    "largeNegative",
-    "smallNegative",
-    "nominal",
-    "smallPositive",
-    "largePositive",
+  oneOf: [
+    { enum: ["largeNegative"], title: "Large negative" },
+    { enum: ["smallNegative"], title: "Small negative" },
+    { enum: ["nominal"], title: "Nominal" },
+    { enum: ["smallPositive"], title: "Small positive" },
+    { enum: ["largePositive"], title: "Large positive" },
   ],
 };
 
 export const outputFuzzySetSchema: JSONSchema7 = {
   type: "string",
-  enum: ["minimal", "low", "medium", "high", "maximal"],
+  oneOf: [
+    { enum: ["minimal"], title: "Minimal" },
+    { enum: ["low"], title: "Low" },
+    { enum: ["medium"], title: "Medium" },
+    { enum: ["high"], title: "High" },
+    { enum: ["maximal"], title: "Maximal" },
+  ],
 };
 
 export const hedgeSchema: JSONSchema7 = {
@@ -201,6 +207,13 @@ export const outputSettingsUiSchema = {
 
 export const fuzzyRuleCondition: JSONSchema7 = {
   type: "object",
+  required: [
+    "negation",
+    "delta",
+    "peripheral",
+    "quantityType",
+    "fuzzyVariable",
+  ],
   properties: {
     negation: { type: "boolean" },
     hedge: hedgeSchema,
@@ -213,6 +226,7 @@ export const fuzzyRuleCondition: JSONSchema7 = {
 
 export const fuzzyRuleImplication: JSONSchema7 = {
   type: "object",
+  required: ["peripheral", "command", "fuzzyVariable"],
   properties: {
     peripheral: { type: "string" },
     command: { type: "string" },
