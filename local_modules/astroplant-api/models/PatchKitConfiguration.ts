@@ -25,17 +25,17 @@ export interface PatchKitConfiguration {
      * @type {string}
      * @memberof PatchKitConfiguration
      */
-    rulesSupervisorModuleName?: string;
+    controllerSymbolLocation?: string;
     /**
      * @type {string}
      * @memberof PatchKitConfiguration
      */
-    rulesSupervisorClassName?: string;
+    controllerSymbol?: string;
     /**
      * @type {object}
      * @memberof PatchKitConfiguration
      */
-    rules?: object;
+    controlRules?: object;
     /**
      * @type {boolean}
      * @memberof PatchKitConfiguration

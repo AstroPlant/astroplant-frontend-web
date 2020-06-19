@@ -45,12 +45,12 @@ export interface PeripheralDefinition {
      * @type {string}
      * @memberof PeripheralDefinition
      */
-    moduleName: string;
+    symbolLocation: string;
     /**
      * @type {string}
      * @memberof PeripheralDefinition
      */
-    className: string;
+    symbol: string;
     /**
      * @type {object}
      * @memberof PeripheralDefinition

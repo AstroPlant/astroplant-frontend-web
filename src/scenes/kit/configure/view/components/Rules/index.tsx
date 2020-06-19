@@ -67,7 +67,7 @@ type State = {
 function parseConfiguration(configuration: KitConfigurationState): FuzzyControl {
   let fuzzyControl: FuzzyControl = { input: {}, output: {}, rules: [] };
 
-  const rules = configuration.rules as any;
+  const rules = configuration.controlRules as any;
   try {
     for (const [peripheralName, qtSettings] of Object.entries(
       rules.fuzzyControl.input
@@ -204,7 +204,7 @@ class Rules extends React.Component<Props, State> {
     return api.patchConfiguration({
       configurationId: configuration.id,
       patchKitConfiguration: {
-        rules: formData,
+        controlRules: formData,
       },
     });
   }
@@ -219,7 +219,7 @@ class Rules extends React.Component<Props, State> {
       .patchConfiguration({
         configurationId: configuration.id,
         patchKitConfiguration: {
-          rules: {
+          controlRules: {
             fuzzyControl,
           },
         },

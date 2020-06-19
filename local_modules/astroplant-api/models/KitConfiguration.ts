@@ -35,17 +35,17 @@ export interface KitConfiguration {
      * @type {string}
      * @memberof KitConfiguration
      */
-    rulesSupervisorModuleName: string;
+    controllerSymbolLocation: string;
     /**
      * @type {string}
      * @memberof KitConfiguration
      */
-    rulesSupervisorClassName: string;
+    controllerSymbol: string;
     /**
      * @type {object}
      * @memberof KitConfiguration
      */
-    rules: object;
+    controlRules: object;
     /**
      * @type {boolean}
      * @memberof KitConfiguration

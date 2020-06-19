@@ -92,8 +92,8 @@ export interface components {
       description?: string;
       brand?: string;
       model?: string;
-      moduleName: string;
-      className: string;
+      symbolLocation: string;
+      symbol: string;
       configurationSchema: { [key: string]: any };
       commandSchema: { [key: string]: any } | null;
       expectedQuantityTypes?: number[];
@@ -138,18 +138,18 @@ export interface components {
       id: number;
       kitId: number;
       description?: string;
-      rulesSupervisorModuleName: string;
-      rulesSupervisorClassName: string;
-      rules: { [key: string]: any };
+      controllerSymbolLocation: string;
+      controllerSymbol: string;
+      controlRules: { [key: string]: any };
       active: boolean;
       neverUsed: boolean;
     };
     NewKitConfiguration: { description?: string };
     PatchKitConfiguration: {
       description?: string;
-      rulesSupervisorModuleName?: string;
-      rulesSupervisorClassName?: string;
-      rules?: { [key: string]: any };
+      controllerSymbolLocation?: string;
+      controllerSymbol?: string;
+      controlRules?: { [key: string]: any };
       active?: boolean;
     };
     KitConfigurationWithPeripherals: components["schemas"]["KitConfiguration"] & {
