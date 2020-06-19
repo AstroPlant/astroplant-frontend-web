@@ -30,6 +30,8 @@ export const Theme: ThemeProps = {
     TextWidget,
     EmailWidget,
     PasswordWidget,
+    // TODO: not sure whether this is the best way to register the time widget.
+    // Adding it as TimeWidget causes it not to be found when using "type: string, format: time".
     time: TimeWidget,
   },
   ErrorList,
