@@ -69,7 +69,6 @@ class EditPeripheral extends React.Component<PInner, State> {
   };
 
   handleSubmit = (fuzzyRule: any) => {
-    console.warn(fuzzyRule);
     fuzzyRule.condition = fuzzyRule.condition.map(
       ({ peripheralQuantityType, ...rest }: any) => {
         const splitIdx = peripheralQuantityType.lastIndexOf("-");
@@ -90,7 +89,6 @@ class EditPeripheral extends React.Component<PInner, State> {
         return { ...rest, peripheral, command };
       }
     );
-    console.warn(fuzzyRule);
     this.props.edit(fuzzyRule);
     this.handleClose();
   };
