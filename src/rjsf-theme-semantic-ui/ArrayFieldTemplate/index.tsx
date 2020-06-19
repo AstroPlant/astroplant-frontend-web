@@ -73,7 +73,7 @@ const DefaultArrayItem = (props: any) => {
     fontWeight: "bold",
   };
   return (
-    <>
+    <div key={props.key}>
       <Segment raised attached="top">
         {props.children}
       </Segment>
@@ -110,7 +110,7 @@ const DefaultArrayItem = (props: any) => {
         </Button.Group>
       )}
       <Divider hidden />
-    </>
+    </div>
   );
 };
 
