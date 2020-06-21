@@ -49,7 +49,6 @@ function PeripheralCommand(props: Props) {
     setDisplayUrl(null);
     setPlaintext(null);
     const peripheral = activeConfiguration!.peripherals[peripheralId!]!;
-    console.warn(formData);
     const api = new KitRpcApi(configuration);
     const response = await api
       .peripheralCommand({

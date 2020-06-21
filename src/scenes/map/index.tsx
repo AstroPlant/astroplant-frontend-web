@@ -34,7 +34,6 @@ class KitMap extends React.Component<Props, State> {
     })
       .pipe(reduce((all: Array<Kit>, val: Array<Kit>) => all.concat(val), []))
       .toPromise();
-    console.log(kits);
     this.setState({ kits: Option.some(kits) });
   }
 

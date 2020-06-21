@@ -658,7 +658,6 @@ class Rules extends React.Component<Props, State> {
                   }}
                   delete={() => {
                     this.deleteRule(index);
-                    console.warn("delete");
                     this.setState({ editingRule: Option.none() });
                   }}
                   close={() => {
