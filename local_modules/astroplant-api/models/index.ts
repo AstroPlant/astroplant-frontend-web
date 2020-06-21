@@ -10,6 +10,7 @@ export * from './KitConfiguration';
 export * from './KitConfigurationWithPeripherals';
 export * from './KitConfigurationWithPeripheralsAllOf';
 export * from './KitMembership';
+export * from './Media';
 export * from './NewKit';
 export * from './NewKitConfiguration';
 export * from './NewPeripheral';

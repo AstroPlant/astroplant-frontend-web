@@ -19,6 +19,7 @@ import {
     Kit,
     KitConfiguration,
     KitConfigurationWithPeripherals,
+    Media,
     NewKit,
     NewKitConfiguration,
     NewPeripheral,
@@ -50,6 +51,10 @@ export interface DeletePeripheralRequest {
     peripheralId: number;
 }
 
+export interface GetMediaContentRequest {
+    mediaId: string;
+}
+
 export interface ListAggregateMeasurementsRequest {
     kitSerial: string;
     configuration?: number;
@@ -64,6 +69,13 @@ export interface ListConfigurationsRequest {
 
 export interface ListKitsRequest {
     after?: number;
+}
+
+export interface ListMediaRequest {
+    kitSerial: string;
+    configuration?: number;
+    peripheral?: number;
+    cursor?: string;
 }
 
 export interface ListPermissionsRequest {
@@ -175,7 +187,24 @@ export class KitsApi extends BaseAPI {
     };
 
     /**
-     * Aggregate measurements made by a kit in the last 5 days.
+     * Download media content.
+     */
+    getMediaContent = ({ mediaId }: GetMediaContentRequest): Observable<void> => {
+        throwIfNullOrUndefined(mediaId, 'getMediaContent');
+
+        const headers: HttpHeaders = {
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
+        };
+
+        return this.request<void>({
+            path: '/media/{mediaId}/content'.replace('{mediaId}', encodeURI(mediaId)),
+            method: 'GET',
+            headers,
+        });
+    };
+
+    /**
+     * Aggregate measurements made by a kit.
      */
     listAggregateMeasurements = ({ kitSerial, configuration, peripheral, quantityType, cursor }: ListAggregateMeasurementsRequest): Observable<Array<AggregateMeasurement>> => {
         throwIfNullOrUndefined(kitSerial, 'listAggregateMeasurements');
@@ -228,6 +257,30 @@ export class KitsApi extends BaseAPI {
         return this.request<Array<Kit>>({
             path: '/kits',
             method: 'GET',
+            query,
+        });
+    };
+
+    /**
+     * Media produced by a kit.
+     */
+    listMedia = ({ kitSerial, configuration, peripheral, cursor }: ListMediaRequest): Observable<Array<Media>> => {
+        throwIfNullOrUndefined(kitSerial, 'listMedia');
+
+        const headers: HttpHeaders = {
+            ...(this.configuration.username != null && this.configuration.password != null ? { Authorization: `Basic ${btoa(this.configuration.username + ':' + this.configuration.password)}` } : undefined),
+        };
+
+        const query: HttpQuery = {};
+
+        if (configuration != null) { query['configuration'] = configuration; }
+        if (peripheral != null) { query['peripheral'] = peripheral; }
+        if (cursor != null) { query['cursor'] = cursor; }
+
+        return this.request<Array<Media>>({
+            path: '/kits/{kitSerial}/media'.replace('{kitSerial}', encodeURI(kitSerial)),
+            method: 'GET',
+            headers,
             query,
         });
     };
