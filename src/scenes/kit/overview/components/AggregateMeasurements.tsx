@@ -28,41 +28,50 @@ class AggregateMeasurements extends React.PureComponent<Props> {
     }
 
     if (activeConfiguration !== null) {
-      return (
-        <Container>
-          <Card.Group centered>
-            {Object.values(activeConfiguration.peripherals).map(
-              (peripheral) => {
-                const def: Option<PeripheralDefinition> = Option.from(
-                  peripheralDefinitions[peripheral.peripheralDefinitionId]
+      let hasMeasurements = false;
+      const cards = Object.values(activeConfiguration.peripherals).map(
+        (peripheral) => {
+          const def: Option<PeripheralDefinition> = Option.from(
+            peripheralDefinitions[peripheral.peripheralDefinitionId]
+          );
+          return def
+            .map((def: PeripheralDefinition) =>
+              def.expectedQuantityTypes!.map((quantityType) => {
+                hasMeasurements = true;
+                const qt: Option<QuantityType> = Option.from(
+                  quantityTypes[quantityType]
                 );
-                return def
-                  .map((def: PeripheralDefinition) =>
-                    def.expectedQuantityTypes!.map((quantityType) => {
-                      const qt: Option<QuantityType> = Option.from(
-                        quantityTypes[quantityType]
-                      );
-                      return qt
-                        .map((qt) => {
-                          return (
-                            <AggregateMeasurementsChart
-                              key={peripheral.id + "." + qt.id}
-                              kitState={kitState}
-                              peripheral={peripheral}
-                              peripheralDefinition={def}
-                              quantityType={qt}
-                            />
-                          );
-                        })
-                        .unwrapOrNull();
-                    })
-                  )
+                return qt
+                  .map((qt) => {
+                    return (
+                      <AggregateMeasurementsChart
+                        key={peripheral.id + "." + qt.id}
+                        kitState={kitState}
+                        peripheral={peripheral}
+                        peripheralDefinition={def}
+                        quantityType={qt}
+                      />
+                    );
+                  })
                   .unwrapOrNull();
-              }
-            )}
-          </Card.Group>
-        </Container>
+              })
+            )
+            .unwrapOrNull();
+        }
       );
+      if (hasMeasurements) {
+        return (
+          <Container>
+            <Card.Group centered>{cards}</Card.Group>
+          </Container>
+        );
+      } else {
+        return (
+          <Container>
+            No measurements are being made on this configuration.
+          </Container>
+        );
+      }
     } else {
       return null;
     }

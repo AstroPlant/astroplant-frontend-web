@@ -27,42 +27,51 @@ function RawMeasurements(props: Props) {
   }
 
   if (activeConfiguration !== null) {
-    return (
-      <Container>
-        <Card.Group centered stackable itemsPerRow={4}>
-          {Object.values(activeConfiguration.peripherals).map(peripheral => {
-            const def: Option<PeripheralDefinition> = Option.from(
-              peripheralDefinitions[peripheral.peripheralDefinitionId]
-            );
-            return def
-              .map((def: PeripheralDefinition) =>
-                def.expectedQuantityTypes!.map(quantityType => {
-                  const qt: Option<QuantityType> = Option.from(
-                    quantityTypes[quantityType]
+    let hasMeasurements = false;
+    const cards = Object.values(activeConfiguration.peripherals).map(
+      (peripheral) => {
+        const def: Option<PeripheralDefinition> = Option.from(
+          peripheralDefinitions[peripheral.peripheralDefinitionId]
+        );
+        return def
+          .map((def: PeripheralDefinition) =>
+            def.expectedQuantityTypes!.map((quantityType) => {
+              hasMeasurements = true;
+              const qt: Option<QuantityType> = Option.from(
+                quantityTypes[quantityType]
+              );
+              return qt
+                .map((qt) => {
+                  const measurement = Option.from(
+                    rawMeasurements[peripheral.id + "." + qt.id]
                   );
-                  return qt
-                    .map(qt => {
-                      const measurement = Option.from(
-                        rawMeasurements[peripheral.id + "." + qt.id]
-                      );
-                      return (
-                        <RawMeasurementComp
-                          key={peripheral.id + "." + qt.id}
-                          peripheral={peripheral}
-                          peripheralDefinition={def}
-                          quantityType={qt}
-                          rawMeasurement={measurement}
-                        />
-                      );
-                    })
-                    .unwrapOrNull();
+                  return (
+                    <RawMeasurementComp
+                      key={peripheral.id + "." + qt.id}
+                      peripheral={peripheral}
+                      peripheralDefinition={def}
+                      quantityType={qt}
+                      rawMeasurement={measurement}
+                    />
+                  );
                 })
-              )
-              .unwrapOrNull();
-          })}
-        </Card.Group>
-      </Container>
+                .unwrapOrNull();
+            })
+          )
+          .unwrapOrNull();
+      }
     );
+    if (hasMeasurements) {
+      return (
+        <Container>
+          <Card.Group centered stackable itemsPerRow={4}>
+            {cards}
+          </Card.Group>
+        </Container>
+      );
+    } else {
+      return <Container>No measurements are being made on this configuration.</Container>;
+    }
   } else {
     return null;
   }
@@ -71,7 +80,7 @@ function RawMeasurements(props: Props) {
 const mapStateToProps = (state: RootState) => {
   return {
     peripheralDefinitions: state.peripheralDefinition.definitions,
-    quantityTypes: state.quantityType.quantityTypes
+    quantityTypes: state.quantityType.quantityTypes,
   };
 };
 
