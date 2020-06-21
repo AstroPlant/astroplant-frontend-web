@@ -1,7 +1,7 @@
 import React from "react";
 import { RouteComponentProps } from "react-router";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Container, Loader, Header, Tab } from "semantic-ui-react";
+import { Container, Loader, Tab } from "semantic-ui-react";
 import { KitState } from "modules/kit/reducer";
 
 import RawMeasurements from "./components/RawMeasurements";

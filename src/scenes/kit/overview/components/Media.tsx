@@ -7,11 +7,6 @@ import { KitState, KitConfigurationState } from "modules/kit/reducer";
 import { PeripheralDefinition } from "astroplant-api";
 import { KitsApi, schemas } from "api";
 import { configuration, rateLimit } from "utils/api";
-import Option from "utils/option";
-
-import RawMeasurementComp from "./RawMeasurement";
-
-type Params = { kitSerial: string };
 
 export type Props = {
   kitState: KitState;
@@ -28,7 +23,6 @@ function Media(props: Props) {
     activeConfiguration,
     setActiveConfiguration,
   ] = useState<KitConfigurationState | null>(null);
-  const [openImage, setOpenImage] = useState(null);
 
   const { kitState } = props;
 
@@ -41,7 +35,7 @@ function Media(props: Props) {
         break;
       }
     }
-  }, []);
+  }, [kitState.configurations]);
 
   useEffect(() => {
     if (activeConfiguration) {
@@ -57,7 +51,7 @@ function Media(props: Props) {
     }
 
     return () => setMedia([]);
-  }, [activeConfiguration]);
+  }, [kitState.details, activeConfiguration]);
 
   useEffect(() => {
     if (displayMedia) {
@@ -86,7 +80,6 @@ function Media(props: Props) {
   if (media.length > 0) {
     return (
       <>
-        {displayMedia !== null && displayUrl === null && <div>Loading</div>}
         {displayMedia !== null && displayUrl !== null && (
           <Modal open={true} onClose={() => setDisplayUrl(null)}>
             <Modal.Header>{displayMedia.name}</Modal.Header>
