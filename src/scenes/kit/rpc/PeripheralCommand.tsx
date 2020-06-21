@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Button, Select, Image, Segment } from "semantic-ui-react";
 
-import { JSONSchema7 } from "json-schema";
-
 import { RootState } from "types";
 import { KitState, KitConfigurationState } from "modules/kit/reducer";
 import { KitRpcApi, schemas } from "api";
@@ -75,33 +73,6 @@ function PeripheralCommand(props: Props) {
   };
 
   if (activeConfiguration !== null) {
-    let schema: JSONSchema7 = {
-      title: "Command",
-      oneOf: [],
-    };
-    // for (const peripheral of Object.values(activeConfiguration!.peripherals)) {
-    //   const peripheralDefinition = peripheralDefinitions[
-    //     peripheral.peripheralDefinitionId
-    //   ]!;
-    //   let sch: any = {
-    //     type: "object",
-    //     properties: {
-    //       peripheralId: {
-    //         title: "Peripheral",
-    //         type: "number",
-    //         enum: [peripheral.id],
-    //         enumNames: [peripheral.name],
-    //       },
-    //     },
-    //   };
-    //   if (peripheralDefinition.commandSchema) {
-    //     // @ts-ignore
-    //     sch.properties.command = peripheralDefinition.commandSchema;
-    //   }
-    //   // @ts-ignore
-    //   schema.oneOf.push(sch);
-    // }
-    console.log(schema);
     return (
       <>
         <div>
