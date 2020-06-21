@@ -40,6 +40,7 @@ function KitOverview(props: Props) {
         },
         pane: (
           <Route
+            key={"measurements-pane"}
             path={`${baseUrl}`}
             exact
             render={() => (
@@ -65,6 +66,7 @@ function KitOverview(props: Props) {
         },
         pane: (
           <Route
+            key={"media-pane"}
             path={`${baseUrl}/media`}
             render={() => (
               <Tab.Pane>
