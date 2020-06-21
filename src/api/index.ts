@@ -140,6 +140,33 @@ export class KitsApi extends BaseApi {
       query: query as HttpQuery,
     });
   };
+
+  listMedia = ({
+    kitSerial,
+    ...query
+  }: {
+    kitSerial: string;
+    configuration?: number;
+    peripheral?: number;
+  }): Observable<Response<Array<schemas["Media"]>>> => {
+    return this.request<Array<schemas["Media"]>>({
+      path: `/kits/${encodeUri(kitSerial)}/media`,
+      method: "GET",
+      query: query as HttpQuery,
+    });
+  };
+
+  getMediaContent = ({
+    mediaId,
+  }: {
+    mediaId: string;
+  }): Observable<Response<any>> => {
+    return this.request<any>({
+      path: `/media/${encodeUri(mediaId)}/content`,
+      method: "GET",
+      responseType: "blob",
+    });
+  };
 }
 
 export class KitRpcApi extends BaseApi {
@@ -152,7 +179,7 @@ export class KitRpcApi extends BaseApi {
     peripheral: string;
     command: string;
   }): Observable<Response<any>> => {
-    return this.request<Array<schemas["AggregateMeasurement"]>>({
+    return this.request<any>({
       path: `/kit-rpc/${encodeUri(kitSerial)}/peripheral-command`,
       method: "POST",
       body: { peripheral, command },

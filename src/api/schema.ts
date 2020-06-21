@@ -165,5 +165,16 @@ export interface components {
       datetimeEnd: string;
       values: { [key: string]: number };
     };
+    Media: {
+      id: string;
+      peripheralId: number;
+      kitId: number;
+      kitConfigurationId: number;
+      datetime: string;
+      name: string;
+      type: string;
+      metadata: { [key: string]: any };
+      size: number;
+    };
   };
 }
