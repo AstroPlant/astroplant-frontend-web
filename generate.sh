@@ -12,6 +12,11 @@ if [ -f $types ] ; then
 fi
 
 patch -p1 <<'EOF'
+--- a/local_modules/astroplant-api/models/index.ts
++++ b/local_modules/astroplant-api/models/index.ts
+@@ -0,0 +0,2 @@
++export type AnyType = any;
++
 --- a/local_modules/astroplant-api/runtime.ts
 +++ b/local_modules/astroplant-api/runtime.ts
 @@ -15,7 +15,7 @@

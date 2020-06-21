@@ -1,3 +1,5 @@
+export type AnyType = any;
+
 export * from './AggregateMeasurement';
 export * from './AuthRefreshToken';
 export * from './AuthUser';
