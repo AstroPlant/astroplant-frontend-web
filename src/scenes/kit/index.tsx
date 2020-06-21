@@ -118,9 +118,7 @@ class KitDashboard extends React.PureComponent<
             />
             <Route
               path={`${path}/rpc`}
-              render={(props) => (
-                <Rpc {...props} kit={kitState.details.unwrap()} />
-              )}
+              render={(props) => <Rpc {...props} kitState={kitState} />}
             />
             <Route
               render={(props) => <Overview {...props} kitState={kitState} />}
