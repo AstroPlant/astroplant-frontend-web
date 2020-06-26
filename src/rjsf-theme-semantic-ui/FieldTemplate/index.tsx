@@ -12,7 +12,8 @@ export default function FieldTemplate(props: FieldTemplateProps) {
     required,
     description,
     rawErrors = [],
-    children
+    children,
+    schema,
   } = props;
   return (
     <Form.Field>
@@ -22,7 +23,7 @@ export default function FieldTemplate(props: FieldTemplateProps) {
           {required ? "*" : null}
         </label>
       )}
-      {description}
+      {schema["type"] !== "array" && description}
       {children}
       {rawErrors.length > 0 && (
         <div style={{ width: "100%" }}>
