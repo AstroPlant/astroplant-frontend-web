@@ -56,7 +56,7 @@ export default (props: Props) => {
           {fuzzyRule.implication.map((implication) => {
             return (
               <Table.Row
-                key={`${implication.peripheral}-${implication.command}`}
+                key={`${implication.peripheral}-${implication.command}-${implication.fuzzyVariable}`}
               >
                 <Table.Cell>{implication.peripheral}</Table.Cell>
                 <Table.Cell>{implication.command}</Table.Cell>
@@ -66,6 +66,33 @@ export default (props: Props) => {
           })}
         </Table.Body>
       </Table>
+      {fuzzyRule.schedules.length > 0 && (
+        <>
+          <Header as="h5">Output schedule votes</Header>
+          <Table compact="very">
+            <Table.Header>
+              <Table.Row>
+                <Table.HeaderCell>Peripheral</Table.HeaderCell>
+                <Table.HeaderCell>Command</Table.HeaderCell>
+                <Table.HeaderCell>Schedule #</Table.HeaderCell>
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {fuzzyRule.schedules.map((schedule) => {
+                return (
+                  <Table.Row
+                    key={`${schedule.peripheral}-${schedule.command}-${schedule.schedule}`}
+                  >
+                    <Table.Cell>{schedule.peripheral}</Table.Cell>
+                    <Table.Cell>{schedule.command}</Table.Cell>
+                    <Table.Cell>{schedule.schedule}</Table.Cell>
+                  </Table.Row>
+                );
+              })}
+            </Table.Body>
+          </Table>
+        </>
+      )}
     </>
   );
 };

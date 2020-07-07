@@ -25,9 +25,20 @@ export type ContinuousOutputSettings = {
   maximal: number;
 };
 
+export type ScheduledOutputSettings = {
+  interpolated: boolean;
+  schedules: Array<{
+    schedule: Array<{
+      time: string;
+      value: number;
+    }>;
+  }>;
+};
+
 export type OutputSettings = {
-  type: "continuous";
-  continuous: ContinuousOutputSettings;
+  type: "continuous" | "scheduled";
+  continuous?: ContinuousOutputSettings;
+  scheduled?: ScheduledOutputSettings;
 };
 
 export type OutputFuzzySet = "minimal" | "low" | "medium" | "high" | "maximal";
@@ -49,9 +60,16 @@ export type FuzzyRuleImplication = {
   fuzzyVariable: OutputFuzzySet;
 };
 
+export type FuzzyRuleSchedule = {
+  peripheral: string;
+  command: string;
+  schedule: number;
+};
+
 export type FuzzyRule = {
   condition: FuzzyRuleCondition[];
   implication: FuzzyRuleImplication[];
+  schedules: FuzzyRuleSchedule[];
   activeFrom: string;
   activeTo: string;
 };
@@ -173,36 +191,102 @@ export const inputSettingsUiSchema = {
   setpoints: setpointUiSchema,
 };
 
-export const outputSettingsSchema: JSONSchema7 = {
-  type: "object",
-  properties: {
-    type: {
-      type: "string",
-      enum: ["continuous"],
+export const outputSettingsScheduleSchema: JSONSchema7 = {
+  type: "array",
+  items: {
+    type: "object",
+    required: ["time", "value"],
+    properties: {
+      time: { type: "string", format: "time" },
+      value: {},
     },
-    continuous: {
-      type: "object",
-      properties: {
-        minimal: {
-          type: "number",
-        },
-        maximal: {
-          type: "number",
-        },
-      },
+  },
+  minItems: 1,
+};
+
+export const continuousOutputSettingsSchema: JSONSchema7 = {
+  type: "object",
+  title: "Continuous output settings",
+  required: ["minimal", "maximal"],
+  properties: {
+    minimal: {
+      type: "number",
+    },
+    maximal: {
+      type: "number",
     },
   },
 };
 
-export const outputSettingsUiSchema = {
-  continuous: {
-    minimal: {
-      "ui:title": "Minimal command value",
+export const continuousOutputSettingsUiSchema = {
+  minimal: {
+    "ui:title": "Minimal command value",
+  },
+  maximal: {
+    "ui:title": "Maximal command value",
+  },
+};
+
+export const scheduledOutputSettingsSchema: JSONSchema7 = {
+  type: "object",
+  title: "Scheduled output settings",
+  required: ["interpolated", "schedules"],
+  properties: {
+    interpolated: {
+      type: "boolean",
+      default: false,
     },
-    maximal: {
-      "ui:title": "Maximal command value",
+    schedules: {
+      type: "array",
+      title: "Output schedules",
+      items: {
+        type: "object",
+        title: "Schedule",
+        required: ["schedule"],
+        properties: {
+          schedule: outputSettingsScheduleSchema,
+        },
+      },
+      minItems: 1,
     },
   },
+};
+
+export const scheduledOutputSettingsUiSchema = {
+  interpolated: {
+    "ui:help":
+      "Interpolation is only possible for numeric commands. By interpolating, output command will linearly move from one output value to the next. To have a stable output command between two times, e.g. 09:00 and 18:00, set those times to the same command value.",
+  },
+  schedules: {
+    "ui:description":
+      "One or more schedules can be defined, with the system switching between them based on the rules you define. If no schedules appear in rules, or no rule matches, the first schedule is used by default.",
+  },
+};
+
+export const outputSettingsSchema: JSONSchema7 = {
+  allOf: [
+    {
+      type: "object",
+      required: ["type"],
+      properties: {
+        type: { type: "string", enum: ["continuous", "scheduled"] },
+      },
+    },
+    {
+      oneOf: [
+        {
+          type: "object",
+          required: ["continuous"],
+          properties: { continuous: continuousOutputSettingsSchema },
+        },
+        {
+          type: "object",
+          required: ["scheduled"],
+          properties: { scheduled: scheduledOutputSettingsSchema },
+        },
+      ],
+    },
+  ],
 };
 
 export const fuzzyRuleCondition: JSONSchema7 = {
@@ -234,11 +318,23 @@ export const fuzzyRuleImplication: JSONSchema7 = {
   },
 };
 
+export const fuzzyRuleSchedule: JSONSchema7 = {
+  type: "object",
+  required: ["peripheral", "command", "schedule"],
+  properties: {
+    peripheral: { type: "string" },
+    command: { type: "string" },
+    schedule: { type: "number", format: "integer" },
+  },
+};
+
 export const fuzzyRule: JSONSchema7 = {
   type: "object",
+  required: ["condition", "implication", "schedules", "activeFrom", "activeTo"],
   properties: {
     condition: { type: "array", items: fuzzyRuleCondition },
     implication: { type: "array", items: fuzzyRuleImplication },
+    schedules: { type: "array", items: fuzzyRuleSchedule },
     activeFrom: { type: "string", format: "time" },
     activeTo: { type: "string", format: "time" },
   },

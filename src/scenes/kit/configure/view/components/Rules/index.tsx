@@ -101,10 +101,11 @@ function parseConfiguration(
       for (const [command, settings] of Object.entries(
         commandSettings as any
       )) {
-        const { type, continuous } = settings as any;
+        const { type, continuous, scheduled } = settings as any;
         fuzzyControl.output[peripheralName][command] = {
           type,
           continuous,
+          scheduled,
         };
       }
     }
@@ -112,6 +113,7 @@ function parseConfiguration(
       let newFuzzyRule: FuzzyRule = {
         condition: [],
         implication: [],
+        schedules: [],
         activeFrom: fuzzyRule.activeFrom,
         activeTo: fuzzyRule.activeTo,
       };
@@ -162,9 +164,28 @@ function parseConfiguration(
         });
       }
 
+      for (const sched of fuzzyRule.schedules) {
+        const { peripheral, command, schedule } = sched;
+
+        if (!(peripheral in fuzzyControl.output)) {
+          continue;
+        }
+
+        if (!(command in fuzzyControl.output[peripheral])) {
+          continue;
+        }
+
+        newFuzzyRule.schedules.push({
+          peripheral,
+          command,
+          schedule,
+        });
+      }
+
       if (
         newFuzzyRule.condition.length > 0 ||
-        newFuzzyRule.implication.length > 0
+        newFuzzyRule.implication.length > 0 ||
+        newFuzzyRule.schedules.length > 0
       ) {
         fuzzyControl.rules.push(newFuzzyRule);
       }
@@ -259,13 +280,28 @@ class Rules extends React.Component<Props, State> {
       if (!(peripheral.name in draft.output)) {
         draft.output[peripheral.name] = {};
       }
-      draft.output[peripheral.name][command] = {
-        type: "continuous",
-        continuous: {
-          minimal: (schema as any).minimal || 0.0,
-          maximal: (schema as any).maximal || 100.0,
-        },
-      };
+      if (schema.type && schema.type === "number") {
+        draft.output[peripheral.name][command] = {
+          type: "continuous",
+          continuous: {
+            minimal: (schema as any).minimal || 0.0,
+            maximal: (schema as any).maximal || 100.0,
+          },
+        };
+      } else {
+        draft.output[peripheral.name][command] = {
+          type: "scheduled",
+          // @ts-ignore
+          scheduled: {
+            interpolated: false,
+            schedules: [
+              {
+                schedule: [{ time: "00:00:00" }],
+              },
+            ],
+          },
+        };
+      }
     });
 
     this.setState({
@@ -279,6 +315,7 @@ class Rules extends React.Component<Props, State> {
       draft.rules.push({
         condition: [],
         implication: [],
+        schedules: [],
         activeFrom: "00:00:00",
         activeTo: "23:59:59",
       });
@@ -408,13 +445,11 @@ class Rules extends React.Component<Props, State> {
       }
 
       for (const [key, val] of Object.entries(schema.properties) as any) {
-        if (val.type === "number") {
-          if (
-            !(peripheral.name in fuzzyControl.output) ||
-            !(key in fuzzyControl.output[peripheral.name])
-          ) {
-            undefinedPeripheralCommands.push([peripheral, key, val]);
-          }
+        if (
+          !(peripheral.name in fuzzyControl.output) ||
+          !(key in fuzzyControl.output[peripheral.name])
+        ) {
+          undefinedPeripheralCommands.push([peripheral, key, val]);
         }
       }
     }
@@ -630,6 +665,7 @@ class Rules extends React.Component<Props, State> {
               const rule = fuzzyControl.rules[index];
               let conditionChoices: [string, QuantityType][] = [];
               let implicationChoices: [string, string][] = [];
+              let scheduleChoices: [string, string][] = [];
               for (const [peripheralName, qtSettings] of Object.entries(
                 fuzzyControl.input
               )) {
@@ -643,14 +679,21 @@ class Rules extends React.Component<Props, State> {
               for (const [peripheralName, commandSettings] of Object.entries(
                 fuzzyControl.output
               )) {
-                for (const command of Object.keys(commandSettings)) {
-                  implicationChoices.push([peripheralName, command]);
+                for (const [command, settings] of Object.entries(
+                  commandSettings
+                )) {
+                  if (settings.type === "continuous") {
+                    implicationChoices.push([peripheralName, command]);
+                  } else if (settings.type === "scheduled") {
+                    scheduleChoices.push([peripheralName, command]);
+                  }
                 }
               }
               return (
                 <EditRule
                   conditionChoices={conditionChoices}
                   implicationChoices={implicationChoices}
+                  scheduleChoices={scheduleChoices}
                   fuzzyRule={rule}
                   edit={(fuzzyRule) => {
                     this.editRule(index, fuzzyRule);

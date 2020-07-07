@@ -17,6 +17,7 @@ import { QuantityType } from "astroplant-api";
 export type Props = {
   conditionChoices: [string, QuantityType][];
   implicationChoices: [string, string][];
+  scheduleChoices: [string, string][];
   fuzzyRule: FuzzyRule;
   edit: (fuzzyRule: FuzzyRule) => void;
   delete: () => void;
@@ -48,11 +49,21 @@ export const fuzzyRuleImplicationSchema: JSONSchema7 = {
   },
 };
 
+export const fuzzyRuleScheduleSchema: JSONSchema7 = {
+  type: "object",
+  required: ["peripheralCommand", "schedule"],
+  properties: {
+    peripheralCommand: { type: "string" },
+    schedule: { type: "number", format: "integer" },
+  },
+};
+
 export const fuzzyRuleSchema: JSONSchema7 = {
   type: "object",
   properties: {
     condition: { type: "array", items: fuzzyRuleConditionSchema },
     implication: { type: "array", items: fuzzyRuleImplicationSchema },
+    schedules: { type: "array", items: fuzzyRuleScheduleSchema },
     activeFrom: { type: "string", format: "time" },
     activeTo: { type: "string", format: "time" },
   },
@@ -91,6 +102,15 @@ class EditPeripheral extends React.Component<PInner, State> {
         return { ...rest, peripheral, command };
       }
     );
+    fuzzyRule.schedules = fuzzyRule.schedules.map(
+      ({ peripheralCommand, ...rest }: any) => {
+        const splitIdx = peripheralCommand.lastIndexOf("-");
+        const peripheral = peripheralCommand.substring(0, splitIdx);
+        const command = peripheralCommand.substring(splitIdx + 1);
+
+        return { ...rest, peripheral, command };
+      }
+    );
     this.props.edit(fuzzyRule);
     this.handleClose();
   };
@@ -99,6 +119,7 @@ class EditPeripheral extends React.Component<PInner, State> {
     const {
       conditionChoices,
       implicationChoices,
+      scheduleChoices,
       fuzzyRule: fuzzyRuleGiven,
     } = this.props;
 
@@ -110,6 +131,12 @@ class EditPeripheral extends React.Component<PInner, State> {
         })
       ),
       implication: fuzzyRuleGiven.implication.map(
+        ({ peripheral, command, ...rest }) => ({
+          ...rest,
+          peripheralCommand: `${peripheral}-${command}`,
+        })
+      ),
+      schedules: fuzzyRuleGiven.schedules.map(
         ({ peripheral, command, ...rest }) => ({
           ...rest,
           peripheralCommand: `${peripheral}-${command}`,
@@ -142,6 +169,13 @@ class EditPeripheral extends React.Component<PInner, State> {
         "ui:title": "Output implications",
         "ui:description":
           "All output implications are set true if the rule holds.",
+        "ui:disabled": false,
+        "ui:help": "",
+      },
+      schedules: {
+        "ui:title": "Output schedule votes",
+        "ui:description":
+          "If the rule holds, it votes for the listed output schedules. The highest-voted output schedule (per peripheral command) is activated.",
         "ui:disabled": false,
         "ui:help": "",
       },
@@ -189,6 +223,23 @@ class EditPeripheral extends React.Component<PInner, State> {
       } else {
         uiSchema.implication["ui:disabled"] = true;
         uiSchema.implication["ui:help"] = "Add outputs to set implications.";
+      }
+      if (scheduleChoices.length > 0) {
+        // @ts-ignore
+        draft.properties.schedules.items.properties.peripheralCommand[
+          "enum"
+        ] = scheduleChoices.map(
+          ([peripheral, command]) => `${peripheral}-${command}`
+        );
+        // @ts-ignore
+        draft.properties.schedules.items.properties.peripheralCommand[
+          "enumNames"
+        ] = scheduleChoices.map(
+          ([peripheral, command]) => `${peripheral} - ${command}`
+        );
+      } else {
+        uiSchema.schedules["ui:disabled"] = true;
+        uiSchema.schedules["ui:help"] = "Add outputs to set implications.";
       }
     });
 

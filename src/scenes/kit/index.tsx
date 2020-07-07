@@ -97,6 +97,7 @@ class KitDashboard extends React.PureComponent<
               </Menu.Item>
             )}
           </Menu>
+
           <Switch>
             <Route
               path={`${path}/details`}

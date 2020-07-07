@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { compose } from "recompose";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Form, Modal, Header, Button, Icon } from "semantic-ui-react";
+import { Form, Modal, Header, Button, Select, Icon } from "semantic-ui-react";
 import produce from "immer";
 import { JSONSchema7 } from "json-schema";
 import RjsfForm from "rjsf-theme-semantic-ui";
@@ -10,8 +10,10 @@ import { Peripheral } from "astroplant-api";
 
 import {
   OutputSettings,
-  outputSettingsSchema,
-  outputSettingsUiSchema,
+  continuousOutputSettingsSchema,
+  continuousOutputSettingsUiSchema,
+  scheduledOutputSettingsSchema,
+  scheduledOutputSettingsUiSchema,
 } from "../schemas";
 
 export type Props = {
@@ -30,87 +32,135 @@ export type Props = {
 
 type PInner = Props & WithTranslation;
 
-type State = {};
+type OutputType = "continuous" | "scheduled";
 
-class EditPeripheral extends React.Component<PInner, State> {
-  state: State = {};
+function EditOutput(props: PInner) {
+  const { peripheral, command, schema, outputSettings } = props;
 
-  handleClose = () => {
-    this.props.close();
+  const possibleOutputTypes: Array<OutputType> =
+    schema.type && schema.type === "number"
+      ? ["continuous", "scheduled"]
+      : ["scheduled"];
+
+  let initialOutputType = possibleOutputTypes[0];
+  try {
+    initialOutputType = outputSettings.type;
+  } catch (_e) {}
+  const [outputType, setOutputType] = useState<OutputType>(initialOutputType);
+
+  const handleClose = () => {
+    props.close();
   };
 
-  handleDelete = (peripheral: Peripheral, command: string) => {
-    this.props.delete(peripheral, command);
-    this.handleClose();
+  const handleDelete = (peripheral: Peripheral, command: string) => {
+    props.delete(peripheral, command);
+    handleClose();
   };
 
-  handleSubmit = (
+  const handleSubmit = (
     peripheral: Peripheral,
     command: string,
-    outputSettings: OutputSettings
+    outputSettings: any
   ) => {
-    this.props.edit(peripheral, command, outputSettings);
-    this.handleClose();
+    if (outputType === "continuous") {
+      props.edit(peripheral, command, {
+        type: "continuous",
+        continuous: outputSettings,
+      });
+    } else if (outputType === "scheduled") {
+      for (const schedule of outputSettings.schedules) {
+        schedule.schedule.sort((a: any, b: any) => {
+          if (a.time < b.time) {
+            return -1;
+          } else if (a.time === b.time) {
+            return 0;
+          } else {
+            return 1;
+          }
+        });
+      }
+
+      props.edit(peripheral, command, {
+        type: "scheduled",
+        scheduled: outputSettings,
+      });
+    }
+    handleClose();
   };
 
-  // edit(outputSettings: OutputSettings) {
-  //   const { peripheral, command, edit, close } = this.props;
-  //   edit(peripheral, quantityType, inputSettings);
-  //   close();
-  // }
-
-  render() {
-    const { peripheral, command, schema, outputSettings } = this.props;
-
-    const outputSettingsSchemaModified = produce(
-      outputSettingsSchema,
+  let outputSettingsSchemaModified: JSONSchema7;
+  let outputSettingsUiSchema: any;
+  let data: any;
+  if (outputType === "continuous") {
+    outputSettingsSchemaModified = produce(
+      continuousOutputSettingsSchema,
       (draft) => {
         // @ts-ignore
-        draft.properties.continuous.properties.minimal = schema;
+        draft.properties.minimal = schema;
         // @ts-ignore
-        draft.properties.continuous.properties.maximal = schema;
+        draft.properties.maximal = schema;
       }
     );
-
-    return (
-      <Modal
-        closeOnEscape={true}
-        closeOnDimmerClick={true}
-        open={true}
-        onClose={this.handleClose}
-      >
-        <Modal.Header>
-          <Icon name="cogs" /> {peripheral.name} — {command}
-        </Modal.Header>
-        <Modal.Content>
-          <Header size="small">Please choose the output settings.</Header>
-          <RjsfForm
-            schema={outputSettingsSchemaModified}
-            uiSchema={outputSettingsUiSchema}
-            onSubmit={({ formData }) =>
-              this.handleSubmit(peripheral, command, formData)
-            }
-            formData={outputSettings}
-          >
-            <Form.Button type="submit" primary>
-              Update
-            </Form.Button>
-          </RjsfForm>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button
-            secondary
-            onClick={() => this.handleDelete(peripheral, command)}
-          >
-            Delete
-          </Button>
-          <Button color="red" onClick={this.handleClose}>
-            Cancel
-          </Button>
-        </Modal.Actions>
-      </Modal>
+    outputSettingsUiSchema = continuousOutputSettingsUiSchema;
+    data = outputSettings.continuous;
+  } else if (outputType === "scheduled") {
+    outputSettingsSchemaModified = produce(
+      scheduledOutputSettingsSchema,
+      (draft) => {
+        // @ts-ignore
+        draft.properties.schedules.items.properties.schedule.items.properties.value = schema;
+      }
     );
+    // FIXME disable interpolation checkbox if schema type is not number
+    outputSettingsUiSchema = scheduledOutputSettingsUiSchema;
+    data = outputSettings.scheduled;
+  } else {
+    throw new Error("Unknown output type");
   }
+
+  return (
+    <Modal
+      closeOnEscape={true}
+      closeOnDimmerClick={true}
+      open={true}
+      onClose={handleClose}
+    >
+      <Modal.Header>
+        <Icon name="cogs" /> {peripheral.name} — {command}
+      </Modal.Header>
+      <Modal.Content>
+        <Header size="small">Please choose the output type:</Header>
+        <Select
+          options={possibleOutputTypes.map((outputType) => ({
+            text: outputType,
+            value: outputType,
+          }))}
+          value={outputType}
+          onChange={(_e, data) => setOutputType(data.value as OutputType)}
+        />
+        <RjsfForm
+          schema={outputSettingsSchemaModified}
+          uiSchema={outputSettingsUiSchema}
+          onSubmit={({ formData }) =>
+            handleSubmit(peripheral, command, formData)
+          }
+          formData={data}
+        >
+          <Form.Button type="submit" primary>
+            Update
+          </Form.Button>
+        </RjsfForm>
+      </Modal.Content>
+      <Modal.Actions>
+        <Button secondary onClick={() => handleDelete(peripheral, command)}>
+          Delete
+        </Button>
+        <Button color="red" onClick={handleClose}>
+          Cancel
+        </Button>
+      </Modal.Actions>
+    </Modal>
+  );
 }
 
-export default compose<PInner, Props>(withTranslation())(EditPeripheral);
+export default compose<PInner, Props>(withTranslation())(EditOutput);
