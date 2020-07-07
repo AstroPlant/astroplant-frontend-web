@@ -40,20 +40,20 @@ class ViewConfiguration extends React.Component<InternalProps, State> {
       <Container>
         <Segment raised>
           <Header>Description</Header>
-          <Description kit={kitState.details.unwrap()} configuration={configuration} />
+          <Description kit={kitState.details!} configuration={configuration} />
         </Segment>
         <Container textAlign="right">
-          <ActivateDeactivate kit={kitState.details.unwrap()} configuration={configuration} />
+          <ActivateDeactivate kit={kitState.details!} configuration={configuration} />
         </Container>
         <Divider />
         <Container>
           <Header>{t("control.header")}</Header>
-          <Rules kit={kitState.details.unwrap()} configuration={configuration} />
+          <Rules kit={kitState.details!} configuration={configuration} />
         </Container>
         <Divider />
         <Container>
           <Header>Peripherals</Header>
-          <Peripherals kit={kitState.details.unwrap()} configuration={configuration} />
+          <Peripherals kit={kitState.details!} configuration={configuration} />
         </Container>
       </Container>
     );
@@ -66,7 +66,7 @@ const map = (props: Props) => {
 
   return {
     ...props,
-    option: Option.from(kitState.configurations.unwrap()[configurationId])
+    option: Option.from(kitState.configurations![configurationId])
   };
 };
 

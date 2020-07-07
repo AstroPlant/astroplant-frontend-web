@@ -16,7 +16,7 @@ export default function KitConfigure(props: Props) {
 
   return (
     <Container text>
-        <ResetPassword kit={kitState.details.unwrap()} />
+        <ResetPassword kit={kitState.details!} />
     </Container>
   );
 }

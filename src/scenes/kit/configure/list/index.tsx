@@ -14,7 +14,7 @@ export default function KitConfigure(props: Props) {
   const { kitState } = props;
   const { url } = props.match;
 
-  const configurations = kitState.configurations.unwrap();
+  const configurations = kitState.configurations!;
   const numConfigurations = Object.keys(configurations).length;
 
   return (

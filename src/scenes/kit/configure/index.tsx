@@ -17,7 +17,7 @@ export default function KitConfigure(props: Props) {
   const { kitState } = props;
   const { path } = props.match;
 
-  if (kitState.configurations.isNone()) {
+  if (kitState.configurations === null) {
     return (
       <Container>
         <Loader active />
@@ -30,7 +30,7 @@ export default function KitConfigure(props: Props) {
           <Route
             path={`${path}/create`}
             render={props => (
-              <Create {...props} kit={kitState.details.unwrap()} />
+              <Create {...props} kit={kitState.details!} />
             )}
           />
           <Route

@@ -98,7 +98,7 @@ class AggregateMeasurementsChart extends React.PureComponent<Props, State> {
     const { kitState, peripheral, quantityType } = this.props;
     const api = new KitsApi(configuration);
     const request = await api.listAggregateMeasurements({
-      kitSerial: kitState.details.unwrap().serial,
+      kitSerial: kitState.details!.serial,
       peripheral: peripheral.id,
       quantityType: quantityType.id,
     });

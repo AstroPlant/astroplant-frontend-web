@@ -19,16 +19,38 @@ export type Props = WithTranslation &
 function KitOverview(props: Props) {
   const baseUrl = props.match.url;
   const { t, kitState } = props;
+
+  if (kitState.configurations === null) {
+    return (
+      <Container>
+        <Loader active />
+      </Container>
+    );
+  }
+
   let activeConfiguration = null;
-  for (const configuration of Object.values(
-    kitState.configurations.unwrapOr({})
-  )) {
+  for (const configuration of Object.values(kitState.configurations)) {
     if (configuration.active) {
       activeConfiguration = configuration;
     }
   }
 
-  if (activeConfiguration !== null) {
+  if (activeConfiguration === null) {
+    return (
+      <Container text>
+        <div
+          style={{
+            fontWeight: "bolder",
+            opacity: 0.6,
+            textAlign: "center",
+            marginTop: "1rem",
+          }}
+        >
+          <h2>{t("kit.noActiveConfiguration")}</h2>
+        </div>
+      </Container>
+    );
+  } else {
     const panes = [
       {
         menuItem: {
@@ -83,27 +105,6 @@ function KitOverview(props: Props) {
         <Switch>
           <Tab panes={panes} renderActiveOnly={false} activeIndex={-1} />
         </Switch>
-      </Container>
-    );
-  } else if (kitState.configurations.isNone()) {
-    return (
-      <Container>
-        <Loader active />
-      </Container>
-    );
-  } else {
-    return (
-      <Container text>
-        <div
-          style={{
-            fontWeight: "bolder",
-            opacity: 0.6,
-            textAlign: "center",
-            marginTop: "1rem",
-          }}
-        >
-          <h2>{t("kit.noActiveConfiguration")}</h2>
-        </div>
       </Container>
     );
   }

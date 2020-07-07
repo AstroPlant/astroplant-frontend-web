@@ -20,7 +20,7 @@ function RawMeasurements(props: Props) {
   const { kitState, peripheralDefinitions, quantityTypes } = props;
   const rawMeasurements = kitState.rawMeasurements;
   let activeConfiguration = null;
-  for (const configuration of Object.values(kitState.configurations.unwrap())) {
+  for (const configuration of Object.values(kitState.configurations!)) {
     if (configuration.active) {
       activeConfiguration = configuration;
     }

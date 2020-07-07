@@ -20,7 +20,7 @@ class AggregateMeasurements extends React.PureComponent<Props> {
     const { kitState, peripheralDefinitions, quantityTypes } = this.props;
     let activeConfiguration = null;
     for (const configuration of Object.values(
-      kitState.configurations.unwrap()
+      kitState.configurations!
     )) {
       if (configuration.active) {
         activeConfiguration = configuration;

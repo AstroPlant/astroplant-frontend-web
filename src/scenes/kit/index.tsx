@@ -42,12 +42,12 @@ class KitDashboard extends React.PureComponent<
 > {
   componentDidMount() {
     const kitState = this.props.value;
-    this.props.startWatching({ serial: kitState.details.unwrap().serial });
+    this.props.startWatching({ serial: kitState.details!.serial });
   }
 
   componentWillUnmount() {
     const kitState = this.props.value;
-    this.props.stopWatching({ serial: kitState.details.unwrap().serial });
+    this.props.stopWatching({ serial: kitState.details!.serial });
   }
 
   render() {
@@ -64,7 +64,7 @@ class KitDashboard extends React.PureComponent<
       .map((m) => m.accessSuper)
       .unwrapOr(false);
 
-    const kit = kitState.details.unwrap();
+    const kit = kitState.details!;
     return (
       <>
         <HeadTitle main={kit.name || kit.serial} />
@@ -104,7 +104,7 @@ class KitDashboard extends React.PureComponent<
               render={(props) => (
                 <Details
                   {...props}
-                  kit={kitState.details.unwrap()}
+                  kit={kitState.details!}
                   membership={this.props.membership}
                 />
               )}
@@ -141,7 +141,7 @@ class KitStatusWrapper extends React.PureComponent<
 
     if (
       kitState.status === "Fetched" ||
-      (kitState.status === "Fetching" && kitState.details.isSome())
+      (kitState.status === "Fetching" && kitState.details !== null)
     ) {
       return <KitDashboard {...this.props} />;
     } else if (kitState.status === "None" || kitState.status === "Fetching") {

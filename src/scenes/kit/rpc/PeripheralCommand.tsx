@@ -24,12 +24,10 @@ function PeripheralCommand(props: Props) {
   const [plaintext, setPlaintext] = useState<string | null>(null);
 
   const { kitState, peripheralDefinitions } = props;
-  const kit = kitState.details.unwrap();
+  const kit = kitState.details!;
 
   useEffect(() => {
-    for (const configuration of Object.values(
-      kitState.configurations.unwrap()
-    )) {
+    for (const configuration of Object.values(kitState.configurations!)) {
       if (configuration.active) {
         setActiveConfiguration(configuration);
         break;

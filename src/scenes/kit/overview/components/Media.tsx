@@ -28,7 +28,7 @@ function Media(props: Props) {
 
   useEffect(() => {
     for (const configuration of Object.values(
-      kitState.configurations.unwrap()
+      kitState.configurations!
     )) {
       if (configuration.active) {
         setActiveConfiguration(configuration);
@@ -40,7 +40,7 @@ function Media(props: Props) {
   useEffect(() => {
     if (activeConfiguration) {
       (async () => {
-        const kitSerial = kitState.details.unwrap().serial;
+        const kitSerial = kitState.details!.serial;
         const kitsApi = new KitsApi(configuration);
         const response = await kitsApi
           .listMedia({ kitSerial, configuration: activeConfiguration.id })

@@ -4,15 +4,11 @@ import { Link } from "react-router-dom";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Container, Divider, Card, Image, Header } from "semantic-ui-react";
 
-import { KitState } from "modules/kit/reducer";
-import { Kit } from "astroplant-api";
-
 import { RootState } from "types";
-import Option from "utils/option";
 
 import {
   withAuthentication,
-  WithAuthentication
+  WithAuthentication,
 } from "../../Components/AuthenticatedGuard";
 import Gravatar from "../../Components/Gravatar";
 import HeadTitle from "../../Components/HeadTitle";
@@ -33,7 +29,7 @@ class Me extends Component<Props> {
       <>
         <HeadTitle
           main={t("me.header", {
-            displayName: this.props.me.displayName
+            displayName: this.props.me.displayName,
           })}
         />
         <Container text style={{ marginTop: "1em" }}>
@@ -46,10 +42,8 @@ class Me extends Component<Props> {
               </p>
               {Object.keys(this.props.kitMemberships).length > 0 && (
                 <Card.Group>
-                  {Object.keys(this.props.kitMemberships).map(serial => {
-                    const kitState: Option<KitState> = Option.from(
-                      this.props.kitStates[serial]
-                    );
+                  {Object.keys(this.props.kitMemberships).map((serial) => {
+                    const kitState = this.props.kitStates[serial];
                     return (
                       <Card
                         fluid
@@ -63,10 +57,8 @@ class Me extends Component<Props> {
                             <Gravatar identifier={serial} />
                           </Image>
                           <Card.Header>
-                            {kitState
-                              .andThen(kitState => kitState.details)
-                              .andThen((kit: Kit) => Option.from(kit.name))
-                              .unwrapOr(t("kit.unnamed"))}
+                            {(kitState.details && kitState.details.name) ||
+                              t("kit.unnamed")}
                           </Card.Header>
                           <Card.Meta>Serial: {serial}</Card.Meta>
                         </Card.Content>
@@ -100,7 +92,7 @@ class Me extends Component<Props> {
             </Card.Content>
             <Card.Content extra>
               {t("me.content.usernameLabel", {
-                username: this.props.me.username
+                username: this.props.me.username,
               })}
             </Card.Content>
           </Card>
@@ -114,7 +106,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     loadingKitMemberships: state.me.loadingKitMemberships,
     kitMemberships: state.me.kitMemberships,
-    kitStates: state.kit.kits
+    kitStates: state.kit.kits,
   };
 };
 

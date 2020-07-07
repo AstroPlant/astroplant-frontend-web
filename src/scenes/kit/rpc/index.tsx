@@ -33,7 +33,7 @@ export default class KitRpc extends React.Component<Props, State> {
   async versionRequest() {
     this.setState({ versionRequesting: true, versionResponse: null });
     const { kitState } = this.props;
-    const kit = kitState.details.unwrap();
+    const kit = kitState.details!;
 
     try {
       const api = new KitRpcApi(AuthConfiguration.Instance);
@@ -51,7 +51,7 @@ export default class KitRpc extends React.Component<Props, State> {
   async uptimeRequest() {
     this.setState({ uptimeRequesting: true, uptimeResponse: null });
     const { kitState } = this.props;
-    const kit = kitState.details.unwrap();
+    const kit = kitState.details!;
 
     try {
       const api = new KitRpcApi(AuthConfiguration.Instance);
