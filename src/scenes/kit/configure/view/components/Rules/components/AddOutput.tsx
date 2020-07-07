@@ -67,11 +67,11 @@ class AddPeripheral extends React.Component<PInner, State> {
         onClose={this.handleClose}
       >
         <Modal.Header>
-          <Icon name="thermometer" /> Add fuzzy input
+          <Icon name="thermometer" /> Add fuzzy output
         </Modal.Header>
         <Modal.Content>
           <Header size="small">
-            Please select the peripheral and quantity type to add as input.
+            Please select the peripheral and the command to add as output.
           </Header>
           <Card.Group centered stackable columns={3}>
             {choices.map(([peripheral, command, schema]) => {
