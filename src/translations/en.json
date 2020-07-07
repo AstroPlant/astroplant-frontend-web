@@ -112,7 +112,7 @@
     },
     "control": {
       "header": "Control",
-      "explanation": "These rules configure the fuzzy control system on the kit. Setpoints are used to calculate errors or deviation from midpoints. These errors or deviations are used in fuzzy logic statements to control output. This results in a gradual, continuous control signals."
+      "explanation": "These rules configure the fuzzy control system on the kit. Setpoints are used to calculate errors or deviation from midpoints. These errors or deviations are used in fuzzy logic statements to control output. This results in gradual, continuous control signals."
     },
     "invalidParameter": {
       "mustBeEmailAddress": "must be an email address",
