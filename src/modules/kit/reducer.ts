@@ -1,4 +1,5 @@
 import { createReducer, ActionType } from "typesafe-actions";
+import isEqual from "lodash/isEqual";
 import * as actions from "./actions";
 import { byId, arrayToObject } from "utils/byId";
 import Option from "utils/option";
@@ -36,7 +37,7 @@ export interface KitsState {
 }
 
 const initial: KitsState = {
-  kits: {}
+  kits: {},
 };
 
 const initialKit: KitState = {
@@ -44,7 +45,7 @@ const initialKit: KitState = {
   configurations: Option.none(),
   loadingConfigurations: false,
   rawMeasurements: {},
-  status: "None"
+  status: "None",
 };
 
 export type KitAction = ActionType<typeof actions>;
@@ -63,7 +64,7 @@ const kitReducer = createReducer<KitState, KitAction>(initialKit)
     return {
       ...state,
       details: Option.some(action.payload),
-      status: "Fetched"
+      status: "Fetched",
     };
   })
   .handleAction(actions.kitConfigurationsRequest, (state, action) => {
@@ -71,19 +72,31 @@ const kitReducer = createReducer<KitState, KitAction>(initialKit)
   })
   .handleAction(actions.kitConfigurationsSuccess, (state, action) => {
     let configurations: { [id: string]: KitConfigurationState } = {};
+    let existingConfigurations: {
+      [id: string]: KitConfigurationState;
+    } = state.configurations.unwrapOr({});
     for (const { peripherals, ...confRest } of action.payload.configurations) {
       const conf = {
         ...confRest,
-        peripherals: arrayToObject(peripherals, peripheral =>
+        peripherals: arrayToObject(peripherals, (peripheral) =>
           peripheral.id.toString()
-        )
+        ),
       };
-      configurations[conf.id] = conf;
+
+      if (
+        conf.id in existingConfigurations &&
+        isEqual(conf, existingConfigurations[conf.id])
+      ) {
+        configurations[conf.id] = existingConfigurations[conf.id];
+      } else {
+        configurations[conf.id] = conf;
+      }
     }
+
     return {
       ...state,
       configurations: Option.some(configurations),
-      loadingConfigurations: false
+      loadingConfigurations: false,
     };
   })
   .handleAction(actions.kitSetAllConfigurationsInactive, (state, action) => {
@@ -114,10 +127,12 @@ const kitReducerWrapper = (state: KitState, action: any) => {
   //if (Object.entries(state2.details).length === 0) {
   //  return;
   //}
-  let newConfigurations = Option.some(kitConfigurationReducerById(
-    state2.configurations.unwrapOr({}),
-    action
-  ) as any);
+  let newConfigurations = Option.some(
+    kitConfigurationReducerById(
+      state2.configurations.unwrapOr({}),
+      action
+    ) as any
+  );
   if (state2.configurations.isNone() && newConfigurations.unwrap() === {}) {
     newConfigurations = Option.none();
   }
@@ -131,7 +146,7 @@ const kitConfigurationReducer = createReducer<KitConfigurationState, KitAction>(
     const { configuration } = action.payload;
     const configurationWithPeripherals: KitConfigurationState = {
       ...configuration,
-      peripherals: {}
+      peripherals: {},
     };
 
     return configurationWithPeripherals;
@@ -142,7 +157,7 @@ const kitConfigurationReducer = createReducer<KitConfigurationState, KitAction>(
 
     const newConfiguration = {
       ...configuration,
-      peripherals: existingConfigurationPeripherals
+      peripherals: existingConfigurationPeripherals,
     };
 
     return newConfiguration;
@@ -176,29 +191,23 @@ const kitReducerById = byId(
   kitReducerWrapper as any
 );
 
-const kitConfigurationReducerById = byId(
-  (action: any) => {
-    const maybeWithConfiguration = action.payload || {};
-    return (
-      (maybeWithConfiguration.configuration || {}).id ||
-      maybeWithConfiguration.configurationId
-    );
-  },
-  kitConfigurationReducerWrapper as any
-);
+const kitConfigurationReducerById = byId((action: any) => {
+  const maybeWithConfiguration = action.payload || {};
+  return (
+    (maybeWithConfiguration.configuration || {}).id ||
+    maybeWithConfiguration.configurationId
+  );
+}, kitConfigurationReducerWrapper as any);
 
-const peripheralReducerById = byId(
-  (action: any) => {
-    const maybeWithPeripheral = action.payload || {};
-    return (
-      (maybeWithPeripheral.peripheral || {}).id ||
-      maybeWithPeripheral.peripheralId
-    );
-  },
-  peripheralReducer as any
-);
+const peripheralReducerById = byId((action: any) => {
+  const maybeWithPeripheral = action.payload || {};
+  return (
+    (maybeWithPeripheral.peripheral || {}).id ||
+    maybeWithPeripheral.peripheralId
+  );
+}, peripheralReducer as any);
 
-export default function(state = initial, action: any) {
+export default function (state = initial, action: any) {
   const { kits, ...otherState } = state;
 
   const newKits = kitReducerById(kits, action) as any;
