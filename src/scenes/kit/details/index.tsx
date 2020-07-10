@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState, useMemo } from "react";
 import { RouteComponentProps, Route, Switch } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -11,67 +11,79 @@ import {
   Transition,
   Icon,
   Header,
-  Divider
+  Divider,
 } from "semantic-ui-react";
 import ReactMarkdown from "react-markdown";
 import { removeNull, undefinedToNull, emptyStringToNull } from "utils/form";
 import { pushUpOne } from "utils/router";
 
 import { addKit } from "modules/kit/actions";
-import { KitMembership } from "modules/me/reducer";
 import { Kit, KitsApi } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
-import Option from "utils/option";
 
 import {
   schema as patchSchema,
-  uiSchema as patchUiSchema
+  uiSchema as patchUiSchema,
 } from "./patch-kit-schema";
 import ApiForm from "Components/ApiForm";
 import MapWithMarker from "Components/MapWithMarker";
 
+import { KitContext, MembershipContext } from "../contexts";
+
 const PatchKitForm = ApiForm<any, Kit>();
 
-export type Props = {
-  kit: Kit;
-  membership: Option<KitMembership>;
-};
-
+export type Props = {};
 export type InnerProps = WithTranslation &
-  RouteComponentProps<{}> &
-  Props & {
+  RouteComponentProps<{}> & {
     addKit: (payload: Kit) => void;
   };
 
-type State = {
-  done: boolean;
-};
+function KitDetails(props: InnerProps) {
+  const [done, setDone] = useState(false);
 
-class KitDetails extends React.PureComponent<InnerProps, State> {
-  state: State = {
-    done: false
-  };
+  const { t, addKit } = props;
+  const { url, path } = props.match;
 
-  patchTransform(formData: any) {
+  const kit = useContext(KitContext);
+  const membership = useContext(MembershipContext);
+
+  const kitDetails = useMemo(() => {
+    return removeNull({
+      name: kit.name,
+      description: kit.description,
+      coordinate:
+        typeof kit.latitude === "number" && typeof kit.longitude === "number"
+          ? {
+              latitude: kit.latitude,
+              longitude: kit.longitude,
+            }
+          : null,
+      privacyPublicDashboard: kit.privacyPublicDashboard,
+      privacyShowOnMap: kit.privacyShowOnMap,
+    });
+  }, [kit]);
+  const schema = useMemo(() => {
+    return patchSchema(t);
+  }, [t]);
+
+  const patchTransform = (formData: any) => {
     const { coordinate, ...rest } = formData;
     if (typeof coordinate === "undefined") {
       return {
         latitude: null,
         longitude: null,
-        ...rest
+        ...rest,
       };
     } else {
       return {
         latitude: coordinate.latitude,
         longitude: coordinate.longitude,
-        ...rest
+        ...rest,
       };
     }
-  }
+  };
 
-  patchSend(formData: any) {
-    const { kit } = this.props;
-
+  const patchSend = (formData: any) => {
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.patchKit({
       kitSerial: kit.serial,
@@ -80,129 +92,107 @@ class KitDetails extends React.PureComponent<InnerProps, State> {
           "name",
           "description",
           "privacyPublicDashboard",
-          "privacyShowOnMap"
+          "privacyShowOnMap",
         ])
-      )
+      ),
     });
-  }
+  };
 
-  onPatchResponse(response: Kit) {
-    const { addKit } = this.props;
+  const onPatchResponse = (response: Kit) => {
     addKit(response);
-    this.setState({ done: true });
-    pushUpOne(this.props.history);
-  }
+    setDone(true);
+    pushUpOne(props.history);
+  };
 
-  render() {
-    const { t, kit, membership } = this.props;
-    const { url, path } = this.props.match;
+  const canEditDetails = membership.map((m) => m.accessSuper).unwrapOr(false);
 
-    const canEditDetails = membership.map(m => m.accessSuper).unwrapOr(false);
-
-    return (
-      <Container text>
-        <Segment piled padded>
-          <Switch>
-            <Route
-              path={`${path}/edit`}
-              render={props => {
-                return (
-                  <PatchKitForm
-                    schema={patchSchema(t) as any}
-                    uiSchema={patchUiSchema as any}
-                    transform={formData => this.patchTransform(formData)}
-                    send={formData => this.patchSend(formData)}
-                    onResponse={formData => this.onPatchResponse(formData)}
-                    formData={removeNull({
-                      name: kit.name,
-                      description: kit.description,
-                      coordinate:
-                        typeof kit.latitude === "number" &&
-                        typeof kit.longitude === "number"
-                          ? {
-                              latitude: kit.latitude,
-                              longitude: kit.longitude
-                            }
-                          : null,
-                      privacyPublicDashboard: kit.privacyPublicDashboard,
-                      privacyShowOnMap: kit.privacyShowOnMap
-                    })}
-                  />
-                );
-              }}
-            />
-            <Route
-              render={props => (
-                <>
-                  {this.state.done && (
-                    <>
-                      <Header size="huge" icon textAlign="center">
-                        <Transition
-                          animation="drop"
-                          duration={450}
-                          transitionOnMount
-                        >
-                          <Icon name="check" circular />
-                        </Transition>
-                        <Header.Content>Success!</Header.Content>
-                      </Header>
-                      <p>Your kit's details have been changed.</p>
-                      <Divider />
-                    </>
-                  )}
-                  <div>
-                    {canEditDetails && (
-                      <Button
-                        onClick={() => this.props.history.push(`${url}/edit`)}
-                        primary
+  return (
+    <Container text>
+      <Segment piled padded>
+        <Switch>
+          <Route
+            path={`${path}/edit`}
+            render={(_props) => {
+              return (
+                <PatchKitForm
+                  key={0}
+                  schema={schema as any}
+                  uiSchema={patchUiSchema as any}
+                  transform={(formData) => patchTransform(formData)}
+                  send={(formData) => patchSend(removeNull(formData))}
+                  onResponse={(formData) => onPatchResponse(formData)}
+                  formData={kitDetails}
+                />
+              );
+            }}
+          />
+          <Route
+            render={(props) => (
+              <>
+                {done && (
+                  <>
+                    <Header size="huge" icon textAlign="center">
+                      <Transition
+                        animation="drop"
+                        duration={450}
+                        transitionOnMount
                       >
-                        Edit kit details
-                      </Button>
+                        <Icon name="check" circular />
+                      </Transition>
+                      <Header.Content>Success!</Header.Content>
+                    </Header>
+                    <p>Your kit's details have been changed.</p>
+                    <Divider />
+                  </>
+                )}
+                <div>
+                  {canEditDetails && (
+                    <Button
+                      onClick={() => props.history.push(`${url}/edit`)}
+                      primary
+                    >
+                      Edit kit details
+                    </Button>
+                  )}
+                  <h3>{kit.name || kit.serial}</h3>
+                  <ReactMarkdown source={kit.description} />
+                  {typeof kit.latitude === "number" &&
+                    typeof kit.longitude === "number" && (
+                      <>
+                        <Divider />
+                        <MapWithMarker
+                          location={{
+                            latitude: kit.latitude,
+                            longitude: kit.longitude,
+                          }}
+                        >
+                          <p>
+                            {t("common.latitude")}: {kit.latitude.toFixed(4)}
+                            <br />
+                            {t("common.longitude")}: {kit.longitude.toFixed(4)}
+                          </p>
+                        </MapWithMarker>
+                      </>
                     )}
-                    <h3>{kit.name || kit.serial}</h3>
-                    <ReactMarkdown source={kit.description} />
-                    {typeof kit.latitude === "number" &&
-                      typeof kit.longitude === "number" && (
-                        <>
-                          <Divider />
-                          <MapWithMarker
-                            location={{
-                              latitude: kit.latitude,
-                              longitude: kit.longitude
-                            }}
-                          >
-                            <p>
-                              {t("common.latitude")}: {kit.latitude.toFixed(4)}
-                              <br />
-                              {t("common.longitude")}:{" "}
-                              {kit.longitude.toFixed(4)}
-                            </p>
-                          </MapWithMarker>
-                        </>
-                      )}
-                  </div>
-                </>
-              )}
-            />
-          </Switch>
-        </Segment>
-      </Container>
-    );
-  }
+                </div>
+              </>
+            )}
+          />
+        </Switch>
+      </Segment>
+    </Container>
+  );
 }
 
 const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
-      addKit
+      addKit,
     },
     dispatch
   );
 
 export default compose<InnerProps, Props>(
   withTranslation(),
-  connect(
-    null,
-    mapDispatchToProps
-  )
+  connect(null, mapDispatchToProps)
 )(KitDetails);

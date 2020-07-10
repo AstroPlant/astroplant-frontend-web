@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { Button, Select, Image, Segment } from "semantic-ui-react";
 
 import { RootState } from "types";
-import { KitState, KitConfigurationState } from "modules/kit/reducer";
+import { KitConfigurationState } from "modules/kit/reducer";
 import { KitRpcApi, schemas } from "api";
 import { configuration, rateLimit } from "utils/api";
 import PeripheralDefinitionCard from "Components/PeripheralDefinitionCard";
 import RjsfForm from "rjsf-theme-semantic-ui";
 
+import { KitContext, ConfigurationsContext } from "../contexts";
+
 export type Props = {
-  kitState: KitState;
   peripheralDefinitions: { [id: string]: schemas["PeripheralDefinition"] };
 };
 
@@ -22,18 +23,20 @@ function PeripheralCommand(props: Props) {
   const [peripheralId, setPeripheralId] = useState<number | null>(null);
   const [displayUrl, setDisplayUrl] = useState<string | null>(null);
   const [plaintext, setPlaintext] = useState<string | null>(null);
+  const [formData, setFormData] = useState<any>(null);
 
-  const { kitState, peripheralDefinitions } = props;
-  const kit = kitState.details!;
+  const kit = useContext(KitContext);
+  const configurations = useContext(ConfigurationsContext);
+  const { peripheralDefinitions } = props;
 
   useEffect(() => {
-    for (const configuration of Object.values(kitState.configurations!)) {
+    for (const configuration of Object.values(configurations)) {
       if (configuration.active) {
         setActiveConfiguration(configuration);
         break;
       }
     }
-  }, [kitState.configurations]);
+  }, [configurations]);
 
   useEffect(() => {
     return () => {
@@ -70,6 +73,33 @@ function PeripheralCommand(props: Props) {
   };
 
   if (activeConfiguration !== null) {
+    let form = null;
+    if (peripheralId !== null) {
+      const peripheral = activeConfiguration.peripherals[peripheralId]!;
+      const peripheralDefinition = peripheralDefinitions[
+        peripheral.peripheralDefinitionId
+      ]!;
+      form = (
+        <>
+          <PeripheralDefinitionCard
+            peripheralDefinition={peripheralDefinition}
+          />
+          <h3>Command</h3>
+          <RjsfForm
+            key={0}
+            schema={peripheralDefinition.commandSchema!}
+            onChange={({ formData }) => setFormData(formData)}
+            formData={formData}
+            onSubmit={({ formData }) => sendPeripheralCommand(formData)}
+          >
+            <Button type="submit" primary>
+              Send command to kit
+            </Button>
+          </RjsfForm>
+        </>
+      );
+    }
+
     return (
       <>
         <div>
@@ -89,29 +119,7 @@ function PeripheralCommand(props: Props) {
               }))}
           />
         </div>
-        {peripheralId !== null &&
-          (() => {
-            const peripheral = activeConfiguration.peripherals[peripheralId]!;
-            const peripheralDefinition = peripheralDefinitions[
-              peripheral.peripheralDefinitionId
-            ]!;
-            return (
-              <>
-                <PeripheralDefinitionCard
-                  peripheralDefinition={peripheralDefinition}
-                />
-                <h3>Command</h3>
-                <RjsfForm
-                  schema={peripheralDefinition.commandSchema!}
-                  onSubmit={({ formData }) => sendPeripheralCommand(formData)}
-                >
-                  <Button type="submit" primary>
-                    Send command to kit
-                  </Button>
-                </RjsfForm>
-              </>
-            );
-          })()}
+        {form}
         {displayUrl !== null && (
           <>
             <h3>Image response</h3>
@@ -128,7 +136,6 @@ function PeripheralCommand(props: Props) {
         )}
       </>
     );
-    //<RjsfForm schema={schema} />
   } else {
     return <div>No active configuration.</div>;
   }

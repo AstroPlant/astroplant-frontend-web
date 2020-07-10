@@ -1,15 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import { RouteComponentProps } from "react-router";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { compose } from "recompose";
 
 import { Container, Segment, Header, Divider } from "semantic-ui-react";
-import { KitState, KitConfigurationState } from "modules/kit/reducer";
-
-import { withOption, WithValue } from "Components/OptionGuard";
-import { propsMap } from "Components/PropsMap";
+import { KitConfigurationState } from "modules/kit/reducer";
 
 import Option from "utils/option";
+
+import { KitContext, ConfigurationsContext } from "../../contexts";
 
 import Description from "./components/Description";
 import Rules from "./components/Rules";
@@ -18,60 +17,48 @@ import Peripherals from "./components/Peripherals";
 
 type Params = { configurationId: string };
 
-export type Props = RouteComponentProps<Params> & { kitState: KitState };
+export type Props = RouteComponentProps<Params>;
+type InternalProps = Props & WithTranslation;
 
-type InternalProps = Props & WithTranslation & WithValue<KitConfigurationState>;
+function ViewConfiguration(props: InternalProps) {
+  const { t } = props;
+  const { configurationId } = props.match.params;
 
-type State = {
-  done: boolean;
-  result: any;
-};
+  const kit = useContext(KitContext);
+  const configurations = useContext(ConfigurationsContext);
 
-class ViewConfiguration extends React.Component<InternalProps, State> {
-  state = {
-    done: false,
-    result: null
-  };
+  const configuration: Option<KitConfigurationState> = Option.from(configurations![configurationId]);
 
-  render() {
-    const { kitState, value: configuration, t } = this.props;
-
+  if (configuration.isNone()) {
+    return <div>Configuration not found.</div>;
+  } else {
     return (
       <Container>
         <Segment raised>
           <Header>Description</Header>
-          <Description kit={kitState.details!} configuration={configuration} />
+          <Description kit={kit} configuration={configuration.unwrap()} />
         </Segment>
         <Container textAlign="right">
-          <ActivateDeactivate kit={kitState.details!} configuration={configuration} />
+          <ActivateDeactivate
+            kit={kit}
+            configuration={configuration.unwrap()}
+          />
         </Container>
         <Divider />
         <Container>
           <Header>{t("control.header")}</Header>
-          <Rules kit={kitState.details!} configuration={configuration} />
+          <Rules kit={kit} configuration={configuration.unwrap()} />
         </Container>
         <Divider />
         <Container>
           <Header>Peripherals</Header>
-          <Peripherals kit={kitState.details!} configuration={configuration} />
+          <Peripherals kit={kit} configuration={configuration.unwrap()} />
         </Container>
       </Container>
     );
   }
 }
 
-const map = (props: Props) => {
-  const { configurationId } = props.match.params;
-  const { kitState } = props;
-
-  return {
-    ...props,
-    option: Option.from(kitState.configurations![configurationId])
-  };
-};
-
-export default compose<InternalProps, Props>(
-  propsMap(map),
-  withTranslation(),
-  withOption(() => <div>Still loading, or configuration not found</div>)
-)(ViewConfiguration);
+export default compose<InternalProps, Props>(withTranslation())(
+  ViewConfiguration
+);

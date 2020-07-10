@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState } from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { RouteComponentProps, Redirect } from "react-router";
@@ -10,9 +10,11 @@ import ApiForm from "Components/ApiForm";
 
 import { kitConfigurationCreated } from "modules/kit/actions";
 
-import { KitsApi, KitConfiguration, Kit } from "astroplant-api";
+import { KitsApi, KitConfiguration } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 import Option from "utils/option";
+
+import { KitContext } from "../../contexts";
 
 const CreateConfigurationForm = ApiForm<any, KitConfiguration>();
 
@@ -20,88 +22,74 @@ type Params = { kitSerial: string };
 
 export type Props = WithTranslation &
   RouteComponentProps<Params> & {
-    kit: Kit;
     kitConfigurationCreated: (payload: {
       serial: string;
       configuration: KitConfiguration;
     }) => void;
   };
 
-type State = {
-  done: boolean;
-  result: Option<KitConfiguration>;
-};
+function CreateConfiguration(props: Props) {
+  const { t, kitConfigurationCreated } = props;
 
-class CreateConfiguration extends React.Component<Props, State> {
-  state: State = {
-    done: false,
-    result: Option.none()
+  const [done, setDone] = useState(false);
+  const [result, setResult] = useState<Option<KitConfiguration>>(Option.none());
+
+  const kit = useContext(KitContext);
+
+  const onResponse = (response: KitConfiguration) => {
+    setResult(Option.some(response));
+    setDone(true);
+    kitConfigurationCreated({
+      serial: kit.serial,
+      configuration: response,
+    });
   };
 
-  onResponse(response: KitConfiguration) {
-    const { kit } = this.props;
-    this.setState({ done: true, result: Option.some(response) });
-    this.props.kitConfigurationCreated({
-      serial: kit.serial,
-      configuration: response
-    });
-  }
-
-  send(formData: any) {
-    const { kit } = this.props;
-
+  const send = (formData: any) => {
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.createConfiguration({
       kitSerial: kit.serial,
       newKitConfiguration: {
-        description: formData.description
-      }
+        description: formData.description,
+      },
     });
-  }
+  };
 
-  render() {
-    const { kit, t } = this.props;
+  const schema: JSONSchema7 = {
+    type: "object",
+    title: "Create configuration",
+    required: [],
+    properties: {
+      description: { type: "string", title: t("common.description") },
+    },
+  };
 
-    const schema: JSONSchema7 = {
-      type: "object",
-      title: "Create configuration",
-      required: [],
-      properties: {
-        description: { type: "string", title: t("common.description") }
-      }
-    };
+  const uiSchema = {};
 
-    const uiSchema = {};
-
-    return (
-      <Container text>
-        <Segment piled padded>
-          {this.state.done ? (
-            <Redirect
-              to={`/kit/${kit.serial}/configure/${
-                this.state.result.unwrap().id
-              }`}
+  return (
+    <Container text>
+      <Segment piled padded>
+        {done ? (
+          <Redirect to={`/kit/${kit.serial}/configure/${result.unwrap().id}`} />
+        ) : (
+          <>
+            <CreateConfigurationForm
+              schema={schema}
+              uiSchema={uiSchema}
+              send={send}
+              onResponse={onResponse}
             />
-          ) : (
-            <>
-              <CreateConfigurationForm
-                schema={schema}
-                uiSchema={uiSchema}
-                send={this.send.bind(this)}
-                onResponse={this.onResponse.bind(this)}
-              />
-            </>
-          )}
-        </Segment>
-      </Container>
-    );
-  }
+          </>
+        )}
+      </Segment>
+    </Container>
+  );
 }
 
 const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
-      kitConfigurationCreated
+      kitConfigurationCreated,
     },
     dispatch
   );

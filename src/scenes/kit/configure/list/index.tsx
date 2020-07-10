@@ -1,20 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { Container, Card, Image, Icon } from "semantic-ui-react";
-import { KitState } from "modules/kit/reducer";
+
+import { ConfigurationsContext } from "../../contexts";
 
 type Params = { kitSerial: string };
 
-export type Props = RouteComponentProps<Params> & {
-  kitState: KitState;
-};
+export type Props = RouteComponentProps<Params>;
 
 export default function KitConfigure(props: Props) {
-  const { kitState } = props;
   const { url } = props.match;
 
-  const configurations = kitState.configurations!;
+  const configurations = useContext(ConfigurationsContext);
+
   const numConfigurations = Object.keys(configurations).length;
 
   return (
@@ -24,8 +23,7 @@ export default function KitConfigure(props: Props) {
       </p>
       {numConfigurations > 0 ? (
         <Card.Group>
-          {Object.keys(configurations).map(id => {
-            const configuration = configurations[id];
+          {Object.entries(configurations).map(([id, configuration]) => {
             return (
               <Card fluid key={id} color="orange" as={Link} to={`${url}/${id}`}>
                 <Card.Content>

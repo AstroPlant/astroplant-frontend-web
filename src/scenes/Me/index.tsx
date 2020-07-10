@@ -57,8 +57,10 @@ class Me extends Component<Props> {
                             <Gravatar identifier={serial} />
                           </Image>
                           <Card.Header>
-                            {(kitState.details && kitState.details.name) ||
-                              t("kit.unnamed")}
+                            {kitState
+                              ? (kitState.details && kitState.details.name) ||
+                                t("kit.unnamed")
+                              : "Loading"}
                           </Card.Header>
                           <Card.Meta>Serial: {serial}</Card.Meta>
                         </Card.Content>

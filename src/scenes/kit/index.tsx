@@ -16,6 +16,11 @@ import { KitState } from "modules/kit/reducer";
 import { startWatching, stopWatching, fetchKit } from "modules/kit/actions";
 import { KitMembership } from "modules/me/reducer";
 
+import {
+  KitContext,
+  ConfigurationsContext,
+  MembershipContext,
+} from "./contexts";
 import Overview from "./overview";
 import Details from "./details";
 import Configure from "./configure";
@@ -29,6 +34,8 @@ type Props = RouteComponentProps<Params> &
     kitState: Option<KitState>;
     membership: Option<KitMembership>;
     fetchKit: (payload: { serial: string }) => void;
+    startWatching: (payload: { serial: string }) => void;
+    stopWatching: (payload: { serial: string }) => void;
   };
 
 type InnerKitProps = {
@@ -38,30 +45,10 @@ type InnerKitProps = {
   membership: Option<KitMembership>;
 };
 
-type KitDashboardProps = WithTranslation &
-  InnerKitProps & {
-    startWatching: (payload: { serial: string }) => void;
-    stopWatching: (payload: { serial: string }) => void;
-  };
+type KitDashboardProps = WithTranslation & InnerKitProps;
 
 const KitDashboard = (props: KitDashboardProps) => {
-  const {
-    path,
-    url,
-    kitState,
-    membership,
-    startWatching,
-    stopWatching,
-  } = props;
-
-  const serial = kitState.details!.serial;
-
-  useEffect(() => {
-    startWatching({ serial });
-    return () => {
-      stopWatching({ serial });
-    };
-  }, [serial, startWatching, stopWatching]);
+  const { path, url, kitState, membership } = props;
 
   const canConfigure = membership
     .map((m) => m.accessSuper || m.accessConfigure)
@@ -72,68 +59,67 @@ const KitDashboard = (props: KitDashboardProps) => {
   const canQueryRpc = membership.map((m) => m.accessSuper).unwrapOr(false);
 
   const kit = kitState.details!;
+  const configurations = kitState.configurations!;
   return (
-    <>
-      <HeadTitle main={kit.name || kit.serial} />
-      <Container>
-        <Menu pointing secondary>
-          <Menu.Item as={NavLink} exact to={`${url}`}>
-            <Icon name="chart bar" />
-            Overview
-          </Menu.Item>
-          <Menu.Item as={NavLink} to={`${url}/details`}>
-            <Icon name="clipboard" />
-            Details
-          </Menu.Item>
-          {canConfigure && (
-            <Menu.Item as={NavLink} to={`${url}/configure`}>
-              <Icon name="setting" />
-              Configure
-            </Menu.Item>
-          )}
-          {canConfigureAccess && (
-            <Menu.Item as={NavLink} to={`${url}/access`}>
-              <Icon name="lock open" />
-              Access
-            </Menu.Item>
-          )}
-          {canQueryRpc && (
-            <Menu.Item as={NavLink} to={`${url}/rpc`}>
-              <Icon name="tty" />
-              RPC
-            </Menu.Item>
-          )}
-        </Menu>
+    <KitContext.Provider value={kit}>
+      <ConfigurationsContext.Provider value={configurations}>
+        <MembershipContext.Provider value={membership}>
+          <HeadTitle main={kit.name || kit.serial} />
+          <Container>
+            <Menu pointing secondary>
+              <Menu.Item as={NavLink} exact to={`${url}`}>
+                <Icon name="chart bar" />
+                Overview
+              </Menu.Item>
+              <Menu.Item as={NavLink} to={`${url}/details`}>
+                <Icon name="clipboard" />
+                Details
+              </Menu.Item>
+              {canConfigure && (
+                <Menu.Item as={NavLink} to={`${url}/configure`}>
+                  <Icon name="setting" />
+                  Configure
+                </Menu.Item>
+              )}
+              {canConfigureAccess && (
+                <Menu.Item as={NavLink} to={`${url}/access`}>
+                  <Icon name="lock open" />
+                  Access
+                </Menu.Item>
+              )}
+              {canQueryRpc && (
+                <Menu.Item as={NavLink} to={`${url}/rpc`}>
+                  <Icon name="tty" />
+                  RPC
+                </Menu.Item>
+              )}
+            </Menu>
 
-        <Switch>
-          <Route
-            path={`${path}/details`}
-            render={(props) => (
-              <Details
-                {...props}
-                kit={kitState.details!}
-                membership={membership}
+            <Switch>
+              <Route
+                path={`${path}/details`}
+                render={(props) => <Details {...props} />}
               />
-            )}
-          />
-          <Route
-            path={`${path}/configure`}
-            render={(props) => <Configure {...props} kitState={kitState} />}
-          />
-          <Route
-            path={`${path}/access`}
-            render={(props) => <Access {...props} kitState={kitState} />}
-          />
-          <Route
-            path={`${path}/rpc`}
-            render={(props) => <Rpc {...props} kitState={kitState} />}
-          />
-          <Route
-            render={(props) => <Overview {...props} kitState={kitState} />}
-          />
-        </Switch>
-      </Container>
-    </>
+              <Route
+                path={`${path}/configure`}
+                render={(props) => <Configure {...props} />}
+              />
+              <Route
+                path={`${path}/access`}
+                render={(props) => <Access {...props} />}
+              />
+              <Route
+                path={`${path}/rpc`}
+                render={(props) => <Rpc {...props} />}
+              />
+              <Route
+                render={(props) => <Overview {...props} kitState={kitState} />}
+              />
+            </Switch>
+          </Container>
+        </MembershipContext.Provider>
+      </ConfigurationsContext.Provider>
+    </KitContext.Provider>
   );
 };
 
@@ -152,22 +138,40 @@ const InnerKit = compose<KitDashboardProps, InnerKitProps>(
 )(KitDashboard);
 
 const Kit = (props: Props) => {
-  const { t, kitState: kit, membership, fetchKit } = props;
+  const {
+    t,
+    kitState: kit,
+    membership,
+    fetchKit,
+    startWatching,
+    stopWatching,
+  } = props;
   const { kitSerial } = props.match.params;
 
   useEffect(() => {
     fetchKit({ serial: kitSerial });
   }, [kitSerial, fetchKit]);
 
+  const kitAccessible = kit.map((kit) => kit.details !== null).unwrapOr(false);
+  useEffect(() => {
+    if (kitAccessible) {
+      startWatching({ serial: kitSerial });
+      return () => {
+        stopWatching({ serial: kitSerial });
+      };
+    }
+  }, [kitAccessible, kitSerial, startWatching, stopWatching]);
+
   if (kit.isNone()) {
     return <Loading />;
   }
-
   const kitState = kit.unwrap();
 
   if (
-    kitState.status === "Fetched" ||
-    (kitState.status === "Fetching" && kitState.details !== null)
+    (kitState.status === "Fetched" && kitState.configurations !== null) ||
+    (kitState.status === "Fetching" &&
+      kitState.details !== null &&
+      kitState.configurations !== null)
   ) {
     return (
       <InnerKit
@@ -177,7 +181,11 @@ const Kit = (props: Props) => {
         membership={membership}
       />
     );
-  } else if (kitState.status === "None" || kitState.status === "Fetching") {
+  } else if (
+    kitState.status === "None" ||
+    kitState.status === "Fetching" ||
+    kitState.configurations === null
+  ) {
     return <Loading />;
   } else if (kitState.status === "NotFound") {
     return (

@@ -1,22 +1,18 @@
-import React from "react";
+import React, { useContext } from "react";
 import { RouteComponentProps } from "react-router";
 import { Container } from "semantic-ui-react";
-import { KitState } from "modules/kit/reducer";
 
+import { KitContext } from "../contexts";
 import ResetPassword from "./components/ResetPassword";
 
-type Params = { kitSerial: string };
+export type Props = RouteComponentProps<{}>;
 
-export type Props = RouteComponentProps<Params> & {
-  kitState: KitState;
-};
-
-export default function KitConfigure(props: Props) {
-  const { kitState } = props;
+export default function KitConfigure(_props: Props) {
+  const kit = useContext(KitContext);
 
   return (
     <Container text>
-        <ResetPassword kit={kitState.details!} />
+        <ResetPassword kit={kit} />
     </Container>
   );
 }
