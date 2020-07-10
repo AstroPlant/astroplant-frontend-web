@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { Observable } from "rxjs";
@@ -10,19 +10,12 @@ import RjsfForm from "../rjsf-theme-semantic-ui";
 
 import {
   Notification,
-  notificationConnectionIssue
+  notificationConnectionIssue,
 } from "../modules/notification";
 import { addNotificationRequest } from "../modules/notification/actions";
 
 import { requestWrapper } from "utils/api";
 import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
-
-type State<T> = {
-  submitting: boolean;
-  formEpoch: number; // Hacky var to reset form errors on submission.
-  formData: T | null;
-  additionalFormErrors: InvalidParametersFormErrors;
-};
 
 export type Props<T, R> = {
   schema: JSONSchema7;
@@ -43,90 +36,77 @@ type AllProps<T, R> = WithTranslation &
     ) => void;
   };
 
-class ApiForm<T = any, R = any> extends Component<AllProps<T, R>, State<T>> {
-  state: State<T> = {
-    submitting: false,
-    formEpoch: 0,
-    formData: null,
-    additionalFormErrors: {}
-  };
+function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
+  const { t, formData: initialFormData } = props;
+  const [formData, setFormData] = useState(initialFormData);
+  const [submitting, setSubmitting] = useState(false);
+  const [formEpoch, setFormEpoch] = useState(0);
+  const [additionalFormErrors, setAdditionalFormErrors] = useState<
+    InvalidParametersFormErrors
+  >({});
 
-  async submit(formData: T) {
-    this.setState((state: State<T>) => {
-      return {
-        submitting: true,
-        formEpoch: state.formEpoch + 1,
-        formData,
-        additionalFormErrors: {}
-      };
-    });
-
-    const { t } = this.props;
+  const submit = async (formData: T) => {
+    setSubmitting(true);
+    setFormEpoch(formEpoch + 1);
+    setFormData(formData);
+    setAdditionalFormErrors({});
 
     try {
-      const payload = this.props.transform
-        ? this.props.transform(formData)
-        : formData;
-      const response = await this.props
+      const payload = props.transform ? props.transform(formData) : formData;
+      const response = await props
         .send(payload)
         .pipe(requestWrapper())
         .toPromise();
 
-      this.setState({ submitting: false });
-      this.props.onResponse(response);
+      setSubmitting(false);
+      props.onResponse(response);
     } catch (e) {
-      this.setState({ submitting: false });
+      setSubmitting(false);
 
       console.warn("error on form submission", e, e.response);
       if (e.status === 0) {
-        this.props.addNotificationRequest(notificationConnectionIssue(t));
+        props.addNotificationRequest(notificationConnectionIssue(t));
       }
 
-      const formErrors = PDInvalidParameters.toFormErrors(
-        this.props.t,
-        e.response
-      );
+      const formErrors = PDInvalidParameters.toFormErrors(t, e.response);
       if (formErrors !== null) {
         console.warn("form errors", formErrors);
-        this.setState({ additionalFormErrors: formErrors });
+        setAdditionalFormErrors(formErrors);
       }
     }
-  }
+  };
 
-  render() {
-    const { t } = this.props;
-
-    return (
-      <>
-        <RjsfForm
-          key={this.state.formEpoch}
-          schema={this.props.schema}
-          uiSchema={this.props.uiSchema}
-          validate={this.props.validate}
-          onSubmit={({ formData }) => this.submit(formData)}
-          formData={this.state.formData || this.props.formData}
-          disabled={this.state.submitting}
-          // @ts-ignore
-          extraErrors={this.state.additionalFormErrors}
+  return (
+    <>
+      <RjsfForm
+        key={formEpoch}
+        schema={props.schema}
+        uiSchema={props.uiSchema}
+        validate={props.validate}
+        onChange={({ formData }) => setFormData(formData)}
+        onSubmit={({ formData }) => submit(formData)}
+        formData={formData}
+        disabled={submitting}
+        // @ts-ignore
+        extraErrors={additionalFormErrors}
+      >
+        <Form.Button
+          type="submit"
+          primary
+          disabled={submitting}
+          loading={submitting}
         >
-          <Form.Button
-            type="submit"
-            primary
-            disabled={this.state.submitting}
-            loading={this.state.submitting}
-          >
-            {this.props.submitLabel || t("form.submit")}
-          </Form.Button>
-        </RjsfForm>
-      </>
-    );
-  }
+          {props.submitLabel || t("form.submit")}
+        </Form.Button>
+      </RjsfForm>
+    </>
+  );
 }
 
 const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
-      addNotificationRequest
+      addNotificationRequest,
     },
     dispatch
   );
