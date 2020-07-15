@@ -61,7 +61,7 @@ function EditPeripheral(props: PInner) {
         <Icon name="thermometer" /> {peripheral.name} —{" "}
         {quantityType.physicalQuantity} in {quantityType.physicalUnit}
       </Modal.Header>
-      <Modal.Content>
+      <Modal.Content scrolling>
         <Header size="small">Please choose the input settings.</Header>
         <RjsfForm
           schema={inputSettingsSchema}

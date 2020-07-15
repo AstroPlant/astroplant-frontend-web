@@ -130,7 +130,7 @@ function EditOutput(props: PInner) {
       <Modal.Header>
         <Icon name="cogs" /> {peripheral.name} — {command}
       </Modal.Header>
-      <Modal.Content>
+      <Modal.Content scrolling>
         <Header size="small">Please choose the output type:</Header>
         <Select
           options={possibleOutputTypes.map((outputType) => ({

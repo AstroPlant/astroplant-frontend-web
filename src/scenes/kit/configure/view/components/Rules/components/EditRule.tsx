@@ -250,7 +250,7 @@ function EditRule(props: PInner) {
       <Modal.Header>
         <Icon name="balance" /> Rule
       </Modal.Header>
-      <Modal.Content>
+      <Modal.Content scrolling>
         <Header size="small">
           Please set the rule input conditions and output implications.
         </Header>
