@@ -113,7 +113,6 @@ function EditOutput(props: PInner) {
         draft.properties.schedules.items.properties.schedule.items.properties.value = schema;
       }
     );
-    // FIXME disable interpolation checkbox if schema type is not number
     outputSettingsUiSchema = produce(
       scheduledOutputSettingsUiSchema,
       (draft) => {
