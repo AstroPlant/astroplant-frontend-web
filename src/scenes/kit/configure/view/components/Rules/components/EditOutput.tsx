@@ -38,11 +38,11 @@ function EditOutput(props: PInner) {
   const submitButtonRef = useRef(null);
 
   const { peripheral, command, schema, outputSettings } = props;
+  const commandIsNumber = schema.type && schema.type === "number";
 
-  const possibleOutputTypes: Array<OutputType> =
-    schema.type && schema.type === "number"
-      ? ["continuous", "scheduled"]
-      : ["scheduled"];
+  const possibleOutputTypes: Array<OutputType> = commandIsNumber
+    ? ["continuous", "scheduled"]
+    : ["scheduled"];
 
   let initialOutputType = possibleOutputTypes[0];
   try {
@@ -114,7 +114,13 @@ function EditOutput(props: PInner) {
       }
     );
     // FIXME disable interpolation checkbox if schema type is not number
-    outputSettingsUiSchema = scheduledOutputSettingsUiSchema;
+    outputSettingsUiSchema = produce(
+      scheduledOutputSettingsUiSchema,
+      (draft) => {
+        // @ts-ignore
+        draft.interpolated["ui:disabled"] = !commandIsNumber;
+      }
+    );
     data = outputSettings.scheduled;
   } else {
     throw new Error("Unknown output type");
