@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { compose } from "recompose";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Form, Modal, Header, Button, Select, Icon } from "semantic-ui-react";
+import { Modal, Header, Button, Select, Icon } from "semantic-ui-react";
 import produce from "immer";
 import { JSONSchema7 } from "json-schema";
 import RjsfForm from "rjsf-theme-semantic-ui";
@@ -35,6 +35,8 @@ type PInner = Props & WithTranslation;
 type OutputType = "continuous" | "scheduled";
 
 function EditOutput(props: PInner) {
+  const submitButtonRef = useRef(null);
+
   const { peripheral, command, schema, outputSettings } = props;
 
   const possibleOutputTypes: Array<OutputType> =
@@ -146,12 +148,20 @@ function EditOutput(props: PInner) {
           }
           formData={data}
         >
-          <Form.Button type="submit" primary>
-            Update
-          </Form.Button>
+          <input
+            ref={submitButtonRef}
+            type="submit"
+            style={{ display: "none" }}
+          />
         </RjsfForm>
       </Modal.Content>
       <Modal.Actions>
+        <Button
+          primary
+          onClick={() => (submitButtonRef.current! as any).click()}
+        >
+          Submit
+        </Button>
         <Button secondary onClick={() => handleDelete(peripheral, command)}>
           Delete
         </Button>

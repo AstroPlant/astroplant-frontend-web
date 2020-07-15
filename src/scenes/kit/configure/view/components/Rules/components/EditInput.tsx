@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useRef } from "react";
 import { compose } from "recompose";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Form, Modal, Header, Button, Icon } from "semantic-ui-react";
+import { Modal, Header, Button, Icon } from "semantic-ui-react";
 import RjsfForm from "rjsf-theme-semantic-ui";
 
 import { Peripheral, QuantityType } from "astroplant-api";
@@ -27,78 +27,76 @@ export type Props = {
 
 type PInner = Props & WithTranslation;
 
-type State = {};
+function EditPeripheral(props: PInner) {
+  const submitButtonRef = useRef(null);
 
-class EditPeripheral extends React.Component<PInner, State> {
-  state: State = {};
-
-  handleClose = () => {
-    this.props.close();
+  const handleClose = () => {
+    props.close();
   };
 
-  handleDelete = (peripheral: Peripheral, quantityType: QuantityType) => {
-    this.props.delete(peripheral, quantityType);
-    this.handleClose();
+  const handleDelete = (peripheral: Peripheral, quantityType: QuantityType) => {
+    props.delete(peripheral, quantityType);
+    handleClose();
   };
 
-  handleSubmit = (
+  const handleSubmit = (
     peripheral: Peripheral,
     quantityType: QuantityType,
     inputSettings: InputSettings
   ) => {
-    this.props.edit(peripheral, quantityType, inputSettings);
-    this.handleClose();
+    props.edit(peripheral, quantityType, inputSettings);
+    handleClose();
   };
 
-  edit(inputSettings: InputSettings) {
-    const { peripheral, quantityType, edit, close } = this.props;
-    edit(peripheral, quantityType, inputSettings);
-    close();
-  }
+  const { peripheral, quantityType, inputSettings } = props;
 
-  render() {
-    const { peripheral, quantityType, inputSettings } = this.props;
-
-    return (
-      <Modal
-        closeOnEscape={true}
-        closeOnDimmerClick={true}
-        open={true}
-        onClose={this.handleClose}
-      >
-        <Modal.Header>
-          <Icon name="thermometer" /> {peripheral.name} —{" "}
-          {quantityType.physicalQuantity} in {quantityType.physicalUnit}
-        </Modal.Header>
-        <Modal.Content>
-          <Header size="small">Please choose the input settings.</Header>
-          <RjsfForm
-            schema={inputSettingsSchema}
-            uiSchema={inputSettingsUiSchema}
-            onSubmit={({ formData }) =>
-              this.handleSubmit(peripheral, quantityType, formData)
-            }
-            formData={inputSettings}
-          >
-            <Form.Button type="submit" primary>
-              Update
-            </Form.Button>
-          </RjsfForm>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button
-            secondary
-            onClick={() => this.handleDelete(peripheral, quantityType)}
-          >
-            Delete
-          </Button>
-          <Button color="red" onClick={this.handleClose}>
-            Cancel
-          </Button>
-        </Modal.Actions>
-      </Modal>
-    );
-  }
+  return (
+    <Modal
+      closeOnEscape={true}
+      closeOnDimmerClick={true}
+      open={true}
+      onClose={handleClose}
+    >
+      <Modal.Header>
+        <Icon name="thermometer" /> {peripheral.name} —{" "}
+        {quantityType.physicalQuantity} in {quantityType.physicalUnit}
+      </Modal.Header>
+      <Modal.Content>
+        <Header size="small">Please choose the input settings.</Header>
+        <RjsfForm
+          schema={inputSettingsSchema}
+          uiSchema={inputSettingsUiSchema}
+          onSubmit={({ formData }) =>
+            handleSubmit(peripheral, quantityType, formData)
+          }
+          formData={inputSettings}
+        >
+          <input
+            ref={submitButtonRef}
+            type="submit"
+            style={{ display: "none" }}
+          />
+        </RjsfForm>
+      </Modal.Content>
+      <Modal.Actions>
+        <Button
+          primary
+          onClick={() => (submitButtonRef.current! as any).click()}
+        >
+          Submit
+        </Button>
+        <Button
+          secondary
+          onClick={() => handleDelete(peripheral, quantityType)}
+        >
+          Delete
+        </Button>
+        <Button color="red" onClick={handleClose}>
+          Cancel
+        </Button>
+      </Modal.Actions>
+    </Modal>
+  );
 }
 
 export default compose<PInner, Props>(withTranslation())(EditPeripheral);
