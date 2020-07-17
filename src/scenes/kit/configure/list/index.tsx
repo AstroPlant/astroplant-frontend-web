@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
-import { Container, Card, Image, Icon } from "semantic-ui-react";
+import { Container, Card, Label } from "semantic-ui-react";
 
 import { ConfigurationsContext } from "../../contexts";
 
@@ -28,14 +28,14 @@ export default function KitConfigure(props: Props) {
               <Card fluid key={id} color="orange" as={Link} to={`${url}/${id}`}>
                 <Card.Content>
                   {configuration.neverUsed && (
-                    <Image floated="right" size="mini">
-                      <Icon title="Editable, never used" name="asterisk" />
-                    </Image>
+                    <Label attached="bottom right" color="green">
+                      Never used (editable)
+                    </Label>
                   )}
                   {configuration.active && (
-                    <Image floated="right" size="mini">
-                      <Icon title="Currently active" name="exclamation" />
-                    </Image>
+                    <Label attached="bottom right" color="blue">
+                      Currently active
+                    </Label>
                   )}
                   <Card.Header>{configuration.description}</Card.Header>
                   <Card.Meta>Identifier: #{configuration.id}</Card.Meta>
