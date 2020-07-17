@@ -35,8 +35,6 @@ type PInner = Props & WithTranslation;
 type OutputType = "continuous" | "scheduled";
 
 function EditOutput(props: PInner) {
-  const submitButtonRef = useRef(null);
-
   const { peripheral, command, schema, outputSettings } = props;
   const commandIsNumber = schema.type && schema.type === "number";
 
@@ -49,6 +47,44 @@ function EditOutput(props: PInner) {
     initialOutputType = outputSettings.type;
   } catch (_e) {}
   const [outputType, setOutputType] = useState<OutputType>(initialOutputType);
+
+  let outputSettingsSchemaModified: JSONSchema7;
+  let outputSettingsUiSchema: any;
+  let data: any;
+  if (outputType === "continuous") {
+    outputSettingsSchemaModified = produce(
+      continuousOutputSettingsSchema,
+      (draft) => {
+        // @ts-ignore
+        draft.properties.minimal = schema;
+        // @ts-ignore
+        draft.properties.maximal = schema;
+      }
+    );
+    outputSettingsUiSchema = continuousOutputSettingsUiSchema;
+    data = outputSettings.continuous;
+  } else if (outputType === "scheduled") {
+    outputSettingsSchemaModified = produce(
+      scheduledOutputSettingsSchema,
+      (draft) => {
+        // @ts-ignore
+        draft.properties.schedules.items.properties.schedule.items.properties.value = schema;
+      }
+    );
+    outputSettingsUiSchema = produce(
+      scheduledOutputSettingsUiSchema,
+      (draft) => {
+        // @ts-ignore
+        draft.interpolated["ui:disabled"] = !commandIsNumber;
+      }
+    );
+    data = outputSettings.scheduled;
+  } else {
+    throw new Error("Unknown output type");
+  }
+  const [formData, setFormData] = useState(data);
+
+  const submitButtonRef = useRef(null);
 
   const handleClose = () => {
     props.close();
@@ -90,41 +126,6 @@ function EditOutput(props: PInner) {
     handleClose();
   };
 
-  let outputSettingsSchemaModified: JSONSchema7;
-  let outputSettingsUiSchema: any;
-  let data: any;
-  if (outputType === "continuous") {
-    outputSettingsSchemaModified = produce(
-      continuousOutputSettingsSchema,
-      (draft) => {
-        // @ts-ignore
-        draft.properties.minimal = schema;
-        // @ts-ignore
-        draft.properties.maximal = schema;
-      }
-    );
-    outputSettingsUiSchema = continuousOutputSettingsUiSchema;
-    data = outputSettings.continuous;
-  } else if (outputType === "scheduled") {
-    outputSettingsSchemaModified = produce(
-      scheduledOutputSettingsSchema,
-      (draft) => {
-        // @ts-ignore
-        draft.properties.schedules.items.properties.schedule.items.properties.value = schema;
-      }
-    );
-    outputSettingsUiSchema = produce(
-      scheduledOutputSettingsUiSchema,
-      (draft) => {
-        // @ts-ignore
-        draft.interpolated["ui:disabled"] = !commandIsNumber;
-      }
-    );
-    data = outputSettings.scheduled;
-  } else {
-    throw new Error("Unknown output type");
-  }
-
   return (
     <Modal
       closeOnEscape={true}
@@ -151,7 +152,8 @@ function EditOutput(props: PInner) {
           onSubmit={({ formData }) =>
             handleSubmit(peripheral, command, formData)
           }
-          formData={data}
+          formData={formData}
+          onChange={({ formData }) => setFormData(formData)}
         >
           <input
             ref={submitButtonRef}

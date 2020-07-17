@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useState, useRef } from "react";
 import { compose } from "recompose";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Modal, Header, Button, Icon } from "semantic-ui-react";
@@ -28,6 +28,9 @@ export type Props = {
 type PInner = Props & WithTranslation;
 
 function EditPeripheral(props: PInner) {
+  const { peripheral, quantityType, inputSettings } = props;
+  const [formData, setFormData] = useState(inputSettings);
+
   const submitButtonRef = useRef(null);
 
   const handleClose = () => {
@@ -48,8 +51,6 @@ function EditPeripheral(props: PInner) {
     handleClose();
   };
 
-  const { peripheral, quantityType, inputSettings } = props;
-
   return (
     <Modal
       closeOnEscape={true}
@@ -69,7 +70,8 @@ function EditPeripheral(props: PInner) {
           onSubmit={({ formData }) =>
             handleSubmit(peripheral, quantityType, formData)
           }
-          formData={inputSettings}
+          onChange={({ formData }) => setFormData(formData)}
+          formData={formData}
         >
           <input
             ref={submitButtonRef}

@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useState, useRef } from "react";
 import { compose } from "recompose";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Modal, Header, Button, Icon } from "semantic-ui-react";
@@ -68,6 +68,37 @@ export const fuzzyRuleSchema: JSONSchema7 = {
 };
 
 function EditRule(props: PInner) {
+  const {
+    conditionChoices,
+    implicationChoices,
+    scheduleChoices,
+    fuzzyRule: fuzzyRuleGiven,
+  } = props;
+
+  const fuzzyRuleAdapted = {
+    condition: fuzzyRuleGiven.condition.map(
+      ({ peripheral, quantityType, ...rest }) => ({
+        ...rest,
+        peripheralQuantityType: `${peripheral}-${quantityType}`,
+      })
+    ),
+    implication: fuzzyRuleGiven.implication.map(
+      ({ peripheral, command, ...rest }) => ({
+        ...rest,
+        peripheralCommand: `${peripheral}-${command}`,
+      })
+    ),
+    schedules: fuzzyRuleGiven.schedules.map(
+      ({ peripheral, command, ...rest }) => ({
+        ...rest,
+        peripheralCommand: `${peripheral}-${command}`,
+      })
+    ),
+    activeFrom: fuzzyRuleGiven.activeFrom,
+    activeTo: fuzzyRuleGiven.activeTo,
+  };
+  const [formData, setFormData] = useState(fuzzyRuleAdapted);
+
   const submitButtonRef = useRef(null);
 
   const handleClose = () => {
@@ -111,36 +142,6 @@ function EditRule(props: PInner) {
     );
     props.edit(fuzzyRule);
     handleClose();
-  };
-
-  const {
-    conditionChoices,
-    implicationChoices,
-    scheduleChoices,
-    fuzzyRule: fuzzyRuleGiven,
-  } = props;
-
-  let fuzzyRuleAdapted = {
-    condition: fuzzyRuleGiven.condition.map(
-      ({ peripheral, quantityType, ...rest }) => ({
-        ...rest,
-        peripheralQuantityType: `${peripheral}-${quantityType}`,
-      })
-    ),
-    implication: fuzzyRuleGiven.implication.map(
-      ({ peripheral, command, ...rest }) => ({
-        ...rest,
-        peripheralCommand: `${peripheral}-${command}`,
-      })
-    ),
-    schedules: fuzzyRuleGiven.schedules.map(
-      ({ peripheral, command, ...rest }) => ({
-        ...rest,
-        peripheralCommand: `${peripheral}-${command}`,
-      })
-    ),
-    activeFrom: fuzzyRuleGiven.activeFrom,
-    activeTo: fuzzyRuleGiven.activeTo,
   };
 
   let uiSchema = {
@@ -258,7 +259,8 @@ function EditRule(props: PInner) {
           schema={schema}
           uiSchema={uiSchema}
           onSubmit={({ formData }) => handleSubmit(formData)}
-          formData={fuzzyRuleAdapted}
+          formData={formData}
+          onChange={({ formData }) => setFormData(formData)}
         >
           <input
             ref={submitButtonRef}
