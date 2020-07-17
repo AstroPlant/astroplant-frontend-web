@@ -35,7 +35,7 @@ export default (props: Props) => {
             </Table.HeaderCell>
             <Table.HeaderCell>Number of delta measurements</Table.HeaderCell>
             <Table.HeaderCell>
-              Setpoint interpolation (minutes)
+              Setpoint interpolation
             </Table.HeaderCell>
           </Table.Row>
         </Table.Header>
@@ -44,7 +44,9 @@ export default (props: Props) => {
             <Table.Cell>{settings.nominalRange}</Table.Cell>
             <Table.Cell>{settings.nominalDeltaRange}</Table.Cell>
             <Table.Cell>{settings.deltaMeasurements}</Table.Cell>
-            <Table.Cell>{settings.interpolation}</Table.Cell>
+            <Table.Cell>
+              {settings.interpolated ? "Interpolated" : "Not interpolated"}{" "}
+            </Table.Cell>
           </Table.Row>
         </Table.Body>
       </Table>

@@ -82,14 +82,14 @@ function parseConfiguration(
           nominalRange,
           nominalDeltaRange,
           deltaMeasurements,
-          interpolation,
+          interpolated,
           setpoints,
         } = settings as any;
         fuzzyControl.input[peripheralName][quantityTypeId] = {
           nominalRange,
           nominalDeltaRange,
           deltaMeasurements,
-          interpolation,
+          interpolated,
           setpoints,
         };
       }
@@ -260,7 +260,7 @@ class Rules extends React.Component<Props, State> {
         nominalRange: 1.0,
         nominalDeltaRange: 0.1,
         deltaMeasurements: 1,
-        interpolation: 15,
+        interpolated: false,
         setpoints: [],
       };
     });

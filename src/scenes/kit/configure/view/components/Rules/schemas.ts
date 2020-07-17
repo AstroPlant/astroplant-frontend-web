@@ -9,7 +9,7 @@ export type InputSettings = {
   nominalRange: number;
   nominalDeltaRange: number;
   deltaMeasurements: number;
-  interpolation: number;
+  interpolated: boolean;
   setpoints: Setpoint[];
 };
 
@@ -145,7 +145,7 @@ export const inputSettingsSchema: JSONSchema7 = {
     "nominalRange",
     "nominalDeltaRange",
     "deltaMeasurements",
-    "interpolation",
+    "interpolated",
     "setpoints",
   ],
   properties: {
@@ -158,8 +158,8 @@ export const inputSettingsSchema: JSONSchema7 = {
     deltaMeasurements: {
       type: "number",
     },
-    interpolation: {
-      type: "number",
+    interpolated: {
+      type: "boolean",
     },
     setpoints: {
       type: "array",
@@ -183,10 +183,12 @@ export const inputSettingsUiSchema = {
     "ui:description":
       "The amount of meaurements used to compute the measurement delta.",
   },
-  interpolation: {
-    "ui:title": "Interpolation",
+  interpolated: {
+    "ui:title": "Interpolated",
+    "ui:help":
+      "By interpolating, the setpoint will linearly move from one output value to the next. To have a stable setpoint between two times, e.g. 09:00 and 18:00, set those times to the same setpoint value.",
     "ui:description":
-      "Within this number of minutes to the next setpoint, the setpoint will be linearly interpolated.",
+      "When enabled, the setpoint will be linearly interpolated.",
   },
   setpoints: setpointUiSchema,
 };
