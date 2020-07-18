@@ -1,4 +1,4 @@
-import { createReducer, ActionType } from "typesafe-actions";
+import { createReducer } from "@reduxjs/toolkit";
 import produce from "immer";
 import isEqual from "lodash/isEqual";
 import * as actions from "./actions";
@@ -22,26 +22,25 @@ const initial: MeState = {
   kitMemberships: {},
 };
 
-export type MeAction = ActionType<typeof actions>;
-
-export default createReducer<MeState, MeAction>(initial)
-  .handleAction(actions.setDetails, (state, action) => {
-    return { ...state, details: Option.some(action.payload) };
-  })
-  .handleAction(actions.setKitMemberships, (state, action) => {
-    return produce(state, (draft) => {
+export default createReducer<MeState>(initial, (build) =>
+  build
+    .addCase(actions.setDetails, (state, action) => {
+      state.details = Option.some(action.payload);
+    })
+    .addCase(actions.setKitMemberships, (state, action) => {
+      // TODO delete membership no longer in payload
       for (const { kit, accessConfigure, accessSuper } of action.payload) {
         const membership = { accessConfigure, accessSuper };
         if (
           !(kit.serial in state.kitMemberships) ||
           !isEqual(membership, state.kitMemberships[kit.serial])
         ) {
-          draft.kitMemberships[kit.serial] = membership;
+          state.kitMemberships[kit.serial] = membership;
         }
-        draft.loadingKitMemberships = false;
       }
-    });
-  })
-  .handleAction(actions.loadingKitMemberships, (state) => {
-    return { ...state, loadingKitMemberships: true };
-  });
+      state.loadingKitMemberships = false;
+    })
+    .addCase(actions.loadingKitMemberships, (state) => {
+      state.loadingKitMemberships = true;
+    })
+);

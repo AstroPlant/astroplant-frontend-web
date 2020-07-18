@@ -1,4 +1,4 @@
-import { combineReducers } from "redux";
+import { combineReducers } from "@reduxjs/toolkit";
 import { combineEpics } from "redux-observable";
 import { tap } from "rxjs/operators";
 import genericReducer from "./modules/generic/reducer";

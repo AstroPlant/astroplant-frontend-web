@@ -1,4 +1,3 @@
-import { isActionOf } from "typesafe-actions";
 import { Epic, combineEpics } from "redux-observable";
 import { of, concat } from "rxjs";
 import { mergeMap, filter, delay } from "rxjs/operators";
@@ -11,7 +10,7 @@ import * as actions from "./actions";
  */
 const notificationRequestEpic: Epic = (action$, state$) =>
   action$.pipe(
-    filter(isActionOf(actions.addNotificationRequest)),
+    filter(actions.addNotificationRequest.match),
     mergeMap(action => {
       const { notification, timeout } = action.payload;
       const id = state$.value.notification.nextId;

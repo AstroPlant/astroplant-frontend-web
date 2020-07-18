@@ -1,4 +1,3 @@
-import { isActionOf } from "typesafe-actions";
 import { Epic, combineEpics } from "redux-observable";
 import { Observable } from "rxjs";
 import {
@@ -8,16 +7,16 @@ import {
   share,
   map,
   finalize,
-  takeUntil
+  takeUntil,
 } from "rxjs/operators";
 import { webSocket } from "rxjs/webSocket";
 import * as kitActions from "../kit/actions";
 import { RawMeasurement } from "../kit/reducer";
 
-const webSocketSubject = webSocket(process.env.REACT_APP_WEBSOCKET_URL || "ws://localhost:8080/ws");
-const webSocketMessages: Observable<any> = webSocketSubject.pipe(
-  share(),
+const webSocketSubject = webSocket(
+  process.env.REACT_APP_WEBSOCKET_URL || "ws://localhost:8080/ws"
 );
+const webSocketMessages: Observable<any> = webSocketSubject.pipe(share());
 let webSocketRequestId = 0;
 
 const prepareRpcRequest = (method: string, params: any) => {
@@ -28,8 +27,8 @@ const prepareRpcRequest = (method: string, params: any) => {
       jsonrpc: "2.0",
       id: nextId,
       method,
-      params
-    }
+      params,
+    },
   ];
 };
 
@@ -47,7 +46,9 @@ const rpcSubscription = (method: string, params: any) => {
         ),
         map((message: any) => message.params.result),
         finalize(() => {
-          const [, request] = prepareRpcRequest("unsubscribe_" + method, [subId]);
+          const [, request] = prepareRpcRequest("unsubscribe_" + method, [
+            subId,
+          ]);
           webSocketSubject.next(request);
         })
       );
@@ -60,17 +61,22 @@ const rpcSubscription = (method: string, params: any) => {
  */
 const rawMeasurementsEpic: Epic = (action$, state$) =>
   action$.pipe(
-    filter(isActionOf(kitActions.startWatching)),
-    mergeMap(action => {
+    filter(kitActions.startWatching.match),
+    mergeMap((action) => {
       const kitSerial = action.payload.serial;
       return rpcSubscription("rawMeasurements", { kitSerial }).pipe(
-        map(rawMeasurement =>
-          kitActions.rawMeasurementReceived(kitSerial, rawMeasurement as RawMeasurement)
+        map((rawMeasurement) =>
+          kitActions.rawMeasurementReceived({
+            serial: kitSerial,
+            rawMeasurement: rawMeasurement as RawMeasurement,
+          })
         ),
-        takeUntil(action$.pipe(
-          filter(isActionOf(kitActions.stopWatching)),
-          filter(action => action.payload.serial === kitSerial)
-        ))
+        takeUntil(
+          action$.pipe(
+            filter(kitActions.stopWatching.match),
+            filter((action) => action.payload.serial === kitSerial)
+          )
+        )
       );
     })
   );

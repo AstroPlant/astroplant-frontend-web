@@ -1,4 +1,4 @@
-import { createReducer, ActionType } from "typesafe-actions";
+import { createReducer } from "@reduxjs/toolkit";
 import * as actions from "./actions";
 
 export interface GenericState {
@@ -6,14 +6,11 @@ export interface GenericState {
 }
 
 const initial: GenericState = {
-  apiConnectionFailed: false
+  apiConnectionFailed: false,
 };
 
-export type GenericAction = ActionType<typeof actions>;
-
-export default createReducer<GenericState, GenericAction>(initial).handleAction(
-  actions.setApiConnectionFailed,
-  (state, action) => {
-    return { ...state, apiConnectionFailed: action.payload };
-  }
+export default createReducer<GenericState>(initial, (builder) =>
+  builder.addCase(actions.setApiConnectionFailed, (state, action) => {
+    state.apiConnectionFailed = action.payload;
+  })
 );

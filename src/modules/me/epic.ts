@@ -1,4 +1,3 @@
-import { isActionOf } from "typesafe-actions";
 import { Epic, combineEpics } from "redux-observable";
 import { of, concat, EMPTY } from "rxjs";
 import { switchMap, map, filter, catchError } from "rxjs/operators";
@@ -14,7 +13,7 @@ import { AuthConfiguration, requestWrapper } from "utils/api";
  */
 const fetchUserDetailsEpic: Epic = (action$, state$) =>
   action$.pipe(
-    filter(isActionOf(authActions.setAccessToken)),
+    filter(authActions.setAccessToken.match),
     map((_action) => new AccessApi(AuthConfiguration.Instance)),
     switchMap((api) =>
       api.showMe().pipe(
@@ -31,7 +30,7 @@ const fetchUserDetailsEpic: Epic = (action$, state$) =>
 
 const fetchUserKitsEpic: Epic = (actions$, state$) =>
   actions$.pipe(
-    filter(isActionOf([actions.setDetails, actions.kitCreated])),
+    filter(action => actions.setDetails.match(action) || actions.kitCreated.match(action)),
     map((_action) => new UsersApi(AuthConfiguration.Instance)),
     switchMap((api) =>
       concat(

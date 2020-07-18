@@ -1,4 +1,3 @@
-import { isActionOf } from "typesafe-actions";
 import { Epic, combineEpics } from "redux-observable";
 import { switchMap, map, filter, catchError } from "rxjs/operators";
 import { of, timer } from "rxjs";
@@ -14,7 +13,7 @@ import * as sessionActions from "../session/actions";
  */
 const clearRefreshTokenEpic: Epic = (action$, state$) =>
   action$.pipe(
-    filter(isActionOf(sessionActions.sessionInitialize)),
+    filter(sessionActions.sessionInitialize.match),
     filter(() => !state$.value.auth.rememberMe),
     map(actions.clearTokens)
   );
@@ -25,7 +24,7 @@ const clearRefreshTokenEpic: Epic = (action$, state$) =>
  */
 const refreshAuthenticationEpic: Epic = (action$, state$) =>
   action$.pipe(
-    filter(isActionOf(sessionActions.sessionInitialized)),
+    filter(sessionActions.sessionInitialized.match),
     switchMap(() => timer(0, 5 * 60 * 1000)),
     switchMap(() => {
       if (state$.value.auth.refreshToken) {

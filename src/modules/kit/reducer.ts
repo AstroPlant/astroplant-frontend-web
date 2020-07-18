@@ -1,4 +1,4 @@
-import { createReducer, ActionType } from "typesafe-actions";
+import { createReducer } from "@reduxjs/toolkit";
 import isEqual from "lodash/isEqual";
 import * as actions from "./actions";
 import { byId, arrayToObject } from "utils/byId";
@@ -47,79 +47,72 @@ const initialKit: KitState = {
   status: "None",
 };
 
-export type KitAction = ActionType<typeof actions>;
+const kitReducer = createReducer<KitState>(initialKit, (builder) =>
+  builder
+    .addCase(actions.fetchKit, (state, _action) => {
+      state.status = "Fetching";
+    })
+    .addCase(actions.notFound, (state, _action) => {
+      state.status = "NotFound";
+    })
+    .addCase(actions.notAuthorized, (state, _action) => {
+      state.status = "NotAuthorized";
+    })
+    .addCase(actions.addKit, (state, action) => {
+      state.details = action.payload;
+      state.status = "Fetched";
+    })
+    .addCase(actions.kitConfigurationsRequest, (state, _action) => {
+      state.loadingConfigurations = true;
+    })
+    .addCase(actions.kitConfigurationsSuccess, (state, action) => {
+      if (state.configurations === null) {
+        state.configurations = {};
+      }
 
-const kitReducer = createReducer<KitState, KitAction>(initialKit)
-  .handleAction(actions.fetchKit, (state, action) => {
-    return { ...state, status: "Fetching" };
-  })
-  .handleAction(actions.notFound, (state, action) => {
-    return { ...state, status: "NotFound" };
-  })
-  .handleAction(actions.notAuthorized, (state, action) => {
-    return { ...state, status: "NotAuthorized" };
-  })
-  .handleAction(actions.addKit, (state, action) => {
-    return {
-      ...state,
-      details: action.payload,
-      status: "Fetched",
-    };
-  })
-  .handleAction(actions.kitConfigurationsRequest, (state, action) => {
-    return { ...state, loadingConfigurations: true };
-  })
-  .handleAction(actions.kitConfigurationsSuccess, (state, action) => {
-    let configurations: { [id: string]: KitConfigurationState } = {};
-    let existingConfigurations: {
-      [id: string]: KitConfigurationState;
-    } = state.configurations || {};
-    for (const { peripherals, ...confRest } of action.payload.configurations) {
-      const conf = {
-        ...confRest,
-        peripherals: arrayToObject(peripherals, (peripheral) =>
-          peripheral.id.toString()
-        ),
-      };
+      const configurationIds = action.payload.configurations.map(
+        (conf) => conf.id
+      );
 
-      if (
-        conf.id in existingConfigurations &&
-        isEqual(conf, existingConfigurations[conf.id])
-      ) {
-        configurations[conf.id] = existingConfigurations[conf.id];
+      for (const configurationId of Object.keys(state.configurations)) {
+        if (!configurationIds.includes(Number(configurationId))) {
+          delete state.configurations[configurationId];
+        }
+      }
+
+      for (const { peripherals, ...confRest } of action.payload
+        .configurations) {
+        const conf = {
+          ...confRest,
+          peripherals: arrayToObject(peripherals, (peripheral) =>
+            peripheral.id.toString()
+          ),
+        };
+
+        if (
+          !(conf.id in state.configurations) ||
+          !isEqual(conf, state.configurations[conf.id])
+        ) {
+          state.configurations[conf.id] = conf;
+        }
+      }
+      state.loadingConfigurations = false;
+    })
+    .addCase(actions.kitSetAllConfigurationsInactive, (state, action) => {
+      if (state.configurations === null) {
+        return;
       } else {
-        configurations[conf.id] = conf;
+        for (const configuration of Object.values(state.configurations)) {
+          configuration.active = false;
+        }
       }
-    }
-
-    return {
-      ...state,
-      configurations: configurations,
-      loadingConfigurations: false,
-    };
-  })
-  .handleAction(actions.kitSetAllConfigurationsInactive, (state, action) => {
-    if (state.configurations === null) {
-      return state;
-    } else {
-      const oldConfigurations = state.configurations;
-      let configurations: { [id: string]: KitConfigurationState } = {};
-      for (const id of Object.keys(oldConfigurations)) {
-        const conf = oldConfigurations[id];
-        configurations[id] = { ...conf, active: false };
-      }
-
-      return { ...state, configurations: configurations };
-    }
-  })
-  .handleAction(actions.rawMeasurementReceived, (state, action) => {
-    let rawMeasurements = state.rawMeasurements;
-    const { peripheral, quantityType } = action.payload.rawMeasurement;
-    rawMeasurements[peripheral + "." + quantityType] =
-      action.payload.rawMeasurement;
-
-    return { ...state, rawMeasurements };
-  });
+    })
+    .addCase(actions.rawMeasurementReceived, (state, action) => {
+      const { peripheral, quantityType } = action.payload.rawMeasurement;
+      state.rawMeasurements[peripheral + "." + quantityType] =
+        action.payload.rawMeasurement;
+    })
+);
 
 const kitReducerWrapper = (state: KitState, action: any) => {
   const state2 = kitReducer(state, action) as any;
@@ -139,29 +132,31 @@ const kitReducerWrapper = (state: KitState, action: any) => {
   }
 };
 
-const kitConfigurationReducer = createReducer<KitConfigurationState, KitAction>(
-  {} as KitConfigurationState
-)
-  .handleAction(actions.kitConfigurationCreated, (state, action) => {
-    const { configuration } = action.payload;
-    const configurationWithPeripherals: KitConfigurationState = {
-      ...configuration,
-      peripherals: {},
-    };
+const kitConfigurationReducer = createReducer<KitConfigurationState>(
+  {} as KitConfigurationState,
+  (builder) =>
+    builder
+      .addCase(actions.kitConfigurationCreated, (state, action) => {
+        const { configuration } = action.payload;
+        const configurationWithPeripherals: KitConfigurationState = {
+          ...configuration,
+          peripherals: {},
+        };
 
-    return configurationWithPeripherals;
-  })
-  .handleAction(actions.kitConfigurationUpdated, (state, action) => {
-    const { configuration } = action.payload;
-    const existingConfigurationPeripherals = state.peripherals || [];
+        return configurationWithPeripherals;
+      })
+      .addCase(actions.kitConfigurationUpdated, (state, action) => {
+        const { configuration } = action.payload;
+        const existingConfigurationPeripherals = state.peripherals || [];
 
-    const newConfiguration = {
-      ...configuration,
-      peripherals: existingConfigurationPeripherals,
-    };
+        const newConfiguration = {
+          ...configuration,
+          peripherals: existingConfigurationPeripherals,
+        };
 
-    return newConfiguration;
-  });
+        return newConfiguration;
+      })
+);
 
 const kitConfigurationReducerWrapper = (
   state: KitConfigurationState,
@@ -175,16 +170,20 @@ const kitConfigurationReducerWrapper = (
   return { ...state2, peripherals: newPeripherals };
 };
 
-const peripheralReducer = createReducer<Peripheral, KitAction>({} as Peripheral)
-  .handleAction(actions.peripheralCreated, (state, action) => {
-    return action.payload.peripheral;
-  })
-  .handleAction(actions.peripheralUpdated, (state, action) => {
-    return action.payload.peripheral;
-  })
-  .handleAction(actions.peripheralDeleted, (state, action) => {
-    return undefined as any;
-  });
+const peripheralReducer = createReducer<Peripheral>(
+  {} as Peripheral,
+  (builder) =>
+    builder
+      .addCase(actions.peripheralCreated, (state, action) => {
+        return action.payload.peripheral;
+      })
+      .addCase(actions.peripheralUpdated, (state, action) => {
+        return action.payload.peripheral;
+      })
+      .addCase(actions.peripheralDeleted, (state, _action) => {
+        return undefined as any;
+      })
+);
 
 const kitReducerById = byId(
   (action: any) => (action.payload || {}).serial,

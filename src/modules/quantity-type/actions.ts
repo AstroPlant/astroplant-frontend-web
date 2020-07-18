@@ -1,7 +1,6 @@
-import { createAction } from "typesafe-actions";
+import { createAction } from "@reduxjs/toolkit";
 import { QuantityType } from "astroplant-api";
 
-export const addQuantityTypes = createAction(
-  "quantityType/ADD_QUANTITY_TYPES",
-  action => (payload: QuantityType[]) => action(payload)
+export const addQuantityTypes = createAction<QuantityType[]>(
+  "quantityType/ADD_QUANTITY_TYPES"
 );

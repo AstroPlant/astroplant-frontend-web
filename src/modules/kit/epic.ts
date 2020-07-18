@@ -1,4 +1,3 @@
-import { isActionOf } from "typesafe-actions";
 import { Epic, combineEpics } from "redux-observable";
 import { from, of, concat, timer } from "rxjs";
 import {
@@ -19,7 +18,7 @@ import { PDNotFound, PDForbidden } from "../../problems";
 
 const addKitFromKitMemberships: Epic = (actions$, state$) =>
   actions$.pipe(
-    filter(isActionOf(meActions.setKitMemberships)),
+    filter(meActions.setKitMemberships.match),
     map(action => action.payload),
     switchMap(kitMemberships =>
       from(kitMemberships.map(kitMembership => kitMembership.kit))
@@ -29,7 +28,7 @@ const addKitFromKitMemberships: Epic = (actions$, state$) =>
 
 const fetchKit: Epic = (actions$, state$) =>
   actions$.pipe(
-    filter(isActionOf(actions.fetchKit)),
+    filter(actions.fetchKit.match),
     map(action => action.payload.serial),
     map(kitSerial => {
       const api = new KitsApi(AuthConfiguration.Instance);
@@ -54,7 +53,7 @@ const fetchKit: Epic = (actions$, state$) =>
 
 const kitWatching: Epic = (actions$, state$) =>
   actions$.pipe(
-    filter(isActionOf(actions.startWatching)),
+    filter(actions.startWatching.match),
     map(action => action.payload.serial),
     mergeMap(serial =>
       timer(0, 60 * 1000).pipe(
@@ -63,7 +62,7 @@ const kitWatching: Epic = (actions$, state$) =>
         ),
         takeUntil(
           actions$.pipe(
-            filter(isActionOf(actions.stopWatching)),
+            filter(actions.stopWatching.match),
             filter(action => action.payload.serial === serial)
           )
         )
@@ -73,7 +72,7 @@ const kitWatching: Epic = (actions$, state$) =>
 
 const kitConfigurationsRequest: Epic = (actions$, state$) =>
   actions$.pipe(
-    filter(isActionOf(actions.kitConfigurationsRequest)),
+    filter(actions.kitConfigurationsRequest.match),
     map(action => action.payload.serial),
     map(kitSerial => {
       const api = new KitsApi(AuthConfiguration.Instance);

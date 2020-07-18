@@ -1,5 +1,4 @@
 import { combineEpics, ofType } from "redux-observable";
-import { isActionOf } from "typesafe-actions";
 import { combineLatest } from "rxjs";
 import { map, filter, delay } from "rxjs/operators";
 import { REHYDRATE } from "redux-persist/lib/constants";
@@ -32,7 +31,7 @@ const sessionInitializeEpic = (action$: any, state$: any) =>
  */
 const sessionInitializedEpic = (action$: any) =>
   action$.pipe(
-    filter(isActionOf(actions.sessionInitialize)),
+    filter(actions.sessionInitialize.match),
     delay(10),
     map(() => actions.sessionInitialized())
   );

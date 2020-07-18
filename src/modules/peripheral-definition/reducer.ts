@@ -1,4 +1,4 @@
-import { createReducer, ActionType } from "typesafe-actions";
+import { createReducer } from "@reduxjs/toolkit";
 import * as actions from "./actions";
 
 import { PeripheralDefinition } from "astroplant-api";
@@ -8,21 +8,13 @@ export interface PeripheralDefinitionState {
 }
 
 const initial: PeripheralDefinitionState = {
-  definitions: {}
+  definitions: {},
 };
 
-export type PeripheralDefinitionAction = ActionType<typeof actions>;
-
-export default createReducer<
-  PeripheralDefinitionState,
-  PeripheralDefinitionAction
->(initial).handleAction(actions.addDefinitions, (state, action) => {
-  const { definitions, ...rest } = state;
-
-  let newDefinitions: {[id: string]: PeripheralDefinition} = {};
-  for (const def of action.payload) {
-    newDefinitions[def.id.toString()] = def;
-  }
-
-  return { definitions: { ...newDefinitions, ...definitions }, ...rest };
-});
+export default createReducer<PeripheralDefinitionState>(initial, (build) =>
+  build.addCase(actions.addDefinitions, (state, action) => {
+    for (const def of action.payload) {
+      state.definitions[def.id.toString()] = def;
+    }
+  })
+);

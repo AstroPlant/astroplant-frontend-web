@@ -1,6 +1,6 @@
 import { persistReducer } from "redux-persist";
 import localStorage from "redux-persist/lib/storage";
-import { createReducer, ActionType } from "typesafe-actions";
+import { createReducer } from "@reduxjs/toolkit";
 import * as actions from "./actions";
 
 export interface AuthState {
@@ -13,39 +13,41 @@ export interface AuthState {
 const persistConfig = {
   key: "auth",
   whitelist: ["rememberMe", "refreshToken"],
-  storage: localStorage
+  storage: localStorage,
 };
 
 const initial: AuthState = {
   authenticationRan: false,
   rememberMe: false,
   refreshToken: null,
-  accessToken: null
+  accessToken: null,
 };
 
-export type AuthAction = ActionType<typeof actions>;
-
-const reducer = createReducer<AuthState, AuthAction>(initial)
-  .handleAction(actions.notAuthenticated, (state, _) => {
-    return { ...state, authenticationRan: true };
-  })
-  .handleAction(actions.setRememberMe, (state, action) => {
-    return { ...state, rememberMe: action.payload };
-  })
-  .handleAction(actions.setRefreshToken, (state, action) => {
-    return { ...state, refreshToken: action.payload.token };
-  })
-  .handleAction(actions.clearRefreshToken, (state, _) => {
-    return { ...state, refreshToken: null };
-  })
-  .handleAction(actions.setAccessToken, (state, action) => {
-    return { ...state, accessToken: action.payload, authenticationRan: true };
-  })
-  .handleAction(actions.clearAccessToken, (state, _) => {
-    return { ...state, accessToken: null };
-  })
-  .handleAction(actions.clearTokens, (state, _) => {
-    return { ...state, refreshToken: null, accessToken: null };
-  });
+const reducer = createReducer(initial, (builder) =>
+  builder
+    .addCase(actions.notAuthenticated, (state, _) => {
+      state.authenticationRan = true;
+    })
+    .addCase(actions.setRememberMe, (state, action) => {
+      state.rememberMe = action.payload;
+    })
+    .addCase(actions.setRefreshToken, (state, action) => {
+      state.refreshToken = action.payload.token;
+    })
+    .addCase(actions.clearRefreshToken, (state, _) => {
+      state.refreshToken = null;
+    })
+    .addCase(actions.setAccessToken, (state, action) => {
+      state.accessToken = action.payload;
+      state.authenticationRan = true;
+    })
+    .addCase(actions.clearAccessToken, (state, _) => {
+      state.accessToken = null;
+    })
+    .addCase(actions.clearTokens, (state, _) => {
+      state.refreshToken = null;
+      state.accessToken = null;
+    })
+);
 
 export default persistReducer(persistConfig, reducer);

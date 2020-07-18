@@ -1,4 +1,3 @@
-import { isActionOf } from "typesafe-actions";
 import { Epic, combineEpics } from "redux-observable";
 import { switchMap, map, filter, catchError } from "rxjs/operators";
 import { of } from "rxjs";
@@ -10,7 +9,7 @@ import { walkPages } from "utils/api";
 
 const fetchQuantityTypes: Epic = (actions$, state$) =>
   actions$.pipe(
-    filter(isActionOf(genericActions.pageInitializationSuccess)),
+    filter(genericActions.pageInitializationSuccess.match),
     map(() => new DefinitionsApi()),
     switchMap((api: DefinitionsApi) =>
       walkPages((page) =>
