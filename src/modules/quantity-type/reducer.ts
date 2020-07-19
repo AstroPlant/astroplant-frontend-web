@@ -8,14 +8,12 @@ export const quantityTypesAdapter = createEntityAdapter<QuantityType>({
   selectId: (quantityType) => quantityType.id,
 });
 
-export default createReducer(
-  { types: quantityTypesAdapter.getInitialState() },
-  (build) =>
-    build.addCase(actions.addQuantityTypes, (state, action) => {
-      quantityTypesAdapter.upsertMany(state.types, action.payload);
-    })
+export default createReducer(quantityTypesAdapter.getInitialState(), (build) =>
+  build.addCase(actions.addQuantityTypes, (state, action) => {
+    quantityTypesAdapter.upsertMany(state, action.payload);
+  })
 );
 
 export const selectors = quantityTypesAdapter.getSelectors(
-  (state: RootState) => state.quantityType.types
+  (state: RootState) => state.quantityType
 );
