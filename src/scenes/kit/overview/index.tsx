@@ -103,7 +103,9 @@ function KitOverview(props: Props) {
     return (
       <Container>
         <Switch>
-          <Tab panes={panes} renderActiveOnly={false} activeIndex={-1} />
+          <>
+            <Tab panes={panes} renderActiveOnly={false} activeIndex={-1} />
+          </>
         </Switch>
       </Container>
     );
