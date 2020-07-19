@@ -16,6 +16,7 @@ import {
 import { RootState } from "types";
 import { KitConfigurationState } from "modules/kit/reducer";
 import { peripheralCreated } from "modules/kit/actions";
+import { selectors as peripheralDefinitionsSelectors } from "modules/peripheral-definition/reducer";
 import { Kit, KitsApi, PeripheralDefinition, Peripheral } from "astroplant-api";
 import { AuthConfiguration } from "utils/api";
 
@@ -37,7 +38,7 @@ export type Props = {
 
 type PInner = Props &
   WithTranslation & {
-    peripheralDefinitions: { [id: string]: PeripheralDefinition };
+    peripheralDefinitions: { [id: string]: PeripheralDefinition | undefined };
     peripheralCreated: (payload: {
       serial: string;
       configurationId: number;
@@ -141,7 +142,7 @@ class AddPeripheral extends React.Component<PInner, State> {
           </Header>
           <Card.Group centered>
             {Object.keys(this.props.peripheralDefinitions).map((id) => {
-              const def = this.props.peripheralDefinitions[id];
+              const def = this.props.peripheralDefinitions[id]!;
               return (
                 <PeripheralDefinitionCard
                   key={def.id}
@@ -190,7 +191,7 @@ class AddPeripheral extends React.Component<PInner, State> {
 
 const mapStateToProps = (state: RootState) => {
   return {
-    peripheralDefinitions: state.peripheralDefinition.definitions,
+    peripheralDefinitions: peripheralDefinitionsSelectors.selectEntities(state),
   };
 };
 

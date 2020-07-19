@@ -6,6 +6,7 @@ import { Modal, Card, Header, Button, Icon } from "semantic-ui-react";
 
 import { RootState } from "types";
 import { PeripheralDefinition, Peripheral, QuantityType } from "astroplant-api";
+import { selectors as peripheralDefinitionsSelectors } from "modules/peripheral-definition/reducer";
 
 export type Props = {
   choices: [Peripheral, QuantityType][];
@@ -115,7 +116,7 @@ class AddPeripheral extends React.Component<PInner, State> {
 
 const mapStateToProps = (state: RootState) => {
   return {
-    peripheralDefinitions: state.peripheralDefinition.definitions,
+    peripheralDefinitions: peripheralDefinitionsSelectors.selectEntities(state),
   };
 };
 

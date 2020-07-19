@@ -7,6 +7,7 @@ import { JSONSchema7 } from "json-schema";
 
 import { RootState } from "types";
 import { PeripheralDefinition, Peripheral } from "astroplant-api";
+import { selectors as peripheralDefinitionsSelectors } from "modules/peripheral-definition/reducer";
 
 export type Props = {
   choices: [Peripheral, string, JSONSchema7][];
@@ -110,7 +111,7 @@ class AddPeripheral extends React.Component<PInner, State> {
 
 const mapStateToProps = (state: RootState) => {
   return {
-    peripheralDefinitions: state.peripheralDefinition.definitions,
+    peripheralDefinitions: peripheralDefinitionsSelectors.selectEntities(state),
   };
 };
 
