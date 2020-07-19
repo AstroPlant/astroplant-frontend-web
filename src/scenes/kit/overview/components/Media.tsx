@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { Container, Image, Table, Button, Modal } from "semantic-ui-react";
 import Moment from "react-moment";
-import { RootState } from "types";
 import { KitState, KitConfigurationState } from "modules/kit/reducer";
-import { PeripheralDefinition } from "astroplant-api";
+import { selectors as peripheralDefinitionsSelectors } from "modules/peripheral-definition/reducer";
 import { KitsApi, schemas } from "api";
 import { configuration, rateLimit } from "utils/api";
 
 export type Props = {
   kitState: KitState;
-  peripheralDefinitions: { [id: string]: PeripheralDefinition };
 };
 
-function Media(props: Props) {
+export default function Media(props: Props) {
+  const peripheralDefinitions = useSelector(
+    peripheralDefinitionsSelectors.selectEntities
+  );
+
   const [media, setMedia] = useState<Array<schemas["Media"]>>([]);
   const [displayMedia, setDisplayMedia] = useState<schemas["Media"] | null>(
     null
@@ -27,9 +29,7 @@ function Media(props: Props) {
   const { kitState } = props;
 
   useEffect(() => {
-    for (const configuration of Object.values(
-      kitState.configurations!
-    )) {
+    for (const configuration of Object.values(kitState.configurations!)) {
       if (configuration.active) {
         setActiveConfiguration(configuration);
         break;
@@ -175,11 +175,3 @@ function Media(props: Props) {
     return <Container>No media has been produced.</Container>;
   }
 }
-
-const mapStateToProps = (state: RootState) => {
-  return {
-    peripheralDefinitions: state.peripheralDefinition.definitions,
-  };
-};
-
-export default connect(mapStateToProps)(Media);

@@ -1,20 +1,21 @@
-import { createReducer } from "@reduxjs/toolkit";
+import { createReducer, createEntityAdapter } from "@reduxjs/toolkit";
 import * as actions from "./actions";
+import { RootState } from "types";
 
 import { PeripheralDefinition } from "astroplant-api";
 
-export interface PeripheralDefinitionState {
-  definitions: { [id: string]: PeripheralDefinition };
-}
+export const definitionsAdapter = createEntityAdapter<PeripheralDefinition>({
+  selectId: (peripheralDefinition) => peripheralDefinition.id,
+});
 
-const initial: PeripheralDefinitionState = {
-  definitions: {},
-};
+export default createReducer(
+  { definitions: definitionsAdapter.getInitialState() },
+  (build) =>
+    build.addCase(actions.addDefinitions, (state, action) => {
+      definitionsAdapter.upsertMany(state.definitions, action.payload);
+    })
+);
 
-export default createReducer<PeripheralDefinitionState>(initial, (build) =>
-  build.addCase(actions.addDefinitions, (state, action) => {
-    for (const def of action.payload) {
-      state.definitions[def.id.toString()] = def;
-    }
-  })
+export const selectors = definitionsAdapter.getSelectors(
+  (state: RootState) => state.peripheralDefinition.definitions
 );

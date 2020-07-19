@@ -1,5 +1,4 @@
 import { createReducer } from "@reduxjs/toolkit";
-import produce from "immer";
 import isEqual from "lodash/isEqual";
 import * as actions from "./actions";
 import Option from "../../utils/option";

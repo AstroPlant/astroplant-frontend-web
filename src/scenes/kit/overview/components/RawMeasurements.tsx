@@ -1,8 +1,9 @@
 import React from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { Container, Card } from "semantic-ui-react";
-import { RootState } from "types";
 import { KitState } from "modules/kit/reducer";
+import { selectors as peripheralDefinitionsSelectors } from "modules/peripheral-definition/reducer";
+import { selectors as quantityTypesSelectors } from "modules/quantity-type/reducer";
 import { PeripheralDefinition, QuantityType } from "astroplant-api";
 import Option from "utils/option";
 
@@ -12,12 +13,15 @@ type Params = { kitSerial: string };
 
 export type Props = {
   kitState: KitState;
-  peripheralDefinitions: { [id: string]: PeripheralDefinition };
-  quantityTypes: { [id: string]: QuantityType };
 };
 
-function RawMeasurements(props: Props) {
-  const { kitState, peripheralDefinitions, quantityTypes } = props;
+export default function RawMeasurements(props: Props) {
+  const peripheralDefinitions = useSelector(
+    peripheralDefinitionsSelectors.selectEntities
+  );
+  const quantityTypes = useSelector(quantityTypesSelectors.selectEntities);
+
+  const { kitState } = props;
   const rawMeasurements = kitState.rawMeasurements;
   let activeConfiguration = null;
   for (const configuration of Object.values(kitState.configurations!)) {
@@ -70,18 +74,13 @@ function RawMeasurements(props: Props) {
         </Container>
       );
     } else {
-      return <Container>No measurements are being made on this configuration.</Container>;
+      return (
+        <Container>
+          No measurements are being made on this configuration.
+        </Container>
+      );
     }
   } else {
     return null;
   }
 }
-
-const mapStateToProps = (state: RootState) => {
-  return {
-    peripheralDefinitions: state.peripheralDefinition.definitions,
-    quantityTypes: state.quantityType.quantityTypes,
-  };
-};
-
-export default connect(mapStateToProps)(RawMeasurements);

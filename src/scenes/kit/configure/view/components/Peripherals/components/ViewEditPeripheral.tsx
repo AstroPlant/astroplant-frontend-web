@@ -171,7 +171,7 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
 
 const mapStateToProps = (state: RootState) => {
   return {
-    peripheralDefinitions: state.peripheralDefinition.definitions,
+    peripheralDefinitions: state.peripheralDefinition.definitions.entities,
   };
 };
 

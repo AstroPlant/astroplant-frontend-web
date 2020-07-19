@@ -1,21 +1,23 @@
 import React, { useContext, useState, useEffect } from "react";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { Button, Select, Image, Segment } from "semantic-ui-react";
 
-import { RootState } from "types";
 import { KitConfigurationState } from "modules/kit/reducer";
-import { KitRpcApi, schemas } from "api";
+import { selectors as peripheralDefinitionsSelectors } from "modules/peripheral-definition/reducer";
+import { KitRpcApi } from "api";
 import { configuration, rateLimit } from "utils/api";
 import PeripheralDefinitionCard from "Components/PeripheralDefinitionCard";
 import RjsfForm from "rjsf-theme-semantic-ui";
 
 import { KitContext, ConfigurationsContext } from "../contexts";
 
-export type Props = {
-  peripheralDefinitions: { [id: string]: schemas["PeripheralDefinition"] };
-};
+export type Props = {};
 
-function PeripheralCommand(props: Props) {
+export default function PeripheralCommand(props: Props) {
+  const peripheralDefinitions = useSelector(
+    peripheralDefinitionsSelectors.selectEntities
+  );
+
   const [
     activeConfiguration,
     setActiveConfiguration,
@@ -27,7 +29,6 @@ function PeripheralCommand(props: Props) {
 
   const kit = useContext(KitContext);
   const configurations = useContext(ConfigurationsContext);
-  const { peripheralDefinitions } = props;
 
   useEffect(() => {
     for (const configuration of Object.values(configurations)) {
@@ -140,11 +141,3 @@ function PeripheralCommand(props: Props) {
     return <div>No active configuration.</div>;
   }
 }
-
-const mapStateToProps = (state: RootState) => {
-  return {
-    peripheralDefinitions: state.peripheralDefinition.definitions,
-  };
-};
-
-export default connect(mapStateToProps)(PeripheralCommand);

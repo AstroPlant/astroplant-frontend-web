@@ -17,6 +17,8 @@ import { JSONSchema7 } from "json-schema";
 import { RootState } from "types";
 import { KitConfigurationState } from "modules/kit/reducer";
 import { kitConfigurationUpdated } from "modules/kit/actions";
+import { selectors as peripheralDefinitionsSelectors } from "modules/peripheral-definition/reducer";
+import { selectors as quantityTypesSelectors } from "modules/quantity-type/reducer";
 
 import {
   Kit,
@@ -43,11 +45,12 @@ import AddOutput from "./components/AddOutput";
 import EditInput from "./components/EditInput";
 import EditOutput from "./components/EditOutput";
 import EditRule from "./components/EditRule";
+
 export type Props = WithTranslation & {
   kit: Kit;
   configuration: KitConfigurationState;
-  peripheralDefinitions: { [id: string]: PeripheralDefinition };
-  quantityTypes: { [id: string]: QuantityType };
+  peripheralDefinitions: { [id: string]: PeripheralDefinition | undefined };
+  quantityTypes: { [id: string]: QuantityType | undefined };
   kitConfigurationUpdated: (kitConfiguration: {
     serial: string;
     configuration: KitConfiguration;
@@ -560,7 +563,7 @@ class Rules extends React.Component<Props, State> {
                     configuration.peripherals
                   ).filter((p) => p.name === peripheralName)[0];
                   const peripheralDefinition =
-                    peripheralDefinitions[peripheral.peripheralDefinitionId];
+                    peripheralDefinitions[peripheral.peripheralDefinitionId]!;
                   const schema = (peripheralDefinition.commandSchema as any)
                     .properties[command] as JSONSchema7;
                   return (
@@ -735,8 +738,8 @@ class Rules extends React.Component<Props, State> {
 
 const mapStateToProps = (state: RootState) => {
   return {
-    peripheralDefinitions: state.peripheralDefinition.definitions,
-    quantityTypes: state.quantityType.quantityTypes,
+    peripheralDefinitions: peripheralDefinitionsSelectors.selectEntities(state),
+    quantityTypes: quantityTypesSelectors.selectEntities(state),
   };
 };
 
