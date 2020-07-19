@@ -117,9 +117,3 @@ export default function Conn<T, R>(): React.ComponentType<Props<T, R>> {
     mapDispatchToProps
   )(withTranslation()(ApiForm as React.ComponentType<AllProps<T, R>>));
 }
-
-/*export default connect<any, any, Props<T, R>>(
-    null,
-    mapDispatchToProps
-)(withTranslation()(ApiForm));
-*/
