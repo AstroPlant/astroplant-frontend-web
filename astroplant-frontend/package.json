@@ -28,7 +28,7 @@
     "lodash": "^4.17.17",
     "md5": "^2.2.1",
     "moment": "^2.24.0",
-    "parse-link-header": "^1.0.1",
+    "parse-link-header": "^2.0.0",
     "query-string": "^6.10.1",
     "react": "^16.12.0",
     "react-device-detect": "^1.11.14",
