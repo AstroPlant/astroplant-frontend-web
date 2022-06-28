@@ -11,13 +11,15 @@
         pkgs = nixpkgs.legacyPackages.${system};
       in
       {
-        packages.astroplant-frontend = pkgs.stdenv.mkDerivation rec {
+        packages.astroplant-frontend = self.packageExprs.${system}.astroplant-frontend {
+          apiUrl = "http://localhost:8080";
+          websocketUrl = "ws://localhost:8080/ws";
+        };
+
+        packageExprs.astroplant-frontend = { apiUrl, websocketUrl }: pkgs.stdenv.mkDerivation rec {
           pname = "astroplant-frontend";
           version = "0.1.0-alpha.1";
           src = ./.;
-
-          apiUrl = "http://localhost:8080";
-          websocketUrl = "ws://localhost:8080/ws";
 
           astroplant-api = pkgs.yarn2nix-moretea.mkYarnPackage {
             src = ./astroplant-api;
