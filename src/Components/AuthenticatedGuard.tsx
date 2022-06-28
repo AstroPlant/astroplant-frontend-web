@@ -33,6 +33,7 @@ export function withAuthentication<P>(
   Component: React.ComponentType<P & WithAuthentication>
 ) => React.ComponentType<P> {
   console.info("Authentication guard instantiated");
+  // @ts-ignore
   return Component => {
     console.info("Authentication guard ran");
     const AuthComponent = withAuthToValue(Component); //: React.ComponentType<P & WithValue<FullUser>> = withAuthToValue<P>(Component);

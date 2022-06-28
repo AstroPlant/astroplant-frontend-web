@@ -17,7 +17,8 @@ During the build process, environment variables are used to configure the server
 To run the development server, run:
 
 ```sh
-npm start
+$ yarn
+$ yarn start
 ```
 
 This starts the app in development mode. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -29,7 +30,7 @@ The page will reload if you make edits. You will also see any lint errors in the
 To build the static files, run:
 
 ```sh
-npm run build
+$ yarn build
 ```
 
 This builds the app for production to the `./build` folder.

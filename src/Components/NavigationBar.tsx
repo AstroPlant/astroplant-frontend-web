@@ -82,10 +82,10 @@ const NavBarDesktop = ({
 
 const Content = ({ children }: { children: any }) => <>{children}</>;
 
-type NavigationBarProps = {
+type NavigationBarProps = React.PropsWithChildren<{
   leftItems: any[];
   rightItems: any[];
-};
+}>;
 
 class NavigationBar extends Component<
   NavigationBarProps,
