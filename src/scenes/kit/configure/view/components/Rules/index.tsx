@@ -299,7 +299,7 @@ class Rules extends React.Component<Props, State> {
             interpolated: false,
             schedules: [
               {
-                schedule: [{ time: "00:00:00" }],
+                schedule: [{ time: "00:00:00", value: 0 }],
               },
             ],
           },
