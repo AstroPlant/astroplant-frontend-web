@@ -1,4 +1,4 @@
 {
-    "private": true,
-    "workspaces": ["astroplant-api", "astroplant-frontend"]
+  "private": true,
+  "workspaces": ["astroplant-api", "astroplant-frontend"]
 }
