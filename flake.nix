@@ -16,6 +16,9 @@
           version = "0.1.0-alpha.1";
           src = ./.;
 
+          apiUrl = "http://localhost:8080";
+          websocketUrl = "ws://localhost:8080/ws";
+
           astroplant-api = pkgs.yarn2nix-moretea.mkYarnPackage {
             src = ./astroplant-api;
             yarnLock = ./yarn.lock;
@@ -36,6 +39,11 @@
           };
 
           nativeBuildInputs = with pkgs; [ yarn ];
+
+          configurePhase = ''
+            export REACT_APP_API_URL=${apiUrl}
+            export REACT_APP_WEBSOCKET_URL=${websocketUrl}
+          '';
 
           buildPhase = ''
             runHook preBuild
