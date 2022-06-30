@@ -1,10 +1,9 @@
-{ pkgs
-, yarn
-, yarn2nix-moretea
+{ mkYarnPackage
+, mkYarnModules
 , version
 }:
 let
-  astroplant-api = yarn2nix-moretea.mkYarnPackage {
+  astroplant-api = mkYarnPackage {
     src = ../astroplant-api;
     yarnLock = ../yarn.lock;
     buildPhase = ''
@@ -15,7 +14,7 @@ let
   };
 in
 # Is there a better way to include local workspace astroplant-api?
-(yarn2nix-moretea.mkYarnModules {
+(mkYarnModules {
   inherit version;
   pname = "astroplant-frontend";
   name = "astroplant-frontend-node-modules-${version}";

@@ -1,11 +1,17 @@
 { pkgs
+, stdenv
 , yarn
-, astroplant-frontend-modules
 , version
 , apiUrl ? "http://localhost:8080"
 , websocketUrl ? "ws://localhost:8080/ws"
 }:
-pkgs.stdenv.mkDerivation rec {
+# Could this work with splicing, so we don't need to take from pkgsBuildBuild?
+# If we put `astroplant-frontend-modules` in depsBuildBuild, but refer to the
+# variable later, it's pulled in without offsetting.
+let
+  astroplant-frontend-modules = pkgs.pkgsBuildBuild.astroplant-frontend-modules;
+in
+stdenv.mkDerivation rec {
   inherit version;
   pname = "astroplant-frontend";
   src = builtins.filterSource
@@ -14,7 +20,10 @@ pkgs.stdenv.mkDerivation rec {
 
   # The output is a static site; the compile target does not matter.
   # Hence, this is depsBuildBuild and not nativeBuildInputs.
-  depsBuildBuild = [ yarn astroplant-frontend-modules ];
+  depsBuildBuild = [
+    yarn
+    # astroplant-frontend-modules
+  ];
 
   configurePhase = ''
     export REACT_APP_API_URL=${apiUrl}
