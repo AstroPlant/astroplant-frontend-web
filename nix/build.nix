@@ -59,4 +59,5 @@ stdenv.mkDerivation rec {
   '';
 
   doDist = false;
+  doCheck = false;
 }
