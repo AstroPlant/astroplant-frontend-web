@@ -6,77 +6,25 @@
     flake = false;
   };
   outputs = { self, nixpkgs, flake-utils, ... }:
+    let
+      version = "0.1.0-alpha.1";
+      overlay = self: super: {
+        astroplant-frontend-modules = self.callPackage ./nix/modules.nix { inherit version; };
+        astroplant-frontend = self.callPackage ./nix/build.nix { inherit version; };
+      };
+    in
+    rec {
+      overlays."astroplant-frontend" = overlay;
+      overlays.default = overlays."astroplant-frontend";
+    } //
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = nixpkgs.legacyPackages.${system};
+        pkgs = import nixpkgs { inherit system; overlays = [ overlay ]; };
       in
       {
-        packages.astroplant-frontend = self.packageExprs.${system}.astroplant-frontend {
-          apiUrl = "http://localhost:8080";
-          websocketUrl = "ws://localhost:8080/ws";
-        };
-
-        packageExprs.astroplant-frontend = { apiUrl, websocketUrl }: pkgs.stdenv.mkDerivation rec {
-          pname = "astroplant-frontend";
-          version = "0.1.0-alpha.1";
-          src = ./.;
-
-          astroplant-api = pkgs.yarn2nix-moretea.mkYarnPackage {
-            src = ./astroplant-api;
-            yarnLock = ./yarn.lock;
-            buildPhase = ''
-              runHook preBuild
-              yarn build
-              runHook postBuild
-            '';
-          };
-
-          # Is there a better way to include local workspace astroplant-api?
-          nodeModules = pkgs.yarn2nix-moretea.mkYarnModules {
-            name = "astroplant-frontend-node-modules-${version}";
-            inherit pname version;
-            packageJSON = ./astroplant-frontend/package.json;
-            yarnLock = ./yarn.lock;
-            workspaceDependencies = [ astroplant-api ];
-          };
-
-          nativeBuildInputs = with pkgs; [ yarn ];
-
-          configurePhase = ''
-            export REACT_APP_API_URL=${apiUrl}
-            export REACT_APP_WEBSOCKET_URL=${websocketUrl}
-          '';
-
-          buildPhase = ''
-            runHook preBuild
-
-            mkdir ./node_modules
-
-            # Symlink all files in node_modules, including hidden files
-            shopt -s dotglob 
-            for dep in ${nodeModules}/node_modules/*; do
-              ln -s "$dep" ./node_modules/
-            done
-            shopt -u dotglob
-
-            # Add astroplant-api dependency we built previously
-            rm ./node_modules/astroplant-frontend
-            rm ./node_modules/astroplant-api
-            ln -s ${astroplant-api}/libexec/astroplant-api/deps/astroplant-api ./node_modules/astroplant-api
-
-            yarn workspace astroplant-frontend build
-
-            runHook postBuild
-          '';
-
-          installPhase = ''
-            runHook preInstall
-            mv astroplant-frontend/build $out
-            runHook postInstall
-          '';
-
-          doDist = false;
-        };
+        packageExprs.astroplant-frontend = { apiUrl, websocketUrl }:
+          pkgs.astroplant-frontend.override { inherit apiUrl websocketUrl; };
+        packages.astroplant-frontend = pkgs.astroplant-frontend;
         defaultPackage = self.packages.${system}.astroplant-frontend-web;
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
