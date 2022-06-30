@@ -25,7 +25,7 @@
         packageExprs.astroplant-frontend = { apiUrl, websocketUrl }:
           pkgs.astroplant-frontend.override { inherit apiUrl websocketUrl; };
         packages.astroplant-frontend = pkgs.astroplant-frontend;
-        defaultPackage = self.packages.${system}.astroplant-frontend-web;
+        defaultPackage = self.packages.${system}.astroplant-frontend;
         devShell = pkgs.mkShell {
           buildInputs = with pkgs; [
             bashInteractive
