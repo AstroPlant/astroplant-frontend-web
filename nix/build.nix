@@ -4,6 +4,7 @@
 , version
 , apiUrl ? "http://localhost:8080"
 , websocketUrl ? "ws://localhost:8080/ws"
+, removeReferencesTo
 }:
 # Could this work with splicing, so we don't need to take from pkgsBuildBuild?
 # If we put `astroplant-frontend-modules` in depsBuildBuild, but refer to the
@@ -22,6 +23,7 @@ stdenv.mkDerivation rec {
   # Hence, this is depsBuildBuild and not nativeBuildInputs.
   depsBuildBuild = [
     yarn
+    removeReferencesTo
     # astroplant-frontend-modules
   ];
 
@@ -58,6 +60,14 @@ stdenv.mkDerivation rec {
     runHook postInstall
   '';
 
+  postInstall = ''
+    find "$out" -type f -exec remove-references-to \
+      -t ${astroplant-frontend-modules} \
+      -t ${astroplant-frontend-modules.astroplant-api} '{}' +
+  '';
+
+  # Shouldn't have any runtime dependencies at all.
+  allowedReferences = [ ];
   doDist = false;
   doCheck = false;
 }
