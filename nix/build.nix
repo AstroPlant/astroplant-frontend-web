@@ -60,8 +60,10 @@ stdenv.mkDerivation rec {
     runHook postInstall
   '';
 
+  # The source map files contain references to the nix store, causing
+  # the closure to contain runtime dependencies we don't care about.
   postInstall = ''
-    find "$out" -type f -exec remove-references-to \
+    find "$out" -name "*.map" -type f -exec remove-references-to \
       -t ${astroplant-frontend-modules} \
       -t ${astroplant-frontend-modules.astroplant-api} '{}' +
   '';
