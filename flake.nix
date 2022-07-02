@@ -8,11 +8,12 @@
   outputs = { self, nixpkgs, flake-utils, ... }:
     let
       version = "0.1.0-alpha.1";
+      buildString = (builtins.substring 0 8 self.sourceInfo.lastModifiedDate) + "-" + (if (self ? rev) then self.rev else "dirty");
     in
     {
       overlays.default = final: prev: {
         astroplant-frontend-modules = final.callPackage ./nix/modules.nix { inherit version; };
-        astroplant-frontend = final.callPackage ./nix/build.nix { inherit version; };
+        astroplant-frontend = final.callPackage ./nix/build.nix { inherit version buildString; };
       };
     } //
     flake-utils.lib.eachDefaultSystem (system:

@@ -4,6 +4,7 @@
 , version
 , apiUrl ? "http://localhost:8080"
 , websocketUrl ? "ws://localhost:8080/ws"
+, buildString ? "Unknown"
 , removeReferencesTo
 }:
 # Could this work with splicing, so we don't need to take from pkgsBuildBuild?
@@ -30,6 +31,7 @@ stdenv.mkDerivation rec {
   configurePhase = ''
     export REACT_APP_API_URL=${apiUrl}
     export REACT_APP_WEBSOCKET_URL=${websocketUrl}
+    export REACT_APP_BUILD_STRING=${buildString}
   '';
 
   buildPhase = ''
