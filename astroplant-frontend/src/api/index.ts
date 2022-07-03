@@ -93,7 +93,13 @@ export class BaseApi {
       url += "?" + queryString(options.query);
     }
 
-    let headers = options.headers || {};
+    let headers: HttpHeaders = {
+      ...options.headers,
+      ...(options.body === undefined
+        ? {}
+        : { "Content-Type": "application/json" }),
+    };
+
     const accessToken = this.configuration.accessToken();
     if (accessToken !== null) {
       headers = { ...headers, Authorization: `Bearer ${accessToken}` };
@@ -170,7 +176,7 @@ export class KitsApi extends BaseApi {
 
   downloadMediaContent = ({ mediaId }: { mediaId: string }) => {
     // TODO: get temporary download token from API.
-    // 
+    //
     // this.download({
     //   path: `/media/${encodeUri(mediaId)}/content`,
     //   method: "GET",
