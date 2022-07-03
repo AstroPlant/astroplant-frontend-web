@@ -33,7 +33,7 @@ const prepareRpcRequest = (method: string, params: any) => {
 };
 
 const rpcSubscription = (method: string, params: any) => {
-  const [id, request] = prepareRpcRequest("subscribe_" + method, params);
+  const [id, request] = prepareRpcRequest(method, params);
   webSocketSubject.next(request);
   return webSocketMessages.pipe(
     filter((message: any) => message.id === id),
@@ -64,7 +64,9 @@ const rawMeasurementsEpic: Epic = (action$, state$) =>
     filter(kitActions.startWatching.match),
     mergeMap((action) => {
       const kitSerial = action.payload.serial;
-      return rpcSubscription("rawMeasurements", { kitSerial }).pipe(
+      return rpcSubscription("subscribe_raw_measurements", {
+        kit_serial: kitSerial,
+      }).pipe(
         map((rawMeasurement) =>
           kitActions.rawMeasurementReceived({
             serial: kitSerial,
