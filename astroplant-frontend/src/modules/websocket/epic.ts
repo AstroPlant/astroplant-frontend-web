@@ -59,6 +59,7 @@ const rpcSubscription = (method: string, params: any) => {
               message.method === method && message.params.subscription === subId
           ),
           map((message: any) => message.params.result),
+          // FIXME: When this observable is retried, the unsubscribe message is sent on a _new_ websocket connection.
           finalize(() => {
             const [, request] = prepareRpcRequest("unsubscribe_" + method, [
               subId,
