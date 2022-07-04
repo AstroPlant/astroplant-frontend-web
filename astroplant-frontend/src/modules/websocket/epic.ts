@@ -1,5 +1,5 @@
 import { Epic, combineEpics } from "redux-observable";
-import { Observable } from "rxjs";
+import { Observable, concat } from "rxjs";
 import {
   mergeMap,
   switchMap,
@@ -8,6 +8,10 @@ import {
   map,
   finalize,
   takeUntil,
+  retryWhen,
+  tap,
+  delay,
+  take,
 } from "rxjs/operators";
 import { webSocket } from "rxjs/webSocket";
 import * as kitActions from "../kit/actions";
@@ -33,29 +37,41 @@ const prepareRpcRequest = (method: string, params: any) => {
 };
 
 const rpcSubscription = (method: string, params: any) => {
-  const [id, request] = prepareRpcRequest(method, params);
-  webSocketSubject.next(request);
-  return webSocketMessages.pipe(
-    filter((message: any) => message.id === id),
-    switchMap((message: any) => {
-      const subId = message.result;
-      return webSocketMessages.pipe(
-        filter(
-          (message: any) =>
-            message.method === method && message.params.subscription === subId
-        ),
-        map((message: any) => message.params.result),
-        finalize(() => {
-          const [, request] = prepareRpcRequest("unsubscribe_" + method, [
-            subId,
-          ]);
-          webSocketSubject.next(request);
-        })
-      );
-    })
+  let id: any;
+  return concat(
+    new Observable((subscriber) => {
+      const [id_, request] = prepareRpcRequest(method, params);
+      id = id_;
+      try {
+        webSocketSubject.next(request);
+      } catch (err) {
+        subscriber.error(err);
+      }
+      subscriber.complete();
+    }),
+    webSocketMessages.pipe(
+      filter((message: any) => message.id === id),
+      switchMap((message: any) => {
+        const subId = message.result;
+        return webSocketMessages.pipe(
+          filter(
+            (message: any) =>
+              message.method === method && message.params.subscription === subId
+          ),
+          map((message: any) => message.params.result),
+          finalize(() => {
+            const [, request] = prepareRpcRequest("unsubscribe_" + method, [
+              subId,
+            ]);
+            webSocketSubject.next(request);
+          })
+        );
+      })
+    )
   );
 };
 
+// TODO: why does the connection drop if no messages are sent by the server?
 /**
  * Listens to notification requests, and add notifications.
  */
@@ -77,6 +93,14 @@ const rawMeasurementsEpic: Epic = (action$, state$) =>
           action$.pipe(
             filter(kitActions.stopWatching.match),
             filter((action) => action.payload.serial === kitSerial)
+          )
+        ),
+        // Try re-establishing the connection 10 times, waiting 5 seconds each time.
+        retryWhen((errors) =>
+          errors.pipe(
+            tap((err) => console.warn(`WS error: ${err}`)),
+            delay(5000),
+            take(10)
           )
         )
       );
