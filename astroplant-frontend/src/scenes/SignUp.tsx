@@ -75,7 +75,8 @@ class SignUpPage extends Component<WithTranslation, State> {
         "ui:widget": "password"
       },
       emailAddress: {
-        "ui:widget": "email"
+        // e-mail widget seems to be missing in @rjsf/semantic-ui
+        // "ui:widget": "email"
       }
     };
 
