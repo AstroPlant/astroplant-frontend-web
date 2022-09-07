@@ -38,15 +38,9 @@ function KitOverview(props: Props) {
   if (activeConfiguration === null) {
     return (
       <Container text>
-        <div
-          style={{
-            fontWeight: "bolder",
-            opacity: 0.6,
-            textAlign: "center",
-            marginTop: "1rem",
-          }}
-        >
-          <h2>{t("kit.noActiveConfiguration")}</h2>
+        <div>
+          <p>This kit has no configurations yet.</p>
+          <p>For help on how to configure your kit you can read the documentation <a target="_blank" href="https://docs.astroplant.io/astroplant-kit-setup/registering-and-configuring-a-kit">here</a></p>
         </div>
       </Container>
     );

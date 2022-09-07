@@ -47,6 +47,9 @@ type State = {
   >;
 };
 
+const fillColor = "#35EF7F";
+const borderColor = "#2fce6f";
+
 class AggregateMeasurementsChart extends React.PureComponent<Props, State> {
   state: State = {
     measurements: Option.none(),
@@ -151,7 +154,7 @@ class AggregateMeasurementsChart extends React.PureComponent<Props, State> {
     } = this.props;
     const { measurements } = this.state;
     return (
-      <Card color="blue" fluid {...rest}>
+      <Card color="black" fluid {...rest}>
         <Card.Content>
           <Card.Header>{quantityType.physicalQuantity}</Card.Header>
           <Card.Description textAlign="center">
@@ -180,16 +183,22 @@ class AggregateMeasurementsChart extends React.PureComponent<Props, State> {
                   padding={{ top: 50, bottom: 0 }}
                 />
                 <Area
+                  fill={fillColor}
+                  stroke={borderColor}
                   yAxisId="left"
                   dataKey="values.minimum"
                   name={t("kit.aggregateMeasurements.minimum") as string}
                 />
                 <Area
+                  fill={fillColor}
+                  stroke={borderColor}
                   yAxisId="left"
                   dataKey="values.average"
                   name={t("kit.aggregateMeasurements.average") as string}
                 />
                 <Area
+                  fill={fillColor}
+                  stroke={borderColor}
                   yAxisId="left"
                   dataKey="values.maximum"
                   name={t("kit.aggregateMeasurements.maximum") as string}

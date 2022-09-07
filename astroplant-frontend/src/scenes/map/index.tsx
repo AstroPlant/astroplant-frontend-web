@@ -11,6 +11,7 @@ import Option from "~/utils/option";
 import { walkPages } from "~/utils/api";
 
 import { KitsApi, Kit } from "astroplant-api";
+import { MarkerIcon } from "~/Components/MarkerIcon";
 
 type Props = WithTranslation;
 
@@ -71,6 +72,7 @@ class KitMap extends React.Component<Props, State> {
                         <Marker
                           position={[kit.latitude!, kit.longitude!]}
                           key={kit.id}
+                          icon={MarkerIcon}
                         >
                           <Popup>
                             <h3>{kit.name || t("kit.unnamed")}</h3>

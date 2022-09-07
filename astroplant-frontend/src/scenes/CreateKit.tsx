@@ -124,7 +124,7 @@ class CreateKit extends Component<Props, State> {
       <>
         <HeadTitle main={t("createKit.header")} />
         <Container text style={{ marginTop: "1em" }}>
-          <Segment piled padded>
+          <Segment padded>
             {this.state.done ? (
               <>
                 <Header size="huge" icon textAlign="center">
@@ -145,6 +145,11 @@ class CreateKit extends Component<Props, State> {
                     If you lose it,{" "}
                     <strong>you can always generate a new password</strong> from
                     the kit's configuration screen.
+                  </p>
+                  <p>
+                    This password and the kit's serial number should be added to <code>kit_config.toml</code> file in the home directory of the kit. <code>/home/pi</code>
+                    <br />
+                    Read more about setting up the password <a target="_blank" href="https://docs.astroplant.io/astroplant-kit-setup/astroplant-software/quick-software-setup#installing-the-bare-image">here</a>
                   </p>
                   <Card color="orange" centered raised fluid>
                     <Card.Content>

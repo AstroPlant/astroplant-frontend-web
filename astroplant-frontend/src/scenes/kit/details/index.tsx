@@ -54,9 +54,9 @@ function KitDetails(props: InnerProps) {
       coordinate:
         typeof kit.latitude === "number" && typeof kit.longitude === "number"
           ? {
-              latitude: kit.latitude,
-              longitude: kit.longitude,
-            }
+            latitude: kit.latitude,
+            longitude: kit.longitude,
+          }
           : null,
       privacyPublicDashboard: kit.privacyPublicDashboard,
       privacyShowOnMap: kit.privacyShowOnMap,
@@ -108,7 +108,7 @@ function KitDetails(props: InnerProps) {
 
   return (
     <Container text>
-      <Segment piled padded>
+      <Segment padded>
         <Switch>
           <Route
             path={`${path}/edit`}

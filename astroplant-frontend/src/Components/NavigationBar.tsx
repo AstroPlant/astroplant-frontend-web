@@ -6,6 +6,7 @@ import {
   Sidebar,
   Responsive
 } from "semantic-ui-react";
+import { Logo } from "./Logo";
 
 const NavBarMobile = ({
   children,
@@ -39,7 +40,7 @@ const NavBarMobile = ({
       <Menu id="navigation-small" inverted>
         <Container>
           <Menu.Item header>
-            <h2>AstroPlant</h2>
+            <Logo variant="white" size={24} />
           </Menu.Item>
           <Menu.Item onClick={onToggle}>
             <Icon name="sidebar" />
@@ -66,7 +67,7 @@ const NavBarDesktop = ({
   <Menu id="navigation-big">
     <Container>
       <Menu.Item header>
-        <h2>AstroPlant</h2>
+        <Logo variant="green" size={32} />
       </Menu.Item>
       {leftItems.map((item: any) => (
         <Menu.Item {...item} />

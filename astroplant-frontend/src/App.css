@@ -3,7 +3,12 @@ body #root {
   font-size: 16px;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Roboto';
   font-weight: 300;
 }
@@ -16,7 +21,23 @@ h2 {
   font-size: 2rem;
 }
 
-#navigation-small, #navigation-big {
+a,
+a:hover {
+  color: #35EF7F;
+}
+
+.ui.primary.button {
+  background-color: #35EF7F;
+  color: black;
+}
+
+.ui.primary.button:hover {
+  background-color: #37e07b;
+  color: black;
+}
+
+#navigation-small,
+#navigation-big {
   border-left: none;
   border-top: none;
   border-right: none;
@@ -26,7 +47,7 @@ h2 {
 
 .headTitleBackground {
   height: 10em;
-    background-image: linear-gradient(to top left, #3dadbf 0, #2577a1 85%);
+  background-image: linear-gradient(to top left, #35EF7F 0, #35EF7F 85%);
 }
 
 .headTitleBackground .container {
@@ -39,7 +60,7 @@ h2 {
 
 .headTitleBackground h1,
 .headTitleBackground p {
-  color: rgb(230, 230, 250);
+  color: rgb(0, 0, 0);
 }
 
 .p_title {
@@ -53,8 +74,14 @@ h2 {
 }
 
 footer#footer {
-  background-color: whitesmoke;
-  color: rgb(140,140,140);
+  background-color: black;
+  color: white;
   padding-top: 5em;
   padding-bottom: 5em;
+}
+
+code {
+  background-color: #f5f5f5;
+  border-radius: 3px;
+  padding: 0.2em;
 }
