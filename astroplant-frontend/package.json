@@ -27,7 +27,7 @@
     "leaflet": "^1.6.0",
     "lodash": "^4.17.17",
     "md5": "^2.2.1",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "parse-link-header": "^2.0.0",
     "query-string": "^6.10.1",
     "react": "17.0.2",
