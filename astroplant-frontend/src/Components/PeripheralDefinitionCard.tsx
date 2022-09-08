@@ -9,7 +9,7 @@ export type Props = CardProps & {
 export default (props: Props) => {
   const { peripheralDefinition: def, ...rest } = props;
   return (
-    <Card color="blue" { ...rest }>
+    <Card color="black" {...rest}>
       <Card.Content>
         <Card.Header>{def.name}</Card.Header>
         {def.description && (

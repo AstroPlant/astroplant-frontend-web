@@ -87,7 +87,7 @@ class SignUpPage extends Component<WithTranslation, State> {
           secondary="Create an account to connect to the AstroPlant world."
         />
         <Container text style={{ marginTop: "1em" }}>
-          <Segment piled padded>
+          <Segment padded>
             {this.state.done ? (
               <>
                 <Header size="huge" icon textAlign="center">

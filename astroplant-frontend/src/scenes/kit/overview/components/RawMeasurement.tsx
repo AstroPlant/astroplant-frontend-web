@@ -21,7 +21,7 @@ export default (props: Props) => {
     ...rest
   } = props;
   return (
-    <Card color="blue" {...rest}>
+    <Card color="black" {...rest}>
       <Card.Content>
         <Card.Header>{quantityType.physicalQuantity}</Card.Header>
         <Card.Description textAlign="center">

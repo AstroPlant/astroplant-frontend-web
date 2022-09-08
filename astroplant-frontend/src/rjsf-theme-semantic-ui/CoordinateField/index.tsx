@@ -5,6 +5,7 @@ import { withTranslation, WithTranslation } from "react-i18next";
 import { FieldProps } from "@rjsf/core";
 import { Map, Marker, TileLayer, Popup } from "react-leaflet";
 import { Button } from "semantic-ui-react";
+import { MarkerIcon } from "~/Components/MarkerIcon";
 
 type State = {
   latitude: number | null;
@@ -47,41 +48,45 @@ class CoordinateField extends React.Component<InnerProps, State> {
     const { t } = this.props;
     const { latitude, longitude } = this.state;
     return (
-      <Map
-        center={[35, 0]}
-        zoom={2}
-        height={200}
-        style={{ height: "45em" }}
-        onClick={(event: any) => {
-          const latLng = {
-            lat: Math.round(event.latlng.lat * 10000) / 10000,
-            lng: Math.round(event.latlng.lng * 10000) / 10000
-          };
-          this.onChange(latLng);
-        }}
-      >
-        <TileLayer
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-        />
-        {typeof latitude === "number" && typeof longitude === "number" && (
-          <Marker position={[latitude!, longitude!]}>
-            <Popup>
-              <h3>{t("common.position")}</h3>
-              <p>
-                {t("common.latitude")}: {latitude.toFixed(4)}
-                <br />
-                {t("common.longitude")}: {longitude.toFixed(4)}
-              </p>
-              <p>
-                <Button onClick={() => this.onChange({ lat: null, lng: null })}>
-                  {t("common.remove")}
-                </Button>
-              </p>
-            </Popup>
-          </Marker>
-        )}
-      </Map>
+      <div>
+        <p><strong>Kit location</strong></p>
+        <p>Select a position on the map to set as your kit's location</p>
+        <Map
+          center={[35, 0]}
+          zoom={2}
+          height={200}
+          style={{ height: "45em" }}
+          onClick={(event: any) => {
+            const latLng = {
+              lat: Math.round(event.latlng.lat * 10000) / 10000,
+              lng: Math.round(event.latlng.lng * 10000) / 10000
+            };
+            this.onChange(latLng);
+          }}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          />
+          {typeof latitude === "number" && typeof longitude === "number" && (
+            <Marker icon={MarkerIcon} position={[latitude!, longitude!]}>
+              <Popup>
+                <h3>{t("common.position")}</h3>
+                <p>
+                  {t("common.latitude")}: {latitude.toFixed(4)}
+                  <br />
+                  {t("common.longitude")}: {longitude.toFixed(4)}
+                </p>
+                <p>
+                  <Button onClick={() => this.onChange({ lat: null, lng: null })}>
+                    {t("common.remove")}
+                  </Button>
+                </p>
+              </Popup>
+            </Marker>
+          )}
+        </Map>
+      </div>
     );
   }
 }

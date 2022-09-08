@@ -1,5 +1,6 @@
 import React from "react";
 import { Map, Marker, Popup, TileLayer } from "react-leaflet";
+import { MarkerIcon } from "./MarkerIcon";
 
 type Props = {
   location: { latitude: number; longitude: number };
@@ -19,7 +20,7 @@ export default class MapWithMarker extends React.Component<Props> {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         />
-        <Marker position={[location.latitude, location.longitude]}>
+        <Marker icon={MarkerIcon} position={[location.latitude, location.longitude]}>
           {this.props.children && <Popup>{this.props.children}</Popup>}
         </Marker>
       </Map>

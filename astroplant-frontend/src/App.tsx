@@ -23,6 +23,8 @@ import Me from "./scenes/Me";
 import CreateKit from "./scenes/CreateKit";
 import Kit from "./scenes/kit";
 import Map from "./scenes/map";
+import { Button } from "semantic-ui-react";
+import { persistor } from "./store";
 
 type Props = WithTranslation & {
   displayName: Option<string>;
@@ -63,27 +65,36 @@ class App extends Component<Props> {
           rightItems={
             this.props.displayName.isSome()
               ? [
-                  {
-                    as: NavLink,
-                    content: this.props.displayName.unwrap(),
-                    to: "/me",
-                    key: "me"
+                {
+                  as: NavLink,
+                  content: this.props.displayName.unwrap(),
+                  to: "/me",
+                  key: "me"
+                },
+                {
+                  as: Button,
+                  content: t("common.logOut"),
+                  key: "logOut",
+                  onClick: () => {
+                    persistor.purge();
+                    window.location.href = "/"
                   }
-                ]
+                }
+              ]
               : [
-                  {
-                    as: NavLink,
-                    content: t("common.logIn"),
-                    to: "/log-in",
-                    key: "logIn"
-                  },
-                  {
-                    as: NavLink,
-                    content: t("common.signUp"),
-                    to: "/sign-up",
-                    key: "signUp"
-                  }
-                ]
+                {
+                  as: NavLink,
+                  content: t("common.logIn"),
+                  to: "/log-in",
+                  key: "logIn"
+                },
+                {
+                  as: NavLink,
+                  content: t("common.signUp"),
+                  to: "/sign-up",
+                  key: "signUp"
+                }
+              ]
           }
         >
           <Switch>

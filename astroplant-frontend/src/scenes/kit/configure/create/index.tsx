@@ -68,7 +68,7 @@ function CreateConfiguration(props: Props) {
 
   return (
     <Container text>
-      <Segment piled padded>
+      <Segment padded>
         {done ? (
           <Redirect to={`/kit/${kit.serial}/configure/${result.unwrap().id}`} />
         ) : (
