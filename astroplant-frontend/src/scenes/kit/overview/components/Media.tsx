@@ -6,6 +6,7 @@ import { KitState, KitConfigurationState } from "~/modules/kit/reducer";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { KitsApi, schemas } from "~/api";
 import { configuration, rateLimit } from "~/utils/api";
+import { tap } from "rxjs/operators";
 
 export type Props = {
   kitState: KitState;
@@ -57,14 +58,19 @@ export default function Media(props: Props) {
   useEffect(() => {
     if (displayMedia) {
       (async () => {
-        const kitsApi = new KitsApi(configuration);
-        const response = await kitsApi
-          .getMediaContent({ mediaId: displayMedia.id })
-          .pipe(rateLimit)
-          .toPromise();
+        try {
+          const kitsApi = new KitsApi(configuration);
+          const response = await kitsApi
+            .getMediaContent({ mediaId: displayMedia.id + "AIAA" })
+            .pipe(rateLimit)
+            .toPromise();
 
-        const url = URL.createObjectURL(response.content);
-        setDisplayUrl(url);
+          const url = URL.createObjectURL(response.content);
+          setDisplayUrl(url);
+        } catch (error) {
+          alert(error);
+          setDisplayMedia(null);
+        }
       })();
     }
   }, [displayMedia]);

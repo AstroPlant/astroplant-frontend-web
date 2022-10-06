@@ -39,6 +39,7 @@ class ActivateDeactivate extends React.Component<PInner> {
       serial: kit.serial,
       configuration: response,
     });
+    alert("Configuration updated. Make sure to restart the kit for the configuration to activate.");
   }
 
   send() {
