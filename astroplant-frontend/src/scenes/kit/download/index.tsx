@@ -46,17 +46,7 @@ function KitDownload(_props: InnerProps) {
   const startM = moment(start, moment.HTML5_FMT.DATETIME_LOCAL);
   const endM = moment(end, moment.HTML5_FMT.DATETIME_LOCAL);
 
-  const configurationUrl = configurationId
-    ? api.getArchiveDownloadLink({ kitSerial: kit.serial, configurationId })
-    : null;
-  let timeWindowUrl = null;
-  if (startM.isValid() && endM.isValid()) {
-    timeWindowUrl = api.getArchiveDownloadLink({
-      kitSerial: kit.serial,
-      from: startM,
-      to: endM,
-    });
-  }
+  const timeWindowValid = startM.isValid() && endM.isValid();
 
   return (
     <Container text>
@@ -86,12 +76,18 @@ function KitDownload(_props: InnerProps) {
                 </Form.Field>
               </Form.Group>
               <Form.Field>
-                {configurationUrl === null ? (
+                {configurationId === undefined ? (
                   <Button primary disabled>
                     Download
                   </Button>
                 ) : (
-                  <Button primary as="a" href={configurationUrl}>
+                  <Button
+                    primary
+                    onClick={() => {
+                      const query = { configurationId };
+                      initiateDownload(api, kit.serial, query);
+                    }}
+                  >
                     Download
                   </Button>
                 )}
@@ -140,12 +136,18 @@ function KitDownload(_props: InnerProps) {
             </Form.Field>
           </Form.Group>
           <Form.Field>
-            {timeWindowUrl === null ? (
-              <Button primary disabled>
+            {timeWindowValid ? (
+              <Button
+                primary
+                onClick={() => {
+                  const query = { from: startM, to: endM };
+                  initiateDownload(api, kit.serial, query);
+                }}
+              >
                 Download
               </Button>
             ) : (
-              <Button primary as="a" href={timeWindowUrl}>
+              <Button primary disabled>
                 Download
               </Button>
             )}
@@ -154,6 +156,35 @@ function KitDownload(_props: InnerProps) {
       </Segment>
     </Container>
   );
+}
+
+/** Fetches an authorization token for kit data archive downloading, and, if
+ * succesful, sends the client to the data download link.
+ */
+async function initiateDownload(
+  api: KitsApi,
+  kitSerial: string,
+  query: {
+    configurationId?: number;
+    from?: moment.Moment;
+    to?: moment.Moment;
+  }
+) {
+  try {
+    const token = (await api.getArchiveDownloadToken({ kitSerial }).toPromise())
+      .content;
+
+    const url = api.constructArchiveDownloadLink({
+      token,
+      kitSerial,
+      ...query,
+    });
+    if (url) {
+      // Browsers usually see that this location has an attachment header, so
+      // they will not actually navigate the user away from the page.
+      window.location.href = url;
+    }
+  } catch {}
 }
 
 export default compose<InnerProps, Props>(withTranslation())(KitDownload);

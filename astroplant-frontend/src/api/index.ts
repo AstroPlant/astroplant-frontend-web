@@ -184,20 +184,45 @@ export class KitsApi extends BaseApi {
     // });
   };
 
-  getArchiveDownloadLink = ({
+  getArchiveDownloadToken = ({
     kitSerial,
+  }: {
+    kitSerial: string;
+  }): Observable<Response<string>> => {
+    return this.request<string>({
+      path: `/kits/${encodeUri(kitSerial)}/archive`,
+      method: "POST",
+    });
+  };
+
+  constructArchiveDownloadLink = ({
+    kitSerial,
+    token,
     configurationId,
     from,
     to,
   }: {
     kitSerial: string;
+    token: string;
     configurationId?: number;
     from?: moment.Moment;
     to?: moment.Moment;
   }): string | null => {
-    let url = `${this.configuration.basePath}/kits/${kitSerial}/archive`;
+    let url = `${this.configuration.basePath}/kits/${encodeUri(
+      kitSerial
+    )}/archive`;
 
     let query = {};
+
+    query = { token, ...query };
+
+    if (
+      configurationId === undefined &&
+      (from === undefined || to === undefined)
+    ) {
+      return null;
+    }
+
     if (configurationId !== undefined) {
       query = { configuration: configurationId, ...query };
     }
@@ -210,11 +235,7 @@ export class KitsApi extends BaseApi {
       query = { to: to.format(), ...query };
     }
 
-    if (Object.keys(query).length === 0) {
-      return null;
-    } else {
-      url += "?" + queryString(query);
-    }
+    url += "?" + queryString(query);
 
     return url;
   };
