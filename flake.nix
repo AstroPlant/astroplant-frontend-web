@@ -37,6 +37,11 @@
             jre
             coreutils
           ];
+          shellHook = ''
+            # FIXME: this isn't a long-term solutions. With an upgrade of react-scripts
+            # to 5.x it shouldn't be necesasry anymore.
+            export NODE_OPTIONS=--openssl-legacy-provider
+          '';
         };
       });
 }
