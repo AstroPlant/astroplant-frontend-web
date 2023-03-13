@@ -32,6 +32,7 @@
           buildInputs = with pkgs; [
             bashInteractive
             nodejs-18_x
+            yarn
             nodePackages.javascript-typescript-langserver
             nodePackages.prettier
             jre
