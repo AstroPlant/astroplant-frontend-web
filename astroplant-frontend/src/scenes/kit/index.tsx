@@ -23,6 +23,7 @@ import {
 } from "./contexts";
 import Overview from "./overview";
 import Details from "./details";
+import Download from "./download";
 import Configure from "./configure";
 import Access from "./access";
 import Rpc from "./rpc";
@@ -75,6 +76,11 @@ const KitDashboard = (props: KitDashboardProps) => {
                 <Icon name="clipboard" />
                 Details
               </Menu.Item>
+              {/* currently downloading only requires the View permission (which is alwas given), this may change */}
+              <Menu.Item as={NavLink} to={`${url}/download`}>
+                <Icon name="cloud download" />
+                Download
+              </Menu.Item>
               {canConfigure && (
                 <Menu.Item as={NavLink} to={`${url}/configure`}>
                   <Icon name="setting" />
@@ -99,6 +105,10 @@ const KitDashboard = (props: KitDashboardProps) => {
               <Route
                 path={`${path}/details`}
                 render={(props) => <Details {...props} />}
+              />
+              <Route
+                path={`${path}/download`}
+                render={(props) => <Download {...props} />}
               />
               <Route
                 path={`${path}/configure`}

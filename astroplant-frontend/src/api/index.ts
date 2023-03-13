@@ -15,6 +15,7 @@ import { ajax, AjaxResponse } from "rxjs/ajax";
 import { map } from "rxjs/operators";
 import { Observable } from "rxjs";
 import parseLinkHeader from "parse-link-header";
+import moment from "moment";
 
 import Option from "../utils/option";
 import { components } from "./schema";
@@ -181,6 +182,41 @@ export class KitsApi extends BaseApi {
     //   path: `/media/${encodeUri(mediaId)}/content`,
     //   method: "GET",
     // });
+  };
+
+  getArchiveDownloadLink = ({
+    kitSerial,
+    configurationId,
+    from,
+    to,
+  }: {
+    kitSerial: string;
+    configurationId?: number;
+    from?: moment.Moment;
+    to?: moment.Moment;
+  }): string | null => {
+    let url = `${this.configuration.basePath}/kits/${kitSerial}/archive`;
+
+    let query = {};
+    if (configurationId !== undefined) {
+      query = { configuration: configurationId, ...query };
+    }
+
+    if (from !== undefined) {
+      query = { from: from.format(), ...query };
+    }
+
+    if (to !== undefined) {
+      query = { to: to.format(), ...query };
+    }
+
+    if (Object.keys(query).length === 0) {
+      return null;
+    } else {
+      url += "?" + queryString(query);
+    }
+
+    return url;
   };
 }
 
