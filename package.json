@@ -5,5 +5,8 @@
     "build": "yarn workspace astroplant-frontend run build"
   },
   "private": true,
-  "workspaces": ["astroplant-api", "astroplant-frontend"]
+  "workspaces": [
+    "astroplant-api",
+    "astroplant-frontend"
+  ]
 }
