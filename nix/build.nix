@@ -29,8 +29,8 @@ stdenv.mkDerivation rec {
   ];
 
   configurePhase = ''
-    # FIXME: this isn't a long-term solutions. With an upgrade of react-scripts
-    # to 5.x it shouldn't be necesasry anymore.
+    # FIXME: this isn't a long-term solution. With an upgrade of react-scripts
+    # to 5.x it shouldn't be necessary anymore.
     export NODE_OPTIONS=--openssl-legacy-provider
 
     export REACT_APP_API_URL=${apiUrl}
