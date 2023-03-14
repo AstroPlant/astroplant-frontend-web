@@ -20,17 +20,17 @@ function KitDownload(_props: InnerProps) {
   const kit = useContext(KitContext);
   const configurations = useContext(ConfigurationsContext);
 
-  const now = moment();
   const oneMonthAgo = moment().subtract(1, "months");
+  const now = moment();
 
   const [configurationId, setConfigurationId] = useState<number | undefined>(
     undefined
   );
   const [start, setStart] = useState(
-    now.format(moment.HTML5_FMT.DATETIME_LOCAL)
+    oneMonthAgo.format(moment.HTML5_FMT.DATETIME_LOCAL)
   );
   const [end, setEnd] = useState(
-    oneMonthAgo.format(moment.HTML5_FMT.DATETIME_LOCAL)
+    now.format(moment.HTML5_FMT.DATETIME_LOCAL)
   );
 
   const configOptions = Object.entries(configurations).map(
