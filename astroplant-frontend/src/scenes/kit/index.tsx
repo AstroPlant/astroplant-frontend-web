@@ -76,7 +76,6 @@ const KitDashboard = (props: KitDashboardProps) => {
                 <Icon name="clipboard" />
                 Details
               </Menu.Item>
-              {/* currently downloading only requires the View permission (which is alwas given), this may change */}
               <Menu.Item as={NavLink} to={`${url}/download`}>
                 <Icon name="cloud download" />
                 Download
