@@ -1,7 +1,7 @@
 import { esbuildCommonjs } from '@originjs/vite-plugin-commonjs'
 import reactRefresh from '@vitejs/plugin-react-refresh'
-import { defineConfig } from 'vite'
 import tsconfigPaths from 'vite-tsconfig-paths'
+import { defineConfig } from 'vitest/config'
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -25,4 +25,7 @@ export default defineConfig({
             plugins: [esbuildCommonjs(['react-moment'])],
         },
     },
+    test: {
+        environment: "jsdom"
+    }
 })
