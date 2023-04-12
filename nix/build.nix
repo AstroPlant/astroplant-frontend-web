@@ -33,9 +33,9 @@ stdenv.mkDerivation rec {
     # to 5.x it shouldn't be necessary anymore.
     export NODE_OPTIONS=--openssl-legacy-provider
 
-    export REACT_APP_API_URL=${apiUrl}
-    export REACT_APP_WEBSOCKET_URL=${websocketUrl}
-    export REACT_APP_BUILD_STRING=${buildString}
+    export VITE_API_URL=${apiUrl}
+    export VITE_WEBSOCKET_URL=${websocketUrl}
+    export VITE_BUILD_STRING=${buildString}
   '';
 
   buildPhase = ''

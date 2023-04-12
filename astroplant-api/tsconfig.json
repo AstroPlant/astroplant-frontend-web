@@ -2,13 +2,16 @@
   "compilerOptions": {
     "declaration": true,
     "target": "es6",
-    "module": "commonjs",
+    "module": "ESNext",
     "moduleResolution": "node",
     "outDir": "dist",
     "rootDir": ".",
     "typeRoots": [
       "node_modules/@types"
-    ]
+    ],
+    "types": [
+      "vite/client",
+    ],
   },
   "exclude": [
     "dist",

@@ -11,7 +11,7 @@ class Footer extends Component {
             Copyright © AstroPlant 2018&ndash;2022. Source code available on <a href="https://github.com/astroplant">GitHub</a>.
           </p>
           <p>
-          Version: {packageJson.version} {process.env.REACT_APP_BUILD_STRING && "(" + process.env.REACT_APP_BUILD_STRING + ")"}
+            Version: {packageJson.version} {import.meta.env.VITE_BUILD_STRING && "(" + import.meta.env.VITE_BUILD_STRING + ")"}
           </p>
         </Container>
       </footer>

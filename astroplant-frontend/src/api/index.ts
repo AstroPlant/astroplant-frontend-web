@@ -11,18 +11,18 @@
  * implementation at ./local_modules/astroplant-api.
  */
 
+import moment from "moment";
+import parseLinkHeader from "parse-link-header";
+import { Observable } from "rxjs";
 import { ajax, AjaxResponse } from "rxjs/ajax";
 import { map } from "rxjs/operators";
-import { Observable } from "rxjs";
-import parseLinkHeader from "parse-link-header";
-import moment from "moment";
 
 import Option from "../utils/option";
 import { components } from "./schema";
 export type schemas = components["schemas"];
 
 export const BASE_PATH =
-  process.env.REACT_APP_API_URL || "http://localhost:8080";
+  import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export interface ConfigurationParameters {
   basePath?: string; // override base path
@@ -30,7 +30,7 @@ export interface ConfigurationParameters {
 }
 
 export class Configuration {
-  constructor(private configuration: ConfigurationParameters = {}) {}
+  constructor(private configuration: ConfigurationParameters = {}) { }
 
   get basePath(): string {
     return this.configuration.basePath || BASE_PATH;
@@ -82,7 +82,7 @@ export class Response<T> {
 }
 
 export class BaseApi {
-  constructor(protected configuration = new Configuration()) {}
+  constructor(protected configuration = new Configuration()) { }
 
   private createRequestArguments = (options: RequestOptions): any => {
     let url = this.configuration.basePath + options.path;
@@ -270,11 +270,11 @@ export type HttpMethod =
 export type HttpHeaders = { [key: string]: string };
 export type HttpQuery = {
   [key: string]:
-    | string
-    | number
-    | boolean
-    | null
-    | Array<string | number | null | boolean>;
+  | string
+  | number
+  | boolean
+  | null
+  | Array<string | number | null | boolean>;
 };
 export type HttpBody = any;
 

@@ -1,24 +1,24 @@
 import { Epic, combineEpics } from "redux-observable";
 import { Observable, concat } from "rxjs";
 import {
-  mergeMap,
-  switchMap,
-  filter,
-  share,
-  map,
-  finalize,
-  takeUntil,
-  retryWhen,
-  tap,
   delay,
+  filter,
+  finalize,
+  map,
+  mergeMap,
+  retryWhen,
+  share,
+  switchMap,
   take,
+  takeUntil,
+  tap,
 } from "rxjs/operators";
 import { webSocket } from "rxjs/webSocket";
 import * as kitActions from "../kit/actions";
 import { RawMeasurement } from "../kit/reducer";
 
 const webSocketSubject = webSocket(
-  process.env.REACT_APP_WEBSOCKET_URL || "ws://localhost:8080/ws"
+  import.meta.env.VITE_WEBSOCKET_URL || "ws://localhost:8080/ws"
 );
 const webSocketMessages: Observable<any> = webSocketSubject.pipe(share());
 let webSocketRequestId = 0;

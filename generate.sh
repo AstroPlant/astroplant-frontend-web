@@ -24,7 +24,7 @@ patch -p1 <<'EOF'
  import { map, concatMap } from 'rxjs/operators';
 
 -export const BASE_PATH = 'https://api.astroplant.sda-projects.nl'.replace(/\/+$/, '');
-+export const BASE_PATH = process.env.REACT_APP_API_URL || "http://localhost:8080";
++export const BASE_PATH = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
  export interface ConfigurationParameters {
      basePath?: string; // override base path
