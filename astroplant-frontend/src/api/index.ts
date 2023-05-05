@@ -15,7 +15,7 @@ import { ajax, AjaxResponse } from "rxjs/ajax";
 import { map } from "rxjs/operators";
 import { Observable } from "rxjs";
 import parseLinkHeader from "parse-link-header";
-import moment from "moment";
+import { DateTime } from "luxon";
 
 import Option from "../utils/option";
 import { components } from "./schema";
@@ -205,8 +205,8 @@ export class KitsApi extends BaseApi {
     kitSerial: string;
     token: string;
     configurationId?: number;
-    from?: moment.Moment;
-    to?: moment.Moment;
+    from?: DateTime;
+    to?: DateTime;
   }): string | null => {
     let url = `${this.configuration.basePath}/kits/${encodeUri(
       kitSerial
@@ -228,11 +228,11 @@ export class KitsApi extends BaseApi {
     }
 
     if (from !== undefined) {
-      query = { from: from.format(), ...query };
+      query = { from: from.toISO(), ...query };
     }
 
     if (to !== undefined) {
-      query = { to: to.format(), ...query };
+      query = { to: to.toISO(), ...query };
     }
 
     url += "?" + queryString(query);

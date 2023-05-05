@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { compose } from "recompose";
-import moment from "moment";
+import { DateTime, Interval } from "luxon";
 import { Button, Container, Segment, Header } from "semantic-ui-react";
 import { Form } from "semantic-ui-react";
 
@@ -20,17 +20,27 @@ function KitDownload(_props: InnerProps) {
   const kit = useContext(KitContext);
   const configurations = useContext(ConfigurationsContext);
 
-  const oneMonthAgo = moment().subtract(1, "months");
-  const now = moment();
+  const oneMonthAgo = DateTime.now().minus({ months: 1 });
+  const now = DateTime.now();
 
   const [configurationId, setConfigurationId] = useState<number | undefined>(
     undefined
   );
+
+  // Formatting from: https://github.com/moment/luxon/discussions/1136
   const [start, setStart] = useState(
-    oneMonthAgo.format(moment.HTML5_FMT.DATETIME_LOCAL)
+    oneMonthAgo.startOf("minute").toISO({
+      includeOffset: false,
+      suppressSeconds: true,
+      suppressMilliseconds: true,
+    })!
   );
   const [end, setEnd] = useState(
-    now.format(moment.HTML5_FMT.DATETIME_LOCAL)
+    now.startOf("minute").toISO({
+      includeOffset: false,
+      suppressSeconds: true,
+      suppressMilliseconds: true,
+    })!
   );
 
   const configOptions = Object.entries(configurations).map(
@@ -43,10 +53,10 @@ function KitDownload(_props: InnerProps) {
     })
   );
 
-  const startM = moment(start, moment.HTML5_FMT.DATETIME_LOCAL);
-  const endM = moment(end, moment.HTML5_FMT.DATETIME_LOCAL);
+  const startM = DateTime.fromISO(start);
+  const endM = DateTime.fromISO(end);
 
-  const timeWindowValid = startM.isValid() && endM.isValid();
+  const timeWindowValid = startM.isValid && endM.isValid;
 
   return (
     <Container text>
@@ -166,8 +176,8 @@ async function initiateDownload(
   kitSerial: string,
   query: {
     configurationId?: number;
-    from?: moment.Moment;
-    to?: moment.Moment;
+    from?: DateTime;
+    to?: DateTime;
   }
 ) {
   try {

@@ -1,18 +1,20 @@
 import React from "react";
-import moment from "moment";
+import { DateTime } from "luxon";
 import { WidgetProps } from "@rjsf/utils";
 import { Input } from "semantic-ui-react";
 
 function processInput(input: string): string {
-  const m = moment(input, [
-    moment.HTML5_FMT.TIME,
-    moment.HTML5_FMT.TIME_SECONDS
-  ]);
-  if (m && m.isValid()) {
-    return m.format("HH:mm:ss");
-  } else {
-    return input;
-  }
+  // const dt = DateTime.fromFormat(input, "HH:mm");
+  // const dt2 = DateTime.fromFormat(input, "HH:mm:ss");
+  // console.warn(dt, dt.isValid, dt.invalidReason, dt.toLocaleString());
+  // if (dt && dt.isValid) {
+  //   return dt.toFormat("HH:mm:ss");
+  // } else if (dt2 && dt2.isValid) {
+  //   return dt2.toFormat("HH:mm:ss");
+  // } else {
+  //   return input;
+  // }
+  return input;
 }
 
 export function TimeWidget(props: any) {
@@ -25,15 +27,15 @@ export function TimeWidget(props: any) {
     onChange,
     onBlur,
     onFocus,
-    options
+    options,
   }: WidgetProps) => {
     const _onChange = ({
-      target: { value }
+      target: { value },
     }: React.ChangeEvent<HTMLInputElement>) => {
       onChange(value === "" ? options.emptyValue : value);
     };
     const _onBlur = ({
-      target: { value }
+      target: { value },
     }: React.FocusEvent<HTMLInputElement>) => {
       const newValue = processInput(value);
       if (newValue !== value) {
@@ -42,7 +44,7 @@ export function TimeWidget(props: any) {
       onBlur(id, newValue);
     };
     const _onFocus = ({
-      target: { value }
+      target: { value },
     }: React.FocusEvent<HTMLInputElement>) => onFocus(id, value);
 
     return (
