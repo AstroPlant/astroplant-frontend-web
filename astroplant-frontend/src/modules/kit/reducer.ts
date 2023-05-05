@@ -18,7 +18,7 @@ export interface Measurement {
 export interface RawMeasurement extends Measurement {
   kitSerial: string;
   peripheral: number;
-  datetime: number;
+  datetime: string;
 }
 
 export interface KitState {
