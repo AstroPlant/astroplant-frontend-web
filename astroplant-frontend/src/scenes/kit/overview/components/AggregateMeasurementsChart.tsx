@@ -10,7 +10,7 @@ import {
   YAxis,
   Brush,
 } from "recharts";
-import moment from "moment";
+import { DateTime } from "luxon";
 import { map, tap } from "rxjs/operators";
 import { Observable } from "rxjs";
 import { Peripheral, PeripheralDefinition, QuantityType } from "astroplant-api";
@@ -164,11 +164,19 @@ class AggregateMeasurementsChart extends React.PureComponent<Props, State> {
                   formatter={(value: any, name: any) =>
                     parseFloat(value.toPrecision(4))
                   }
-                  labelFormatter={(time: any) => moment(time).format("L LTS")}
+                  labelFormatter={(time: any) =>
+                    DateTime.fromMillis(time).toLocaleString(
+                      DateTime.DATETIME_SHORT
+                    )
+                  }
                 />
                 <XAxis
                   dataKey="datetimeStartNumber"
-                  tickFormatter={(tick) => moment(tick).calendar()}
+                  tickFormatter={(tick) =>
+                    DateTime.fromMillis(tick).toLocaleString(
+                      DateTime.DATETIME_SHORT
+                    )
+                  }
                   minTickGap={40}
                   scale="linear"
                 />
@@ -210,7 +218,9 @@ class AggregateMeasurementsChart extends React.PureComponent<Props, State> {
                   <Brush
                     dataKey="datetimeStartNumber"
                     height={40}
-                    tickFormatter={(time: any) => moment(time).format("L")}
+                    tickFormatter={(time: any) =>
+                      DateTime.fromMillis(time).toLocaleString(DateTime.DATETIME_SHORT)
+                    }
                     startIndex={this.calculateWindowStartIndex(
                       measurements.unwrapOr([])
                     )}

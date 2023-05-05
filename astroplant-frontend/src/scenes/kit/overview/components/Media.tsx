@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Container, Image, Table, Button, Modal } from "semantic-ui-react";
-import Moment from "react-moment";
+import { DateTime } from "luxon";
+
+import RelativeTime from "~/Components/RelativeTime";
 import { KitState, KitConfigurationState } from "~/modules/kit/reducer";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { KitsApi, schemas } from "~/api";
@@ -22,10 +24,8 @@ export default function Media(props: Props) {
     null
   );
   const [displayUrl, setDisplayUrl] = useState<string | null>(null);
-  const [
-    activeConfiguration,
-    setActiveConfiguration,
-  ] = useState<KitConfigurationState | null>(null);
+  const [activeConfiguration, setActiveConfiguration] =
+    useState<KitConfigurationState | null>(null);
   const [downloadLoading, setDownloadLoading] = useState<boolean>(false);
 
   const { kitState } = props;
@@ -112,7 +112,7 @@ export default function Media(props: Props) {
                 <Table.Body>
                   <Table.Row>
                     <Table.Cell>
-                      <Moment interval={15000}>{displayMedia.datetime}</Moment>
+                      <RelativeTime to={DateTime.fromISO(displayMedia.datetime)} />
                     </Table.Cell>
                     <Table.Cell>
                       {
@@ -143,9 +143,8 @@ export default function Media(props: Props) {
           </Table.Header>
           <Table.Body>
             {media.map((media) => {
-              const peripheral = activeConfiguration!.peripherals[
-                media.peripheralId
-              ]!;
+              const peripheral =
+                activeConfiguration!.peripherals[media.peripheralId]!;
               const displayable =
                 media.type === "image/png" ||
                 media.type === "image/jpeg" ||
@@ -158,9 +157,7 @@ export default function Media(props: Props) {
               return (
                 <Table.Row key={media.id}>
                   <Table.Cell>
-                    <Moment fromNow interval={15000}>
-                      {media.datetime}
-                    </Moment>
+                      <RelativeTime to={DateTime.fromISO(media.datetime)} />
                   </Table.Cell>
                   <Table.Cell>{peripheral.name}</Table.Cell>
                   <Table.Cell>{media.name}</Table.Cell>

@@ -1,6 +1,8 @@
 import React from "react";
 import { Card, CardProps, Statistic, Loader } from "semantic-ui-react";
-import Moment from "react-moment";
+import { DateTime } from "luxon";
+
+import RelativeTime from "~/Components/RelativeTime";
 import { RawMeasurement } from "modules/kit/reducer";
 import { Peripheral, PeripheralDefinition, QuantityType } from "astroplant-api";
 import Option from "utils/option";
@@ -42,9 +44,7 @@ export default (props: Props) => {
               <>
                 <Card.Meta>
                   Measured{" "}
-                  <Moment fromNow interval={15000}>
-                    {m.datetime}
-                  </Moment>
+                  <RelativeTime to={DateTime.fromISO(m.datetime)} />
                 </Card.Meta>
               </>
             );

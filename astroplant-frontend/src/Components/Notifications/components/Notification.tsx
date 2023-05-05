@@ -1,12 +1,12 @@
 import React from "react";
 import { Message, Progress } from "semantic-ui-react";
-import moment, { Moment } from "moment";
+import { DateTime, Interval } from "luxon";
 import Option from "~/utils/option";
 import { Notification, NotificationKind } from "~/modules/notification";
 
 export type Props = {
   notification: Notification;
-  time: Option<{ from: Moment; to: Moment }>;
+  time: Option<{ from: DateTime; to: DateTime }>;
   dismiss: () => void;
 };
 
@@ -18,7 +18,7 @@ class NotificationMsg extends React.Component<Props, State> {
   interval: any;
 
   state = {
-    progress: null
+    progress: null,
   };
 
   constructor(props: Props) {
@@ -31,15 +31,15 @@ class NotificationMsg extends React.Component<Props, State> {
 
   update() {
     const { from, to } = this.props.time.unwrap();
-    const now = moment();
+    const now = DateTime.now();
 
-    const total = to.diff(from, "ms");
-    const elapsed = now.diff(from, "ms");
+    const total = Interval.fromDateTimes(from, to).length("milliseconds");
+    const elapsed = Interval.fromDateTimes(from, now).length("milliseconds");
 
     const progress = (elapsed / total) * 100;
 
     this.setState({
-      progress: 100 - progress
+      progress: 100 - progress,
     });
   }
 

@@ -1,5 +1,5 @@
 import { createAction } from "@reduxjs/toolkit";
-import { Moment } from "moment";
+import { DateTime } from "luxon";
 import { Notification } from "./index";
 import Option from "utils/option";
 
@@ -19,7 +19,7 @@ export const addNotificationSuccess = createAction(
     nextId: number,
     id: string,
     notification: Notification,
-    time: Option<{ from: Moment; to: Moment }>
+    time: Option<{ from: DateTime; to: DateTime }>
   ) => ({ payload: { nextId, id, notification, time } })
 );
 

@@ -11,11 +11,11 @@
  * implementation at ./local_modules/astroplant-api.
  */
 
-import moment from "moment";
 import parseLinkHeader from "parse-link-header";
 import { Observable } from "rxjs";
 import { ajax, AjaxResponse } from "rxjs/ajax";
 import { map } from "rxjs/operators";
+import { DateTime } from "luxon";
 
 import Option from "../utils/option";
 import { components } from "./schema";
@@ -30,7 +30,7 @@ export interface ConfigurationParameters {
 }
 
 export class Configuration {
-  constructor(private configuration: ConfigurationParameters = {}) { }
+  constructor(private configuration: ConfigurationParameters = {}) {}
 
   get basePath(): string {
     return this.configuration.basePath || BASE_PATH;
@@ -82,7 +82,7 @@ export class Response<T> {
 }
 
 export class BaseApi {
-  constructor(protected configuration = new Configuration()) { }
+  constructor(protected configuration = new Configuration()) {}
 
   private createRequestArguments = (options: RequestOptions): any => {
     let url = this.configuration.basePath + options.path;
@@ -205,8 +205,8 @@ export class KitsApi extends BaseApi {
     kitSerial: string;
     token: string;
     configurationId?: number;
-    from?: moment.Moment;
-    to?: moment.Moment;
+    from?: DateTime;
+    to?: DateTime;
   }): string | null => {
     let url = `${this.configuration.basePath}/kits/${encodeUri(
       kitSerial
@@ -228,11 +228,11 @@ export class KitsApi extends BaseApi {
     }
 
     if (from !== undefined) {
-      query = { from: from.format(), ...query };
+      query = { from: from.toISO(), ...query };
     }
 
     if (to !== undefined) {
-      query = { to: to.format(), ...query };
+      query = { to: to.toISO(), ...query };
     }
 
     url += "?" + queryString(query);
@@ -270,11 +270,11 @@ export type HttpMethod =
 export type HttpHeaders = { [key: string]: string };
 export type HttpQuery = {
   [key: string]:
-  | string
-  | number
-  | boolean
-  | null
-  | Array<string | number | null | boolean>;
+    | string
+    | number
+    | boolean
+    | null
+    | Array<string | number | null | boolean>;
 };
 export type HttpBody = any;
 
