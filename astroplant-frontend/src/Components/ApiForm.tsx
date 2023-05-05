@@ -5,7 +5,9 @@ import { Observable } from "rxjs";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Form } from "semantic-ui-react";
 import { JSONSchema7 } from "json-schema";
-import { UiSchema, FormValidation } from "@rjsf/core";
+import { UiSchema, FormValidation } from "@rjsf/utils";
+import validator from "@rjsf/validator-ajv8";
+
 import RjsfForm from "~/rjsf-theme-semantic-ui";
 
 import {
@@ -41,9 +43,8 @@ function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
   const [formData, setFormData] = useState(initialFormData);
   const [submitting, setSubmitting] = useState(false);
   const [formEpoch, setFormEpoch] = useState(0);
-  const [additionalFormErrors, setAdditionalFormErrors] = useState<
-    InvalidParametersFormErrors
-  >({});
+  const [additionalFormErrors, setAdditionalFormErrors] =
+    useState<InvalidParametersFormErrors>({});
 
   const submit = async (formData: T) => {
     setSubmitting(true);
@@ -89,6 +90,7 @@ function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
         disabled={submitting}
         // @ts-ignore
         extraErrors={additionalFormErrors}
+        validator={validator}
       >
         <Form.Button
           type="submit"

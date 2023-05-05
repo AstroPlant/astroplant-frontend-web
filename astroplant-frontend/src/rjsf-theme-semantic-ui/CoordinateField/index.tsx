@@ -2,7 +2,7 @@ import React from "react";
 import { compose } from "recompose";
 import { withTranslation, WithTranslation } from "react-i18next";
 
-import { FieldProps } from "@rjsf/core";
+import { FieldProps } from "@rjsf/utils";
 import { Map, Marker, TileLayer, Popup } from "react-leaflet";
 import { Button } from "semantic-ui-react";
 import { MarkerIcon } from "~/Components/MarkerIcon";

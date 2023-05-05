@@ -6,9 +6,10 @@ import { Theme as SemanticUITheme } from "@rjsf/semantic-ui";
 import TimeWidget from "./TimeWidget";
 import CoordinateField from "./CoordinateField";
 
-const Theme = produce(SemanticUITheme, (draft: any) => {
-  draft.fields["CoordinateField"] = CoordinateField;
+const Theme = produce(SemanticUITheme, (draft) => {
   draft.widgets["time"] = TimeWidget;
+  draft.fields = {};
+  draft.fields["CoordinateField"] = CoordinateField;
 });
 
 const Form = withTheme(Theme as ThemeProps);

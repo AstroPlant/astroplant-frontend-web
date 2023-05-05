@@ -4,6 +4,8 @@ import { withTranslation, WithTranslation } from "react-i18next";
 import { Modal, Header, Button, Select, Icon } from "semantic-ui-react";
 import produce from "immer";
 import { JSONSchema7 } from "json-schema";
+import validator from "@rjsf/validator-ajv8";
+
 import RjsfForm from "~/rjsf-theme-semantic-ui";
 
 import { Peripheral } from "astroplant-api";
@@ -68,7 +70,8 @@ function EditOutput(props: PInner) {
       scheduledOutputSettingsSchema,
       (draft) => {
         // @ts-ignore
-        draft.properties.schedules.items.properties.schedule.items.properties.value = schema;
+        draft.properties.schedules.items.properties.schedule.items.properties.value =
+          schema;
       }
     );
     outputSettingsUiSchema = produce(
@@ -154,6 +157,7 @@ function EditOutput(props: PInner) {
           }
           formData={formData}
           onChange={({ formData }) => setFormData(formData)}
+          validator={validator}
         >
           <input
             ref={submitButtonRef}

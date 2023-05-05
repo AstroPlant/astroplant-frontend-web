@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Button, Select, Image, Segment } from "semantic-ui-react";
+import validator from "@rjsf/validator-ajv8";
 
 import { KitConfigurationState } from "~/modules/kit/reducer";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
@@ -18,10 +19,8 @@ export default function PeripheralCommand(props: Props) {
     peripheralDefinitionsSelectors.selectEntities
   );
 
-  const [
-    activeConfiguration,
-    setActiveConfiguration,
-  ] = useState<KitConfigurationState | null>(null);
+  const [activeConfiguration, setActiveConfiguration] =
+    useState<KitConfigurationState | null>(null);
   const [peripheralId, setPeripheralId] = useState<number | null>(null);
   const [displayUrl, setDisplayUrl] = useState<string | null>(null);
   const [plaintext, setPlaintext] = useState<string | null>(null);
@@ -77,9 +76,8 @@ export default function PeripheralCommand(props: Props) {
     let form = null;
     if (peripheralId !== null) {
       const peripheral = activeConfiguration.peripherals[peripheralId]!;
-      const peripheralDefinition = peripheralDefinitions[
-        peripheral.peripheralDefinitionId
-      ]!;
+      const peripheralDefinition =
+        peripheralDefinitions[peripheral.peripheralDefinitionId]!;
       form = (
         <>
           <PeripheralDefinitionCard
@@ -92,6 +90,7 @@ export default function PeripheralCommand(props: Props) {
             onChange={({ formData }) => setFormData(formData)}
             formData={formData}
             onSubmit={({ formData }) => sendPeripheralCommand(formData)}
+            validator={validator}
           >
             <Button type="submit" primary>
               Send command to kit

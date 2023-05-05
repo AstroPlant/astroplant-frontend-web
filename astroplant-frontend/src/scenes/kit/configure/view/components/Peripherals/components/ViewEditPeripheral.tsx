@@ -4,6 +4,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Segment, Label, Header, Button, Icon } from "semantic-ui-react";
+import validator from "@rjsf/validator-ajv8";
 
 import { RootState } from "~/types";
 import { KitConfigurationState } from "~/modules/kit/reducer";
@@ -91,9 +92,8 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
 
   render() {
     const { t, peripheral } = this.props;
-    const def = this.props.peripheralDefinitions[
-      peripheral.peripheralDefinitionId
-    ];
+    const def =
+      this.props.peripheralDefinitions[peripheral.peripheralDefinitionId];
 
     const schema: JSONSchema7 = {
       type: "object",
@@ -131,6 +131,7 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
               uiSchema={{}}
               disabled={true}
               formData={peripheral}
+              validator={validator}
             >
               <div />
             </RjsfForm>

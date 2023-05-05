@@ -4,6 +4,8 @@ import { withTranslation, WithTranslation } from "react-i18next";
 import { Modal, Header, Button, Icon } from "semantic-ui-react";
 import produce from "immer";
 import { JSONSchema7 } from "json-schema";
+import validator from "@rjsf/validator-ajv8";
+
 import RjsfForm from "~/rjsf-theme-semantic-ui";
 
 import {
@@ -207,11 +209,10 @@ function EditRule(props: PInner) {
     }
     if (implicationChoices.length > 0) {
       // @ts-ignore
-      draft.properties.implication.items.properties.peripheralCommand[
-        "enum"
-      ] = implicationChoices.map(
-        ([peripheral, command]) => `${peripheral}-${command}`
-      );
+      draft.properties.implication.items.properties.peripheralCommand["enum"] =
+        implicationChoices.map(
+          ([peripheral, command]) => `${peripheral}-${command}`
+        );
       // @ts-ignore
       draft.properties.implication.items.properties.peripheralCommand[
         "enumNames"
@@ -224,11 +225,10 @@ function EditRule(props: PInner) {
     }
     if (scheduleChoices.length > 0) {
       // @ts-ignore
-      draft.properties.schedules.items.properties.peripheralCommand[
-        "enum"
-      ] = scheduleChoices.map(
-        ([peripheral, command]) => `${peripheral}-${command}`
-      );
+      draft.properties.schedules.items.properties.peripheralCommand["enum"] =
+        scheduleChoices.map(
+          ([peripheral, command]) => `${peripheral}-${command}`
+        );
       // @ts-ignore
       draft.properties.schedules.items.properties.peripheralCommand[
         "enumNames"
@@ -261,6 +261,7 @@ function EditRule(props: PInner) {
           onSubmit={({ formData }) => handleSubmit(formData)}
           formData={formData}
           onChange={({ formData }) => setFormData(formData)}
+          validator={validator}
         >
           <input
             ref={submitButtonRef}
