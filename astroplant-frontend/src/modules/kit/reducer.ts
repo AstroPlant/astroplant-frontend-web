@@ -147,11 +147,12 @@ const kitConfigurationReducer = createReducer<KitConfigurationState>(
       })
       .addCase(actions.kitConfigurationUpdated, (state, action) => {
         const { configuration } = action.payload;
-        const existingConfigurationPeripherals = state.peripherals || [];
+        // const existingConfigurationPeripherals = state.peripherals || [];
 
         const newConfiguration = {
           ...configuration,
-          peripherals: existingConfigurationPeripherals,
+          peripherals: state.peripherals,
+          // peripherals: existingConfigurationPeripherals,
         };
 
         return newConfiguration;
