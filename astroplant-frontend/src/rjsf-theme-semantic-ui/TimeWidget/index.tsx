@@ -1,6 +1,6 @@
 import React from "react";
 import moment from "moment";
-import { WidgetProps } from "@rjsf/core";
+import { WidgetProps } from "@rjsf/utils";
 import { Input } from "semantic-ui-react";
 
 function processInput(input: string): string {

@@ -2,6 +2,8 @@ import React, { useState, useRef } from "react";
 import { compose } from "recompose";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Modal, Header, Button, Icon } from "semantic-ui-react";
+import validator from "@rjsf/validator-ajv8";
+
 import RjsfForm from "~/rjsf-theme-semantic-ui";
 
 import { Peripheral, QuantityType } from "astroplant-api";
@@ -72,6 +74,7 @@ function EditPeripheral(props: PInner) {
           }
           onChange={({ formData }) => setFormData(formData)}
           formData={formData}
+          validator={validator}
         >
           <input
             ref={submitButtonRef}
