@@ -66,7 +66,8 @@ class ApiButton<R = any> extends Component<AllProps<R>, State> {
 
       this.setState({ submitting: false });
       this.props.onResponse(response);
-    } catch (e) {
+    } catch (e_) {
+      const e = e_ as any;
       this.setState({ submitting: false });
 
       console.warn("error on form submission", e, e.response);

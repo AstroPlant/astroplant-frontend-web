@@ -22,7 +22,7 @@ export class AuthConfiguration extends Configuration {
             return {
               ...request,
               headers: {
-                ...request.headers,
+                ...(request.headers || {}),
                 Authorization: `Bearer ${token}`,
               },
             };

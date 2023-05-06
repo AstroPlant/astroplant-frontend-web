@@ -12,7 +12,7 @@ export interface WithAuthentication {
 
 const mapStateToProps = (state: RootState) => ({ option: state.me.details });
 
-function withAuthToValue<P>(
+function withAuthToValue<P extends object>(
   Component: React.ComponentType<P & WithAuthentication>
 ): React.ComponentType<P & WithValue<FullUser>> {
   return props => {
@@ -27,7 +27,7 @@ function withAuthToValue<P>(
  * `MustBeLoggedIn` page. If `showLoading` is true and authentication has not been
  * ran yet, shows a loading page.
  */
-export function withAuthentication<P>(
+export function withAuthentication<P extends object>(
   showLoading: boolean = true
 ): (
   Component: React.ComponentType<P & WithAuthentication>
@@ -64,7 +64,7 @@ const mapStateToAwaitAuthenticationProps = (state: RootState) => ({
  * issues). Waits until state.auth.authenticationRan is true. If the access token is set,
  * also waits until state.me.details.isSome().
  */
-export function awaitAuthenticationRan<P>(): (
+export function awaitAuthenticationRan<P extends object>(): (
   Component: React.ComponentType<P>
 ) => React.ComponentType<P> {
   return Component => {

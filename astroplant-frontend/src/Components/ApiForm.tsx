@@ -61,7 +61,8 @@ function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
 
       setSubmitting(false);
       props.onResponse(response);
-    } catch (e) {
+    } catch (e_) {
+      const e = e_ as any;
       setSubmitting(false);
 
       console.warn("error on form submission", e, e.response);

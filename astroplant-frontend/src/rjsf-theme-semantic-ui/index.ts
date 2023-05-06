@@ -7,8 +7,10 @@ import TimeWidget from "./TimeWidget";
 import CoordinateField from "./CoordinateField";
 
 const Theme = produce(SemanticUITheme, (draft) => {
+  draft.widgets = draft.widgets || {};
+  draft.fields = draft.fields || {};
+
   draft.widgets["time"] = TimeWidget;
-  draft.fields = {};
   draft.fields["CoordinateField"] = CoordinateField;
 });
 
