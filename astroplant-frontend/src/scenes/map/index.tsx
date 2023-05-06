@@ -79,7 +79,7 @@ class KitMap extends React.Component<Props, State> {
                             {kit.description && (
                               <>
                                 <Divider />
-                                <ReactMarkdown source={kit.description} />
+                                <ReactMarkdown>{kit.description}</ReactMarkdown>
                               </>
                             )}
                             <Divider />

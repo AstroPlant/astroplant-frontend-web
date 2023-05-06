@@ -155,7 +155,7 @@ function KitDetails(props: InnerProps) {
                     </Button>
                   )}
                   <h3>{kit.name || kit.serial}</h3>
-                  <ReactMarkdown source={kit.description} />
+                  <ReactMarkdown>{kit.description || ""}</ReactMarkdown>
                   {typeof kit.latitude === "number" &&
                     typeof kit.longitude === "number" && (
                       <>
