@@ -61,7 +61,7 @@ export default function Media(props: Props) {
         try {
           const kitsApi = new KitsApi(configuration);
           const response = await kitsApi
-            .getMediaContent({ mediaId: displayMedia.id + "AIAA" })
+            .getMediaContent({ mediaId: displayMedia.id })
             .pipe(rateLimit)
             .toPromise();
 
