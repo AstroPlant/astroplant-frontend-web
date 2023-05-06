@@ -6,7 +6,7 @@
   "main": "./dist/index.mjs",
   "typings": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && vite build",
     "prepare": "tsc && vite build"
   },
   "dependencies": {
