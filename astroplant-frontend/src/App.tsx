@@ -1,29 +1,29 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
+import "leaflet/dist/leaflet.css";
+import { Component } from "react";
 import { withTranslation, WithTranslation } from "react-i18next";
+import { connect } from "react-redux";
+import "./App.css";
 import { RootState } from "./types";
 import Option from "./utils/option";
-import "./App.css";
-import "leaflet/dist/leaflet.css";
 
-import { Switch, Route, Redirect, NavLink } from "react-router-dom";
+import { NavLink, Redirect, Route, Switch } from "react-router-dom";
 
-import Notifications from "./Components/Notifications";
 import ConnectionStatus from "./Components/ConnectionStatus";
-import NavigationBar from "./Components/NavigationBar";
 import Footer from "./Components/Footer";
+import NavigationBar from "./Components/NavigationBar";
+import Notifications from "./Components/Notifications";
 
 import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import TermsAndConditions from "./pages/TermsAndConditions";
 
-import LogIn from "./scenes/LogIn";
-import SignUp from "./scenes/SignUp";
-import Me from "./scenes/Me";
+import { Button } from "semantic-ui-react";
 import CreateKit from "./scenes/CreateKit";
 import Kit from "./scenes/kit";
+import LogIn from "./scenes/LogIn";
 import Map from "./scenes/map";
-import { Button } from "semantic-ui-react";
+import Me from "./scenes/Me";
+import SignUp from "./scenes/SignUp";
 import { persistor } from "./store";
 
 type Props = WithTranslation & {
@@ -32,15 +32,14 @@ type Props = WithTranslation & {
 
 class App extends Component<Props> {
   componentDidMount() {
-    const L = require("leaflet");
 
-    delete L.Icon.Default.prototype._getIconUrl;
+    // delete L.Icon.Default.prototype._getIconUrl;
 
-    L.Icon.Default.mergeOptions({
-      iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
-      iconUrl: require("leaflet/dist/images/marker-icon.png"),
-      shadowUrl: require("leaflet/dist/images/marker-shadow.png")
-    });
+    // L.Icon.Default.mergeOptions({
+    //   iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
+    //   iconUrl: require("leaflet/dist/images/marker-icon.png"),
+    //   shadowUrl: require("leaflet/dist/images/marker-shadow.png")
+    // });
   }
 
   render() {

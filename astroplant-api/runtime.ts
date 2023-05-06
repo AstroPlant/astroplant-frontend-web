@@ -12,10 +12,10 @@
  */
 
 import { Observable, of } from 'rxjs';
-import { ajax, AjaxRequest, AjaxResponse } from 'rxjs/ajax';
-import { map, concatMap } from 'rxjs/operators';
+import { AjaxRequest, AjaxResponse, ajax } from 'rxjs/ajax';
+import { concatMap, map } from 'rxjs/operators';
 
-export const BASE_PATH = process.env.REACT_APP_API_URL || "http://localhost:8080";
+export const BASE_PATH = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export interface ConfigurationParameters {
     basePath?: string; // override base path
@@ -27,7 +27,7 @@ export interface ConfigurationParameters {
 }
 
 export class Configuration {
-    constructor(private configuration: ConfigurationParameters = {}) {}
+    constructor(private configuration: ConfigurationParameters = {}) { }
 
     get basePath(): string {
         return this.configuration.basePath || BASE_PATH;
@@ -152,7 +152,7 @@ export const COLLECTION_FORMATS = {
 };
 
 export type Json = any;
-export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
+export type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD';
 export type HttpHeaders = { [key: string]: string };
 export type HttpQuery = Partial<{ [key: string]: string | number | null | boolean | Array<string | number | null | boolean> }>; // partial is needed for strict mode
 export type HttpBody = Json | FormData;
@@ -183,8 +183,8 @@ export const querystring = queryString;
 /**
  * @deprecated
  */
-export const throwIfRequired = (params: {[key: string]: any}, key: string, nickname: string) => {
-    if (!params || params[key] == null) {
+export const throwIfRequired = (params: { [key: string]: any }, key: string, nickname: string) => {
+    if (!params || params[key] == null) {
         throw new RequiredError(`Required parameter ${key} was null or undefined when calling ${nickname}.`);
     }
 };
@@ -196,8 +196,8 @@ export const throwIfNullOrUndefined = (value: any, nickname?: string) => {
 };
 
 // alias for easier importing
-export interface RequestArgs extends AjaxRequest {}
-export interface ResponseArgs extends AjaxResponse {}
+export interface RequestArgs extends AjaxRequest { }
+export interface ResponseArgs extends AjaxResponse { }
 
 export interface Middleware {
     pre?(request: RequestArgs): RequestArgs;

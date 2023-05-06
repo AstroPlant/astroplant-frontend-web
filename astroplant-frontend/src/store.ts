@@ -1,15 +1,15 @@
-import { createStore, applyMiddleware } from "redux";
+import { applyMiddleware, createStore } from "redux";
 import { createEpicMiddleware } from "redux-observable";
 import { persistStore } from "redux-persist";
-import { rootReducer, rootEpic } from "./root";
+import { rootEpic, rootReducer } from "./root";
 
 const logger = (store: any) => (next: any) => (action: any) => {
-  if (process.env.NODE_ENV !== "production") {
+  if (import.meta.env.NODE_ENV !== "production") {
     console.group(action.type);
     console.info("dispatching", action);
   }
   let result = next(action);
-  if (process.env.NODE_ENV !== "production") {
+  if (import.meta.env.NODE_ENV !== "production") {
     console.log("next state", store.getState());
     console.groupEnd();
   }

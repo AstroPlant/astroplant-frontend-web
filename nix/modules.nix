@@ -1,11 +1,15 @@
 { mkYarnPackage
 , mkYarnModules
 , version
+, apiUrl ? "http://localhost:8080"
 }:
 let
   astroplant-api = mkYarnPackage {
     src = ../astroplant-api;
     yarnLock = ../yarn.lock;
+    preConfigure = ''
+      export VITE_API_URL=${apiUrl}
+    '';
     buildPhase = ''
       runHook preBuild
       yarn build

@@ -11,10 +11,10 @@
  * implementation at ./local_modules/astroplant-api.
  */
 
+import parseLinkHeader from "parse-link-header";
+import { Observable } from "rxjs";
 import { ajax, AjaxResponse } from "rxjs/ajax";
 import { map } from "rxjs/operators";
-import { Observable } from "rxjs";
-import parseLinkHeader from "parse-link-header";
 import { DateTime } from "luxon";
 
 import Option from "../utils/option";
@@ -22,7 +22,7 @@ import { components } from "./schema";
 export type schemas = components["schemas"];
 
 export const BASE_PATH =
-  process.env.REACT_APP_API_URL || "http://localhost:8080";
+  import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export interface ConfigurationParameters {
   basePath?: string; // override base path

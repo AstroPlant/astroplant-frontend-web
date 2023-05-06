@@ -1,7 +1,7 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Container, Card } from "semantic-ui-react";
-import { KitState } from "~/modules/kit/reducer";
+import { KitConfigurationState, KitState } from "~/modules/kit/reducer";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { selectors as quantityTypesSelectors } from "~/modules/quantity-type/reducer";
 import { PeripheralDefinition, QuantityType } from "astroplant-api";
@@ -23,7 +23,7 @@ export default function RawMeasurements(props: Props) {
 
   const { kitState } = props;
   const rawMeasurements = kitState.rawMeasurements;
-  let activeConfiguration = null;
+  let activeConfiguration: null | KitConfigurationState  = null;
   for (const configuration of Object.values(kitState.configurations!)) {
     if (configuration.active) {
       activeConfiguration = configuration;

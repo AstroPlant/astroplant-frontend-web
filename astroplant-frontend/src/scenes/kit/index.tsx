@@ -112,7 +112,7 @@ const KitDashboard = (props: KitDashboardProps) => {
               />
               <Route
                 path={`${path}/configure`}
-                render={(props) => <Configure {...props} />}
+                render={(props: any) => <Configure {...props} />}
               />
               <Route
                 path={`${path}/access`}
@@ -120,10 +120,10 @@ const KitDashboard = (props: KitDashboardProps) => {
               />
               <Route
                 path={`${path}/rpc`}
-                render={(props) => <Rpc {...props} />}
+                render={(props: any) => <Rpc {...props} />}
               />
               <Route
-                render={(props) => <Overview {...props} kitState={kitState} />}
+                render={(props: any) => <Overview {...props} kitState={kitState} />}
               />
             </Switch>
           </Container>

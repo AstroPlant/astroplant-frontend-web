@@ -1,14 +1,13 @@
-import React from "react";
-import ReactDOM from "react-dom";
 import i18n from "i18next";
+import ReactDOM from "react-dom";
 import { initReactI18next } from "react-i18next";
 import { Provider } from "react-redux";
-import "semantic-ui-css/semantic.min.css";
 import { BrowserRouter } from "react-router-dom";
+import "semantic-ui-css/semantic.min.css";
 import App from "./App";
-import { store } from "./store";
 import * as actions from "./modules/generic/actions";
 import * as serviceWorker from "./serviceWorker";
+import { store } from "./store";
 import en from "./translations/en.json";
 
 i18n
