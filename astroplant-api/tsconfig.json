@@ -2,16 +2,28 @@
   "compilerOptions": {
     "declaration": true,
     "target": "es6",
-    "module": "ESNext",
-    "moduleResolution": "node",
     "outDir": "dist",
     "rootDir": ".",
-    "typeRoots": [
-      "node_modules/@types"
+    "useDefineForClassFields": true,
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
     ],
     "types": [
-      "vite/client",
+      "vite/client"
     ],
+    "allowJs": false,
+    "skipLibCheck": true,
+    "esModuleInterop": false,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx"
   },
   "exclude": [
     "dist",

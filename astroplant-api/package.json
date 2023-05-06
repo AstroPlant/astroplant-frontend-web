@@ -3,11 +3,11 @@
   "version": "0.1.0-alpha.1",
   "description": "OpenAPI client for astroplant-api",
   "author": "OpenAPI-Generator",
-  "main": "./dist/index.js",
+  "main": "./dist/index.mjs",
   "typings": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc --outDir dist/",
-    "prepare": "npm run build"
+    "build": "tsc",
+    "prepare": "tsc && vite build"
   },
   "dependencies": {
     "rxjs": "~6.5.5"
