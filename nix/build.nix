@@ -11,7 +11,7 @@
 # If we put `astroplant-frontend-modules` in depsBuildBuild, but refer to the
 # variable later, it's pulled in without offsetting.
 let
-  astroplant-frontend-modules = pkgs.pkgsBuildBuild.astroplant-frontend-modules;
+  astroplant-frontend-modules = pkgs.pkgsBuildBuild.astroplant-frontend-modules.override { inherit apiUrl; };
 in
 stdenv.mkDerivation rec {
   inherit version;
