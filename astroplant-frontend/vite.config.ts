@@ -20,11 +20,6 @@ export default defineConfig({
         reactRefresh(),
         tsconfigPaths()
     ],
-    optimizeDeps: {
-        esbuildOptions: {
-            plugins: [esbuildCommonjs(['react-moment'])],
-        },
-    },
     test: {
         environment: "jsdom"
     }
