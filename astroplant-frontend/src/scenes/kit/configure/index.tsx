@@ -39,7 +39,7 @@ export default function KitConfigure(props: Props) {
         />
         <Route
           path={`${path}/:configurationId`}
-          render={(routeProps: any) => <View {...routeProps} {...props} />}
+          render={(routeProps: any) => <View {...routeProps} />}
         />
         <Route render={(_routeProps) => <List {...props} />} />
       </Switch>
