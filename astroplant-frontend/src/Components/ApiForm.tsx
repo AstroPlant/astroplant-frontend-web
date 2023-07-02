@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { PropsWithChildren, useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { Observable } from "rxjs";
@@ -34,16 +34,22 @@ export type Props<T, R> = {
   readonly?: boolean;
 };
 
-type AllProps<T, R> = WithTranslation &
-  Props<T, R> & {
-    addNotificationRequest: (
-      notification: Notification,
-      timeout?: number | null
-    ) => void;
-  };
+type AllProps<T, R> = PropsWithChildren<
+  WithTranslation &
+    Props<T, R> & {
+      addNotificationRequest: (
+        notification: Notification,
+        timeout?: number | null
+      ) => void;
+    }
+>;
 
+/** A json-schema based form with functionality to interact with the API.
+ *
+ * Child components are rendered in the same Form.Group as the submit button.
+ */
 function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
-  const { t, formData: initialFormData, disabled, readonly } = props;
+  const { t, children, formData: initialFormData, disabled, readonly } = props;
   const [formData, setFormData] = useState(initialFormData);
   const [submitting, setSubmitting] = useState(false);
   const [formEpoch, setFormEpoch] = useState(0);
@@ -99,16 +105,19 @@ function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
       >
         {readonly === true ? (
           // Empty RjsfForm children to hide the default submit button.
-          <></>
+          <>{children && <Form.Group>{children}</Form.Group>}</>
         ) : (
-          <Form.Button
-            type="submit"
-            primary
-            disabled={disabled || submitting}
-            loading={submitting}
-          >
-            {props.submitLabel || t("form.submit")}
-          </Form.Button>
+          <Form.Group>
+            <Form.Button
+              type="submit"
+              primary
+              disabled={disabled || submitting}
+              loading={submitting}
+            >
+              {props.submitLabel || t("form.submit")}
+            </Form.Button>
+            {children}
+          </Form.Group>
         )}
       </RjsfForm>
     </>
