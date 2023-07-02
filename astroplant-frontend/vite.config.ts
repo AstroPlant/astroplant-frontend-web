@@ -1,5 +1,5 @@
 import { esbuildCommonjs } from "@originjs/vite-plugin-commonjs";
-import reactRefresh from "@vitejs/plugin-react-refresh";
+import react from "@vitejs/plugin-react";
 import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
@@ -16,7 +16,7 @@ export default defineConfig({
   build: {
     outDir: "build",
   },
-  plugins: [reactRefresh(), tsconfigPaths()],
+  plugins: [react(), tsconfigPaths()],
   optimizeDeps: {
     // Exclude workspace dependency astroplant-api from bundling
     exclude: ["astroplant-api"],
