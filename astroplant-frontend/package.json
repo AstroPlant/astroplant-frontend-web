@@ -55,10 +55,6 @@
     "semantic-ui-react": "~0.88.2",
     "window-resize-listener-react": "^1.1.0"
   },
-  "resolutions": {
-    "@types/react": "^16.0.0",
-    "react-error-overlay": "6.0.9"
-  },
   "scripts": {
     "check": "tsc --noemit",
     "start": "vite",
