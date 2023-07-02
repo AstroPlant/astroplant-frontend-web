@@ -24,8 +24,8 @@ export default function KitConfigure(props: Props) {
           <a href="https://astroplant.gitbook.io/join-mission/astroplant-software/software-setup">
             software setup guides
           </a>
-          . You can check your current kit version through the RPC system using
-          &quot;Query kit version&quot;—if your kit is up and running. You can
+          . If your kit is up and running you can check your current kit version
+          through the RPC system using &quot;Query kit version&quot;. You can
           also SSH into your kit and run:
         </p>
         <pre>
