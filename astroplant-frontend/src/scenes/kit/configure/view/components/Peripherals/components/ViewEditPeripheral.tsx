@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { compose } from "recompose";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
@@ -47,14 +47,12 @@ type PInner = Props &
 const PeripheralForm = ApiForm<any, any>();
 const DeletePeripheralButton = ApiButton<any>();
 
-class ViewEditPeripheral extends React.Component<PInner, State> {
-  state: State = {
-    editing: false,
-  };
+const ViewEditPeripheral = (props: PInner) => {
+  const [editing, setEditing] = useState(false);
 
-  sendUpdate = (formData: any) => {
-    const { peripheral } = this.props;
+  const { t, kit, configuration, peripheral } = props;
 
+  const sendUpdate = (formData: any) => {
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.patchPeripheral({
       peripheralId: peripheral.id,
@@ -62,113 +60,105 @@ class ViewEditPeripheral extends React.Component<PInner, State> {
     });
   };
 
-  responseUpdate = (response: Peripheral) => {
-    const { kit, configuration } = this.props;
-    this.props.peripheralUpdated({
+  const responseUpdate = (response: Peripheral) => {
+    props.peripheralUpdated({
       serial: kit.serial,
       configurationId: configuration.id,
       peripheral: response,
     });
-    this.setState({ editing: false });
+    setEditing(false);
   };
 
-  sendDelete = () => {
-    const { peripheral } = this.props;
-
+  const sendDelete = () => {
     const api = new KitsApi(AuthConfiguration.Instance);
     return api.deletePeripheral({
       peripheralId: peripheral.id,
     });
   };
 
-  responseDelete = () => {
-    const { kit, configuration, peripheral } = this.props;
-    this.props.peripheralDeleted({
+  const responseDelete = () => {
+    props.peripheralDeleted({
       serial: kit.serial,
       configurationId: configuration.id,
       peripheralId: peripheral.id,
     });
   };
 
-  render() {
-    const { t, peripheral } = this.props;
-    const def =
-      this.props.peripheralDefinitions[peripheral.peripheralDefinitionId];
+  const def = props.peripheralDefinitions[peripheral.peripheralDefinitionId];
 
-    const schema: JSONSchema7 = {
-      type: "object",
-      required: ["name", "configuration"],
-      properties: {
-        name: { type: "string", title: t("common.name") },
-        configuration: def.configurationSchema,
-      },
-    };
+  const schema: JSONSchema7 = {
+    type: "object",
+    required: ["name", "configuration"],
+    properties: {
+      name: { type: "string", title: t("common.name") },
+      configuration: def.configurationSchema,
+    },
+  };
 
-    return (
-      <Segment padded>
-        <Label attached="top">Peripheral #{peripheral.id}</Label>
-        <Header>{peripheral.name}</Header>
-        <p>Identifier: #{peripheral.id}</p>
-        <PeripheralDefinitionCard peripheralDefinition={def} fluid />
-        {this.state.editing ? (
-          <>
-            <PeripheralForm
-              schema={schema}
-              uiSchema={{}}
-              send={this.sendUpdate}
-              onResponse={this.responseUpdate}
-              transform={(formData) => ({
-                ...formData,
-                peripheralDefinitionId: def.id,
-              })}
-              formData={peripheral}
-            />
-          </>
-        ) : (
-          <>
-            <RjsfForm
-              schema={schema}
-              uiSchema={{}}
-              disabled={true}
-              formData={peripheral}
-              validator={validator}
+  return (
+    <Segment padded>
+      <Label attached="top">Peripheral #{peripheral.id}</Label>
+      <Header>{peripheral.name}</Header>
+      <p>Identifier: #{peripheral.id}</p>
+      <PeripheralDefinitionCard peripheralDefinition={def} fluid />
+      {editing ? (
+        <>
+          <PeripheralForm
+            schema={schema}
+            uiSchema={{}}
+            send={sendUpdate}
+            onResponse={responseUpdate}
+            transform={(formData) => ({
+              ...formData,
+              peripheralDefinitionId: def.id,
+            })}
+            formData={peripheral}
+          />
+        </>
+      ) : (
+        <>
+          <RjsfForm
+            schema={schema}
+            uiSchema={{}}
+            disabled={true}
+            formData={peripheral}
+            validator={validator}
+          >
+            <div />
+          </RjsfForm>
+          <div style={{ overflow: "hidden" }}>
+            <Button
+              primary
+              icon
+              labelPosition="left"
+              floated="left"
+              onClick={() => setEditing(true)}
             >
-              <div />
-            </RjsfForm>
-            <div style={{ overflow: "hidden" }}>
-              <Button
-                primary
-                icon
-                labelPosition="left"
-                floated="left"
-                onClick={() => this.setState({ editing: true })}
-              >
-                <Icon name="pencil" />
-                Edit
-              </Button>
-              <DeletePeripheralButton
-                send={this.sendDelete}
-                onResponse={this.responseDelete}
-                buttonProps={{
-                  negative: true,
-                  icon: true,
-                  labelPosition: "right",
-                  floated: "right",
-                }}
-                confirm={() => ({
-                  content: t("kitConfiguration.peripherals.deleteConfirm"),
-                })}
-              >
-                <Icon name="delete" />
-                Delete
-              </DeletePeripheralButton>
-            </div>
-          </>
-        )}
-      </Segment>
-    );
-  }
-}
+              <Icon name="pencil" />
+              Edit
+            </Button>
+            <DeletePeripheralButton
+              send={sendDelete}
+              onResponse={responseDelete}
+              buttonProps={{
+                negative: true,
+                icon: true,
+                labelPosition: "right",
+                floated: "right",
+              }}
+              confirm={() => ({
+                content: t("kitConfiguration.peripherals.deleteConfirm"),
+              })}
+            >
+              <Icon name="delete" />
+              Delete
+            </DeletePeripheralButton>
+          </div>
+        </>
+      )}
+    </Segment>
+  );
+};
 
 const mapStateToProps = (state: RootState) => {
   return {
