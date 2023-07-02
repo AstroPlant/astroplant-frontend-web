@@ -28,6 +28,10 @@ export type Props<T, R> = {
   onResponse: (response: R) => void;
   submitLabel?: string;
   formData?: any;
+  /** Show form fields (and the submit button) as disabled. */
+  disabled?: boolean;
+  /** Hide the submit button. */
+  readonly?: boolean;
 };
 
 type AllProps<T, R> = WithTranslation &
@@ -39,7 +43,7 @@ type AllProps<T, R> = WithTranslation &
   };
 
 function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
-  const { t, formData: initialFormData } = props;
+  const { t, formData: initialFormData, disabled, readonly } = props;
   const [formData, setFormData] = useState(initialFormData);
   const [submitting, setSubmitting] = useState(false);
   const [formEpoch, setFormEpoch] = useState(0);
@@ -88,19 +92,24 @@ function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
         onChange={({ formData }) => setFormData(formData)}
         onSubmit={({ formData }) => submit(formData)}
         formData={formData}
-        disabled={submitting}
+        disabled={disabled || readonly || submitting}
         // @ts-ignore
         extraErrors={additionalFormErrors}
         validator={validator}
       >
-        <Form.Button
-          type="submit"
-          primary
-          disabled={submitting}
-          loading={submitting}
-        >
-          {props.submitLabel || t("form.submit")}
-        </Form.Button>
+        {readonly === true ? (
+          // Empty RjsfForm children to hide the default submit button.
+          <></>
+        ) : (
+          <Form.Button
+            type="submit"
+            primary
+            disabled={disabled || submitting}
+            loading={submitting}
+          >
+            {props.submitLabel || t("form.submit")}
+          </Form.Button>
+        )}
       </RjsfForm>
     </>
   );
