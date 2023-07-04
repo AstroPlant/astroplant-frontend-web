@@ -7,7 +7,7 @@ import { Confirm, Button, ButtonProps } from "semantic-ui-react";
 
 import {
   Notification,
-  notificationConnectionIssue
+  notificationConnectionIssue,
 } from "~/modules/notification";
 import { addNotificationRequest } from "~/modules/notification/actions";
 
@@ -46,13 +46,13 @@ class ApiButton<R = any> extends Component<AllProps<R>, State> {
   state = {
     submitting: false,
     confirming: false,
-    confirmLabels: {} as ConfirmLabels
+    confirmLabels: {} as ConfirmLabels,
   };
 
   async submit() {
-    this.setState(state => {
+    this.setState((state) => {
       return {
-        submitting: true
+        submitting: true,
       };
     });
 
@@ -85,7 +85,7 @@ class ApiButton<R = any> extends Component<AllProps<R>, State> {
       if (conf !== null) {
         this.setState({
           confirming: true,
-          confirmLabels: { ...this.state.confirmLabels, ...conf }
+          confirmLabels: { ...this.state.confirmLabels, ...conf },
         });
         return;
       }
@@ -110,7 +110,10 @@ class ApiButton<R = any> extends Component<AllProps<R>, State> {
       <>
         <Button
           {...this.props.buttonProps}
-          onClick={() => this.click()}
+          onClick={(e) => {
+            e.preventDefault();
+            this.click();
+          }}
           disabled={this.state.submitting}
           loading={this.state.submitting}
         >
@@ -133,7 +136,7 @@ class ApiButton<R = any> extends Component<AllProps<R>, State> {
 const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
-      addNotificationRequest
+      addNotificationRequest,
     },
     dispatch
   );
