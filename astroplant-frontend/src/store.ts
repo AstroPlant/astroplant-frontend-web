@@ -1,6 +1,14 @@
-import { applyMiddleware, createStore } from "redux";
+import { configureStore } from "@reduxjs/toolkit";
 import { createEpicMiddleware } from "redux-observable";
-import { persistStore } from "redux-persist";
+import {
+  FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+  persistStore,
+} from "redux-persist";
 import { rootEpic, rootReducer } from "./root";
 
 const logger = (store: any) => (next: any) => (action: any) => {
@@ -18,10 +26,15 @@ const logger = (store: any) => (next: any) => (action: any) => {
 
 const epicMiddleware = createEpicMiddleware();
 
-export const store = createStore(
-  rootReducer,
-  applyMiddleware(logger, epicMiddleware)
-);
+export const store = configureStore({
+  reducer: rootReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }).concat([logger, epicMiddleware]),
+});
 export const persistor = persistStore(store);
 
 epicMiddleware.run(rootEpic);
