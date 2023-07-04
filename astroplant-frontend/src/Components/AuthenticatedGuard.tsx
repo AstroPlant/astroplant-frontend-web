@@ -1,25 +1,14 @@
 import React from "react";
-import { connect, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { compose } from "recompose";
-import { RootState, FullUser } from "types";
-import { WithValue, withOption } from "./OptionGuard";
+import { FullUser } from "types";
 import MustBeLoggedIn from "../pages/MustBeLoggedIn";
 import Loading from "./Loading";
 import { selectMe } from "~/modules/me/reducer";
+import { selectAuth } from "~/modules/auth/reducer";
 
 export interface WithAuthentication {
   me: FullUser;
-}
-
-const mapStateToProps = (state: RootState) => ({ option: state.me.details });
-
-function withAuthToValue<P extends object>(
-  Component: React.ComponentType<P & WithAuthentication>
-): React.ComponentType<P & WithValue<FullUser>> {
-  return (props) => {
-    const { value, ...rest } = props;
-    return <Component {...(rest as P)} me={value} />;
-  };
 }
 
 /**
@@ -58,40 +47,31 @@ export function withAuthentication<P extends object>(
   }
 }
 
-const mapStateToAwaitAuthenticationProps = (state: RootState) => ({
-  auth: state.auth,
-  me: state.me,
-});
-
-/**
- * HOC to wait until authentication has been ran (either successfully authenticating the
- * user, or failing authentication due to missing or invalid credentials or connectivity
- * issues). Waits until state.auth.authenticationRan is true. If the access token is set,
- * also waits until state.me.details.isSome().
+/** HOC to wait until authentication has been ran (either successfully
+ * authenticating the user, or failing authentication due to missing or invalid
+ * credentials or connectivity issues). Waits until
+ * state.auth.authenticationRan is true. If the access token is set, also waits
+ * until state.me.details is not null (or until the access token is removed as
+ * invalid from the store).
  */
 export function awaitAuthenticationRan<P extends object>(): (
   Component: React.ComponentType<P>
 ) => React.ComponentType<P> {
   return (Component) => {
-    // @ts-ignore
-    return connect(mapStateToAwaitAuthenticationProps)((props) => {
-      // @ts-ignore
-      const { auth, me, ...rest } = props;
-      if (
-        // @ts-ignore
-        auth.authenticationRan &&
-        // @ts-ignore
-        (!auth.accessToken || me.details !== null)
-      ) {
-        return <Component {...rest} />;
+    return (props: P) => {
+      const auth = useSelector(selectAuth) ?? null;
+      const me = useSelector(selectMe)?.details ?? null;
+
+      if (auth.authenticationRan && (!auth.accessToken || me !== null)) {
+        return <Component {...props} />;
       } else {
         return (
           <>
             <div style={{ height: "2em" }} />
-            <Loading />
+            <Loading />{" "}
           </>
         );
       }
-    }) as React.ComponentType<P>;
+    };
   };
 }

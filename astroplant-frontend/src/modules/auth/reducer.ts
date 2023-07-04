@@ -2,6 +2,7 @@ import { persistReducer } from "redux-persist";
 import localStorage from "redux-persist/lib/storage";
 import { createReducer } from "@reduxjs/toolkit";
 import * as actions from "./actions";
+import { RootState } from "~/types";
 
 export interface AuthState {
   authenticationRan: boolean;
@@ -49,5 +50,7 @@ const reducer = createReducer(initial, (builder) =>
       state.accessToken = null;
     })
 );
+
+export const selectAuth = (state: RootState) => state.auth;
 
 export default persistReducer(persistConfig, reducer);
