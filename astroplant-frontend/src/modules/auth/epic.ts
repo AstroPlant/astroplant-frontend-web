@@ -14,8 +14,8 @@ import * as sessionActions from "../session/actions";
 const clearRefreshTokenEpic: Epic = (action$, state$) =>
   action$.pipe(
     filter(sessionActions.sessionInitialize.match),
-    filter(() => !state$.value.auth.rememberMe),
-    map(actions.clearTokens)
+    filter((_ev) => !state$.value.auth.rememberMe),
+    map((_ev) => actions.clearTokens)
   );
 
 /**
@@ -33,14 +33,14 @@ const refreshAuthenticationEpic: Epic = (action$, state$) =>
             api
               .obtainAccessTokenFromRefreshToken({
                 authRefreshToken: {
-                  refreshToken: state$.value.auth.refreshToken
-                }
+                  refreshToken: state$.value.auth.refreshToken,
+                },
               })
               .pipe(
                 requestWrapper(),
-                map(resp => resp),
+                map((resp) => resp),
                 map(actions.setAccessToken),
-                catchError(err => of(actions.notAuthenticated()))
+                catchError((err) => of(actions.notAuthenticated()))
               )
           )
         );
