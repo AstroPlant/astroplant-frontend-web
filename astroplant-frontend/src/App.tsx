@@ -4,7 +4,6 @@ import { withTranslation, WithTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import "./App.css";
 import { RootState } from "./types";
-import Option from "./utils/option";
 
 import { NavLink, Redirect, Route, Switch } from "react-router-dom";
 
@@ -27,14 +26,12 @@ import SignUp from "./scenes/SignUp";
 import { persistor } from "./store";
 
 type Props = WithTranslation & {
-  displayName: Option<string>;
+  displayName: string | null;
 };
 
 class App extends Component<Props> {
   componentDidMount() {
-
     // delete L.Icon.Default.prototype._getIconUrl;
-
     // L.Icon.Default.mergeOptions({
     //   iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
     //   iconUrl: require("leaflet/dist/images/marker-icon.png"),
@@ -52,48 +49,48 @@ class App extends Component<Props> {
               as: NavLink,
               content: t("common.home"),
               to: "/home",
-              key: "home"
+              key: "home",
             },
             {
               as: NavLink,
               content: t("common.map"),
               to: "/map",
-              key: "map"
-            }
+              key: "map",
+            },
           ]}
           rightItems={
-            this.props.displayName.isSome()
+            this.props.displayName !== null
               ? [
-                {
-                  as: NavLink,
-                  content: this.props.displayName.unwrap(),
-                  to: "/me",
-                  key: "me"
-                },
-                {
-                  as: Button,
-                  content: t("common.logOut"),
-                  key: "logOut",
-                  onClick: () => {
-                    persistor.purge();
-                    window.location.href = "/"
-                  }
-                }
-              ]
+                  {
+                    as: NavLink,
+                    content: this.props.displayName,
+                    to: "/me",
+                    key: "me",
+                  },
+                  {
+                    as: Button,
+                    content: t("common.logOut"),
+                    key: "logOut",
+                    onClick: () => {
+                      persistor.purge();
+                      window.location.href = "/";
+                    },
+                  },
+                ]
               : [
-                {
-                  as: NavLink,
-                  content: t("common.logIn"),
-                  to: "/log-in",
-                  key: "logIn"
-                },
-                {
-                  as: NavLink,
-                  content: t("common.signUp"),
-                  to: "/sign-up",
-                  key: "signUp"
-                }
-              ]
+                  {
+                    as: NavLink,
+                    content: t("common.logIn"),
+                    to: "/log-in",
+                    key: "logIn",
+                  },
+                  {
+                    as: NavLink,
+                    content: t("common.signUp"),
+                    to: "/sign-up",
+                    key: "signUp",
+                  },
+                ]
           }
         >
           <Switch>
@@ -126,7 +123,7 @@ class App extends Component<Props> {
 
 const mapStateToProps = (state: RootState) => {
   const { details } = state.me;
-  return { displayName: details.map(d => d.displayName) };
+  return { displayName: details?.displayName ?? null };
 };
 
 export default connect(mapStateToProps)(withTranslation()(App));

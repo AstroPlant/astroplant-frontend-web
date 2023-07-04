@@ -3,6 +3,7 @@ import isEqual from "lodash/isEqual";
 import * as actions from "./actions";
 import Option from "../../utils/option";
 import { FullUser } from "astroplant-api";
+import { RootState } from "~/types";
 
 export interface KitMembership {
   accessConfigure: boolean;
@@ -10,13 +11,13 @@ export interface KitMembership {
 }
 
 export interface MeState {
-  details: Option<FullUser>;
+  details: FullUser | null;
   loadingKitMemberships: boolean;
   kitMemberships: { [serial: string]: KitMembership };
 }
 
 const initial: MeState = {
-  details: Option.none(),
+  details: null,
   loadingKitMemberships: false,
   kitMemberships: {},
 };
@@ -24,7 +25,7 @@ const initial: MeState = {
 export default createReducer<MeState>(initial, (build) =>
   build
     .addCase(actions.setDetails, (state, action) => {
-      state.details = Option.some(action.payload);
+      state.details = action.payload;
     })
     .addCase(actions.setKitMemberships, (state, action) => {
       // TODO delete membership no longer in payload
@@ -43,3 +44,5 @@ export default createReducer<MeState>(initial, (build) =>
       state.loadingKitMemberships = true;
     })
 );
+
+export const selectMe = (state: RootState) => state.me;

@@ -37,7 +37,7 @@ const fetchUserKitsEpic: Epic = (actions$, state$) =>
         of(actions.loadingKitMemberships()),
         api
           .showUserKitMemberships({
-            username: state$.value.me.details.unwrap().username,
+            username: state$.value.me.details.username,
           })
           .pipe(
             requestWrapper(),

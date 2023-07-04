@@ -1,10 +1,11 @@
 import React from "react";
-import { connect } from "react-redux";
+import { connect, useSelector } from "react-redux";
 import { compose } from "recompose";
 import { RootState, FullUser } from "types";
 import { WithValue, withOption } from "./OptionGuard";
 import MustBeLoggedIn from "../pages/MustBeLoggedIn";
 import Loading from "./Loading";
+import { selectMe } from "~/modules/me/reducer";
 
 export interface WithAuthentication {
   me: FullUser;
@@ -15,7 +16,7 @@ const mapStateToProps = (state: RootState) => ({ option: state.me.details });
 function withAuthToValue<P extends object>(
   Component: React.ComponentType<P & WithAuthentication>
 ): React.ComponentType<P & WithValue<FullUser>> {
-  return props => {
+  return (props) => {
     const { value, ...rest } = props;
     return <Component {...(rest as P)} me={value} />;
   };
@@ -32,30 +33,34 @@ export function withAuthentication<P extends object>(
 ): (
   Component: React.ComponentType<P & WithAuthentication>
 ) => React.ComponentType<P> {
-  console.info("Authentication guard instantiated");
-  // @ts-ignore
-  return Component => {
-    console.info("Authentication guard ran");
-    const AuthComponent = withAuthToValue(Component); //: React.ComponentType<P & WithValue<FullUser>> = withAuthToValue<P>(Component);
-    const OptionComponent = withOption<FullUser, P>(MustBeLoggedIn)(
-      AuthComponent
-    );
+  console.debug("Authentication guard instantiated");
 
-    if (showLoading) {
-      return compose<any, any>(
-        awaitAuthenticationRan(),
-        connect(mapStateToProps)
-      )(OptionComponent);
-    } else {
-      // @ts-ignore
-      return connect(mapStateToProps)(OptionComponent);
-    }
+  const AuthComponent = (
+    Component: React.ComponentType<P & WithAuthentication>
+  ) => {
+    return (props: P) => {
+      console.debug("Authentication guard ran");
+
+      const me = useSelector(selectMe)?.details ?? null;
+
+      if (me === null) {
+        return <MustBeLoggedIn />;
+      } else {
+        return <Component me={me} {...props} />;
+      }
+    };
   };
+
+  if (showLoading) {
+    return compose(awaitAuthenticationRan(), AuthComponent);
+  } else {
+    return AuthComponent;
+  }
 }
 
 const mapStateToAwaitAuthenticationProps = (state: RootState) => ({
   auth: state.auth,
-  me: state.me
+  me: state.me,
 });
 
 /**
@@ -67,16 +72,16 @@ const mapStateToAwaitAuthenticationProps = (state: RootState) => ({
 export function awaitAuthenticationRan<P extends object>(): (
   Component: React.ComponentType<P>
 ) => React.ComponentType<P> {
-  return Component => {
+  return (Component) => {
     // @ts-ignore
-    return connect(mapStateToAwaitAuthenticationProps)(props => {
+    return connect(mapStateToAwaitAuthenticationProps)((props) => {
       // @ts-ignore
       const { auth, me, ...rest } = props;
       if (
         // @ts-ignore
         auth.authenticationRan &&
         // @ts-ignore
-        (!auth.accessToken || me.details.isSome())
+        (!auth.accessToken || me.details !== null)
       ) {
         return <Component {...rest} />;
       } else {
