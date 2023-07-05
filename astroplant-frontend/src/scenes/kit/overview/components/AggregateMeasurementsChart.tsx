@@ -1,5 +1,5 @@
-import React from "react";
-import { withTranslation, WithTranslation } from "react-i18next";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardProps, Button } from "semantic-ui-react";
 import {
   ResponsiveContainer,
@@ -30,42 +30,39 @@ export type Aggregate = {
   };
 };
 
-export type Props = CardProps &
-  WithTranslation & {
-    kitState: KitState;
-    peripheral: Peripheral;
-    peripheralDefinition: PeripheralDefinition;
-    quantityType: QuantityType;
-    measurements: Option<Array<Aggregate>>;
-  };
-
-type State = {
-  measurements: Option<Array<Aggregate>>;
-  loading: boolean;
-  requestNext: Option<
-    Observable<Response<Array<schemas["AggregateMeasurement"]>>>
-  >;
+export type Props = CardProps & {
+  kitState: KitState;
+  peripheral: Peripheral;
+  peripheralDefinition: PeripheralDefinition;
+  quantityType: QuantityType;
 };
 
 const fillColor = "#35EF7F";
 const borderColor = "#2fce6f";
 
-class AggregateMeasurementsChart extends React.PureComponent<Props, State> {
-  state: State = {
-    measurements: Option.none(),
-    loading: false,
-    requestNext: Option.none(),
-  };
+export default function AggregateMeasurementsChart(props: Props) {
+  const { t } = useTranslation();
 
-  async load(
+  const { kitState, peripheral, peripheralDefinition, quantityType, ...rest } =
+    props;
+
+  const [measurements, setMeasurements] = useState<Option<Array<Aggregate>>>(
+    Option.none()
+  );
+  const [loading, setLoading] = useState(false);
+  const [requestNext, setRequestNext] = useState<
+    Option<Observable<Response<Array<schemas["AggregateMeasurement"]>>>>
+  >(Option.none());
+
+  const load = async (
     request: Observable<Response<Array<schemas["AggregateMeasurement"]>>>
-  ) {
-    this.setState({ loading: true });
+  ) => {
+    setLoading(true);
 
     try {
       const result = await request
         .pipe(
-          tap((response) => this.setState({ requestNext: response.next() })),
+          tap((response) => setRequestNext(response.next())),
           map((response) => response.content.reverse()),
           rateLimit
         )
@@ -79,41 +76,44 @@ class AggregateMeasurementsChart extends React.PureComponent<Props, State> {
         values: measurement.values,
       }));
 
-      this.setState({
-        measurements: Option.some(
-          this.state.measurements
+      setMeasurements(
+        Option.some(
+          measurements
             .map((measurements) => [...newMeasurements, ...measurements])
             .unwrapOrElse(() => newMeasurements)
-        ),
-      });
+        )
+      );
     } finally {
-      this.setState({ loading: false });
+      setLoading(false);
     }
-  }
+  };
 
-  async loadNext() {
-    if (this.state.requestNext.isSome()) {
-      await this.load(this.state.requestNext.unwrap());
+  const loadNext = async () => {
+    if (requestNext.isSome()) {
+      await load(requestNext.unwrap());
     }
-  }
+  };
 
-  async componentDidMount() {
-    const { kitState, peripheral, quantityType } = this.props;
-    const api = new KitsApi(configuration);
-    const request = await api.listAggregateMeasurements({
-      kitSerial: kitState.details!.serial,
-      peripheral: peripheral.id,
-      quantityType: quantityType.id,
-    });
-    await this.load(request);
-  }
+  useEffect(() => {
+    const fn = async () => {
+      const { kitState, peripheral, quantityType } = props;
+      const api = new KitsApi(configuration);
+      const request = api.listAggregateMeasurements({
+        kitSerial: kitState.details!.serial,
+        peripheral: peripheral.id,
+        quantityType: quantityType.id,
+      });
+      await load(request);
+    };
+    fn();
+  }, []);
 
   /**
    * Uses some heuristics to calculate the starting index of the chart brush;
    * this ensures charts are zoomed in if there are big gaps in measurement
    * datetimes.
    */
-  calculateWindowStartIndex(measurements: Array<Aggregate>) {
+  const calculateWindowStartIndex = (measurements: Array<Aggregate>) => {
     if (measurements.length < 2) {
       return 0;
     }
@@ -140,132 +140,118 @@ class AggregateMeasurementsChart extends React.PureComponent<Props, State> {
     }
 
     return startIdx;
-  }
+  };
 
-  render() {
-    const {
-      kitState,
-      peripheral,
-      peripheralDefinition,
-      quantityType,
-      t,
-      tReady,
-      ...rest
-    } = this.props;
-    const { measurements } = this.state;
-    return (
-      <Card color="black" fluid {...rest}>
-        <Card.Content>
-          <Card.Header>{quantityType.physicalQuantity}</Card.Header>
-          <Card.Description textAlign="center">
-            <ResponsiveContainer height={300} width="100%">
-              <ComposedChart data={measurements.unwrapOr([])}>
-                <Tooltip
-                  formatter={(value: any, name: any) =>
-                    parseFloat(value.toPrecision(4))
-                  }
-                  labelFormatter={(time: any) =>
+  return (
+    <Card color="black" fluid {...rest}>
+      <Card.Content>
+        <Card.Header>{quantityType.physicalQuantity}</Card.Header>
+        <Card.Description textAlign="center">
+          <ResponsiveContainer height={300} width="100%">
+            <ComposedChart data={measurements.unwrapOr([])}>
+              <Tooltip
+                formatter={(value: any, name: any) =>
+                  parseFloat(value.toPrecision(4))
+                }
+                labelFormatter={(time: any) =>
+                  DateTime.fromMillis(time).toLocaleString(
+                    DateTime.DATETIME_SHORT
+                  )
+                }
+              />
+              <XAxis
+                dataKey="datetimeStartNumber"
+                tickFormatter={(tick) =>
+                  DateTime.fromMillis(tick).toLocaleString(
+                    DateTime.DATETIME_SHORT
+                  )
+                }
+                minTickGap={40}
+                scale="linear"
+              />
+              <YAxis
+                yAxisId="left"
+                orientation="left"
+                label={
+                  quantityType.physicalUnitSymbol || quantityType.physicalUnit
+                }
+                domain={["dataMin", "dataMax"]}
+                tickFormatter={(tick) => tick.toPrecision(4)}
+                padding={{ top: 50, bottom: 0 }}
+              />
+              <Area
+                fill={fillColor}
+                stroke={borderColor}
+                yAxisId="left"
+                dataKey="values.minimum"
+                name={t("kit.aggregateMeasurements.minimum") as string}
+              />
+              <Area
+                fill={fillColor}
+                stroke={borderColor}
+                yAxisId="left"
+                dataKey="values.average"
+                name={t("kit.aggregateMeasurements.average") as string}
+              />
+              <Area
+                fill={fillColor}
+                stroke={borderColor}
+                yAxisId="left"
+                dataKey="values.maximum"
+                name={t("kit.aggregateMeasurements.maximum") as string}
+              />
+              {
+                // see https://github.com/recharts/recharts/issues/1187 and https://github.com/recharts/recharts/issues/2093
+              }
+              {measurements.unwrapOr([]).length > 0 && (
+                <Brush
+                  dataKey="datetimeStartNumber"
+                  height={40}
+                  tickFormatter={(time: any) =>
                     DateTime.fromMillis(time).toLocaleString(
                       DateTime.DATETIME_SHORT
                     )
                   }
+                  startIndex={calculateWindowStartIndex(
+                    measurements.unwrapOr([])
+                  )}
                 />
-                <XAxis
-                  dataKey="datetimeStartNumber"
-                  tickFormatter={(tick) =>
-                    DateTime.fromMillis(tick).toLocaleString(
-                      DateTime.DATETIME_SHORT
-                    )
-                  }
-                  minTickGap={40}
-                  scale="linear"
-                />
-                <YAxis
-                  yAxisId="left"
-                  orientation="left"
-                  label={
-                    quantityType.physicalUnitSymbol || quantityType.physicalUnit
-                  }
-                  domain={["dataMin", "dataMax"]}
-                  tickFormatter={(tick) => tick.toPrecision(4)}
-                  padding={{ top: 50, bottom: 0 }}
-                />
-                <Area
-                  fill={fillColor}
-                  stroke={borderColor}
-                  yAxisId="left"
-                  dataKey="values.minimum"
-                  name={t("kit.aggregateMeasurements.minimum") as string}
-                />
-                <Area
-                  fill={fillColor}
-                  stroke={borderColor}
-                  yAxisId="left"
-                  dataKey="values.average"
-                  name={t("kit.aggregateMeasurements.average") as string}
-                />
-                <Area
-                  fill={fillColor}
-                  stroke={borderColor}
-                  yAxisId="left"
-                  dataKey="values.maximum"
-                  name={t("kit.aggregateMeasurements.maximum") as string}
-                />
-                {
-                  // see https://github.com/recharts/recharts/issues/1187 and https://github.com/recharts/recharts/issues/2093
-                }
-                {this.state.measurements.unwrapOr([]).length > 0 && (
-                  <Brush
-                    dataKey="datetimeStartNumber"
-                    height={40}
-                    tickFormatter={(time: any) =>
-                      DateTime.fromMillis(time).toLocaleString(DateTime.DATETIME_SHORT)
-                    }
-                    startIndex={this.calculateWindowStartIndex(
-                      measurements.unwrapOr([])
-                    )}
-                  />
-                )}
-              </ComposedChart>
-            </ResponsiveContainer>
-            {measurements.isNone() ? (
-              <div
-                style={{
-                  position: "absolute",
-                  marginTop: "-300px",
-                  height: "300px",
-                  width: "100%",
-                  textTransform: "uppercase",
-                  fontWeight: "bolder",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  opacity: 0.6,
-                }}
-              >
-                <h2 style={{ textAlign: "center" }}>
-                  {t("kit.aggregateMeasurements.noMeasurements")}
-                </h2>
-              </div>
-            ) : (
-              <Button
-                disabled={
-                  !this.state.requestNext.isSome() || this.state.loading
-                }
-                loading={this.state.loading}
-                onClick={() => this.loadNext()}
-              >
-                Load more
-              </Button>
-            )}
-          </Card.Description>
-          <Card.Meta>
-            {t("kit.aggregateMeasurements.measuredBy", { peripheral })}
-          </Card.Meta>
-        </Card.Content>
-      </Card>
-    );
-  }
+              )}
+            </ComposedChart>
+          </ResponsiveContainer>
+          {measurements.isNone() ? (
+            <div
+              style={{
+                position: "absolute",
+                marginTop: "-300px",
+                height: "300px",
+                width: "100%",
+                textTransform: "uppercase",
+                fontWeight: "bolder",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                opacity: 0.6,
+              }}
+            >
+              <h2 style={{ textAlign: "center" }}>
+                {t("kit.aggregateMeasurements.noMeasurements")}
+              </h2>
+            </div>
+          ) : (
+            <Button
+              disabled={!requestNext.isSome() || loading}
+              loading={loading}
+              onClick={() => loadNext()}
+            >
+              Load more
+            </Button>
+          )}
+        </Card.Description>
+        <Card.Meta>
+          {t("kit.aggregateMeasurements.measuredBy", { peripheral })}
+        </Card.Meta>
+      </Card.Content>
+    </Card>
+  );
 }
-
-export default withTranslation()(AggregateMeasurementsChart);
