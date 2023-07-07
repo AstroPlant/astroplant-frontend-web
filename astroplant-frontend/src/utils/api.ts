@@ -1,8 +1,8 @@
 import { Configuration, Middleware, RequestArgs } from "astroplant-api";
-import { Configuration as MyConfiguration } from "~/api";
 import { Observable, pipe, timer, throwError, EMPTY } from "rxjs";
 import { retryWhen, mergeMap } from "rxjs/operators";
 import RateLimiter from "rxjs-ratelimiter";
+
 import { store } from "~/store";
 import { recurse } from "./observables";
 
@@ -42,15 +42,6 @@ export class AuthConfiguration extends Configuration {
     return AuthConfiguration.config || (AuthConfiguration.config = new this());
   }
 }
-
-/**
- * Configuration for our manual API implementation.
- */
-export const configuration = new MyConfiguration({
-  accessToken: () => {
-    return store.getState().auth.accessToken;
-  },
-});
 
 /**
  * Rate-limit observables, by calling rateLimiter.limit() with an observable.

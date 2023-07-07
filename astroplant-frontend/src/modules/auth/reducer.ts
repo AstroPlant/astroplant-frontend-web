@@ -51,6 +51,6 @@ const reducer = createReducer(initial, (builder) =>
     })
 );
 
-export const selectAuth = (state: RootState) => state.auth;
+export const selectAuth = (state: RootState): AuthState => state.auth;
 
 export default persistReducer(persistConfig, reducer);

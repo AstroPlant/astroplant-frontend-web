@@ -6,8 +6,8 @@ import { DateTime } from "luxon";
 import RelativeTime from "~/Components/RelativeTime";
 import { KitState, KitConfigurationState } from "~/modules/kit/reducer";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
-import { KitsApi, schemas } from "~/api";
-import { configuration, rateLimit } from "~/utils/api";
+import { api, schemas } from "~/api";
+import { rateLimit } from "~/utils/api";
 import { tap } from "rxjs/operators";
 
 export type Props = {
@@ -43,12 +43,11 @@ export default function Media(props: Props) {
     if (activeConfiguration) {
       (async () => {
         const kitSerial = kitState.details!.serial;
-        const kitsApi = new KitsApi(configuration);
-        const response = await kitsApi
+        const response = await api
           .listMedia({ kitSerial, configuration: activeConfiguration.id })
           .pipe(rateLimit)
           .toPromise();
-        setMedia(response.content);
+        setMedia(response.data);
       })();
     }
 
@@ -59,13 +58,12 @@ export default function Media(props: Props) {
     if (displayMedia) {
       (async () => {
         try {
-          const kitsApi = new KitsApi(configuration);
-          const response = await kitsApi
+          const response = await api
             .getMediaContent({ mediaId: displayMedia.id })
             .pipe(rateLimit)
             .toPromise();
 
-          const url = URL.createObjectURL(response.content);
+          const url = URL.createObjectURL(response.data);
           setDisplayUrl(url);
         } catch (error) {
           alert(error);
@@ -76,6 +74,7 @@ export default function Media(props: Props) {
   }, [displayMedia]);
 
   useEffect(() => {
+    // Clean up old media display URLs.
     return () => {
       if (displayUrl !== null) {
         setDisplayMedia(null);

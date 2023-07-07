@@ -14,11 +14,12 @@
 import parseLinkHeader from "parse-link-header";
 import { Observable } from "rxjs";
 import { ajax, AjaxResponse } from "rxjs/ajax";
-import { map } from "rxjs/operators";
+import { map, reduce } from "rxjs/operators";
 import { DateTime } from "luxon";
 
-import Option from "../utils/option";
 import { components } from "./schema";
+import { store } from "~/store";
+import { selectAuth } from "~/modules/auth/reducer";
 export type schemas = components["schemas"];
 
 export const BASE_PATH =
@@ -47,39 +48,98 @@ export class Configuration {
   }
 }
 
-export class Response<T> {
-  private status: number;
-  private uriNext: string | null = null;
-  public content: T;
-  public mediaType: string | null;
+/** Original query request meta information. This is part of the HTTP request
+ * sent to the API.
+ */
+export type RequestMeta = {
+  url?: string;
+  body?: any;
+  method?: string;
+  headers?: Object;
+};
 
-  constructor(private api: BaseApi, public ajaxResponse: AjaxResponse) {
-    this.status = ajaxResponse.status;
-    this.content = ajaxResponse.response;
+/** Query response meta information, derived from the HTTP response by the API. */
+export type ResponseMeta<T> = {
+  /** The HTTP status code. [200,299] indicates success. */
+  status: number;
+  /** The response content media type, e.g., `application/json`. */
+  mediaType: string | null;
 
-    this.mediaType = ajaxResponse.xhr.getResponseHeader("content-type");
+  /** Whether the resource requested has a next page. (Such as the continuation
+   * of a collection of items.) */
+  hasNext: boolean;
+  /** The URI of the next page if any. */
+  uriNext: string | null;
+  /** An observable to the result of the next page if any. */
+  next: Observable<Response<T>> | null;
+};
 
-    const link = ajaxResponse.xhr.getResponseHeader("link");
-    if (link !== null) {
-      const parsed = parseLinkHeader(link);
-      this.uriNext = parsed?.next?.url ?? null;
-    }
+/** Query meta information. */
+export type Meta<T> = {
+  request: RequestMeta;
+  response: ResponseMeta<T>;
+};
+
+/** The response type of a succesful query. */
+export type Response<T> = {
+  /** The data returned by the query (probably a string, object, Blob, ...) */
+  data: T;
+
+  /** Query meta information. */
+  meta: Meta<T>;
+};
+
+export type ResponseError = {
+  error: null; // todo: fill with HTTP Problem Details
+  meta: Meta<never>;
+};
+
+function processResponse<T = unknown>(
+  api: BaseApi,
+  ajaxResponse: AjaxResponse
+): Response<T> {
+  const data = ajaxResponse.response;
+
+  const status = ajaxResponse.status;
+  const mediaType = ajaxResponse.xhr.getResponseHeader("content-type");
+
+  const request = {
+    url: ajaxResponse.request.url,
+    body: ajaxResponse.request.body,
+    method: ajaxResponse.request.method,
+    headers: ajaxResponse.request.headers,
+  };
+
+  const link = ajaxResponse.xhr.getResponseHeader("link");
+  let uriNext = null;
+  if (link !== null) {
+    const parsed = parseLinkHeader(link);
+    uriNext = parsed?.next?.url ?? null;
   }
 
-  get statusCode(): number {
-    return this.status;
-  }
+  const response = {
+    status,
+    mediaType,
+    hasNext: uriNext !== null,
+    uriNext,
 
-  hasNext(): boolean {
-    return this.uriNext !== null;
-  }
+    // is it correct that we always GET?
+    next: uriNext !== null ? api.getPath<T>(uriNext) : null,
+  };
 
-  next(): Option<Observable<Response<T>>> {
-    if (this.uriNext === null) {
-      return Option.none();
-    } else {
-      return Option.some(this.api.getPath(this.uriNext));
-    }
+  const meta = { request, response };
+
+  if (status >= 200 && status < 300) {
+    return {
+      data,
+      meta,
+    };
+  } else {
+    meta.response.next = null;
+    throw {
+      error: null,
+      meta,
+    } as ResponseError;
   }
 }
 
@@ -121,7 +181,7 @@ export class BaseApi {
     return ajax(this.createRequestArguments(options)).pipe(
       map((res) => {
         if (res.status >= 200 && res.status < 300) {
-          return new Response(this, res);
+          return processResponse(this, res);
         }
         throw res;
       })
@@ -133,7 +193,24 @@ export class BaseApi {
   };
 }
 
-export class KitsApi extends BaseApi {
+export class Api extends BaseApi {
+  listKits = (
+    headers: HttpHeaders
+  ): Observable<Response<Array<schemas["Kit"]>>> => {
+    return this.request<Array<schemas["Kit"]>>({
+      path: "/kits",
+      method: "GET",
+      headers,
+    }).pipe(
+      reduce((acc, val) => {
+        if (acc !== undefined) {
+          val.data = acc.data!.concat(val.data!);
+        }
+        return val;
+      })
+    );
+  };
+
   listAggregateMeasurements = ({
     kitSerial,
     ...query
@@ -241,9 +318,7 @@ export class KitsApi extends BaseApi {
 
     return url;
   };
-}
 
-export class KitRpcApi extends BaseApi {
   peripheralCommand = ({
     kitSerial,
     peripheral,
@@ -261,6 +336,17 @@ export class KitRpcApi extends BaseApi {
     });
   };
 }
+
+/** API configuration automatically fetching the access token from the store. */
+const configuration = new Configuration({
+  accessToken: () => {
+    return selectAuth(store.getState()).accessToken;
+  },
+});
+
+/** A global API instantiation. It automatically injects the authorization
+ * access token fetched from the root store. */
+export const api = new Api(configuration);
 
 export type HttpMethod =
   | "GET"

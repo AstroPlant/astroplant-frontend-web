@@ -2,12 +2,11 @@ import React, { useContext, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { compose } from "recompose";
-import { DateTime, Interval } from "luxon";
+import { DateTime } from "luxon";
 import { Button, Container, Segment, Header } from "semantic-ui-react";
 import { Form } from "semantic-ui-react";
 
-import { configuration } from "~/utils/api";
-import { KitsApi } from "~/api";
+import { api, Api } from "~/api";
 
 import { KitContext, ConfigurationsContext } from "../contexts";
 
@@ -15,8 +14,6 @@ export type Props = {};
 export type InnerProps = WithTranslation & RouteComponentProps<{}>;
 
 function KitDownload(_props: InnerProps) {
-  const api = new KitsApi(configuration);
-
   const kit = useContext(KitContext);
   const configurations = useContext(ConfigurationsContext);
 
@@ -95,7 +92,7 @@ function KitDownload(_props: InnerProps) {
                     primary
                     onClick={() => {
                       const query = { configurationId };
-                      initiateDownload(api, kit.serial, query);
+                      initiateDownload(kit.serial, query);
                     }}
                   >
                     Download
@@ -151,7 +148,7 @@ function KitDownload(_props: InnerProps) {
                 primary
                 onClick={() => {
                   const query = { from: startM, to: endM };
-                  initiateDownload(api, kit.serial, query);
+                  initiateDownload(kit.serial, query);
                 }}
               >
                 Download
@@ -172,7 +169,6 @@ function KitDownload(_props: InnerProps) {
  * succesful, sends the client to the data download link.
  */
 async function initiateDownload(
-  api: KitsApi,
   kitSerial: string,
   query: {
     configurationId?: number;
@@ -182,7 +178,11 @@ async function initiateDownload(
 ) {
   try {
     const token = (await api.getArchiveDownloadToken({ kitSerial }).toPromise())
-      .content;
+      .data;
+
+    if (!token) {
+      throw "failed to fetch token";
+    }
 
     const url = api.constructArchiveDownloadLink({
       token,

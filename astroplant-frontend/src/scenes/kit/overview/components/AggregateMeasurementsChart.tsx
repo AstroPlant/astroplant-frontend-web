@@ -17,8 +17,8 @@ import { Peripheral, PeripheralDefinition, QuantityType } from "astroplant-api";
 import Option from "~/utils/option";
 import { KitState } from "~/modules/kit/reducer";
 
-import { KitsApi, Response, schemas } from "~/api";
-import { rateLimit, configuration } from "~/utils/api";
+import { api, Response, schemas } from "~/api";
+import { rateLimit } from "~/utils/api";
 
 export type Aggregate = {
   datetimeStart: Date;
@@ -50,9 +50,9 @@ export default function AggregateMeasurementsChart(props: Props) {
     Option.none()
   );
   const [loading, setLoading] = useState(false);
-  const [requestNext, setRequestNext] = useState<
-    Option<Observable<Response<Array<schemas["AggregateMeasurement"]>>>>
-  >(Option.none());
+  const [requestNext, setRequestNext] = useState<Observable<
+    Response<Array<schemas["AggregateMeasurement"]>>
+  > | null>(null);
 
   const load = async (
     request: Observable<Response<Array<schemas["AggregateMeasurement"]>>>
@@ -62,8 +62,8 @@ export default function AggregateMeasurementsChart(props: Props) {
     try {
       const result = await request
         .pipe(
-          tap((response) => setRequestNext(response.next())),
-          map((response) => response.content.reverse()),
+          tap((response) => setRequestNext(response.meta.response.next)),
+          map((response) => response.data.reverse()),
           rateLimit
         )
         .toPromise();
@@ -89,15 +89,14 @@ export default function AggregateMeasurementsChart(props: Props) {
   };
 
   const loadNext = async () => {
-    if (requestNext.isSome()) {
-      await load(requestNext.unwrap());
+    if (requestNext !== null) {
+      await load(requestNext);
     }
   };
 
   useEffect(() => {
     const fn = async () => {
       const { kitState, peripheral, quantityType } = props;
-      const api = new KitsApi(configuration);
       const request = api.listAggregateMeasurements({
         kitSerial: kitState.details!.serial,
         peripheral: peripheral.id,
@@ -240,7 +239,7 @@ export default function AggregateMeasurementsChart(props: Props) {
             </div>
           ) : (
             <Button
-              disabled={!requestNext.isSome() || loading}
+              disabled={requestNext === null || loading}
               loading={loading}
               onClick={() => loadNext()}
             >

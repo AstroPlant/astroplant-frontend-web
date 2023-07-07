@@ -5,8 +5,8 @@ import validator from "@rjsf/validator-ajv8";
 
 import { KitConfigurationState } from "~/modules/kit/reducer";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
-import { KitRpcApi } from "~/api";
-import { configuration, rateLimit } from "~/utils/api";
+import { api } from "~/api";
+import { rateLimit } from "~/utils/api";
 import PeripheralDefinitionCard from "~/Components/PeripheralDefinitionCard";
 import RjsfForm from "~/rjsf-theme-semantic-ui";
 
@@ -50,7 +50,6 @@ export default function PeripheralCommand(props: Props) {
     setDisplayUrl(null);
     setPlaintext(null);
     const peripheral = activeConfiguration!.peripherals[peripheralId!]!;
-    const api = new KitRpcApi(configuration);
     const response = await api
       .peripheralCommand({
         kitSerial: kit.serial,
@@ -61,14 +60,14 @@ export default function PeripheralCommand(props: Props) {
       .toPromise();
 
     if (
-      response.content.type === "image/png" ||
-      response.content.type === "image/jpeg" ||
-      response.content.type === "image/gif"
+      response.data.type === "image/png" ||
+      response.data.type === "image/jpeg" ||
+      response.data.type === "image/gif"
     ) {
-      const url = URL.createObjectURL(response.content);
+      const url = URL.createObjectURL(response.data);
       setDisplayUrl(url);
-    } else if (response.content.type === "text/plain") {
-      setPlaintext(await response.content.text());
+    } else if (response.data.type === "text/plain") {
+      setPlaintext(await response.data.text());
     }
   };
 
