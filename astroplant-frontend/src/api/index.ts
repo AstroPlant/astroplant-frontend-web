@@ -300,5 +300,3 @@ const queryString = (params: HttpQuery): string =>
         : `${encodeUri(key)}=${encodeUri(value)}`;
     })
     .join("&");
-
-export default 0;
