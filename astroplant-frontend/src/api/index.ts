@@ -169,8 +169,8 @@ export class KitsApi extends BaseApi {
     mediaId,
   }: {
     mediaId: string;
-  }): Observable<Response<any>> => {
-    return this.request<any>({
+  }): Observable<Response<Blob>> => {
+    return this.request<Blob>({
       path: `/media/${encodeUri(mediaId)}/content`,
       method: "GET",
       responseType: "blob",
@@ -252,8 +252,8 @@ export class KitRpcApi extends BaseApi {
     kitSerial: string;
     peripheral: string;
     command: string;
-  }): Observable<Response<any>> => {
-    return this.request<any>({
+  }): Observable<Response<Blob>> => {
+    return this.request<Blob>({
       path: `/kit-rpc/${encodeUri(kitSerial)}/peripheral-command`,
       method: "POST",
       body: { peripheral, command },
