@@ -1,5 +1,5 @@
 import { FullUser } from "./api";
-import { rootReducer } from "./root";
+import { RootState } from "./store";
 
-export type RootState = ReturnType<typeof rootReducer>;
+export type RootState = RootState;
 export type FullUser = FullUser;

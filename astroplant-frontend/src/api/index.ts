@@ -25,8 +25,10 @@ export const BASE_PATH =
   import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export interface ConfigurationParameters {
-  basePath?: string; // override base path
-  accessToken?: string | (() => string | null); // parameter for oauth2 security
+  /** Override base path */
+  basePath?: string;
+  /** The access token to be given in the Authorization header. */
+  accessToken?: string | (() => string | null);
 }
 
 export class Configuration {
