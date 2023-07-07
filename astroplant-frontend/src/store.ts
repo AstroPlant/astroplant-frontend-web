@@ -10,6 +10,7 @@ import {
   persistStore,
 } from "redux-persist";
 import { rootEpic, rootReducer } from "./root";
+import { rtkApi } from "./services/astroplant";
 
 const logger = (store: any) => (next: any) => (action: any) => {
   if (import.meta.env.NODE_ENV !== "production") {
@@ -33,7 +34,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat([logger, epicMiddleware]),
+    }).concat([rtkApi.middleware, logger, epicMiddleware]),
 });
 export const persistor = persistStore(store);
 

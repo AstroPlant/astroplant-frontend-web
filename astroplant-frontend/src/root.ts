@@ -18,6 +18,7 @@ import notificationEpic from "./modules/notification/epic";
 import sessionReducer from "./modules/session/reducer";
 import sessionEpic from "./modules/session/epic";
 import webSocketEpic from "./modules/websocket/epic";
+import { rtkApi } from "./services/astroplant";
 
 export const rootReducer = combineReducers({
   generic: genericReducer,
@@ -27,7 +28,8 @@ export const rootReducer = combineReducers({
   peripheralDefinition: peripheralDefinitionReducer,
   quantityType: quantityTypeReducer,
   notification: notificationReducer,
-  session: sessionReducer
+  session: sessionReducer,
+  [rtkApi.reducerPath]: rtkApi.reducer,
 });
 
 // Slightly complicated root epic to ensure we throw all errors.
@@ -46,6 +48,6 @@ export const rootEpic = (...args: any[]) =>
       error: (e: any) =>
         setTimeout(() => {
           throw e;
-        })
+        }),
     })
   );
