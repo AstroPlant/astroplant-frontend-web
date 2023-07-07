@@ -1,58 +1,47 @@
 import React, { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { Container, Image, Table, Button, Modal } from "semantic-ui-react";
 import { DateTime } from "luxon";
 
 import RelativeTime from "~/Components/RelativeTime";
+import Loading from "~/Components/Loading";
 import { KitState, KitConfigurationState } from "~/modules/kit/reducer";
-import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { api, schemas } from "~/api";
 import { rateLimit } from "~/utils/api";
-import { tap } from "rxjs/operators";
+import { rtkApi } from "~/services/astroplant";
+import { skipToken } from "@reduxjs/toolkit/dist/query";
 
 export type Props = {
   kitState: KitState;
 };
 
 export default function Media(props: Props) {
-  const peripheralDefinitions = useSelector(
-    peripheralDefinitionsSelectors.selectEntities
+  const { kitState } = props;
+
+  let activeConfiguration: KitConfigurationState | undefined;
+  for (const configuration of Object.values(kitState.configurations!)) {
+    if (configuration.active) {
+      activeConfiguration = configuration;
+      break;
+    }
+  }
+
+  const {
+    data: mediaList,
+    error: mediaListError,
+    isLoading: mediaListIsLoading,
+  } = rtkApi.useListMediaQuery(
+    activeConfiguration
+      ? {
+          kitSerial: kitState.details!.serial,
+          configuration: activeConfiguration.id,
+        }
+      : skipToken
   );
 
-  const [media, setMedia] = useState<Array<schemas["Media"]>>([]);
   const [displayMedia, setDisplayMedia] = useState<schemas["Media"] | null>(
     null
   );
   const [displayUrl, setDisplayUrl] = useState<string | null>(null);
-  const [activeConfiguration, setActiveConfiguration] =
-    useState<KitConfigurationState | null>(null);
-  const [downloadLoading, setDownloadLoading] = useState<boolean>(false);
-
-  const { kitState } = props;
-
-  useEffect(() => {
-    for (const configuration of Object.values(kitState.configurations!)) {
-      if (configuration.active) {
-        setActiveConfiguration(configuration);
-        break;
-      }
-    }
-  }, [kitState.configurations]);
-
-  useEffect(() => {
-    if (activeConfiguration) {
-      (async () => {
-        const kitSerial = kitState.details!.serial;
-        const response = await api
-          .listMedia({ kitSerial, configuration: activeConfiguration.id })
-          .pipe(rateLimit)
-          .toPromise();
-        setMedia(response.data);
-      })();
-    }
-
-    return () => setMedia([]);
-  }, [kitState.details, activeConfiguration]);
 
   useEffect(() => {
     if (displayMedia) {
@@ -83,14 +72,15 @@ export default function Media(props: Props) {
     };
   }, [displayUrl]);
 
-  const downloadMedia = (media: schemas["Media"]) => {
-    setDownloadLoading(true);
-    const kitsApi = new KitsApi(configuration);
-    kitsApi.downloadMediaContent({ mediaId: media.id });
-    setDownloadLoading(false);
-  };
+  if (mediaListIsLoading) {
+    return <Loading />;
+  }
 
-  if (media.length > 0) {
+  if (mediaListError) {
+    return <Container>Failed to fetch media content.</Container>;
+  }
+
+  if (mediaList !== undefined && mediaList.length > 0) {
     return (
       <>
         {displayMedia !== null && displayUrl !== null && (
@@ -111,7 +101,9 @@ export default function Media(props: Props) {
                 <Table.Body>
                   <Table.Row>
                     <Table.Cell>
-                      <RelativeTime to={DateTime.fromISO(displayMedia.datetime)} />
+                      <RelativeTime
+                        to={DateTime.fromISO(displayMedia.datetime)}
+                      />
                     </Table.Cell>
                     <Table.Cell>
                       {
@@ -141,7 +133,7 @@ export default function Media(props: Props) {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {media.map((media) => {
+            {mediaList.map((media) => {
               const peripheral =
                 activeConfiguration!.peripherals[media.peripheralId]!;
               const displayable =
@@ -156,7 +148,7 @@ export default function Media(props: Props) {
               return (
                 <Table.Row key={media.id}>
                   <Table.Cell>
-                      <RelativeTime to={DateTime.fromISO(media.datetime)} />
+                    <RelativeTime to={DateTime.fromISO(media.datetime)} />
                   </Table.Cell>
                   <Table.Cell>{peripheral.name}</Table.Cell>
                   <Table.Cell>{media.name}</Table.Cell>
