@@ -60,7 +60,7 @@ export class Response<T> {
     const link = ajaxResponse.xhr.getResponseHeader("link");
     if (link !== null) {
       const parsed = parseLinkHeader(link);
-      this.uriNext = ((parsed || {}).next || {}).url || null;
+      this.uriNext = parsed?.next?.url ?? null;
     }
   }
 
