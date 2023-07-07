@@ -117,7 +117,7 @@ export class BaseApi {
     };
   };
 
-  protected request = <T>(options: RequestOptions): Observable<Response<T>> => {
+  request = <T = unknown>(options: RequestOptions): Observable<Response<T>> => {
     return ajax(this.createRequestArguments(options)).pipe(
       map((res) => {
         if (res.status >= 200 && res.status < 300) {
@@ -128,7 +128,7 @@ export class BaseApi {
     );
   };
 
-  getPath = <T>(url: string): Observable<Response<T>> => {
+  getPath = <T = unknown>(url: string): Observable<Response<T>> => {
     return this.request({ path: url, method: "GET" });
   };
 }
