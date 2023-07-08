@@ -109,6 +109,7 @@ function KitDownload(_props: InnerProps) {
               documentation{" "}
               <a
                 target="_blank"
+                rel="noreferrer"
                 href="https://docs.astroplant.io/astroplant-kit-setup/registering-and-configuring-a-kit"
               >
                 here

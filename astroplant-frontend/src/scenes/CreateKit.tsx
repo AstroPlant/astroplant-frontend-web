@@ -147,9 +147,18 @@ class CreateKit extends Component<Props, State> {
                     the kit's configuration screen.
                   </p>
                   <p>
-                    This password and the kit's serial number should be added to <code>kit_config.toml</code> file in the home directory of the kit. <code>/home/pi</code>
+                    This password and the kit's serial number should be added to{" "}
+                    <code>kit_config.toml</code> file in the home directory of
+                    the kit. <code>/home/pi</code>
                     <br />
-                    Read more about setting up the password <a target="_blank" href="https://docs.astroplant.io/astroplant-kit-setup/astroplant-software/quick-software-setup#installing-the-bare-image">here</a>
+                    Read more about setting up the password{" "}
+                    <a
+                      target="_blank"
+                      rel="noreferrer"
+                      href="https://docs.astroplant.io/astroplant-kit-setup/astroplant-software/quick-software-setup#installing-the-bare-image"
+                    >
+                      here
+                    </a>
                   </p>
                   <Card color="orange" centered raised fluid>
                     <Card.Content>

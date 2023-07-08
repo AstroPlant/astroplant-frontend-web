@@ -19,7 +19,9 @@ export default function KitConfigure(props: Props) {
   return (
     <Container text>
       <p>
-        <Link to={`${url}/create`}><Button primary>Create a new configuration.</Button></Link>
+        <Link to={`${url}/create`}>
+          <Button primary>Create a new configuration.</Button>
+        </Link>
       </p>
       {numConfigurations > 0 ? (
         <Card.Group>
@@ -47,7 +49,16 @@ export default function KitConfigure(props: Props) {
       ) : (
         <div>
           <p>This kit has no configurations yet.</p>
-          <p>To continue setting up your kit, check out the documentation <a target="_blank" href="https://docs.astroplant.io/astroplant-kit-setup/registering-and-configuring-a-kit">here</a></p>
+          <p>
+            To continue setting up your kit, check out the documentation{" "}
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href="https://docs.astroplant.io/astroplant-kit-setup/registering-and-configuring-a-kit"
+            >
+              here
+            </a>
+          </p>
         </div>
       )}
     </Container>

@@ -40,7 +40,16 @@ function KitOverview(props: Props) {
       <Container text>
         <div>
           <p>This kit has no configurations yet.</p>
-          <p>For help on how to configure your kit you can read the documentation <a target="_blank" href="https://docs.astroplant.io/astroplant-kit-setup/registering-and-configuring-a-kit">here</a></p>
+          <p>
+            For help on how to configure your kit you can read the documentation{" "}
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href="https://docs.astroplant.io/astroplant-kit-setup/registering-and-configuring-a-kit"
+            >
+              here
+            </a>
+          </p>
         </div>
       </Container>
     );
