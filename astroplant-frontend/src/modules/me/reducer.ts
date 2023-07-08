@@ -1,8 +1,7 @@
 import { createReducer } from "@reduxjs/toolkit";
 import isEqual from "lodash/isEqual";
-import * as actions from "./actions";
-import Option from "../../utils/option";
 import { FullUser } from "astroplant-api";
+import * as actions from "./actions";
 import { RootState } from "~/types";
 
 export interface KitMembership {

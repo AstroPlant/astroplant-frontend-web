@@ -13,7 +13,7 @@ export type Props = {
   outputSettings: OutputSettings;
 };
 
-export default (props: Props) => {
+export default function ViewOutput(props: Props) {
   const { command, outputSettings: settings } = props;
 
   if (settings.type === "continuous") {
@@ -104,4 +104,4 @@ export default (props: Props) => {
   } else {
     return <div>Unknown output type.</div>;
   }
-};
+}

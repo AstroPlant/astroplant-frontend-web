@@ -19,10 +19,6 @@ import RjsfForm from "~/rjsf-theme-semantic-ui";
 
 import PeripheralDefinitionCard from "~/Components/PeripheralDefinitionCard";
 
-type State = {
-  editing: boolean;
-};
-
 export type Props = {
   kit: Kit;
   configuration: KitConfigurationState;

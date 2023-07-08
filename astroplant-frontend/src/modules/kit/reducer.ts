@@ -207,7 +207,7 @@ const peripheralReducerById = byId((action: any) => {
   );
 }, peripheralReducer as any);
 
-export default function (state = initial, action: any) {
+export default function rootKitReducer(state = initial, action: any) {
   const { kits, ...otherState } = state;
 
   const newKits = kitReducerById(kits, action) as any;

@@ -18,7 +18,7 @@ export type Props = WithTranslation &
 
 function KitOverview(props: Props) {
   const baseUrl = props.match.url;
-  const { t, kitState } = props;
+  const { kitState } = props;
 
   if (kitState.configurations === null) {
     return (

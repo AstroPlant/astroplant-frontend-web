@@ -4,8 +4,6 @@ import { Container } from "semantic-ui-react";
 
 import HeadTitle from "../Components/HeadTitle";
 
-type HomeProps = WithTranslation;
-
 class Home extends Component<WithTranslation> {
   render() {
     const { t } = this.props;
@@ -21,7 +19,7 @@ class Home extends Component<WithTranslation> {
           <p>{t("home.content.body3")}</p>
         </Container>
 
-      {/*
+        {/*
         <Divider />
 
         <Container>

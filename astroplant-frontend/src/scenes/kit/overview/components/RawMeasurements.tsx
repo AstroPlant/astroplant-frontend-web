@@ -9,8 +9,6 @@ import Option from "~/utils/option";
 
 import RawMeasurementComp from "./RawMeasurement";
 
-type Params = { kitSerial: string };
-
 export type Props = {
   kitState: KitState;
 };

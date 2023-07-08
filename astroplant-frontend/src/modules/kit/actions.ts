@@ -7,10 +7,6 @@ import {
 } from "astroplant-api";
 import { RawMeasurement } from "./reducer";
 
-interface WithKitSerial {
-  serial: string;
-}
-
 export const fetchKit = createAction<{ serial: string }>("kit/FETCH");
 
 export const addKit = createAction<Kit>("kit/ADD");
