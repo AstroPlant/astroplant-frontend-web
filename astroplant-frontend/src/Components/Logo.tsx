@@ -1,10 +1,14 @@
-import React, { FC } from "react"
+import React from "react";
 
-export const Logo: FC<{
-    size?: number;
-    variant: "green" | "white" | "black";
-}> = ({ size = 48, variant }) => {
-    return (
-        <img style={{ height: size, width: "auto" }} src={`/logo-${variant}.svg`} />
-    )
-}
+export type Props = {
+  size?: number;
+  variant: "green" | "white" | "black";
+};
+
+export const Logo = ({ size = 48, variant }: Props) => (
+  <img
+    alt="AstroPlant"
+    style={{ height: size, width: "auto" }}
+    src={`/logo-${variant}.svg`}
+  />
+);
