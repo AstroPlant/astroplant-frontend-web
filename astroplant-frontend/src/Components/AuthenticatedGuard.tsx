@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { FullUser } from "types";
+import { FullUser } from "~/types";
 import MustBeLoggedIn from "../pages/MustBeLoggedIn";
 import Loading from "./Loading";
 import { selectMe } from "~/modules/me/reducer";

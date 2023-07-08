@@ -1,6 +1,6 @@
 import { createReducer, createEntityAdapter } from "@reduxjs/toolkit";
 import * as actions from "./actions";
-import { RootState } from "types";
+import { RootState } from "~/types";
 
 import { QuantityType } from "astroplant-api";
 
