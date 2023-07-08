@@ -1,6 +1,5 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import { compose } from "recompose";
 import { FullUser } from "types";
 import MustBeLoggedIn from "../pages/MustBeLoggedIn";
 import Loading from "./Loading";
@@ -24,27 +23,23 @@ export function withAuthentication<P extends object>(
 ) => React.ComponentType<P> {
   console.debug("Authentication guard instantiated");
 
-  const AuthComponent = (
-    Component: React.ComponentType<P & WithAuthentication>
-  ) => {
+  return (Component: React.ComponentType<P & WithAuthentication>) => {
+    const GuardComponent = showLoading
+      ? awaitAuthenticationRan()(MustBeLoggedIn)
+      : MustBeLoggedIn;
+
     return (props: P) => {
       console.debug("Authentication guard ran");
 
       const me = useSelector(selectMe)?.details ?? null;
 
       if (me === null) {
-        return <MustBeLoggedIn />;
+        return <GuardComponent />;
       } else {
         return <Component me={me} {...props} />;
       }
     };
   };
-
-  if (showLoading) {
-    return compose(awaitAuthenticationRan(), AuthComponent);
-  } else {
-    return AuthComponent;
-  }
 }
 
 /** HOC to wait until authentication has been ran (either successfully
