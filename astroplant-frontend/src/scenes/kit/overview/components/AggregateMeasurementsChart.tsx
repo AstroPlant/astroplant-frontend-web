@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardProps, Button } from "semantic-ui-react";
 import {
@@ -45,6 +45,7 @@ export default function AggregateMeasurementsChart(props: Props) {
 
   const { kitState, peripheral, peripheralDefinition, quantityType, ...rest } =
     props;
+  const kitSerial = kitState.details!.serial;
 
   const [measurements, setMeasurements] = useState<Option<Array<Aggregate>>>(
     Option.none()
@@ -54,41 +55,44 @@ export default function AggregateMeasurementsChart(props: Props) {
     Response<Array<schemas["AggregateMeasurement"]>>
   > | null>(null);
 
-  const load = async (
-    request: Observable<Response<Array<schemas["AggregateMeasurement"]>>>
-  ) => {
-    setLoading(true);
+  const load = useCallback(
+    async (
+      request: Observable<Response<Array<schemas["AggregateMeasurement"]>>>
+    ) => {
+      setLoading(true);
 
-    try {
-      const result = await request
-        .pipe(
-          tap((response) =>
-            setRequestNext(response.meta.response?.next ?? null)
-          ),
-          map((response) => response.data.reverse()),
-          rateLimit
-        )
-        .toPromise();
+      try {
+        const result = await request
+          .pipe(
+            tap((response) =>
+              setRequestNext(response.meta.response?.next ?? null)
+            ),
+            map((response) => response.data.reverse()),
+            rateLimit
+          )
+          .toPromise();
 
-      const newMeasurements = result.map((measurement) => ({
-        datetimeStart: new Date(measurement.datetimeStart),
-        datetimeStartNumber: new Date(measurement.datetimeStart).getTime(),
-        datetimeEnd: new Date(measurement.datetimeEnd),
-        datetimeEndNumber: new Date(measurement.datetimeEnd).getTime(),
-        values: measurement.values,
-      }));
+        const newMeasurements = result.map((measurement) => ({
+          datetimeStart: new Date(measurement.datetimeStart),
+          datetimeStartNumber: new Date(measurement.datetimeStart).getTime(),
+          datetimeEnd: new Date(measurement.datetimeEnd),
+          datetimeEndNumber: new Date(measurement.datetimeEnd).getTime(),
+          values: measurement.values,
+        }));
 
-      setMeasurements(
-        Option.some(
-          measurements
-            .map((measurements) => [...newMeasurements, ...measurements])
-            .unwrapOrElse(() => newMeasurements)
-        )
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+        setMeasurements((measurements) =>
+          Option.some(
+            measurements
+              .map((measurements) => [...newMeasurements, ...measurements])
+              .unwrapOrElse(() => newMeasurements)
+          )
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
   const loadNext = async () => {
     if (requestNext !== null) {
@@ -98,16 +102,20 @@ export default function AggregateMeasurementsChart(props: Props) {
 
   useEffect(() => {
     const fn = async () => {
-      const { kitState, peripheral, quantityType } = props;
       const request = api.listAggregateMeasurements({
-        kitSerial: kitState.details!.serial,
+        kitSerial,
         peripheral: peripheral.id,
         quantityType: quantityType.id,
       });
       await load(request);
     };
     fn();
-  }, []);
+  }, [
+    kitSerial,
+    peripheral.id,
+    quantityType.id,
+    load, // doesn't actually change as its useCallback'd without dependencies
+  ]);
 
   /**
    * Uses some heuristics to calculate the starting index of the chart brush;
