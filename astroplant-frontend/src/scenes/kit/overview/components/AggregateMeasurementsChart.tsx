@@ -62,7 +62,9 @@ export default function AggregateMeasurementsChart(props: Props) {
     try {
       const result = await request
         .pipe(
-          tap((response) => setRequestNext(response.meta.response.next)),
+          tap((response) =>
+            setRequestNext(response.meta.response?.next ?? null)
+          ),
           map((response) => response.data.reverse()),
           rateLimit
         )

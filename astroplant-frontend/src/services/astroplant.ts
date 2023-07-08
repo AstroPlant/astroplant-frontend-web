@@ -22,9 +22,9 @@ import {
   HttpHeaders,
   Meta,
   RequestOptions,
-  Response,
-  ResponseError,
+  ErrorResponse,
   encodeUri,
+  ErrorDetails,
 } from "~/api";
 import { QueryReturnValue } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
 export type schemas = components["schemas"];
@@ -40,8 +40,6 @@ export type HttpQuery = {
 
 const unwrappedApi = new Api();
 
-export type ReturnValue<T> = Response<T> | ResponseError;
-
 async function baseQueryFn(
   args: RequestOptions,
   api: BaseQueryApi,
@@ -49,7 +47,7 @@ async function baseQueryFn(
 ): Promise<
   QueryReturnValue<
     unknown,
-    null, // todo: should be HTTP Problem Details
+    ErrorDetails,
     Meta<unknown>
   >
 > {
@@ -60,13 +58,14 @@ async function baseQueryFn(
   headers = { ...headers, ...args.headers };
 
   try {
+    const response = await unwrappedApi
+      .request({ headers, ...args })
+      .toPromise();
+    console.warn("response", response);
     return await unwrappedApi.request({ headers, ...args }).toPromise();
-  } catch (e) {
-    try {
-      const e_ = e as ResponseError;
-      return { error: e_.error, meta: e_.meta };
-    } finally {
-    }
+  } catch (e_) {
+    const e = e_ as ErrorResponse;
+    return { error: e.error, meta: e.meta };
   }
 }
 
@@ -88,7 +87,7 @@ export const rtkApi = createApi({
           return await unwrappedApi.listKits(headers).toPromise();
         } catch (e) {
           try {
-            const e_ = e as ResponseError;
+            const e_ = e as ErrorResponse;
             return { error: e_.error, meta: e_.meta };
           } finally {
           }

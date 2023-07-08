@@ -13,8 +13,8 @@
 
 import parseLinkHeader from "parse-link-header";
 import { Observable } from "rxjs";
-import { ajax, AjaxResponse } from "rxjs/ajax";
-import { map, reduce } from "rxjs/operators";
+import { ajax, AjaxError, AjaxRequest, AjaxResponse } from "rxjs/ajax";
+import { catchError, map, reduce } from "rxjs/operators";
 import { DateTime } from "luxon";
 
 import { components } from "./schema";
@@ -77,8 +77,9 @@ export type ResponseMeta<T> = {
 /** Query meta information. */
 export type Meta<T> = {
   request: RequestMeta;
-  response: ResponseMeta<T>;
+  response?: ResponseMeta<T>;
 };
+
 
 /** The response type of a succesful query. */
 export type Response<T> = {
@@ -89,10 +90,35 @@ export type Response<T> = {
   meta: Meta<T>;
 };
 
-export type ResponseError = {
-  error: null; // todo: fill with HTTP Problem Details
+// TODO: add ProblemDetails application-level error
+export type ErrorDetails =
+  | {
+      type: "AJAX";
+    }
+  | {
+      type: "TIMEOUT";
+      error?: string;
+    }
+  | {
+      type: "OTHER";
+      error?: string;
+      data?: string;
+      status: number;
+    };
+
+export type ErrorResponse = {
+  error: ErrorDetails;
   meta: Meta<never>;
 };
+
+function processRequestMeta(ajaxRequest: AjaxRequest): RequestMeta {
+  return {
+    url: ajaxRequest.url,
+    body: ajaxRequest.body,
+    method: ajaxRequest.method,
+    headers: ajaxRequest.headers,
+  };
+}
 
 function processResponse<T = unknown>(
   api: BaseApi,
@@ -103,12 +129,7 @@ function processResponse<T = unknown>(
   const status = ajaxResponse.status;
   const mediaType = ajaxResponse.xhr.getResponseHeader("content-type");
 
-  const request = {
-    url: ajaxResponse.request.url,
-    body: ajaxResponse.request.body,
-    method: ajaxResponse.request.method,
-    headers: ajaxResponse.request.headers,
-  };
+  const requestMeta = processRequestMeta(ajaxResponse.request);
 
   const link = ajaxResponse.xhr.getResponseHeader("link");
   let uriNext = null;
@@ -117,7 +138,7 @@ function processResponse<T = unknown>(
     uriNext = parsed?.next?.url ?? null;
   }
 
-  const response = {
+  const responseMeta = {
     status,
     mediaType,
     hasNext: uriNext !== null,
@@ -127,7 +148,7 @@ function processResponse<T = unknown>(
     next: uriNext !== null ? api.getPath<T>(uriNext) : null,
   };
 
-  const meta = { request, response };
+  const meta = { request: requestMeta, response: responseMeta };
 
   if (status >= 200 && status < 300) {
     return {
@@ -137,9 +158,13 @@ function processResponse<T = unknown>(
   } else {
     meta.response.next = null;
     throw {
-      error: null,
+      error: {
+        type: "OTHER",
+        status,
+        data: ajaxResponse.responseText,
+      },
       meta,
-    } as ResponseError;
+    } as ErrorResponse;
   }
 }
 
@@ -179,11 +204,18 @@ export class BaseApi {
 
   request = <T = unknown>(options: RequestOptions): Observable<Response<T>> => {
     return ajax(this.createRequestArguments(options)).pipe(
+      catchError((err_) => {
+        const err = err_ as AjaxError;
+        const meta = { request: processRequestMeta(err.request) };
+        throw {
+          error: {
+            type: "AJAX",
+          },
+          meta,
+        } as ErrorResponse;
+      }),
       map((res) => {
-        if (res.status >= 200 && res.status < 300) {
-          return processResponse(this, res);
-        }
-        throw res;
+        return processResponse(this, res);
       })
     );
   };
