@@ -220,6 +220,9 @@ export class BaseApi {
     };
   };
 
+  /**
+   * @throws {ErrorResponse}
+   */
   request = <T = unknown>(options: RequestOptions): Observable<Response<T>> => {
     return ajax(this.createRequestArguments(options)).pipe(
       catchError((err_) => {
@@ -233,12 +236,21 @@ export class BaseApi {
     );
   };
 
+  /**
+   * @throws {ErrorResponse}
+   */
   getPath = <T = unknown>(url: string): Observable<Response<T>> => {
     return this.request({ path: url, method: "GET" });
   };
 }
 
+/**
+ * A client implementation of the AstroPlant API.
+ */
 export class Api extends BaseApi {
+  /**
+   * @throws {ErrorResponse}
+   */
   listKits = (
     headers: HttpHeaders
   ): Observable<Response<Array<schemas["Kit"]>>> => {
@@ -256,6 +268,9 @@ export class Api extends BaseApi {
     );
   };
 
+  /**
+   * @throws {ErrorResponse}
+   */
   listAggregateMeasurements = ({
     kitSerial,
     ...query
@@ -272,6 +287,9 @@ export class Api extends BaseApi {
     });
   };
 
+  /**
+   * @throws {ErrorResponse}
+   */
   listMedia = ({
     kitSerial,
     ...query
@@ -287,6 +305,9 @@ export class Api extends BaseApi {
     });
   };
 
+  /**
+   * @throws {ErrorResponse}
+   */
   getMediaContent = ({
     mediaId,
   }: {
@@ -308,6 +329,9 @@ export class Api extends BaseApi {
     // });
   };
 
+  /**
+   * @throws {ErrorResponse}
+   */
   getArchiveDownloadToken = ({
     kitSerial,
   }: {
@@ -364,6 +388,9 @@ export class Api extends BaseApi {
     return url;
   };
 
+  /**
+   * @throws {ErrorResponse}
+   */
   peripheralCommand = ({
     kitSerial,
     peripheral,
