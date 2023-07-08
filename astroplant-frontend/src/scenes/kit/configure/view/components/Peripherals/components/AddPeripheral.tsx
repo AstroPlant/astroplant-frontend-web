@@ -1,5 +1,5 @@
 import React from "react";
-import { compose } from "recompose";
+import compose from "~/utils/compose";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { withTranslation, WithTranslation } from "react-i18next";

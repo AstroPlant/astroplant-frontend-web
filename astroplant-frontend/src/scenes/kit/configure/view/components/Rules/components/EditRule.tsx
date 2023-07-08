@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { compose } from "recompose";
+import compose from "~/utils/compose";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Modal, Header, Button, Icon } from "semantic-ui-react";
 import produce from "immer";

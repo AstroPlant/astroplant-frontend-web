@@ -1,7 +1,7 @@
 import React from "react";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { compose } from "recompose";
+import compose from "~/utils/compose";
 import { withTranslation, WithTranslation } from "react-i18next";
 
 import ApiButton from "../../../../../Components/ApiButton";

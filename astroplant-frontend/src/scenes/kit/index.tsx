@@ -4,7 +4,7 @@ import { bindActionCreators } from "redux";
 import { Switch, Route, RouteComponentProps } from "react-router";
 import { NavLink } from "react-router-dom";
 import { withTranslation, WithTranslation, Trans } from "react-i18next";
-import { compose } from "recompose";
+import compose from "~/utils/compose";
 import { Container, Menu, Icon } from "semantic-ui-react";
 import { RootState } from "~/types";
 import Option from "~/utils/option";

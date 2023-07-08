@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { RouteComponentProps } from "react-router-dom";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { compose } from "recompose";
+import compose from "~/utils/compose";
 import { DateTime } from "luxon";
 import { Button, Container, Segment, Header } from "semantic-ui-react";
 import { Form } from "semantic-ui-react";

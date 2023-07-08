@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { RouteComponentProps } from "react-router";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { compose } from "recompose";
+import compose from "~/utils/compose";
 
 import { Container, Segment, Header, Divider } from "semantic-ui-react";
 import { KitConfigurationState } from "~/modules/kit/reducer";
