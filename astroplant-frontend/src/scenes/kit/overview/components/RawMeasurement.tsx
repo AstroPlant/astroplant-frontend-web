@@ -3,7 +3,7 @@ import { Card, CardProps, Statistic, Loader } from "semantic-ui-react";
 import { DateTime } from "luxon";
 
 import RelativeTime from "~/Components/RelativeTime";
-import { RawMeasurement } from "modules/kit/reducer";
+import { RawMeasurement as RawMeasurementState } from "modules/kit/reducer";
 import { Peripheral, PeripheralDefinition, QuantityType } from "astroplant-api";
 import Option from "utils/option";
 
@@ -11,10 +11,10 @@ export type Props = CardProps & {
   peripheral: Peripheral;
   peripheralDefinition: PeripheralDefinition;
   quantityType: QuantityType;
-  rawMeasurement: Option<RawMeasurement>;
+  rawMeasurement: Option<RawMeasurementState>;
 };
 
-export default (props: Props) => {
+export default function RawMeasurement(props: Props) {
   const {
     peripheral,
     peripheralDefinition,
@@ -30,7 +30,7 @@ export default (props: Props) => {
           <Statistic>
             <Statistic.Value>
               {rawMeasurement
-                .map(m => <span>{Math.round(m.value * 100) / 100}</span>)
+                .map((m) => <span>{Math.round(m.value * 100) / 100}</span>)
                 .unwrapOr(<Loader active inline="centered" />)}
             </Statistic.Value>
             <Statistic.Label>
@@ -39,12 +39,11 @@ export default (props: Props) => {
           </Statistic>
         </Card.Description>
         {rawMeasurement
-          .map(m => {
+          .map((m) => {
             return (
               <>
                 <Card.Meta>
-                  Measured{" "}
-                  <RelativeTime to={DateTime.fromISO(m.datetime)} />
+                  Measured <RelativeTime to={DateTime.fromISO(m.datetime)} />
                 </Card.Meta>
               </>
             );
@@ -58,4 +57,4 @@ export default (props: Props) => {
       </Card.Content>
     </Card>
   );
-};
+}

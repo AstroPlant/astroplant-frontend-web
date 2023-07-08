@@ -11,7 +11,7 @@ export type Props = {
   inputSettings: InputSettings;
 };
 
-export default (props: Props) => {
+export default function ViewInput(props: Props) {
   const { quantityType, inputSettings: settings } = props;
   return (
     <>
@@ -34,9 +34,7 @@ export default (props: Props) => {
               {quantityType.physicalUnitSymbol || quantityType.physicalUnit})
             </Table.HeaderCell>
             <Table.HeaderCell>Number of delta measurements</Table.HeaderCell>
-            <Table.HeaderCell>
-              Setpoint interpolation
-            </Table.HeaderCell>
+            <Table.HeaderCell>Setpoint interpolation</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
         <Table.Body>
@@ -75,4 +73,4 @@ export default (props: Props) => {
       </Table>
     </>
   );
-};
+}

@@ -8,7 +8,7 @@ export type Props = {
   fuzzyRule: FuzzyRule;
 };
 
-export default (props: Props) => {
+export default function ViewRule(props: Props) {
   const { fuzzyRule } = props;
   return (
     <>
@@ -95,4 +95,4 @@ export default (props: Props) => {
       )}
     </>
   );
-};
+}

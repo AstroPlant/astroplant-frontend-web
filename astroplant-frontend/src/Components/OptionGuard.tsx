@@ -1,8 +1,6 @@
 import React from "react";
 import Option from "../utils/option";
 
-type Omit<T, K> = Pick<T, Exclude<keyof T, K>>;
-
 export type WithOption<T> = {
   option: Option<T>;
 };

@@ -6,7 +6,7 @@ import { DateTime } from "luxon";
 import { Button, Container, Segment, Header } from "semantic-ui-react";
 import { Form } from "semantic-ui-react";
 
-import { api, Api } from "~/api";
+import { api } from "~/api";
 
 import { KitContext, ConfigurationsContext } from "../contexts";
 
