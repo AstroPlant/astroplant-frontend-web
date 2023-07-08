@@ -80,7 +80,6 @@ export type Meta<T> = {
   response?: ResponseMeta<T>;
 };
 
-
 /** The response type of a succesful query. */
 export type Response<T> = {
   /** The data returned by the query (probably a string, object, Blob, ...) */
@@ -106,10 +105,18 @@ export type ErrorDetails =
       status: number;
     };
 
-export type ErrorResponse = {
-  error: ErrorDetails;
-  meta: Meta<never>;
-};
+export class ErrorResponse extends Error {
+  readonly details: ErrorDetails;
+  readonly meta: Meta<never>;
+
+  constructor(details: ErrorDetails, meta: Meta<never>) {
+    super("An API error occurred");
+    Object.setPrototypeOf(this, ErrorResponse.prototype);
+
+    this.details = details;
+    this.meta = meta;
+  }
+}
 
 function processRequestMeta(ajaxRequest: AjaxRequest): RequestMeta {
   return {
@@ -138,17 +145,29 @@ function processResponse<T = unknown>(
     uriNext = parsed?.next?.url ?? null;
   }
 
-  const responseMeta = {
+  const partialResponseMeta = {
     status,
     mediaType,
     hasNext: uriNext !== null,
     uriNext,
+  };
 
+  const responseMeta: ResponseMeta<T> = {
+    ...partialResponseMeta,
     // is it correct that we always GET?
     next: uriNext !== null ? api.getPath<T>(uriNext) : null,
   };
 
-  const meta = { request: requestMeta, response: responseMeta };
+  const errorResponseMeta: ResponseMeta<never> = {
+    ...partialResponseMeta,
+    next: null,
+  };
+
+  const meta: Meta<T> = { request: requestMeta, response: responseMeta };
+  const errorMeta: Meta<never> = {
+    request: requestMeta,
+    response: errorResponseMeta,
+  };
 
   if (status >= 200 && status < 300) {
     return {
@@ -156,15 +175,14 @@ function processResponse<T = unknown>(
       meta,
     };
   } else {
-    meta.response.next = null;
-    throw {
-      error: {
+    throw new ErrorResponse(
+      {
         type: "OTHER",
         status,
         data: ajaxResponse.responseText,
       },
-      meta,
-    } as ErrorResponse;
+      errorMeta
+    );
   }
 }
 
@@ -207,12 +225,7 @@ export class BaseApi {
       catchError((err_) => {
         const err = err_ as AjaxError;
         const meta = { request: processRequestMeta(err.request) };
-        throw {
-          error: {
-            type: "AJAX",
-          },
-          meta,
-        } as ErrorResponse;
+        throw new ErrorResponse({ type: "AJAX" }, meta);
       }),
       map((res) => {
         return processResponse(this, res);

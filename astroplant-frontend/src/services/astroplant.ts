@@ -44,13 +44,7 @@ async function baseQueryFn(
   args: RequestOptions,
   api: BaseQueryApi,
   _extraOptions: {}
-): Promise<
-  QueryReturnValue<
-    unknown,
-    ErrorDetails,
-    Meta<unknown>
-  >
-> {
+): Promise<QueryReturnValue<unknown, ErrorDetails, Meta<unknown>>> {
   const auth = selectAuth(api.getState() as RootState);
   let headers: HttpHeaders = auth.accessToken
     ? { Authorization: `Bearer: ${auth.accessToken}` }
@@ -63,9 +57,12 @@ async function baseQueryFn(
       .toPromise();
     console.warn("response", response);
     return await unwrappedApi.request({ headers, ...args }).toPromise();
-  } catch (e_) {
-    const e = e_ as ErrorResponse;
-    return { error: e.error, meta: e.meta };
+  } catch (e) {
+    if (e instanceof ErrorResponse) {
+      return { error: e.details, meta: e.meta };
+    } else {
+      throw new Error("An unexpected error occurred");
+    }
   }
 }
 
@@ -86,10 +83,10 @@ export const rtkApi = createApi({
         try {
           return await unwrappedApi.listKits(headers).toPromise();
         } catch (e) {
-          try {
-            const e_ = e as ErrorResponse;
-            return { error: e_.error, meta: e_.meta };
-          } finally {
+          if (e instanceof ErrorResponse) {
+            return { error: e.details, meta: e.meta };
+          } else {
+            throw new Error("An unexpected error occurred");
           }
         }
       },
