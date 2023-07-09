@@ -13,7 +13,13 @@
 
 import parseLinkHeader from "parse-link-header";
 import { Observable } from "rxjs";
-import { ajax, AjaxError, AjaxRequest, AjaxResponse } from "rxjs/ajax";
+import {
+  ajax,
+  AjaxConfig,
+  AjaxError,
+  AjaxRequest,
+  AjaxResponse,
+} from "rxjs/ajax";
 import { catchError, map, reduce } from "rxjs/operators";
 import { DateTime } from "luxon";
 
@@ -131,7 +137,7 @@ function processRequestMeta(ajaxRequest: AjaxRequest): RequestMeta {
 
 function processResponse<T = unknown>(
   api: BaseApi,
-  ajaxResponse: AjaxResponse
+  ajaxResponse: AjaxResponse<T>
 ): Response<T> {
   const data = ajaxResponse.response;
 
@@ -181,7 +187,6 @@ function processResponse<T = unknown>(
       {
         type: "OTHER",
         status,
-        data: ajaxResponse.responseText,
       },
       errorMeta
     );
@@ -191,7 +196,7 @@ function processResponse<T = unknown>(
 export class BaseApi {
   constructor(protected configuration = new Configuration()) {}
 
-  private createRequestArguments = (options: RequestOptions): any => {
+  private createRequestArguments = (options: RequestOptions): AjaxConfig => {
     let url = this.configuration.basePath + options.path;
 
     if (
@@ -219,6 +224,11 @@ export class BaseApi {
       headers,
       body: JSON.stringify(options.body),
       responseType: options.responseType || "json",
+
+      // FIXME: will be deprecated, https://github.com/ReactiveX/rxjs/pull/6710
+      // but currently there doesn't seem to be a great way to prevent setting the
+      // `x-requested-with` header.
+      crossDomain: true,
     };
   };
 
@@ -226,7 +236,7 @@ export class BaseApi {
    * @throws {ErrorResponse}
    */
   request = <T = unknown>(options: RequestOptions): Observable<Response<T>> => {
-    return ajax(this.createRequestArguments(options)).pipe(
+    return ajax<T>(this.createRequestArguments(options)).pipe(
       catchError((err_) => {
         const err = err_ as AjaxError;
         const meta = { request: processRequestMeta(err.request) };
@@ -446,7 +456,7 @@ export interface RequestOptions {
   headers?: HttpHeaders;
   query?: HttpQuery;
   body?: HttpBody;
-  responseType?: string;
+  responseType?: XMLHttpRequestResponseType;
 }
 
 export const encodeUri = (value: any) => encodeURIComponent(String(value));

@@ -11,6 +11,7 @@ import PeripheralDefinitionCard from "~/Components/PeripheralDefinitionCard";
 import RjsfForm from "~/rjsf-theme-semantic-ui";
 
 import { KitContext, ConfigurationsContext } from "../contexts";
+import { firstValueFrom } from "rxjs";
 
 export type Props = {};
 
@@ -50,14 +51,15 @@ export default function PeripheralCommand(props: Props) {
     setDisplayUrl(null);
     setPlaintext(null);
     const peripheral = activeConfiguration!.peripherals[peripheralId!]!;
-    const response = await api
-      .peripheralCommand({
-        kitSerial: kit.serial,
-        peripheral: peripheral.name,
-        command: formData,
-      })
-      .pipe(rateLimit)
-      .toPromise();
+    const response = await firstValueFrom(
+      api
+        .peripheralCommand({
+          kitSerial: kit.serial,
+          peripheral: peripheral.name,
+          command: formData,
+        })
+        .pipe(rateLimit)
+    );
 
     if (
       response.data.type === "image/png" ||

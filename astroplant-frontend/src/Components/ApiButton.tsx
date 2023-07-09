@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { Observable } from "rxjs";
+import { firstValueFrom, Observable } from "rxjs";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Confirm, Button, ButtonProps } from "semantic-ui-react";
 
@@ -59,10 +59,9 @@ class ApiButton<R = any> extends Component<AllProps<R>, State> {
     const { t } = this.props;
 
     try {
-      const response = await this.props
-        .send()
-        .pipe(requestWrapper())
-        .toPromise();
+      const response = await firstValueFrom(
+        this.props.send().pipe(requestWrapper())
+      );
 
       this.setState({ submitting: false });
       this.props.onResponse(response);

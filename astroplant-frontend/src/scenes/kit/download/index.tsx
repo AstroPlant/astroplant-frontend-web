@@ -9,6 +9,7 @@ import { Form } from "semantic-ui-react";
 import { api } from "~/api";
 
 import { KitContext, ConfigurationsContext } from "../contexts";
+import { firstValueFrom } from "rxjs";
 
 export type Props = {};
 export type InnerProps = WithTranslation & RouteComponentProps<{}>;
@@ -178,8 +179,9 @@ async function initiateDownload(
   }
 ) {
   try {
-    const token = (await api.getArchiveDownloadToken({ kitSerial }).toPromise())
-      .data;
+    const token = (
+      await firstValueFrom(api.getArchiveDownloadToken({ kitSerial }))
+    ).data;
 
     if (!token) {
       throw "failed to fetch token";

@@ -27,6 +27,7 @@ import {
   ErrorDetails,
 } from "~/api";
 import { QueryReturnValue } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
+import { firstValueFrom } from "rxjs";
 export type schemas = components["schemas"];
 
 export type HttpQuery = {
@@ -52,11 +53,11 @@ async function baseQueryFn(
   headers = { ...headers, ...args.headers };
 
   try {
-    const response = await unwrappedApi
-      .request({ headers, ...args })
-      .toPromise();
+    const response = await firstValueFrom(
+      unwrappedApi.request({ headers, ...args })
+    );
     console.warn("response", response);
-    return await unwrappedApi.request({ headers, ...args }).toPromise();
+    return await firstValueFrom(unwrappedApi.request({ headers, ...args }));
   } catch (e) {
     if (e instanceof ErrorResponse) {
       return { error: e.details, meta: e.meta };

@@ -1,6 +1,5 @@
 import { combineReducers } from "@reduxjs/toolkit";
 import { combineEpics } from "redux-observable";
-import { tap } from "rxjs/operators";
 import genericReducer from "./modules/generic/reducer";
 //import intlReducer from "./modules/intl/reducer";
 import authReducer from "./modules/auth/reducer";
@@ -33,21 +32,32 @@ export const rootReducer = combineReducers({
 });
 
 // Slightly complicated root epic to ensure we throw all errors.
-export const rootEpic = (...args: any[]) =>
-  combineEpics(
-    authEpic,
-    meEpic,
-    kitEpic,
-    peripheralDefinitionEpic,
-    quantityTypeEpic,
-    notificationEpic,
-    sessionEpic,
-    webSocketEpic
-  )(...args).pipe(
-    tap({
-      error: (e: any) =>
-        setTimeout(() => {
-          throw e;
-        }),
-    })
-  );
+// export const rootEpic = (...args: any[]) =>
+//   combineEpics(
+//     authEpic,
+//     meEpic,
+//     kitEpic,
+//     peripheralDefinitionEpic,
+//     quantityTypeEpic,
+//     notificationEpic,
+//     sessionEpic,
+//     webSocketEpic
+//     // @ts-ignore
+//   )(...args).pipe(
+//     tap({
+//       error: (e: any) =>
+//         setTimeout(() => {
+//           throw e;
+//         }),
+//     })
+//   );
+export const rootEpic = combineEpics(
+  authEpic,
+  meEpic,
+  kitEpic,
+  peripheralDefinitionEpic,
+  quantityTypeEpic,
+  notificationEpic,
+  sessionEpic,
+  webSocketEpic
+);

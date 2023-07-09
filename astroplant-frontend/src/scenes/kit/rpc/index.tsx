@@ -8,6 +8,7 @@ import { AuthConfiguration } from "~/utils/api";
 import { KitContext } from "../contexts";
 
 import PeripheralCommand from "./PeripheralCommand";
+import { firstValueFrom } from "rxjs";
 
 type Params = { kitSerial: string };
 export type Props = RouteComponentProps<Params>;
@@ -26,11 +27,11 @@ export default function KitRpc(_props: Props) {
 
     try {
       const api = new KitRpcApi(AuthConfiguration.Instance);
-      const versionResponse = await api
-        .version({
+      const versionResponse = await firstValueFrom(
+        api.version({
           kitSerial: kit.serial,
         })
-        .toPromise();
+      );
       setVersionResponse(versionResponse);
     } finally {
       setVersionRequesting(false);

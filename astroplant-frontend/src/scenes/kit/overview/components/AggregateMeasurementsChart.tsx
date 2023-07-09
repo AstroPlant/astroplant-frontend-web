@@ -12,7 +12,7 @@ import {
 } from "recharts";
 import { DateTime } from "luxon";
 import { map, tap } from "rxjs/operators";
-import { Observable } from "rxjs";
+import { firstValueFrom, Observable } from "rxjs";
 import { Peripheral, PeripheralDefinition, QuantityType } from "astroplant-api";
 import Option from "~/utils/option";
 import { KitState } from "~/modules/kit/reducer";
@@ -62,15 +62,15 @@ export default function AggregateMeasurementsChart(props: Props) {
       setLoading(true);
 
       try {
-        const result = await request
-          .pipe(
+        const result = await firstValueFrom(
+          request.pipe(
             tap((response) =>
               setRequestNext(response.meta.response?.next ?? null)
             ),
             map((response) => response.data.reverse()),
             rateLimit
           )
-          .toPromise();
+        );
 
         const newMeasurements = result.map((measurement) => ({
           datetimeStart: new Date(measurement.datetimeStart),

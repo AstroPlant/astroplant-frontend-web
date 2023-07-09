@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, useState } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { Observable } from "rxjs";
+import { Observable, firstValueFrom } from "rxjs";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Form } from "semantic-ui-react";
 import { JSONSchema7 } from "json-schema";
@@ -64,10 +64,9 @@ function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
 
     try {
       const payload = props.transform ? props.transform(formData) : formData;
-      const response = await props
-        .send(payload)
-        .pipe(requestWrapper())
-        .toPromise();
+      const response = await firstValueFrom(
+        props.send(payload).pipe(requestWrapper())
+      );
 
       setSubmitting(false);
       props.onResponse(response);

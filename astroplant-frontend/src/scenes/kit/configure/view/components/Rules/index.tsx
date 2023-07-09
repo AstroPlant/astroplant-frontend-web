@@ -46,6 +46,7 @@ import AddOutput from "./components/AddOutput";
 import EditInput from "./components/EditInput";
 import EditOutput from "./components/EditOutput";
 import EditRule from "./components/EditRule";
+import { firstValueFrom } from "rxjs";
 
 export type Props = WithTranslation & {
   kit: Kit;
@@ -242,8 +243,8 @@ class Rules extends React.Component<Props, State> {
     this.setState({ loading: true, fuzzyControl });
 
     const api = new KitsApi(AuthConfiguration.Instance);
-    await api
-      .patchConfiguration({
+    await firstValueFrom(
+      api.patchConfiguration({
         configurationId: configuration.id,
         patchKitConfiguration: {
           controlRules: {
@@ -251,7 +252,7 @@ class Rules extends React.Component<Props, State> {
           },
         },
       })
-      .toPromise();
+    );
     this.setState({ loading: false });
   }
 

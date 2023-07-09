@@ -9,6 +9,7 @@ import { api, schemas } from "~/api";
 import { rateLimit } from "~/utils/api";
 import { rtkApi } from "~/services/astroplant";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
+import { firstValueFrom } from "rxjs";
 
 export type Props = {
   kitState: KitState;
@@ -47,10 +48,9 @@ export default function Media(props: Props) {
     if (displayMedia) {
       (async () => {
         try {
-          const response = await api
-            .getMediaContent({ mediaId: displayMedia.id })
-            .pipe(rateLimit)
-            .toPromise();
+          const response = await firstValueFrom(
+            api.getMediaContent({ mediaId: displayMedia.id }).pipe(rateLimit)
+          );
 
           const url = URL.createObjectURL(response.data);
           setDisplayUrl(url);

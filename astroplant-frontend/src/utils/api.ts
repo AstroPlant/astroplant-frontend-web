@@ -1,10 +1,17 @@
 import { Configuration, Middleware, RequestArgs } from "astroplant-api";
-import { Observable, pipe, timer, throwError, EMPTY } from "rxjs";
-import { retryWhen, mergeMap } from "rxjs/operators";
-import RateLimiter from "rxjs-ratelimiter";
+import {
+  Observable,
+  EMPTY,
+  timer,
+  throwError,
+  pipe,
+  UnaryFunction,
+} from "rxjs";
+import { tap, catchError, retry } from "rxjs/operators";
 
 import { store } from "~/store";
 import { recurse } from "./observables";
+import { ErrorResponse } from "~/api";
 
 /**
  * Configuration for typescript-rxjs API.
@@ -44,46 +51,38 @@ export class AuthConfiguration extends Configuration {
 }
 
 /**
- * Rate-limit observables, by calling rateLimiter.limit() with an observable.
- * E.g.: rateLimiter.limit(of("this is rate limited")). The limits are applied
- * globally, i.e. all observables share the same limit.
- */
-export const rateLimiter = new RateLimiter(15, 10000);
-
-/**
+ * @deprecated this is a no-op now. Rate-limiting will be moved to the global request handler.
  * Utility function to rate-limit observables.
  */
-export const rateLimit = <T>(obs: Observable<T>) => rateLimiter.limit<T>(obs);
+export const rateLimit = <T = unknown>(obs: Observable<T>) => obs;
 
 /**
- * Operator to wrap an observable API call. It provides rate limiting and
- * automatic request retrying for termporal errors.
+ * Operator to wrap an observable API call for automatic reqeust retrying for temporal errors.
  */
-export function requestWrapper() {
+// TODO: this used to provide rate-limiting as well. Maybe rename, or maybe it's not needed anymore?
+export function requestWrapper<T = unknown>(): UnaryFunction<
+  Observable<T>,
+  Observable<T>
+> {
   const MAX_RETRY = 3;
   const RETRY_DELAY_INCREASE = 1000; // In milliseconds.
   const RETRY_DELAY_START = 0; // In milliseconds.
   const TEMPORAL_ERROR_STATUS_CODES = [0, 429, 503, 504];
 
   return pipe(
-    rateLimit,
-    retryWhen((errors: Observable<any>) =>
-      errors.pipe(
-        mergeMap((error: any, i: number) => {
-          console.warn("Got an error in requestWrapper:", error, "i:", i);
-          if (
-            i >= MAX_RETRY ||
-            (typeof error.status !== "undefined" &&
-              !TEMPORAL_ERROR_STATUS_CODES.includes(error.status))
-          ) {
-            // We've exhausted our retries or error is non-temporal.
-            return throwError(error);
-          }
-
-          return timer(i * RETRY_DELAY_INCREASE + RETRY_DELAY_START);
-        })
-      )
-    )
+    retry({
+      delay: (error: ErrorResponse, retryCount) => {
+        if (
+          retryCount >= MAX_RETRY ||
+          (error.details.status !== undefined &&
+            !TEMPORAL_ERROR_STATUS_CODES.includes(error.details.status))
+        ) {
+          // We've exhausted our retries or error is non-temporal.
+          return throwError(() => error);
+        }
+        return timer(retryCount * RETRY_DELAY_INCREASE + RETRY_DELAY_START);
+      },
+    })
   );
 }
 
