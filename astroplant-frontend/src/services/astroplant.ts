@@ -82,7 +82,7 @@ export const rtkApi = createApi({
           ? { Authorization: `Bearer: ${auth.accessToken}` }
           : {};
         try {
-          return await unwrappedApi.listKits(headers).toPromise();
+          return await firstValueFrom(unwrappedApi.listKits(headers));
         } catch (e) {
           if (e instanceof ErrorResponse) {
             return { error: e.details, meta: e.meta };
