@@ -407,19 +407,14 @@ class Rules extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      configuration,
-      quantityTypes,
-      peripheralDefinitions,
-      t,
-    } = this.props;
+    const { configuration, quantityTypes, peripheralDefinitions, t } =
+      this.props;
     const { fuzzyControl } = this.state;
 
     let undefinedPeripheralQuantityTypes: [Peripheral, QuantityType][] = [];
     for (const peripheral of Object.values(configuration.peripherals)) {
-      const peripheralDefinition = peripheralDefinitions[
-        peripheral.peripheralDefinitionId
-      ]!;
+      const peripheralDefinition =
+        peripheralDefinitions[peripheral.peripheralDefinitionId]!;
 
       for (const quantityType of peripheralDefinition.expectedQuantityTypes!) {
         if (
@@ -436,9 +431,8 @@ class Rules extends React.Component<Props, State> {
 
     let undefinedPeripheralCommands: [Peripheral, string, JSONSchema7][] = [];
     for (const peripheral of Object.values(configuration.peripherals)) {
-      const peripheralDefinition = peripheralDefinitions[
-        peripheral.peripheralDefinitionId
-      ]!;
+      const peripheralDefinition =
+        peripheralDefinitions[peripheral.peripheralDefinitionId]!;
 
       if (!peripheralDefinition.commandSchema) {
         continue;
@@ -461,9 +455,8 @@ class Rules extends React.Component<Props, State> {
 
     if (this.state.editing) {
       for (const peripheral of Object.values(configuration.peripherals)) {
-        const peripheralDefinition = peripheralDefinitions[
-          peripheral.peripheralDefinitionId
-        ]!;
+        const peripheralDefinition =
+          peripheralDefinitions[peripheral.peripheralDefinitionId]!;
         if (peripheralDefinition.commandSchema) {
         }
       }
@@ -532,9 +525,8 @@ class Rules extends React.Component<Props, State> {
 
           {this.state.editingInput
             .map(([peripheral, quantityType]) => {
-              const inputSettings = fuzzyControl.input[peripheral.name]![
-                quantityType.id
-              ]!;
+              const inputSettings =
+                fuzzyControl.input[peripheral.name]![quantityType.id]!;
               return (
                 <EditInput
                   peripheral={peripheral}
@@ -616,9 +608,8 @@ class Rules extends React.Component<Props, State> {
 
           {this.state.editingOutput
             .map(([peripheral, command, schema]) => {
-              const outputSettings = fuzzyControl.output[peripheral.name]![
-                command
-              ]!;
+              const outputSettings =
+                fuzzyControl.output[peripheral.name]![command]!;
               return (
                 <EditOutput
                   peripheral={peripheral}
