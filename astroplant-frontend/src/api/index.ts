@@ -12,7 +12,7 @@
  */
 
 import parseLinkHeader from "parse-link-header";
-import { Observable } from "rxjs";
+import { EMPTY, Observable } from "rxjs";
 import {
   ajax,
   AjaxConfig,
@@ -20,7 +20,7 @@ import {
   AjaxRequest,
   AjaxResponse,
 } from "rxjs/ajax";
-import { catchError, map, reduce } from "rxjs/operators";
+import { catchError, expand, map, reduce } from "rxjs/operators";
 import { DateTime } from "luxon";
 
 import { components } from "./schema";
@@ -153,6 +153,14 @@ function processResponse<T = unknown>(
     uriNext = parsed?.next?.url ?? null;
   }
 
+  // Try parsing the x-next header if the Link header failed. (Note: the API is
+  // moving to providing all next pages in the Link header, so this can
+  // safely be removed at some point in the future).
+  if (uriNext === null) {
+    const link = ajaxResponse.xhr.getResponseHeader("x-next");
+    uriNext = link;
+  }
+
   const partialResponseMeta = {
     status,
     mediaType,
@@ -163,6 +171,7 @@ function processResponse<T = unknown>(
   const responseMeta: ResponseMeta<T> = {
     ...partialResponseMeta,
     // is it correct that we always GET?
+    // FIXME: this doesn't pass the same arguments as for the original call.
     next: uriNext !== null ? api.getPath<T>(uriNext) : null,
   };
 
@@ -235,15 +244,33 @@ export class BaseApi {
   /**
    * @throws {ErrorResponse}
    */
-  request = <T = unknown>(options: RequestOptions): Observable<Response<T>> => {
-    return ajax<T>(this.createRequestArguments(options)).pipe(
+  request = <T = unknown>({
+    recursePages = false,
+    ...options
+  }: RequestOptions): Observable<Response<T>> => {
+    const request$ = ajax<T>(this.createRequestArguments(options));
+    return request$.pipe(
+      map((res) => {
+        return processResponse(this, res);
+      }),
+      expand((response) => {
+        const uriNext = response.meta.response?.uriNext;
+        if (!uriNext || !recursePages) {
+          return EMPTY;
+        }
+
+        return ajax<T>(
+          this.createRequestArguments({ ...options, path: uriNext })
+        ).pipe(
+          map((res) => {
+            return processResponse(this, res);
+          })
+        );
+      }),
       catchError((err_) => {
         const err = err_ as AjaxError;
         const meta = { request: processRequestMeta(err.request) };
         throw new ErrorResponse({ type: "AJAX", status: err.status }, meta);
-      }),
-      map((res) => {
-        return processResponse(this, res);
       })
     );
   };
@@ -421,24 +448,32 @@ export class Api extends BaseApi {
   };
 
   // Definitions
-  listPeripheralDefinitions = (query: {
-    withExpectedQuantityTypes?: boolean;
-    after?: number;
-  }): Observable<Response<Array<schemas["PeripheralDefinition"]>>> => {
+  listPeripheralDefinitions = (
+    query: {
+      withExpectedQuantityTypes?: boolean;
+      after?: number;
+    },
+    { recursePages }: { recursePages?: boolean } = {}
+  ): Observable<Response<Array<schemas["PeripheralDefinition"]>>> => {
     return this.request({
       path: `/peripheral-definitions`,
       method: "GET",
       query,
+      recursePages,
     });
   };
 
-  listQuantityTypes = (query: {
-    after?: number;
-  }): Observable<Response<Array<schemas["QuantityType"]>>> => {
+  listQuantityTypes = (
+    query: {
+      after?: number;
+    },
+    { recursePages }: { recursePages?: boolean } = {}
+  ): Observable<Response<Array<schemas["QuantityType"]>>> => {
     return this.request({
-      path: `/peripheral-definitions`,
+      path: `/quantity-types`,
       method: "GET",
       query,
+      recursePages,
     });
   };
 }
@@ -479,6 +514,14 @@ export interface RequestOptions {
   query?: HttpQuery;
   body?: HttpBody;
   responseType?: XMLHttpRequestResponseType;
+
+  /**
+   * Whether we should automatically follow rel=next/x-next link headers. The
+   * client will walk all pages one-by-one when the result observable is
+   * subscribed. When the last page has been emitted, the observable closes
+   * successfully.
+   */
+  recursePages?: boolean;
 }
 
 export const encodeUri = (value: any) => encodeURIComponent(String(value));
