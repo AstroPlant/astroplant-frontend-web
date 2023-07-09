@@ -4,21 +4,17 @@ import { of } from "rxjs";
 import * as genericActions from "~/modules/generic/actions";
 import * as actions from "./actions";
 
-import { DefinitionsApi } from "astroplant-api";
-import { walkPages } from "~/utils/api";
+import { api } from "~/api";
 
-const fetchQuantityTypes: Epic = (actions$, state$) =>
+const fetchQuantityTypes: Epic = (actions$, _state$) =>
   actions$.pipe(
     filter(genericActions.pageInitializationSuccess.match),
-    map(() => new DefinitionsApi()),
-    switchMap((api: DefinitionsApi) =>
-      walkPages((page) =>
-        api.listQuantityTypes({
-          after: page,
-        })
-      ).pipe(
+    switchMap(() =>
+      // TODO: walk pages
+      api.listQuantityTypes({}).pipe(
+        map((response) => response.data),
         map(actions.addQuantityTypes),
-        catchError((err) => of(genericActions.setApiConnectionFailed(true)))
+        catchError((_err) => of(genericActions.setApiConnectionFailed(true)))
       )
     )
   );

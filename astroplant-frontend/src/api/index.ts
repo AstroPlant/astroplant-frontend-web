@@ -419,6 +419,28 @@ export class Api extends BaseApi {
       responseType: "blob",
     });
   };
+
+  // Definitions
+  listPeripheralDefinitions = (query: {
+    withExpectedQuantityTypes?: boolean;
+    after?: number;
+  }): Observable<Response<Array<schemas["PeripheralDefinition"]>>> => {
+    return this.request({
+      path: `/peripheral-definitions`,
+      method: "GET",
+      query,
+    });
+  };
+
+  listQuantityTypes = (query: {
+    after?: number;
+  }): Observable<Response<Array<schemas["QuantityType"]>>> => {
+    return this.request({
+      path: `/peripheral-definitions`,
+      method: "GET",
+      query,
+    });
+  };
 }
 
 /** API configuration automatically fetching the access token from the store. */

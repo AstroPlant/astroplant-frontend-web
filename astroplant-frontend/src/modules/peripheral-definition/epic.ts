@@ -1,27 +1,24 @@
 import { Epic, combineEpics } from "redux-observable";
-import { switchMap, map, filter, catchError } from "rxjs/operators";
-import { of } from "rxjs";
+import { switchMap, map, filter } from "rxjs/operators";
 import * as genericActions from "~/modules/generic/actions";
 import * as actions from "./actions";
 
-import { DefinitionsApi } from "astroplant-api";
-import { walkPages } from "~/utils/api";
+import { api } from "~/api";
 
-const fetchPeripheralDefinitions: Epic = (actions$, state$) =>
+const fetchPeripheralDefinitions: Epic = (actions$, _state$) =>
   actions$.pipe(
     filter(genericActions.pageInitializationSuccess.match),
-    map(() => new DefinitionsApi()),
-    switchMap((api: DefinitionsApi) =>
-      walkPages((page) =>
-        api.listPeripheralDefinitions({
-          after: page,
+    switchMap(() => {
+      // TODO: walk pages
+      return api
+        .listPeripheralDefinitions({
           withExpectedQuantityTypes: true,
         })
-      ).pipe(
-        map(actions.addDefinitions),
-        catchError((err) => of(genericActions.setApiConnectionFailed(true)))
-      )
-    )
+        .pipe(
+          map((response) => response.data),
+          map(actions.addDefinitions)
+        );
+    })
   );
 
 export default combineEpics(fetchPeripheralDefinitions);
