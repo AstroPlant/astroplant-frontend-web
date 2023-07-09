@@ -93,10 +93,12 @@ export type Response<T> = {
 export type ErrorDetails =
   | {
       type: "AJAX";
+      status: number;
     }
   | {
       type: "TIMEOUT";
       error?: string;
+      status: number;
     }
   | {
       type: "OTHER";
@@ -228,7 +230,7 @@ export class BaseApi {
       catchError((err_) => {
         const err = err_ as AjaxError;
         const meta = { request: processRequestMeta(err.request) };
-        throw new ErrorResponse({ type: "AJAX" }, meta);
+        throw new ErrorResponse({ type: "AJAX", status: err.status }, meta);
       }),
       map((res) => {
         return processResponse(this, res);
