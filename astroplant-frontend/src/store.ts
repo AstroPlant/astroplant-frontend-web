@@ -13,12 +13,12 @@ import { rootEpic, rootReducer } from "./root";
 import { rtkApi } from "./services/astroplant";
 
 const logger = (store: any) => (next: any) => (action: any) => {
-  if (import.meta.env.NODE_ENV !== "production") {
+  if (import.meta.env.DEV) {
     console.group(action.type);
     console.info("dispatching", action);
   }
   let result = next(action);
-  if (import.meta.env.NODE_ENV !== "production") {
+  if (import.meta.env.DEV) {
     console.log("next state", store.getState());
     console.groupEnd();
   }
