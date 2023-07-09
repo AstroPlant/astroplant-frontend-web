@@ -28,21 +28,16 @@ const refreshAuthenticationEpic: Epic = (action$, state$) =>
     switchMap(() => timer(0, 5 * 60 * 1000)),
     switchMap(() => {
       if (state$.value.auth.refreshToken) {
-        return of(new AccessApi()).pipe(
-          switchMap((api: AccessApi) =>
-            api
-              .obtainAccessTokenFromRefreshToken({
-                authRefreshToken: {
-                  refreshToken: state$.value.auth.refreshToken,
-                },
-              })
-              .pipe(
-                requestWrapper(),
-                map((resp) => resp),
-                map(actions.setAccessToken),
-                catchError((err) => of(actions.notAuthenticated()))
-              )
-          )
+        const api = new AccessApi();
+        const a = api.obtainAccessTokenFromRefreshToken({
+          authRefreshToken: {
+            refreshToken: state$.value.auth.refreshToken,
+          },
+        });
+        return a.pipe(
+          requestWrapper(),
+          map((access_token) => actions.setAccessToken(access_token)),
+          catchError((_err) => of(actions.notAuthenticated()))
         );
       } else {
         return of(actions.notAuthenticated());
