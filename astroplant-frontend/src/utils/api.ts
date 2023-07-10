@@ -7,7 +7,7 @@ import {
   pipe,
   UnaryFunction,
 } from "rxjs";
-import { tap, catchError, retry } from "rxjs/operators";
+import { retry } from "rxjs/operators";
 
 import { store } from "~/store";
 import { recurse } from "./observables";
