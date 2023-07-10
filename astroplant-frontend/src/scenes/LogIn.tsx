@@ -1,8 +1,6 @@
-import React, { Component } from "react";
-import { withRouter, RouteComponentProps } from "react-router";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { withTranslation, WithTranslation } from "react-i18next";
+import React, { useCallback, useState } from "react";
+import { useHistory } from "react-router";
+import { useTranslation } from "react-i18next";
 import { Container } from "semantic-ui-react";
 import { JSONSchema7 } from "json-schema";
 import ApiForm from "~/Components/ApiForm";
@@ -11,96 +9,72 @@ import { AuthenticationTokens } from "astroplant-api";
 import {
   setRememberMe,
   setRefreshToken,
-  setAccessToken
+  setAccessToken,
 } from "~/modules/auth/actions";
 
 import HeadTitle from "~/Components/HeadTitle";
 
 import { AccessApi } from "astroplant-api";
+import { useAppDispatch } from "~/hooks";
 
 const LogInForm = ApiForm<any, AuthenticationTokens>();
 
-type State = {
-  rememberMe: boolean;
-};
+export default function LogInPage() {
+  const { t } = useTranslation();
 
-type Props = WithTranslation &
-  RouteComponentProps & {
-    setRememberMe: (remember: boolean) => void;
-    setRefreshToken: (token: string) => void;
-    setAccessToken: (token: string) => void;
-  };
+  const dispatch = useAppDispatch();
+  const history = useHistory();
+  const [rememberMeState, setRememberMeState] = useState(false);
 
-class LogInPage extends Component<Props, State> {
-  state: State = {
-    rememberMe: false
-  };
-
-  send = (data: any) => {
-    this.setState({ rememberMe: data.rememberMe });
+  const send = useCallback((data: any) => {
+    setRememberMeState(data.rememberMe);
     const api = new AccessApi();
     return api.authenticateByCredentials({
-      authUser: { username: data.username, password: data.password }
+      authUser: { username: data.username, password: data.password },
     });
-  }
+  }, []);
 
-  onResponse = (response: AuthenticationTokens) => {
-    this.props.setRememberMe(this.state.rememberMe);
-    this.props.setRefreshToken(response.refreshToken);
-    this.props.setAccessToken(response.accessToken);
-    this.props.history.push("/me");
-  }
-
-  render() {
-    const { t } = this.props;
-
-    const schema: JSONSchema7 = {
-      type: "object",
-      required: ["username", "password"],
-      properties: {
-        username: { type: "string", title: t("common.username") },
-        password: { type: "string", title: t("common.password") },
-        rememberMe: {
-          type: "boolean",
-          title: t("logIn.rememberMe")
-        }
-      }
-    };
-
-    const uiSchema = {
-      password: {
-        "ui:widget": "password"
-      }
-    };
-
-    return (
-      <>
-        <HeadTitle main="Log in" />
-        <Container text style={{ marginTop: "1em" }} width={2}>
-          <LogInForm
-            schema={schema}
-            uiSchema={uiSchema}
-            send={this.send}
-            onResponse={this.onResponse}
-            submitLabel={t("logIn.logIn")}
-          />
-        </Container>
-      </>
-    );
-  }
-}
-
-const mapDispatchToProps = (dispatch: any) =>
-  bindActionCreators(
-    {
-      setRememberMe,
-      setRefreshToken,
-      setAccessToken
+  const onResponse = useCallback(
+    (response: AuthenticationTokens) => {
+      dispatch(setRememberMe(rememberMeState));
+      dispatch(setRefreshToken(response.refreshToken));
+      dispatch(setAccessToken(response.accessToken));
+      history.push("/me");
     },
-    dispatch
+    [dispatch, history, rememberMeState]
   );
 
-export default connect(
-  null,
-  mapDispatchToProps
-)(withTranslation()(withRouter(LogInPage)));
+  const schema: JSONSchema7 = {
+    type: "object",
+    required: ["username", "password"],
+    properties: {
+      username: { type: "string", title: t("common.username") },
+      password: { type: "string", title: t("common.password") },
+      rememberMe: {
+        type: "boolean",
+        title: t("logIn.rememberMe"),
+      },
+    },
+  };
+
+  const uiSchema = {
+    password: {
+      "ui:widget": "password",
+    },
+  };
+
+  return (
+    <>
+      <HeadTitle main="Log in" />
+      <Container text style={{ marginTop: "1em" }} width={2}>
+        <LogInForm
+          schema={schema}
+          uiSchema={uiSchema}
+          send={send}
+          onResponse={onResponse}
+          submitLabel={t("logIn.logIn")}
+        />
+      </Container>
+    </>
+  );
+}
