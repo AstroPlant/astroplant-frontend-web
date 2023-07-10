@@ -107,6 +107,12 @@ export type ErrorDetails =
       status: number;
     }
   | {
+      type: "APPLICATION";
+      error?: string;
+      data: object;
+      status: number;
+    }
+  | {
       type: "OTHER";
       error?: string;
       data?: string;
@@ -119,7 +125,7 @@ export class ErrorResponse extends Error {
 
   constructor(details: ErrorDetails, meta: Meta<never>) {
     super(
-      `An API error occurred${
+      `An API ${details.type} error occurred${
         meta.request.url && " (" + meta.request.url + ")"
       }`
     );
@@ -143,6 +149,12 @@ function processResponse<T = unknown>(
   api: BaseApi,
   ajaxResponse: AjaxResponse<T>
 ): Response<T> {
+  if (ajaxResponse.status < 200 || ajaxResponse.status >= 400) {
+    throw new Error(
+      `expected a successful API response (status 200-399), but got ${ajaxResponse.status}`
+    );
+  }
+
   const data = ajaxResponse.response;
 
   const status = ajaxResponse.status;
@@ -165,43 +177,53 @@ function processResponse<T = unknown>(
     uriNext = link;
   }
 
-  const partialResponseMeta = {
+  const responseMeta: ResponseMeta<T> = {
     status,
     mediaType,
     hasNext: uriNext !== null,
     uriNext,
-  };
-
-  const responseMeta: ResponseMeta<T> = {
-    ...partialResponseMeta,
     // is it correct that we always GET?
     // FIXME: this doesn't pass the same arguments as for the original call.
     next: uriNext !== null ? api.getPath<T>(uriNext) : null,
   };
 
-  const errorResponseMeta: ResponseMeta<never> = {
-    ...partialResponseMeta,
-    next: null,
-  };
-
   const meta: Meta<T> = { request: requestMeta, response: responseMeta };
-  const errorMeta: Meta<never> = {
+
+  return { data, meta };
+}
+
+function processError(error: AjaxError): ErrorResponse {
+  const { status, response: data } = error;
+
+  const requestMeta = processRequestMeta(error.request);
+  const meta: Meta<never> = {
     request: requestMeta,
-    response: errorResponseMeta,
   };
 
-  if (status >= 200 && status < 300) {
-    return {
-      data,
-      meta,
-    };
+  if (status === 0) {
+    return new ErrorResponse(
+      {
+        type: "AJAX",
+        status,
+      },
+      meta
+    );
+  } else if (status >= 400 && status < 600 && typeof data === "object") {
+    return new ErrorResponse(
+      {
+        type: "APPLICATION",
+        status,
+        data: data as object,
+      },
+      meta
+    );
   } else {
-    throw new ErrorResponse(
+    return new ErrorResponse(
       {
         type: "OTHER",
         status,
       },
-      errorMeta
+      meta
     );
   }
 }
@@ -276,10 +298,8 @@ export class BaseApi {
           })
         );
       }),
-      catchError((err_) => {
-        const err = err_ as AjaxError;
-        const meta = { request: processRequestMeta(err.request) };
-        throw new ErrorResponse({ type: "AJAX", status: err.status }, meta);
+      catchError((ajaxError) => {
+        throw processError(ajaxError as AjaxError);
       })
     );
   };
