@@ -26,6 +26,7 @@ import { DateTime } from "luxon";
 import { components } from "./schema";
 import { store } from "~/store";
 import { selectAuth } from "~/modules/auth/reducer";
+import { ProblemDetails } from "~/problems";
 export type schemas = components["schemas"];
 
 export const BASE_PATH =
@@ -109,7 +110,13 @@ export type ErrorDetails =
   | {
       type: "APPLICATION";
       error?: string;
-      data: object;
+      data: ProblemDetails;
+      status: number;
+    }
+  | {
+      type: "APPLICATION/UNKNOWN";
+      error?: string;
+      data: unknown;
       status: number;
     }
   | {
@@ -209,14 +216,30 @@ function processError(error: AjaxError): ErrorResponse {
       meta
     );
   } else if (status >= 400 && status < 600 && typeof data === "object") {
-    return new ErrorResponse(
-      {
-        type: "APPLICATION",
-        status,
-        data: data as object,
-      },
-      meta
-    );
+    if (
+      typeof data === "object" &&
+      error.xhr.getResponseHeader("content-type") === "application/problem+json"
+    ) {
+      // An RFC7807 HTTP Problem Details response.
+      return new ErrorResponse(
+        {
+          type: "APPLICATION",
+          status,
+          data: data as ProblemDetails,
+        },
+        meta
+      );
+    } else {
+      // An unknown error response.
+      return new ErrorResponse(
+        {
+          type: "APPLICATION/UNKNOWN",
+          status,
+          data,
+        },
+        meta
+      );
+    }
   } else {
     return new ErrorResponse(
       {
