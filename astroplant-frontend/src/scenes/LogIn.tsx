@@ -3,8 +3,6 @@ import { useHistory } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Container } from "semantic-ui-react";
 import { JSONSchema7 } from "json-schema";
-import ApiForm from "~/Components/ApiForm";
-import { AuthenticationTokens } from "astroplant-api";
 
 import {
   setRememberMe,
@@ -13,11 +11,11 @@ import {
 } from "~/modules/auth/actions";
 
 import HeadTitle from "~/Components/HeadTitle";
-
-import { AccessApi } from "astroplant-api";
+import ApiForm from "~/Components/ApiForm";
 import { useAppDispatch } from "~/hooks";
+import { api, schemas, Response } from "~/api";
 
-const LogInForm = ApiForm<any, AuthenticationTokens>();
+const LogInForm = ApiForm<any, Response<schemas["AuthenticationTokens"]>>();
 
 export default function LogInPage() {
   const { t } = useTranslation();
@@ -28,17 +26,16 @@ export default function LogInPage() {
 
   const send = useCallback((data: any) => {
     setRememberMeState(data.rememberMe);
-    const api = new AccessApi();
     return api.authenticateByCredentials({
       authUser: { username: data.username, password: data.password },
     });
   }, []);
 
   const onResponse = useCallback(
-    (response: AuthenticationTokens) => {
+    (response: Response<schemas["AuthenticationTokens"]>) => {
       dispatch(setRememberMe(rememberMeState));
-      dispatch(setRefreshToken(response.refreshToken));
-      dispatch(setAccessToken(response.accessToken));
+      dispatch(setRefreshToken(response.data.refreshToken));
+      dispatch(setAccessToken(response.data.accessToken));
       history.push("/me");
     },
     [dispatch, history, rememberMeState]
