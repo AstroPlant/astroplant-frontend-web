@@ -118,7 +118,11 @@ export class ErrorResponse extends Error {
   readonly meta: Meta<never>;
 
   constructor(details: ErrorDetails, meta: Meta<never>) {
-    super("An API error occurred");
+    super(
+      `An API error occurred${
+        meta.request.url && " (" + meta.request.url + ")"
+      }`
+    );
     Object.setPrototypeOf(this, ErrorResponse.prototype);
 
     this.details = details;
