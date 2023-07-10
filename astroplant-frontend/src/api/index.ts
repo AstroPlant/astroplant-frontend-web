@@ -264,7 +264,12 @@ export class BaseApi {
         }
 
         return ajax<T>(
-          this.createRequestArguments({ ...options, path: uriNext })
+          this.createRequestArguments({
+            ...options,
+            // explicitly remove the query part (it's set in uriNext by the server)
+            query: undefined,
+            path: uriNext,
+          })
         ).pipe(
           map((res) => {
             return processResponse(this, res);
