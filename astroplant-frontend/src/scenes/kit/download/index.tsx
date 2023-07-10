@@ -184,7 +184,7 @@ async function initiateDownload(
     ).data;
 
     if (!token) {
-      throw "failed to fetch token";
+      throw new Error("failed to fetch token");
     }
 
     const url = api.constructArchiveDownloadLink({
