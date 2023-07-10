@@ -18,6 +18,10 @@ const fetchQuantityTypes: Epic = (actions$, _state$) =>
         ),
         map(actions.addQuantityTypes),
         catchError((_err) => {
+          // TODO: fetching peripheral definitions is important for
+          // initialization. Many views depend on us knowing the peripheral
+          // definitions. Maybe there should be a global loading screen and
+          // error screen?
           return of(genericActions.setApiConnectionFailed(true));
         })
       )
