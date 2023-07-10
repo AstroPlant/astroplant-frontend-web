@@ -456,7 +456,10 @@ export class Api extends BaseApi {
     });
   };
 
-  // Definitions
+  /*******************/
+  /*** Definitions ***/
+  /*******************/
+
   listPeripheralDefinitions = (
     query: {
       withExpectedQuantityTypes?: boolean;
@@ -483,6 +486,102 @@ export class Api extends BaseApi {
       method: "GET",
       query,
       recursePages,
+    });
+  };
+
+  /**********************/
+  /*** Authentication ***/
+  /**********************/
+
+  /**
+   * Authenticate yourself by username and password.
+   * @throws {ErrorResponse}
+   */
+  authenticateByCredentials = ({
+    authUser,
+  }: {
+    authUser: schemas["AuthUser"];
+  }): Observable<Response<schemas["AuthenticationTokens"]>> => {
+    return this.request({
+      path: "/me/auth",
+      method: "POST",
+      body: authUser,
+    });
+  };
+
+  /**
+   * Obtain an access token from a refresh token.
+   * @throws {ErrorResponse}
+   */
+  obtainAccessTokenFromRefreshToken = ({
+    authRefreshToken,
+  }: {
+    authRefreshToken: schemas["AuthRefreshToken"];
+  }): Observable<Response<schemas["AuthenticationTokens"]>> => {
+    return this.request({
+      path: "/me/refresh",
+      method: "POST",
+      body: authRefreshToken,
+    });
+  };
+
+  /**
+   * Information of the authenticated user.
+   * @throws {ErrorResponse}
+   */
+  showMe = (): Observable<Response<schemas["FullUser"]>> => {
+    return this.request({
+      path: "/me",
+      method: "GET",
+    });
+  };
+
+  /************************/
+  /*** User information ***/
+  /************************/
+
+  /**
+   * Create a user.
+   * @throws {ErrorResponse}
+   */
+  createUser = ({
+    newUser,
+  }: {
+    newUser: schemas["NewUser"];
+  }): Observable<Response<void>> => {
+    return this.request({
+      path: "/users",
+      method: "POST",
+      body: newUser,
+    });
+  };
+
+  /**
+   * Get the user's details.
+   * @throws {ErrorResponse}
+   */
+  showUserByUsername = ({
+    username,
+  }: {
+    username: string;
+  }): Observable<Response<schemas["User"]>> => {
+    return this.request({
+      path: `/users/${encodeURI(username)}`,
+      method: "GET",
+    });
+  };
+
+  /**
+   * Get a user's kit memberships.
+   */
+  showUserKitMemberships = ({
+    username,
+  }: {
+    username: string;
+  }): Observable<Response<Array<schemas["KitMembership"]>>> => {
+    return this.request({
+      path: `/users/${encodeURI(username)}/kit-memberships`,
+      method: "GET",
     });
   };
 }
