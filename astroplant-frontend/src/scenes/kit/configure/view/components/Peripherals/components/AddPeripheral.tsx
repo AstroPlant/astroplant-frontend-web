@@ -1,8 +1,5 @@
-import React from "react";
-import compose from "~/utils/compose";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import { withTranslation, WithTranslation } from "react-i18next";
+import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Container,
   Modal,
@@ -13,7 +10,6 @@ import {
   Transition,
 } from "semantic-ui-react";
 
-import { RootState } from "~/types";
 import { KitConfigurationState } from "~/modules/kit/reducer";
 import { peripheralCreated } from "~/modules/kit/actions";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
@@ -23,185 +19,153 @@ import ApiForm from "~/Components/ApiForm";
 
 import PeripheralDefinitionCard from "~/Components/PeripheralDefinitionCard";
 import { api, Response, schemas } from "~/api";
-
-type State = {
-  open: boolean;
-  done: boolean;
-  peripheralDefinition: schemas["PeripheralDefinition"] | null;
-};
+import { useAppDispatch, useAppSelector } from "~/hooks";
 
 export type Props = {
   kit: schemas["Kit"];
   configuration: KitConfigurationState;
 };
 
-type PInner = Props &
-  WithTranslation & {
-    peripheralDefinitions: { [id: string]: schemas["PeripheralDefinition"] | undefined };
-    peripheralCreated: (payload: {
-      serial: string;
-      configurationId: number;
-      peripheral: schemas["Peripheral"];
-    }) => void;
-  };
-
 const PeripheralForm = ApiForm<any, any>();
 
-class AddPeripheral extends React.Component<PInner, State> {
-  state: State = {
-    open: false,
-    done: false,
-    peripheralDefinition: null,
+export default function AddPeripheral({ kit, configuration }: Props) {
+  const { t } = useTranslation();
+  const peripheralDefinitions = useAppSelector(
+    peripheralDefinitionsSelectors.selectAll
+  );
+  const dispatch = useAppDispatch();
+
+  const [open, setOpen] = useState(false);
+  const [done, setDone] = useState(false);
+  const [peripheralDefinition, setPeripheralDefinition] = useState<
+    schemas["PeripheralDefinition"] | null
+  >(null);
+
+  const handleClose = () => {
+    setOpen(false);
+    setDone(false);
+    setPeripheralDefinition(null);
   };
 
-  handleClose = () => {
-    this.setState({ open: false, done: false, peripheralDefinition: null });
+  const handleOpen = () => {
+    setOpen(true);
   };
 
-  handleOpen = () => {
-    this.setState({ open: true });
+  const selectPeripheralDefinition = (
+    peripheralDefinition: schemas["PeripheralDefinition"]
+  ) => {
+    setPeripheralDefinition(peripheralDefinition);
   };
 
-  selectPeripheralDefinition(peripheralDefinition: schemas["PeripheralDefinition"]) {
-    this.setState({ peripheralDefinition });
-  }
-
-  send(formData: any) {
-    const { configuration } = this.props;
-
+  const send = (formData: any) => {
     return api.createPeripheral({
       configurationId: configuration.id,
       newPeripheral: {
         ...formData,
-        peripheralDefinitionId: this.state.peripheralDefinition!.id,
+        peripheralDefinitionId: peripheralDefinition!.id,
       },
     });
-  }
+  };
 
-  onResponse(response: Response<schemas["Peripheral"]>) {
-    const { kit, configuration } = this.props;
-    this.props.peripheralCreated({
-      serial: kit.serial,
-      configurationId: configuration.id,
-      peripheral: response.data,
-    });
-    this.setState({ done: true });
-  }
+  const onResponse = (response: Response<schemas["Peripheral"]>) => {
+    dispatch(
+      peripheralCreated({
+        serial: kit.serial,
+        peripheral: response.data,
+      })
+    );
+    setDone(true);
+  };
 
-  render() {
-    const { t } = this.props;
+  let content;
 
-    let content;
-    const def = this.state.peripheralDefinition;
-
-    if (this.state.done) {
-      content = (
-        <>
-          <Header size="huge" icon textAlign="center">
-            <Transition animation="drop" duration={450} transitionOnMount>
-              <Icon name="check" circular />
-            </Transition>
-            <Header.Content>Success!</Header.Content>
-          </Header>
-          <Container textAlign="center">
-            <p>The peripheral has been added.</p>
-          </Container>
-        </>
-      );
-    } else if (def !== null) {
-      const schema: JSONSchema7 = {
-        type: "object",
-        title: "Peripheral",
-        required: ["name", "configuration"],
-        properties: {
-          name: { type: "string", title: t("common.name") },
-          configuration: def.configurationSchema,
-        },
-      };
-      content = (
-        <>
-          <PeripheralForm
-            schema={schema}
-            uiSchema={{}}
-            send={this.send.bind(this)}
-            onResponse={this.onResponse.bind(this)}
-            transform={(formData) => ({
-              ...formData,
-              peripheralDefinitionId: def.id,
-            })}
-          />
-        </>
-      );
-    } else {
-      content = (
-        <>
-          <Header size="small">
-            Please select the type of peripheral to add.
-          </Header>
-          <Card.Group centered>
-            {Object.keys(this.props.peripheralDefinitions).map((id) => {
-              const def = this.props.peripheralDefinitions[id]!;
-              return (
-                <PeripheralDefinitionCard
-                  key={def.id}
-                  peripheralDefinition={def}
-                  onClick={() => this.selectPeripheralDefinition(def)}
-                />
-              );
-            })}
-          </Card.Group>
-        </>
-      );
-    }
-
-    const closeEasily =
-      this.state.done || this.state.peripheralDefinition === null;
-
-    return (
-      <Modal
-        trigger={
-          <Button primary onClick={this.handleOpen}>
-            Add a peripheral
-          </Button>
-        }
-        closeOnEscape={closeEasily}
-        closeOnDimmerClick={closeEasily}
-        open={this.state.open}
-        onClose={this.handleClose}
-      >
-        <Modal.Header>Add a peripheral</Modal.Header>
-        <Modal.Content>{content}</Modal.Content>
-        <Modal.Actions>
-          {this.state.done ? (
-            <Button color="green" onClick={this.handleClose}>
-              <Icon name="checkmark" /> Neat!
-            </Button>
-          ) : (
-            <Button color="red" onClick={this.handleClose}>
-              Cancel
-            </Button>
-          )}
-        </Modal.Actions>
-      </Modal>
+  if (done) {
+    content = (
+      <>
+        <Header size="huge" icon textAlign="center">
+          <Transition animation="drop" duration={450} transitionOnMount>
+            <Icon name="check" circular />
+          </Transition>
+          <Header.Content>Success!</Header.Content>
+        </Header>
+        <Container textAlign="center">
+          <p>The peripheral has been added.</p>
+        </Container>
+      </>
+    );
+  } else if (peripheralDefinition !== null) {
+    const schema: JSONSchema7 = {
+      type: "object",
+      title: "Peripheral",
+      required: ["name", "configuration"],
+      properties: {
+        name: { type: "string", title: t("common.name") },
+        configuration: peripheralDefinition.configurationSchema,
+      },
+    };
+    content = (
+      <>
+        <PeripheralForm
+          schema={schema}
+          uiSchema={{}}
+          send={send}
+          onResponse={onResponse}
+          transform={(formData) => ({
+            ...formData,
+            peripheralDefinitionId: peripheralDefinition.id,
+          })}
+        />
+      </>
+    );
+  } else {
+    content = (
+      <>
+        <Header size="small">
+          Please select the type of peripheral to add.
+        </Header>
+        <Card.Group centered>
+          {peripheralDefinitions.map((def) => {
+            return (
+              <PeripheralDefinitionCard
+                key={def.id}
+                peripheralDefinition={def}
+                onClick={() => selectPeripheralDefinition(def)}
+              />
+            );
+          })}
+        </Card.Group>
+      </>
     );
   }
-}
 
-const mapStateToProps = (state: RootState) => {
-  return {
-    peripheralDefinitions: peripheralDefinitionsSelectors.selectEntities(state),
-  };
-};
+  // If we've selected a periheral don't making closing the modal too simple.
+  const closeEasily = done || peripheralDefinition === null;
 
-const mapDispatchToProps = (dispatch: any) =>
-  bindActionCreators(
-    {
-      peripheralCreated,
-    },
-    dispatch
+  return (
+    <Modal
+      trigger={
+        <Button primary onClick={handleOpen}>
+          Add a peripheral
+        </Button>
+      }
+      closeOnEscape={closeEasily}
+      closeOnDimmerClick={closeEasily}
+      open={open}
+      onClose={handleClose}
+    >
+      <Modal.Header>Add a peripheral</Modal.Header>
+      <Modal.Content>{content}</Modal.Content>
+      <Modal.Actions>
+        {done ? (
+          <Button color="green" onClick={handleClose}>
+            <Icon name="checkmark" /> Ok
+          </Button>
+        ) : (
+          <Button color="red" onClick={handleClose}>
+            Cancel
+          </Button>
+        )}
+      </Modal.Actions>
+    </Modal>
   );
-
-export default compose<PInner, Props>(
-  connect(mapStateToProps, mapDispatchToProps),
-  withTranslation()
-)(AddPeripheral);
+}
