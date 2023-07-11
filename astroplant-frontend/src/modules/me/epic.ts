@@ -1,38 +1,42 @@
 import { Epic, combineEpics } from "redux-observable";
 import { of, concat, EMPTY } from "rxjs";
 import { switchMap, map, filter, catchError } from "rxjs/operators";
+
+import { api } from "~/api";
 import * as actions from "./actions";
 import * as authActions from "../auth/actions";
 import * as genericActions from "../generic/actions";
 
-import { AccessApi, UsersApi } from "astroplant-api";
-import { AuthConfiguration, requestWrapper } from "~/utils/api";
-
 /**
- * Listens to authentication token change, and fetch our user details.
+ * Listens to authentication token change to fetch our user details.
  */
-const fetchUserDetailsEpic: Epic = (action$, state$) =>
+const fetchUserDetailsEpic: Epic = (action$, _state$) =>
   action$.pipe(
     filter(authActions.setAccessToken.match),
-    map((_action) => new AccessApi(AuthConfiguration.Instance)),
-    switchMap((api) =>
-      api.showMe().pipe(
-        requestWrapper(),
-        map((resp) => resp),
+    switchMap(() => {
+      console.warn("FETCH USER DETAILS");
+
+      return api.showMe().pipe(
+        map((resp) => resp.data),
         catchError((err) => {
           console.warn("error fetching user details", err);
           return EMPTY;
         })
-      )
-    ),
+      );
+    }),
     map(actions.setDetails)
   );
 
+/**
+ * Listens to user details change and kit creation to fetch our kit memberships.
+ */
 const fetchUserKitsEpic: Epic = (actions$, state$) =>
   actions$.pipe(
-    filter(action => actions.setDetails.match(action) || actions.kitCreated.match(action)),
-    map((_action) => new UsersApi(AuthConfiguration.Instance)),
-    switchMap((api) =>
+    filter(
+      (action) =>
+        actions.setDetails.match(action) || actions.kitCreated.match(action)
+    ),
+    switchMap(() =>
       concat(
         of(actions.loadingKitMemberships()),
         api
@@ -40,10 +44,11 @@ const fetchUserKitsEpic: Epic = (actions$, state$) =>
             username: state$.value.me.details.username,
           })
           .pipe(
-            requestWrapper(),
-            map((resp) => resp),
+            map((resp) => resp.data),
             map(actions.setKitMemberships),
-            catchError((err) => of(genericActions.setApiConnectionFailed(true)))
+            catchError((_err) =>
+              of(genericActions.setApiConnectionFailed(true))
+            )
           )
       )
     )
