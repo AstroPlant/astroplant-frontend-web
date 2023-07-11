@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, Icon, Input } from "semantic-ui-react";
 
-import ApiButton from "../../../../Components/ApiButton";
+import ApiButton from "~/Components/ApiButton";
 import { api, Response, schemas } from "~/api";
 
 export type Props = {

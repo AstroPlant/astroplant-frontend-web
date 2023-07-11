@@ -6,10 +6,10 @@ import { JSONSchema7 } from "json-schema";
 
 import { Kit, KitsApi, KitConfiguration } from "astroplant-api";
 
-import ApiForm from "../../../../../Components/ApiForm";
-import { KitConfigurationState } from "../../../../../modules/kit/reducer";
-import { kitConfigurationUpdated } from "../../../../../modules/kit/actions";
-import { AuthConfiguration } from "../../../../../utils/api";
+import ApiForm from "~/Components/ApiForm";
+import { KitConfigurationState } from "~/modules/kit/reducer";
+import { kitConfigurationUpdated } from "~/modules/kit/actions";
+import { AuthConfiguration } from "~/utils/api";
 
 export type Props = {
   kit: Kit;
