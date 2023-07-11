@@ -5,7 +5,6 @@ import validator from "@rjsf/validator-ajv8";
 
 import { KitConfigurationState } from "~/modules/kit/reducer";
 import { peripheralDeleted, peripheralUpdated } from "~/modules/kit/actions";
-import { Kit, KitsApi, Peripheral } from "astroplant-api";
 import { AuthConfiguration } from "~/utils/api";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 
@@ -17,11 +16,12 @@ import RjsfForm from "~/rjsf-theme-semantic-ui";
 import PeripheralDefinitionCard from "~/Components/PeripheralDefinitionCard";
 import { useAppDispatch, useAppSelector } from "~/hooks";
 import Loading from "~/Components/Loading";
+import { api, schemas, Response } from "~/api";
 
 export type Props = {
-  kit: Kit;
+  kit: schemas["Kit"];
   configuration: KitConfigurationState;
-  peripheral: Peripheral;
+  peripheral: schemas["Peripheral"];
 };
 
 const PeripheralForm = ApiForm<any, any>();
@@ -45,25 +45,23 @@ export default function ViewEditPeripheral({
   const [editing, setEditing] = useState(false);
 
   const sendUpdate = (formData: any) => {
-    const api = new KitsApi(AuthConfiguration.Instance);
     return api.patchPeripheral({
       peripheralId: peripheral.id,
       patchPeripheral: formData,
     });
   };
 
-  const responseUpdate = (response: Peripheral) => {
+  const responseUpdate = (response: Response<schemas["Peripheral"]>) => {
     dispatch(
       peripheralUpdated({
         serial: kit.serial,
-        peripheral: response,
+        peripheral: response.data,
       })
     );
     setEditing(false);
   };
 
   const sendDelete = () => {
-    const api = new KitsApi(AuthConfiguration.Instance);
     return api.deletePeripheral({
       peripheralId: peripheral.id,
     });
