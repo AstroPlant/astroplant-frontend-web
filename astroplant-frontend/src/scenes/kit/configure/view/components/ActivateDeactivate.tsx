@@ -1,8 +1,6 @@
 import React from "react";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import compose from "~/utils/compose";
-import { withTranslation, WithTranslation } from "react-i18next";
+import { useDispatch } from "react-redux";
+import { useTranslation, WithTranslation } from "react-i18next";
 
 import ApiButton from "~/Components/ApiButton";
 import { KitConfigurationState } from "~/modules/kit/reducer";
@@ -28,86 +26,70 @@ type PInner = WithTranslation &
 
 const Button = ApiButton<any>();
 
-class ActivateDeactivate extends React.Component<PInner> {
-  onResponse(response: Response<schemas["KitConfiguration"]>) {
-    const { kit } = this.props;
-    this.props.kitSetAllConfigurationsInactive({ serial: kit.serial });
-    this.props.kitConfigurationUpdated({
-      serial: kit.serial,
-      configuration: response.data,
-    });
+export default function ActivateDeactivate({ kit, configuration }: PInner) {
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+
+  const onResponse = (response: Response<schemas["KitConfiguration"]>) => {
+    dispatch(kitSetAllConfigurationsInactive({ serial: kit.serial }));
+    dispatch(
+      kitConfigurationUpdated({
+        serial: kit.serial,
+        configuration: response.data,
+      })
+    );
     alert(
       "Configuration updated. Make sure to restart the kit for the configuration to activate."
     );
-  }
+  };
 
-  send() {
-    const { configuration } = this.props;
-
+  const send = () => {
     return api.patchConfiguration({
       configurationId: configuration.id,
       patchKitConfiguration: {
         active: !configuration.active,
       },
     });
-  }
+  };
 
-  render() {
-    const { t, kit, configuration } = this.props;
+  const kitName = kit.name || "Unnamed";
+  const configurationDescription =
+    configuration.description || configuration.id;
 
-    const kitName = kit.name || "Unnamed";
-    const configurationDescription =
-      configuration.description || configuration.id;
-
-    if (configuration.active) {
-      return (
-        <Button
-          send={this.send.bind(this)}
-          onResponse={this.onResponse.bind(this)}
-          label={t("common.deactivate")}
-          buttonProps={{ negative: true }}
-          confirm={() => ({
-            content: t("kitConfiguration.deactivateConfirm", {
+  if (configuration.active) {
+    return (
+      <Button
+        send={send}
+        onResponse={onResponse}
+        label={t("common.deactivate")}
+        buttonProps={{ negative: true }}
+        confirm={() => ({
+          content: t("kitConfiguration.deactivateConfirm", {
+            kitName,
+            configurationDescription,
+          }),
+        })}
+      />
+    );
+  } else {
+    return (
+      <Button
+        send={send}
+        onResponse={onResponse}
+        label={t("common.activate")}
+        buttonProps={{ positive: true }}
+        confirm={() => ({
+          content: t(
+            configuration.neverUsed
+              ? "kitConfiguration.activateConfirmNeverUsed"
+              : "kitConfiguration.activateConfirm",
+            {
               kitName,
               configurationDescription,
-            }),
-          })}
-        />
-      );
-    } else {
-      return (
-        <Button
-          send={this.send.bind(this)}
-          onResponse={this.onResponse.bind(this)}
-          label={t("common.activate")}
-          buttonProps={{ positive: true }}
-          confirm={() => ({
-            content: t(
-              configuration.neverUsed
-                ? "kitConfiguration.activateConfirmNeverUsed"
-                : "kitConfiguration.activateConfirm",
-              {
-                kitName,
-                configurationDescription,
-              }
-            ),
-          })}
-        />
-      );
-    }
+            }
+          ),
+        })}
+      />
+    );
   }
 }
-
-const mapDispatchToProps = (dispatch: any) =>
-  bindActionCreators(
-    {
-      kitConfigurationUpdated,
-      kitSetAllConfigurationsInactive,
-    },
-    dispatch
-  );
-
-export default compose<PInner, Props>(
-  connect(null, mapDispatchToProps),
-  withTranslation()
-)(ActivateDeactivate);
