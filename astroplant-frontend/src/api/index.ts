@@ -832,6 +832,9 @@ const configuration = new Configuration({
  * access token fetched from the root store. */
 export const api = new Api(configuration);
 
+/** A global API instantiation without automatic authentication. */
+export const apiUnauthenticated = new Api();
+
 export type HttpMethod =
   | "GET"
   | "POST"

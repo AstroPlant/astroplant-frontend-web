@@ -16,7 +16,6 @@ import { QueryReturnValue } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
 import { firstValueFrom } from "rxjs";
 
 import {
-  Api,
   HttpHeaders,
   Meta,
   RequestOptions,
@@ -24,6 +23,7 @@ import {
   encodeUri,
   ErrorDetails,
   schemas,
+  apiUnauthenticated as unwrappedApi,
 } from "~/api";
 
 import { selectAuth } from "~/modules/auth/reducer";
@@ -38,8 +38,6 @@ export type HttpQuery = {
     | null
     | Array<string | number | null | boolean>;
 };
-
-const unwrappedApi = new Api();
 
 async function baseQueryFn(
   args: RequestOptions,
