@@ -560,7 +560,7 @@ export class Api extends BaseApi {
     authRefreshToken,
   }: {
     authRefreshToken: schemas["AuthRefreshToken"];
-  }): Observable<Response<schemas["AuthenticationTokens"]>> => {
+  }): Observable<Response<string>> => {
     return this.request({
       path: "/me/refresh",
       method: "POST",
