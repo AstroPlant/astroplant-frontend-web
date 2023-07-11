@@ -4,19 +4,17 @@ import { connect } from "react-redux";
 import { Icon } from "semantic-ui-react";
 import { JSONSchema7 } from "json-schema";
 
-import { Kit, KitsApi, KitConfiguration } from "astroplant-api";
-
 import ApiForm from "~/Components/ApiForm";
 import { KitConfigurationState } from "~/modules/kit/reducer";
 import { kitConfigurationUpdated } from "~/modules/kit/actions";
-import { AuthConfiguration } from "~/utils/api";
+import { Response, api, schemas } from "~/api";
 
 export type Props = {
-  kit: Kit;
+  kit: schemas["Kit"];
   configuration: KitConfigurationState;
   kitConfigurationUpdated: (kitConfiguration: {
     serial: string;
-    configuration: KitConfiguration;
+    configuration: schemas["KitConfiguration"];
   }) => void;
 };
 
@@ -24,26 +22,28 @@ type State = {
   editing: boolean;
 };
 
-const DescriptionForm = ApiForm<string, KitConfiguration>();
+const DescriptionForm = ApiForm<
+  string,
+  Response<schemas["KitConfiguration"]>
+>();
 
 class Description extends React.Component<Props, State> {
   state = {
     editing: false,
   };
 
-  onResponse(response: KitConfiguration) {
+  onResponse(response: Response<schemas["KitConfiguration"]>) {
     const { kit } = this.props;
     this.setState({ editing: false });
     this.props.kitConfigurationUpdated({
       serial: kit.serial,
-      configuration: response,
+      configuration: response.data,
     });
   }
 
   send(formData: string) {
     const { configuration } = this.props;
 
-    const api = new KitsApi(AuthConfiguration.Instance);
     return api.patchConfiguration({
       configurationId: configuration.id,
       patchKitConfiguration: {
