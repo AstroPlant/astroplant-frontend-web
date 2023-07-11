@@ -4,16 +4,14 @@ import { connect } from "react-redux";
 import compose from "~/utils/compose";
 import { withTranslation, WithTranslation } from "react-i18next";
 
-import ApiButton from "../../../../../Components/ApiButton";
-
-import { KitConfigurationState } from "../../../../../modules/kit/reducer";
+import ApiButton from "~/Components/ApiButton";
+import { KitConfigurationState } from "~/modules/kit/reducer";
 import {
   kitSetAllConfigurationsInactive,
   kitConfigurationUpdated,
-} from "../../../../../modules/kit/actions";
-
+} from "~/modules/kit/actions";
 import { Kit, KitsApi, KitConfiguration } from "astroplant-api";
-import { AuthConfiguration } from "../../../../../utils/api";
+import { AuthConfiguration } from "~/utils/api";
 
 export type Props = {
   kit: Kit;
@@ -39,7 +37,9 @@ class ActivateDeactivate extends React.Component<PInner> {
       serial: kit.serial,
       configuration: response,
     });
-    alert("Configuration updated. Make sure to restart the kit for the configuration to activate.");
+    alert(
+      "Configuration updated. Make sure to restart the kit for the configuration to activate."
+    );
   }
 
   send() {
