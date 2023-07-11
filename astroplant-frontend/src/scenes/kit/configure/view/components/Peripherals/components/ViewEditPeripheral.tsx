@@ -1,16 +1,13 @@
 import React, { useState } from "react";
-import compose from "~/utils/compose";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import { withTranslation, WithTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { Segment, Label, Header, Button, Icon } from "semantic-ui-react";
 import validator from "@rjsf/validator-ajv8";
 
-import { RootState } from "~/types";
 import { KitConfigurationState } from "~/modules/kit/reducer";
 import { peripheralDeleted, peripheralUpdated } from "~/modules/kit/actions";
-import { Kit, KitsApi, PeripheralDefinition, Peripheral } from "astroplant-api";
+import { Kit, KitsApi, Peripheral } from "astroplant-api";
 import { AuthConfiguration } from "~/utils/api";
+import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 
 import { JSONSchema7 } from "json-schema";
 import ApiForm from "~/Components/ApiForm";
@@ -18,6 +15,8 @@ import ApiButton from "~/Components/ApiButton";
 import RjsfForm from "~/rjsf-theme-semantic-ui";
 
 import PeripheralDefinitionCard from "~/Components/PeripheralDefinitionCard";
+import { useAppDispatch, useAppSelector } from "~/hooks";
+import Loading from "~/Components/Loading";
 
 export type Props = {
   kit: Kit;
@@ -25,28 +24,25 @@ export type Props = {
   peripheral: Peripheral;
 };
 
-type PInner = Props &
-  WithTranslation & {
-    peripheralDefinitions: { [id: string]: PeripheralDefinition };
-    peripheralDeleted: (payload: {
-      serial: string;
-      configurationId: number;
-      peripheralId: number;
-    }) => void;
-    peripheralUpdated: (payload: {
-      serial: string;
-      configurationId: number;
-      peripheral: Peripheral;
-    }) => void;
-  };
-
 const PeripheralForm = ApiForm<any, any>();
 const DeletePeripheralButton = ApiButton<any>();
 
-const ViewEditPeripheral = (props: PInner) => {
-  const [editing, setEditing] = useState(false);
+export default function ViewEditPeripheral({
+  kit,
+  configuration: _,
+  peripheral,
+}: Props) {
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
 
-  const { t, kit, configuration, peripheral } = props;
+  const peripheralDefinition = useAppSelector((state) =>
+    peripheralDefinitionsSelectors.selectById(
+      state,
+      peripheral.peripheralDefinitionId
+    )
+  );
+
+  const [editing, setEditing] = useState(false);
 
   const sendUpdate = (formData: any) => {
     const api = new KitsApi(AuthConfiguration.Instance);
@@ -57,11 +53,12 @@ const ViewEditPeripheral = (props: PInner) => {
   };
 
   const responseUpdate = (response: Peripheral) => {
-    props.peripheralUpdated({
-      serial: kit.serial,
-      configurationId: configuration.id,
-      peripheral: response,
-    });
+    dispatch(
+      peripheralUpdated({
+        serial: kit.serial,
+        peripheral: response,
+      })
+    );
     setEditing(false);
   };
 
@@ -73,21 +70,24 @@ const ViewEditPeripheral = (props: PInner) => {
   };
 
   const responseDelete = () => {
-    props.peripheralDeleted({
-      serial: kit.serial,
-      configurationId: configuration.id,
-      peripheralId: peripheral.id,
-    });
+    dispatch(
+      peripheralDeleted({
+        serial: kit.serial,
+        peripheralId: peripheral.id,
+      })
+    );
   };
 
-  const def = props.peripheralDefinitions[peripheral.peripheralDefinitionId];
+  if (!peripheralDefinition) {
+    return <Loading />;
+  }
 
   const schema: JSONSchema7 = {
     type: "object",
     required: ["name", "configuration"],
     properties: {
       name: { type: "string", title: t("common.name") },
-      configuration: def.configurationSchema,
+      configuration: peripheralDefinition.configurationSchema,
     },
   };
 
@@ -96,7 +96,10 @@ const ViewEditPeripheral = (props: PInner) => {
       <Label attached="top">Peripheral #{peripheral.id}</Label>
       <Header>{peripheral.name}</Header>
       <p>Identifier: #{peripheral.id}</p>
-      <PeripheralDefinitionCard peripheralDefinition={def} fluid />
+      <PeripheralDefinitionCard
+        peripheralDefinition={peripheralDefinition}
+        fluid
+      />
       {editing ? (
         <>
           <PeripheralForm
@@ -106,7 +109,7 @@ const ViewEditPeripheral = (props: PInner) => {
             onResponse={responseUpdate}
             transform={(formData) => ({
               ...formData,
-              peripheralDefinitionId: def.id,
+              peripheralDefinitionId: peripheralDefinition.id,
             })}
             formData={peripheral}
           />
@@ -154,24 +157,4 @@ const ViewEditPeripheral = (props: PInner) => {
       )}
     </Segment>
   );
-};
-
-const mapStateToProps = (state: RootState) => {
-  return {
-    peripheralDefinitions: state.peripheralDefinition.entities,
-  };
-};
-
-const mapDispatchToProps = (dispatch: any) =>
-  bindActionCreators(
-    {
-      peripheralDeleted,
-      peripheralUpdated,
-    },
-    dispatch
-  );
-
-export default compose<PInner, Props>(
-  connect(mapStateToProps, mapDispatchToProps),
-  withTranslation()
-)(ViewEditPeripheral);
+}
