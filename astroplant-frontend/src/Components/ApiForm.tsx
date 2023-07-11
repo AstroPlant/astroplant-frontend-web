@@ -18,6 +18,7 @@ import { addNotificationRequest } from "~/modules/notification/actions";
 
 import { requestWrapper } from "~/utils/api";
 import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
+import { ErrorResponse } from "~/api";
 
 export type Props<T, R> = {
   schema: JSONSchema7;
@@ -70,19 +71,26 @@ function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
 
       setSubmitting(false);
       props.onResponse(response);
-    } catch (e_) {
-      const e = e_ as any;
+    } catch (e) {
       setSubmitting(false);
 
-      console.warn("error on form submission", e, e.response);
-      if (e.status === 0) {
-        props.addNotificationRequest(notificationConnectionIssue(t));
-      }
+      // How to handle situations where we don't know the error type? Currently
+      // we just... ignore them. Which is bad.
+      if (e instanceof ErrorResponse) {
+        if (e.details.status === 0 || e.details.status >= 500) {
+          props.addNotificationRequest(notificationConnectionIssue(t));
+        }
 
-      const formErrors = PDInvalidParameters.toFormErrors(t, e.response);
-      if (formErrors !== null) {
-        console.warn("form errors", formErrors);
-        setAdditionalFormErrors(formErrors);
+        console.warn(e);
+        if (e.details.type === "APPLICATION") {
+          const formErrors = PDInvalidParameters.toFormErrors(
+            t,
+            e.details.data
+          );
+          if (formErrors !== null) {
+            setAdditionalFormErrors(formErrors);
+          }
+        }
       }
     }
   };
