@@ -38,9 +38,6 @@ type State = {
   done: boolean;
   result: { kitSerial: string | null; password: string | null };
 };
-function validate(formData: any, errors: any) {
-  return errors;
-}
 
 const CreateKitForm = ApiForm<any, { kitSerial: string; password: string }>();
 
@@ -186,7 +183,6 @@ class CreateKit extends Component<Props, State> {
                 <CreateKitForm
                   schema={schema}
                   uiSchema={uiSchema}
-                  validate={validate}
                   transform={this.transform.bind(this)}
                   send={this.send.bind(this)}
                   onResponse={this.onResponse.bind(this)}
