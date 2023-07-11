@@ -5,7 +5,6 @@ import validator from "@rjsf/validator-ajv8";
 
 import { KitConfigurationState } from "~/modules/kit/reducer";
 import { peripheralDeleted, peripheralUpdated } from "~/modules/kit/actions";
-import { AuthConfiguration } from "~/utils/api";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 
 import { JSONSchema7 } from "json-schema";
