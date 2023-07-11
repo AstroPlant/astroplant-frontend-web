@@ -2,10 +2,9 @@ import { Epic, combineEpics } from "redux-observable";
 import { switchMap, map, filter, catchError } from "rxjs/operators";
 import { of, timer } from "rxjs";
 import * as actions from "./actions";
-import { AccessApi } from "astroplant-api";
-import { requestWrapper } from "~/utils/api";
 
 import * as sessionActions from "../session/actions";
+import { api } from "~/api";
 
 /**
  * Listens to session initialization, and clear the refresh token if we do not
@@ -28,17 +27,17 @@ const refreshAuthenticationEpic: Epic = (action$, state$) =>
     switchMap(() => timer(0, 5 * 60 * 1000)),
     switchMap(() => {
       if (state$.value.auth.refreshToken) {
-        const api = new AccessApi();
-        const a = api.obtainAccessTokenFromRefreshToken({
-          authRefreshToken: {
-            refreshToken: state$.value.auth.refreshToken,
-          },
-        });
-        return a.pipe(
-          requestWrapper(),
-          map((access_token) => actions.setAccessToken(access_token)),
-          catchError((_err) => of(actions.notAuthenticated()))
-        );
+        return api
+          .obtainAccessTokenFromRefreshToken({
+            authRefreshToken: {
+              refreshToken: state$.value.auth.refreshToken,
+            },
+          })
+          .pipe(
+            map((response) => response.data),
+            map((accessToken) => actions.setAccessToken(accessToken)),
+            catchError((_err) => of(actions.notAuthenticated()))
+          );
       } else {
         return of(actions.notAuthenticated());
       }
