@@ -1,14 +1,11 @@
 import React, { useState, useContext } from "react";
 import { RouteComponentProps } from "react-router";
 import { Container, Button, Input, Divider } from "semantic-ui-react";
-
-import { KitRpcApi } from "astroplant-api";
-import { AuthConfiguration } from "~/utils/api";
+import { firstValueFrom } from "rxjs";
 
 import { KitContext } from "../contexts";
-
 import PeripheralCommand from "./PeripheralCommand";
-import { firstValueFrom } from "rxjs";
+import { api } from "~/api";
 
 type Params = { kitSerial: string };
 export type Props = RouteComponentProps<Params>;
@@ -26,13 +23,12 @@ export default function KitRpc(_props: Props) {
     setVersionResponse(null);
 
     try {
-      const api = new KitRpcApi(AuthConfiguration.Instance);
       const versionResponse = await firstValueFrom(
         api.version({
           kitSerial: kit.serial,
         })
       );
-      setVersionResponse(versionResponse);
+      setVersionResponse(versionResponse.data);
     } finally {
       setVersionRequesting(false);
     }
@@ -43,13 +39,12 @@ export default function KitRpc(_props: Props) {
     setUptimeResponse(null);
 
     try {
-      const api = new KitRpcApi(AuthConfiguration.Instance);
-      const uptimeResponse = await api
-        .uptime({
+      const uptimeResponse = await firstValueFrom(
+        api.uptime({
           kitSerial: kit.serial,
         })
-        .toPromise();
-      setUptimeResponse(`${uptimeResponse} seconds`);
+      );
+      setUptimeResponse(`${uptimeResponse.data} seconds`);
     } finally {
       setUptimeRequesting(false);
     }
