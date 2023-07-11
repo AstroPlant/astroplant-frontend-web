@@ -9,11 +9,10 @@ import {
   Transition,
 } from "semantic-ui-react";
 import { JSONSchema7 } from "json-schema";
+
 import ApiForm from "~/Components/ApiForm";
-
 import HeadTitle from "~/Components/HeadTitle";
-
-import { UsersApi } from "astroplant-api";
+import { api } from "~/api";
 
 const SignUpForm = ApiForm();
 
@@ -38,9 +37,12 @@ export default function SignUpPage() {
   };
 
   const send = (data: any) => {
-    const api = new UsersApi();
     return api.createUser({
-      newUser: data,
+      newUser: {
+        username: data.username,
+        password: data.password,
+        emailAddress: data.emailAddress,
+      },
     });
   };
 
