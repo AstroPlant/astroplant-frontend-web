@@ -3,17 +3,15 @@ import compose from "~/utils/compose";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Card, Icon, Input } from "semantic-ui-react";
 
-import { KitsApi, Kit } from "astroplant-api";
-
 import ApiButton from "../../../../Components/ApiButton";
-import { AuthConfiguration } from "../../../../utils/api";
+import { api, Response, schemas } from "~/api";
 
 type State = {
   password?: string;
 };
 
 export type Props = {
-  kit: Kit;
+  kit: schemas["Kit"];
 };
 
 type PInner = WithTranslation & Props;
@@ -23,14 +21,13 @@ const Button = ApiButton<any>();
 class ResetPassword extends React.Component<PInner, State> {
   state: State = {};
 
-  onResponse(response: string) {
-    this.setState({ password: response });
+  onResponse(response: Response<string>) {
+    this.setState({ password: response.data });
   }
 
   send() {
     const { kit } = this.props;
 
-    const api = new KitsApi(AuthConfiguration.Instance);
     return api.resetPassword({
       kitSerial: kit.serial,
     });
