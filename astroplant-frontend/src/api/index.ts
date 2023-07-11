@@ -691,6 +691,36 @@ export class Api extends BaseApi {
     });
   };
 
+  /**
+   * Query the kit for its uptime.
+   * @throws {ErrorResponse}
+   */
+  uptime = ({
+    kitSerial,
+  }: {
+    kitSerial: string;
+  }): Observable<Response<number>> => {
+    return this.request({
+      path: `/kit-rpc/${encodeURI(kitSerial)}/uptime`,
+      method: "GET",
+    });
+  };
+
+  /**
+   * Query the kit for the version it is running.
+   * @throws {ErrorResponse}
+   */
+  version = ({
+    kitSerial,
+  }: {
+    kitSerial: string;
+  }): Observable<Response<string>> => {
+    return this.request({
+      path: `/kit-rpc/${encodeURI(kitSerial)}/version`,
+      method: "GET",
+    });
+  };
+
   /*******************/
   /*** Definitions ***/
   /*******************/
