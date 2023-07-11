@@ -15,8 +15,6 @@ import { removeNull, undefinedToNull, emptyStringToNull } from "~/utils/form";
 import { pushUpOne } from "~/utils/router";
 
 import { addKit } from "~/modules/kit/actions";
-import { Kit, KitsApi } from "astroplant-api";
-import { AuthConfiguration } from "~/utils/api";
 
 import {
   schema as patchSchema,
@@ -27,8 +25,9 @@ import MapWithMarker from "~/Components/MapWithMarker";
 
 import { KitContext, MembershipContext } from "../contexts";
 import { useAppDispatch } from "~/hooks";
+import { Response, api, schemas } from "~/api";
 
-const PatchKitForm = ApiForm<any, Kit>();
+const PatchKitForm = ApiForm<any, Response<schemas["Kit"]>>();
 
 export default function KitDetails(props: RouteComponentProps) {
   const { t } = useTranslation();
@@ -77,7 +76,6 @@ export default function KitDetails(props: RouteComponentProps) {
   };
 
   const patchSend = (formData: any) => {
-    const api = new KitsApi(AuthConfiguration.Instance);
     return api.patchKit({
       kitSerial: kit.serial,
       patchKit: emptyStringToNull(
@@ -91,8 +89,8 @@ export default function KitDetails(props: RouteComponentProps) {
     });
   };
 
-  const onPatchResponse = (response: Kit) => {
-    dispatch(addKit(response));
+  const onPatchResponse = (response: Response<schemas["Kit"]>) => {
+    dispatch(addKit(response.data));
     setDone(true);
     pushUpOne(props.history);
   };
