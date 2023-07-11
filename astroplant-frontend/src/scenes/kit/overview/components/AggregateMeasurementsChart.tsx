@@ -128,7 +128,7 @@ export default function AggregateMeasurementsChart(props: Props) {
     }
 
     let minGap = Infinity;
-    let prevDatetime = measurements[0].datetimeStart;
+    let prevDatetime = measurements[0]!.datetimeStart;
     for (const measurement of measurements.slice(1)) {
       const gap = measurement.datetimeStart.getTime() - prevDatetime.getTime();
       prevDatetime = measurement.datetimeStart;
@@ -138,7 +138,7 @@ export default function AggregateMeasurementsChart(props: Props) {
     }
 
     let startIdx = 0;
-    prevDatetime = measurements[0].datetimeStart;
+    prevDatetime = measurements[0]!.datetimeStart;
     // @ts-ignore
     for (const [idx, measurement] of measurements.slice(1).entries()) {
       const gap = measurement.datetimeStart.getTime() - prevDatetime.getTime();

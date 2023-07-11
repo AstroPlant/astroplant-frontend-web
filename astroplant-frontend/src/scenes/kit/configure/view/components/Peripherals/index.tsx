@@ -17,8 +17,7 @@ export default function Peripherals({ kit, configuration }: Props) {
       {configuration.neverUsed && (
         <AddPeripheral kit={kit} configuration={configuration} />
       )}
-      {Object.keys(configuration.peripherals).map((peripheralId) => {
-        const peripheral = configuration.peripherals[peripheralId];
+      {Object.values(configuration.peripherals).map((peripheral) => {
         return (
           <ViewEditPeripheral
             key={peripheral.id}

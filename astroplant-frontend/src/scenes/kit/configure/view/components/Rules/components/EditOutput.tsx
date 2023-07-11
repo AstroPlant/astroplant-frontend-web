@@ -45,6 +45,10 @@ function EditOutput(props: PInner) {
     : ["scheduled"];
 
   let initialOutputType = possibleOutputTypes[0];
+  if (initialOutputType === undefined) {
+    throw new Error("Expected at least one output type.");
+  }
+
   try {
     initialOutputType = outputSettings.type;
   } catch (_e) {}

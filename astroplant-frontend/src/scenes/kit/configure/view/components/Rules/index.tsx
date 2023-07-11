@@ -90,7 +90,7 @@ function parseConfiguration(
           interpolated,
           setpoints,
         } = settings as any;
-        fuzzyControl.input[peripheralName][quantityTypeId] = {
+        fuzzyControl.input[peripheralName]![quantityTypeId]! = {
           nominalRange,
           nominalDeltaRange,
           deltaMeasurements,
@@ -107,7 +107,7 @@ function parseConfiguration(
         commandSettings as any
       )) {
         const { type, continuous, scheduled } = settings as any;
-        fuzzyControl.output[peripheralName][command] = {
+        fuzzyControl.output[peripheralName]![command]! = {
           type,
           continuous,
           scheduled,
@@ -137,7 +137,7 @@ function parseConfiguration(
           continue;
         }
 
-        if (!(quantityType in fuzzyControl.input[peripheral])) {
+        if (!(quantityType in fuzzyControl.input[peripheral]!)) {
           continue;
         }
 
@@ -158,7 +158,7 @@ function parseConfiguration(
           continue;
         }
 
-        if (!(command in fuzzyControl.output[peripheral])) {
+        if (!(command in fuzzyControl.output[peripheral]!)) {
           continue;
         }
 
@@ -176,7 +176,7 @@ function parseConfiguration(
           continue;
         }
 
-        if (!(command in fuzzyControl.output[peripheral])) {
+        if (!(command in fuzzyControl.output[peripheral]!)) {
           continue;
         }
 
@@ -259,7 +259,7 @@ class Rules extends React.Component<Props, State> {
       if (!(peripheral.name in draft.input)) {
         draft.input[peripheral.name] = {};
       }
-      draft.input[peripheral.name][quantityType.id] = {
+      draft.input[peripheral.name]![quantityType.id] = {
         nominalRange: 1.0,
         nominalDeltaRange: 0.1,
         deltaMeasurements: 1,
@@ -284,7 +284,7 @@ class Rules extends React.Component<Props, State> {
         draft.output[peripheral.name] = {};
       }
       if (schema.type && schema.type === "number") {
-        draft.output[peripheral.name][command] = {
+        draft.output[peripheral.name]![command] = {
           type: "continuous",
           continuous: {
             minimal: (schema as any).minimal || 0.0,
@@ -292,7 +292,7 @@ class Rules extends React.Component<Props, State> {
           },
         };
       } else {
-        draft.output[peripheral.name][command] = {
+        draft.output[peripheral.name]![command] = {
           type: "scheduled",
           // @ts-ignore
           scheduled: {
@@ -348,7 +348,7 @@ class Rules extends React.Component<Props, State> {
     });
 
     const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
-      draft.input[peripheral.name][quantityType.id] = inputSettingsSorted;
+      draft.input[peripheral.name]![quantityType.id] = inputSettingsSorted;
     });
 
     this.update(fuzzyControl);
@@ -360,7 +360,7 @@ class Rules extends React.Component<Props, State> {
     outputSettings: OutputSettings
   ) => {
     const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
-      draft.output[peripheral.name][command] = outputSettings;
+      draft.output[peripheral.name]![command] = outputSettings;
     });
 
     this.update(fuzzyControl);
@@ -376,8 +376,8 @@ class Rules extends React.Component<Props, State> {
 
   deleteInput = (peripheral: Peripheral, quantityType: QuantityType) => {
     const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
-      delete draft.input[peripheral.name][quantityType.id];
-      if (Object.values(draft.input[peripheral.name]).length === 0) {
+      delete draft.input[peripheral.name]![quantityType.id];
+      if (Object.values(draft.input[peripheral.name]!).length === 0) {
         delete draft.input[peripheral.name];
       }
     });
@@ -387,8 +387,8 @@ class Rules extends React.Component<Props, State> {
 
   deleteOutput = (peripheral: Peripheral, command: string) => {
     const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
-      delete draft.output[peripheral.name][command];
-      if (Object.values(draft.output[peripheral.name]).length === 0) {
+      delete draft.output[peripheral.name]![command];
+      if (Object.values(draft.output[peripheral.name]!).length === 0) {
         delete draft.output[peripheral.name];
       }
     });
@@ -421,7 +421,7 @@ class Rules extends React.Component<Props, State> {
       for (const quantityType of peripheralDefinition.expectedQuantityTypes!) {
         if (
           !(peripheral.name in fuzzyControl.input) ||
-          !(quantityType in fuzzyControl.input[peripheral.name])
+          !(quantityType in fuzzyControl.input[peripheral.name]!)
         ) {
           undefinedPeripheralQuantityTypes.push([
             peripheral,
@@ -448,7 +448,7 @@ class Rules extends React.Component<Props, State> {
       for (const [key, val] of Object.entries(schema.properties) as any) {
         if (
           !(peripheral.name in fuzzyControl.output) ||
-          !(key in fuzzyControl.output[peripheral.name])
+          !(key in fuzzyControl.output[peripheral.name]!)
         ) {
           undefinedPeripheralCommands.push([peripheral, key, val]);
         }
@@ -491,7 +491,7 @@ class Rules extends React.Component<Props, State> {
                 {Object.entries(qtInput).map(([quantityTypeId, settings]) => {
                   const peripheral = Object.values(
                     configuration.peripherals
-                  ).filter((p) => p.name === peripheralName)[0];
+                  ).filter((p) => p.name === peripheralName)[0]!;
                   const quantityType = quantityTypes[quantityTypeId]!;
                   return (
                     <div key={quantityTypeId}>
@@ -569,7 +569,7 @@ class Rules extends React.Component<Props, State> {
                 {Object.entries(commandOutput).map(([command, settings]) => {
                   const peripheral = Object.values(
                     configuration.peripherals
-                  ).filter((p) => p.name === peripheralName)[0];
+                  ).filter((p) => p.name === peripheralName)[0]!;
                   const peripheralDefinition =
                     peripheralDefinitions[peripheral.peripheralDefinitionId]!;
                   const schema = (peripheralDefinition.commandSchema as any)
@@ -672,7 +672,7 @@ class Rules extends React.Component<Props, State> {
 
           {this.state.editingRule
             .map((index) => {
-              const rule = fuzzyControl.rules[index];
+              const rule = fuzzyControl.rules[index]!;
               let conditionChoices: [string, QuantityType][] = [];
               let implicationChoices: [string, string][] = [];
               let scheduleChoices: [string, string][] = [];

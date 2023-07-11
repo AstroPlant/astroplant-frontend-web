@@ -102,7 +102,7 @@ export function walkPages<T extends { id: number }>(
       if (result.length === 0) {
         return EMPTY;
       } else {
-        return request(result[result.length - 1].id).pipe(requestWrapper());
+        return request(result[result.length - 1]!.id).pipe(requestWrapper());
       }
     }
   });
