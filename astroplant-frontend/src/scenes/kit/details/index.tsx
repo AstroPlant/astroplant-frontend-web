@@ -1,9 +1,6 @@
 import React, { useContext, useState, useMemo } from "react";
 import { RouteComponentProps, Route, Switch } from "react-router-dom";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import { withTranslation, WithTranslation } from "react-i18next";
-import compose from "~/utils/compose";
+import { useTranslation } from "react-i18next";
 import {
   Button,
   Container,
@@ -29,20 +26,16 @@ import ApiForm from "~/Components/ApiForm";
 import MapWithMarker from "~/Components/MapWithMarker";
 
 import { KitContext, MembershipContext } from "../contexts";
+import { useAppDispatch } from "~/hooks";
 
 const PatchKitForm = ApiForm<any, Kit>();
 
-export type Props = {};
-export type InnerProps = WithTranslation &
-  RouteComponentProps<{}> & {
-    addKit: (payload: Kit) => void;
-  };
-
-function KitDetails(props: InnerProps) {
-  const [done, setDone] = useState(false);
-
-  const { t, addKit } = props;
+export default function KitDetails(props: RouteComponentProps) {
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const { url, path } = props.match;
+
+  const [done, setDone] = useState(false);
 
   const kit = useContext(KitContext);
   const membership = useContext(MembershipContext);
@@ -54,9 +47,9 @@ function KitDetails(props: InnerProps) {
       coordinate:
         typeof kit.latitude === "number" && typeof kit.longitude === "number"
           ? {
-            latitude: kit.latitude,
-            longitude: kit.longitude,
-          }
+              latitude: kit.latitude,
+              longitude: kit.longitude,
+            }
           : null,
       privacyPublicDashboard: kit.privacyPublicDashboard,
       privacyShowOnMap: kit.privacyShowOnMap,
@@ -99,7 +92,7 @@ function KitDetails(props: InnerProps) {
   };
 
   const onPatchResponse = (response: Kit) => {
-    addKit(response);
+    dispatch(addKit(response));
     setDone(true);
     pushUpOne(props.history);
   };
@@ -183,16 +176,3 @@ function KitDetails(props: InnerProps) {
     </Container>
   );
 }
-
-const mapDispatchToProps = (dispatch: any) =>
-  bindActionCreators(
-    {
-      addKit,
-    },
-    dispatch
-  );
-
-export default compose<InnerProps, Props>(
-  withTranslation(),
-  connect(null, mapDispatchToProps)
-)(KitDetails);
