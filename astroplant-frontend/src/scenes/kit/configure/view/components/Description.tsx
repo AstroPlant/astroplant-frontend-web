@@ -11,10 +11,6 @@ import { useAppDispatch } from "~/hooks";
 export type Props = {
   kit: schemas["Kit"];
   configuration: KitConfigurationState;
-  kitConfigurationUpdated: (kitConfiguration: {
-    serial: string;
-    configuration: schemas["KitConfiguration"];
-  }) => void;
 };
 
 const DescriptionForm = ApiForm<
