@@ -26,10 +26,8 @@ import {
   Peripheral,
   PeripheralDefinition,
   QuantityType,
-  KitsApi,
   KitConfiguration,
 } from "astroplant-api";
-import { AuthConfiguration } from "~/utils/api";
 import Option from "~/utils/option";
 
 import {
@@ -48,6 +46,7 @@ import EditOutput from "./components/EditOutput";
 import EditRule from "./components/EditRule";
 import { firstValueFrom } from "rxjs";
 import Loading from "~/Components/Loading";
+import { api, Response, schemas } from "~/api";
 
 export type Props = WithTranslation & {
   kit: Kit;
@@ -217,19 +216,18 @@ class Rules extends React.Component<Props, State> {
     };
   }
 
-  onResponse(response: KitConfiguration) {
+  onResponse(response: Response<schemas["KitConfiguration"]>) {
     const { kit } = this.props;
     this.setState({ editing: false });
     this.props.kitConfigurationUpdated({
       serial: kit.serial,
-      configuration: response,
+      configuration: response.data,
     });
   }
 
   send(formData: any) {
     const { configuration } = this.props;
 
-    const api = new KitsApi(AuthConfiguration.Instance);
     return api.patchConfiguration({
       configurationId: configuration.id,
       patchKitConfiguration: {
@@ -243,7 +241,6 @@ class Rules extends React.Component<Props, State> {
 
     this.setState({ loading: true, fuzzyControl });
 
-    const api = new KitsApi(AuthConfiguration.Instance);
     await firstValueFrom(
       api.patchConfiguration({
         configurationId: configuration.id,
