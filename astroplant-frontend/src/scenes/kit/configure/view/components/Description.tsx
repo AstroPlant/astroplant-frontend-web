@@ -1,6 +1,4 @@
-import React from "react";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
+import React, { useState } from "react";
 import { Icon } from "semantic-ui-react";
 import { JSONSchema7 } from "json-schema";
 
@@ -8,6 +6,7 @@ import ApiForm from "~/Components/ApiForm";
 import { KitConfigurationState } from "~/modules/kit/reducer";
 import { kitConfigurationUpdated } from "~/modules/kit/actions";
 import { Response, api, schemas } from "~/api";
+import { useAppDispatch } from "~/hooks";
 
 export type Props = {
   kit: schemas["Kit"];
@@ -18,77 +17,58 @@ export type Props = {
   }) => void;
 };
 
-type State = {
-  editing: boolean;
-};
-
 const DescriptionForm = ApiForm<
   string,
   Response<schemas["KitConfiguration"]>
 >();
 
-class Description extends React.Component<Props, State> {
-  state = {
-    editing: false,
+export default function Description({ kit, configuration }: Props) {
+  const dispatch = useAppDispatch();
+
+  const [editing, setEditing] = useState(false);
+
+  const onResponse = (response: Response<schemas["KitConfiguration"]>) => {
+    setEditing(false);
+    dispatch(
+      kitConfigurationUpdated({
+        serial: kit.serial,
+        configuration: response.data,
+      })
+    );
   };
 
-  onResponse(response: Response<schemas["KitConfiguration"]>) {
-    const { kit } = this.props;
-    this.setState({ editing: false });
-    this.props.kitConfigurationUpdated({
-      serial: kit.serial,
-      configuration: response.data,
-    });
-  }
-
-  send(formData: string) {
-    const { configuration } = this.props;
-
+  const send = (formData: string) => {
     return api.patchConfiguration({
       configurationId: configuration.id,
       patchKitConfiguration: {
         description: formData,
       },
     });
-  }
+  };
 
-  render() {
-    const { configuration } = this.props;
+  if (editing) {
+    const schema: JSONSchema7 = {
+      type: "string",
+    };
+    const uiSchema = {};
 
-    if (this.state.editing) {
-      const schema: JSONSchema7 = {
-        type: "string",
-      };
-      const uiSchema = {};
-
-      return (
-        <div>
-          <DescriptionForm
-            schema={schema}
-            uiSchema={uiSchema}
-            send={this.send.bind(this)}
-            onResponse={this.onResponse.bind(this)}
-            formData={configuration.description}
-          />
-        </div>
-      );
-    } else {
-      return (
-        <div onClick={() => this.setState({ editing: true })}>
-          <Icon name="pencil" />
-          {configuration.description}
-        </div>
-      );
-    }
+    return (
+      <div>
+        <DescriptionForm
+          schema={schema}
+          uiSchema={uiSchema}
+          send={send}
+          onResponse={onResponse}
+          formData={configuration.description}
+        />
+      </div>
+    );
+  } else {
+    return (
+      <div onClick={() => setEditing(true)}>
+        <Icon name="pencil" />
+        {configuration.description}
+      </div>
+    );
   }
 }
-
-const mapDispatchToProps = (dispatch: any) =>
-  bindActionCreators(
-    {
-      kitConfigurationUpdated,
-    },
-    dispatch
-  );
-
-export default connect(null, mapDispatchToProps)(Description);
