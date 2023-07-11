@@ -194,17 +194,15 @@ const kitReducerById = byId(
 const kitConfigurationReducerById = byId((action: any) => {
   const maybeWithConfiguration = action.payload || {};
   return (
-    (maybeWithConfiguration.configuration || {}).id ||
-    maybeWithConfiguration.configurationId
+    maybeWithConfiguration.configuration?.id ??
+    maybeWithConfiguration.configurationId ??
+    maybeWithConfiguration.peripheral?.kitConfigurationId
   );
 }, kitConfigurationReducerWrapper as any);
 
 const peripheralReducerById = byId((action: any) => {
   const maybeWithPeripheral = action.payload || {};
-  return (
-    (maybeWithPeripheral.peripheral || {}).id ||
-    maybeWithPeripheral.peripheralId
-  );
+  return maybeWithPeripheral.peripheral?.id ?? maybeWithPeripheral.peripheralId;
 }, peripheralReducer as any);
 
 export default function rootKitReducer(state = initial, action: any) {
