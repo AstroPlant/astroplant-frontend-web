@@ -339,6 +339,194 @@ export class BaseApi {
  * A client implementation of the AstroPlant API.
  */
 export class Api extends BaseApi {
+  /**********************/
+  /*** Kit management ***/
+  /**********************/
+
+  /**
+   * Create a new configuration.
+   * @throws {ErrorResponse}
+   */
+  createConfiguration = ({
+    kitSerial,
+    newKitConfiguration,
+  }: {
+    kitSerial: string;
+    newKitConfiguration: schemas["NewKitConfiguration"];
+  }): Observable<Response<schemas["KitConfiguration"]>> => {
+    return this.request({
+      path: `/kits/${encodeURI(kitSerial)}/configurations`,
+      method: "POST",
+      body: newKitConfiguration,
+    });
+  };
+
+  /**
+   * Create a kit.
+   * @throws {ErrorResponse}
+   */
+  createKit = ({
+    newKit,
+  }: {
+    newKit: schemas["NewKit"];
+  }): Observable<Response<{ kitSerial: string; password: string }>> => {
+    return this.request({
+      path: "/kits",
+      method: "POST",
+      body: newKit,
+    });
+  };
+
+  /**
+   * Add a peripheral to the configuration.
+   * @throws {ErrorResponse}
+   */
+  createPeripheral = ({
+    configurationId,
+    newPeripheral,
+  }: {
+    configurationId: number;
+    newPeripheral: schemas["NewPeripheral"];
+  }): Observable<Response<schemas["Peripheral"]>> => {
+    return this.request({
+      path: `/kit-configurations/${encodeURI(
+        String(configurationId)
+      )}/peripherals`,
+      method: "POST",
+      body: newPeripheral,
+    });
+  };
+
+  /**
+   * Delete a peripheral.
+   * @throws {ErrorResponse}
+   */
+  deletePeripheral = ({
+    peripheralId,
+  }: {
+    peripheralId: number;
+  }): Observable<Response<void>> => {
+    return this.request({
+      path: `/peripherals/${encodeURI(String(peripheralId))}`,
+      method: "DELETE",
+    });
+  };
+
+  /**
+   * The configurations of the specified kit.
+   * @throws {ErrorResponse}
+   */
+  listConfigurations = ({
+    kitSerial,
+  }: {
+    kitSerial: string;
+  }): Observable<
+    Response<Array<schemas["KitConfigurationWithPeripherals"]>>
+  > => {
+    return this.request({
+      path: `/kits/${encodeURI(kitSerial)}/configurations`,
+      method: "GET",
+    });
+  };
+
+  /**
+   * List all actions you are permitted to perform on the specified kit.
+   * @throws {ErrorResponse}
+   */
+  listPermissions = (query: {
+    kitSerial: string;
+  }): Observable<Response<Array<schemas["Permission"]>>> => {
+    return this.request({
+      path: "/permissions",
+      method: "GET",
+      query,
+    });
+  };
+
+  /**
+   * Update the configuration.
+   * @throws {ErrorResponse}
+   */
+  patchConfiguration = ({
+    configurationId,
+    patchKitConfiguration,
+  }: {
+    configurationId: number;
+    patchKitConfiguration: schemas["PatchKitConfiguration"];
+  }): Observable<Response<schemas["KitConfiguration"]>> => {
+    return this.request<schemas["KitConfiguration"]>({
+      path: `/kit-configurations/${encodeURI(String(configurationId))}`,
+      method: "PATCH",
+      body: patchKitConfiguration,
+    });
+  };
+
+  /**
+   * Update the kit details.
+   * @throws {ErrorResponse}
+   */
+  patchKit = ({
+    kitSerial,
+    patchKit,
+  }: {
+    kitSerial: string;
+    patchKit: schemas["PatchKit"];
+  }): Observable<Response<schemas["Kit"]>> => {
+    return this.request({
+      path: `/kits/${encodeURI(kitSerial)}`,
+      method: "PATCH",
+      body: patchKit,
+    });
+  };
+
+  /**
+   * Update a peripheral.
+   * @throws {ErrorResponse}
+   */
+  patchPeripheral = ({
+    peripheralId,
+    patchPeripheral,
+  }: {
+    peripheralId: number;
+    patchPeripheral: schemas["PatchPeripheral"];
+  }): Observable<Response<void>> => {
+    return this.request({
+      path: `/peripherals/${encodeURI(String(peripheralId))}`,
+      method: "PATCH",
+      body: patchPeripheral,
+    });
+  };
+
+  /**
+   * Reset the kit's password.
+   * @throws {ErrorResponse}
+   */
+  resetPassword = ({
+    kitSerial,
+  }: {
+    kitSerial: string;
+  }): Observable<Response<string>> => {
+    return this.request({
+      path: `/kits/${encodeURI(kitSerial)}/password`,
+      method: "POST",
+    });
+  };
+
+  /**
+   * Info for a specific kit.
+   * @throws {ErrorResponse}
+   */
+  showKitBySerial = ({
+    kitSerial,
+  }: {
+    kitSerial: string;
+  }): Observable<Response<schemas["Kit"]>> => {
+    return this.request({
+      path: `/kits/${encodeURI(kitSerial)}`,
+      method: "GET",
+    });
+  };
+
   /**
    * @throws {ErrorResponse}
    */
@@ -478,6 +666,10 @@ export class Api extends BaseApi {
 
     return url;
   };
+
+  /***************/
+  /*** Kit RPC ***/
+  /***************/
 
   /**
    * @throws {ErrorResponse}
