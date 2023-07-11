@@ -9,7 +9,6 @@ import {
   createApi,
   retry,
 } from "@reduxjs/toolkit/query/react";
-import { Kit } from "~/../../astroplant-api";
 import { selectAuth } from "~/modules/auth/reducer";
 import { AppDispatch } from "~/store";
 import { RootState } from "~/types";
@@ -75,7 +74,7 @@ export const rtkApi = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithRetry,
   endpoints: (build) => ({
-    listKits: build.query<Kit[], void>({
+    listKits: build.query<schemas["Kit"][], void>({
       async queryFn(_arg, api, _baseQuery) {
         const auth = selectAuth(api.getState() as RootState);
         let headers: HttpHeaders = auth.accessToken
