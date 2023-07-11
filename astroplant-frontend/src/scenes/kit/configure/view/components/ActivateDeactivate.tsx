@@ -1,6 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
-import { useTranslation, WithTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 import ApiButton from "~/Components/ApiButton";
 import { KitConfigurationState } from "~/modules/kit/reducer";
@@ -15,18 +15,9 @@ export type Props = {
   configuration: KitConfigurationState;
 };
 
-type PInner = WithTranslation &
-  Props & {
-    kitConfigurationUpdated: (payload: {
-      serial: string;
-      configuration: schemas["KitConfiguration"];
-    }) => void;
-    kitSetAllConfigurationsInactive: (payload: { serial: string }) => void;
-  };
-
 const Button = ApiButton<any>();
 
-export default function ActivateDeactivate({ kit, configuration }: PInner) {
+export default function ActivateDeactivate({ kit, configuration }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 
