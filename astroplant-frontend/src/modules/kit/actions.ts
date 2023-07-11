@@ -59,7 +59,7 @@ export const peripheralUpdated = createAction<{
 
 export const peripheralDeleted = createAction<{
   serial: string;
-  peripheralId: string;
+  peripheralId: number;
 }>("kit/PERIPHERAL_DELETED");
 
 export const rawMeasurementReceived = createAction<{
