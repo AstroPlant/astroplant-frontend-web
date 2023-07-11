@@ -10,11 +10,10 @@ import {
   kitSetAllConfigurationsInactive,
   kitConfigurationUpdated,
 } from "~/modules/kit/actions";
-import { Kit, KitsApi, KitConfiguration } from "astroplant-api";
-import { AuthConfiguration } from "~/utils/api";
+import { api, Response, schemas } from "~/api";
 
 export type Props = {
-  kit: Kit;
+  kit: schemas["Kit"];
   configuration: KitConfigurationState;
 };
 
@@ -22,7 +21,7 @@ type PInner = WithTranslation &
   Props & {
     kitConfigurationUpdated: (payload: {
       serial: string;
-      configuration: KitConfiguration;
+      configuration: schemas["KitConfiguration"];
     }) => void;
     kitSetAllConfigurationsInactive: (payload: { serial: string }) => void;
   };
@@ -30,12 +29,12 @@ type PInner = WithTranslation &
 const Button = ApiButton<any>();
 
 class ActivateDeactivate extends React.Component<PInner> {
-  onResponse(response: KitConfiguration) {
+  onResponse(response: Response<schemas["KitConfiguration"]>) {
     const { kit } = this.props;
     this.props.kitSetAllConfigurationsInactive({ serial: kit.serial });
     this.props.kitConfigurationUpdated({
       serial: kit.serial,
-      configuration: response,
+      configuration: response.data,
     });
     alert(
       "Configuration updated. Make sure to restart the kit for the configuration to activate."
@@ -45,7 +44,6 @@ class ActivateDeactivate extends React.Component<PInner> {
   send() {
     const { configuration } = this.props;
 
-    const api = new KitsApi(AuthConfiguration.Instance);
     return api.patchConfiguration({
       configurationId: configuration.id,
       patchKitConfiguration: {
