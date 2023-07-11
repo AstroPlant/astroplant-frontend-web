@@ -101,7 +101,7 @@ function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
         key={formEpoch}
         schema={props.schema}
         uiSchema={props.uiSchema}
-        validate={props.validate}
+        customValidate={props.validate}
         onChange={({ formData }) => setFormData(formData)}
         onSubmit={({ formData }) => submit(formData)}
         formData={formData}
