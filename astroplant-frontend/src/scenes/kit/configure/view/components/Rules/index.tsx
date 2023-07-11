@@ -47,6 +47,7 @@ import EditInput from "./components/EditInput";
 import EditOutput from "./components/EditOutput";
 import EditRule from "./components/EditRule";
 import { firstValueFrom } from "rxjs";
+import Loading from "~/Components/Loading";
 
 export type Props = WithTranslation & {
   kit: Kit;
@@ -414,7 +415,11 @@ class Rules extends React.Component<Props, State> {
     let undefinedPeripheralQuantityTypes: [Peripheral, QuantityType][] = [];
     for (const peripheral of Object.values(configuration.peripherals)) {
       const peripheralDefinition =
-        peripheralDefinitions[peripheral.peripheralDefinitionId]!;
+        peripheralDefinitions[peripheral.peripheralDefinitionId];
+
+      if (peripheralDefinition === undefined) {
+        return <Loading />;
+      }
 
       for (const quantityType of peripheralDefinition.expectedQuantityTypes!) {
         if (
