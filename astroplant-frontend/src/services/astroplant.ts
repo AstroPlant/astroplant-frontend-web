@@ -9,13 +9,12 @@ import {
   createApi,
   retry,
 } from "@reduxjs/toolkit/query/react";
-import { selectAuth } from "~/modules/auth/reducer";
-import { AppDispatch } from "~/store";
-import { RootState } from "~/types";
-import { components } from "../api/schema";
 import { ThunkAction } from "@reduxjs/toolkit";
 import { QueryActionCreatorResult } from "@reduxjs/toolkit/dist/query/core/buildInitiate";
 import { QueryResultSelectorResult } from "@reduxjs/toolkit/dist/query/core/buildSelectors";
+import { QueryReturnValue } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
+import { firstValueFrom } from "rxjs";
+
 import {
   Api,
   HttpHeaders,
@@ -24,10 +23,12 @@ import {
   ErrorResponse,
   encodeUri,
   ErrorDetails,
+  schemas,
 } from "~/api";
-import { QueryReturnValue } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
-import { firstValueFrom } from "rxjs";
-export type schemas = components["schemas"];
+
+import { selectAuth } from "~/modules/auth/reducer";
+import { AppDispatch } from "~/store";
+import { RootState } from "~/types";
 
 export type HttpQuery = {
   [key: string]:
