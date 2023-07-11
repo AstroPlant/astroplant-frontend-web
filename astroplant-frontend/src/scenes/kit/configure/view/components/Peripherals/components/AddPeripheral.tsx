@@ -17,32 +17,31 @@ import { RootState } from "~/types";
 import { KitConfigurationState } from "~/modules/kit/reducer";
 import { peripheralCreated } from "~/modules/kit/actions";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
-import { Kit, KitsApi, PeripheralDefinition, Peripheral } from "astroplant-api";
-import { AuthConfiguration } from "~/utils/api";
 
 import { JSONSchema7 } from "json-schema";
 import ApiForm from "~/Components/ApiForm";
 
 import PeripheralDefinitionCard from "~/Components/PeripheralDefinitionCard";
+import { api, Response, schemas } from "~/api";
 
 type State = {
   open: boolean;
   done: boolean;
-  peripheralDefinition: PeripheralDefinition | null;
+  peripheralDefinition: schemas["PeripheralDefinition"] | null;
 };
 
 export type Props = {
-  kit: Kit;
+  kit: schemas["Kit"];
   configuration: KitConfigurationState;
 };
 
 type PInner = Props &
   WithTranslation & {
-    peripheralDefinitions: { [id: string]: PeripheralDefinition | undefined };
+    peripheralDefinitions: { [id: string]: schemas["PeripheralDefinition"] | undefined };
     peripheralCreated: (payload: {
       serial: string;
       configurationId: number;
-      peripheral: Peripheral;
+      peripheral: schemas["Peripheral"];
     }) => void;
   };
 
@@ -63,14 +62,13 @@ class AddPeripheral extends React.Component<PInner, State> {
     this.setState({ open: true });
   };
 
-  selectPeripheralDefinition(peripheralDefinition: PeripheralDefinition) {
+  selectPeripheralDefinition(peripheralDefinition: schemas["PeripheralDefinition"]) {
     this.setState({ peripheralDefinition });
   }
 
   send(formData: any) {
     const { configuration } = this.props;
 
-    const api = new KitsApi(AuthConfiguration.Instance);
     return api.createPeripheral({
       configurationId: configuration.id,
       newPeripheral: {
@@ -80,12 +78,12 @@ class AddPeripheral extends React.Component<PInner, State> {
     });
   }
 
-  onResponse(response: Peripheral) {
+  onResponse(response: Response<schemas["Peripheral"]>) {
     const { kit, configuration } = this.props;
     this.props.peripheralCreated({
       serial: kit.serial,
       configurationId: configuration.id,
-      peripheral: response,
+      peripheral: response.data,
     });
     this.setState({ done: true });
   }
