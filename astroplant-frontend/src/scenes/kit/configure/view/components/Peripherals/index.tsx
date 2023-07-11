@@ -11,27 +11,23 @@ export type Props = {
   configuration: KitConfigurationState;
 };
 
-export default class Peripherals extends React.Component<Props> {
-  render() {
-    const { kit, configuration } = this.props;
-
-    return (
-      <>
-        {configuration.neverUsed && (
-          <AddPeripheral kit={kit} configuration={configuration} />
-        )}
-        {Object.keys(configuration.peripherals).map(peripheralId => {
-          const peripheral = configuration.peripherals[peripheralId];
-          return (
-            <ViewEditPeripheral
-              key={peripheral.id}
-              kit={kit}
-              configuration={configuration}
-              peripheral={peripheral}
-            />
-          );
-        })}
-      </>
-    );
-  }
+export default function Peripherals({ kit, configuration }: Props) {
+  return (
+    <>
+      {configuration.neverUsed && (
+        <AddPeripheral kit={kit} configuration={configuration} />
+      )}
+      {Object.keys(configuration.peripherals).map((peripheralId) => {
+        const peripheral = configuration.peripherals[peripheralId];
+        return (
+          <ViewEditPeripheral
+            key={peripheral.id}
+            kit={kit}
+            configuration={configuration}
+            peripheral={peripheral}
+          />
+        );
+      })}
+    </>
+  );
 }
