@@ -10,20 +10,20 @@ import {
   Card,
   Input,
 } from "semantic-ui-react";
-import { kitCreated } from "../modules/me/actions";
 
 import { JSONSchema7 } from "json-schema";
-import ApiForm from "~/Components/ApiForm";
-
-import { KitsApi } from "astroplant-api";
-import { AuthConfiguration } from "~/utils/api";
 
 import { withAuthentication } from "~/Components/AuthenticatedGuard";
 import HeadTitle from "~/Components/HeadTitle";
-import { schemas } from "~/api";
+import { Response, api, schemas } from "~/api";
 import { useAppDispatch } from "~/hooks";
+import { kitCreated } from "~/modules/me/actions";
+import ApiForm from "~/Components/ApiForm";
 
-const CreateKitForm = ApiForm<any, { kitSerial: string; password: string }>();
+const CreateKitForm = ApiForm<
+  any,
+  Response<{ kitSerial: string; password: string }>
+>();
 
 function CreateKit() {
   const { t } = useTranslation();
@@ -35,10 +35,12 @@ function CreateKit() {
     password: string;
   } | null>(null);
 
-  const onResponse = (response: { kitSerial: string; password: string }) => {
+  const onResponse = (
+    response: Response<{ kitSerial: string; password: string }>
+  ) => {
     dispatch(kitCreated());
     setDone(true);
-    setResult(response);
+    setResult(response.data);
   };
 
   const transform = (formData: any): schemas["NewKit"] => {
@@ -59,7 +61,6 @@ function CreateKit() {
   };
 
   const send = (formData: any) => {
-    const api = new KitsApi(AuthConfiguration.Instance);
     return api.createKit({ newKit: formData });
   };
 
