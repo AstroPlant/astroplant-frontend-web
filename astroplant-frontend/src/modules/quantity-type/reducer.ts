@@ -1,10 +1,9 @@
 import { createReducer, createEntityAdapter } from "@reduxjs/toolkit";
 import * as actions from "./actions";
 import { RootState } from "~/types";
+import { schemas } from "~/api";
 
-import { QuantityType } from "astroplant-api";
-
-export const quantityTypesAdapter = createEntityAdapter<QuantityType>({
+export const quantityTypesAdapter = createEntityAdapter<schemas["QuantityType"]>({
   selectId: (quantityType) => quantityType.id,
 });
 

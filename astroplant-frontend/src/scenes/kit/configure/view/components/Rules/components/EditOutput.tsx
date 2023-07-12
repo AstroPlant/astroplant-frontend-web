@@ -8,8 +8,6 @@ import validator from "@rjsf/validator-ajv8";
 
 import RjsfForm from "~/rjsf-theme-semantic-ui";
 
-import { Peripheral } from "astroplant-api";
-
 import {
   OutputSettings,
   continuousOutputSettingsSchema,
@@ -17,18 +15,19 @@ import {
   scheduledOutputSettingsSchema,
   scheduledOutputSettingsUiSchema,
 } from "../schemas";
+import { schemas } from "~/api";
 
 export type Props = {
-  peripheral: Peripheral;
+  peripheral: schemas["Peripheral"];
   command: string;
   schema: JSONSchema7;
   outputSettings: OutputSettings;
   edit: (
-    peripheral: Peripheral,
+    peripheral: schemas["Peripheral"],
     command: string,
     outputSettings: OutputSettings
   ) => void;
-  delete: (peripheral: Peripheral, command: string) => void;
+  delete: (peripheral: schemas["Peripheral"], command: string) => void;
   close: () => void;
 };
 
@@ -97,13 +96,13 @@ function EditOutput(props: PInner) {
     props.close();
   };
 
-  const handleDelete = (peripheral: Peripheral, command: string) => {
+  const handleDelete = (peripheral: schemas["Peripheral"], command: string) => {
     props.delete(peripheral, command);
     handleClose();
   };
 
   const handleSubmit = (
-    peripheral: Peripheral,
+    peripheral: schemas["Peripheral"],
     command: string,
     outputSettings: any
   ) => {

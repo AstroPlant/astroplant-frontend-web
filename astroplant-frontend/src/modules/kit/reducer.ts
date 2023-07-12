@@ -3,11 +3,10 @@ import isEqual from "lodash/isEqual";
 import * as actions from "./actions";
 import { byId, arrayToObject } from "~/utils/byId";
 
-import { Kit } from "astroplant-api";
-import { KitConfiguration, Peripheral } from "astroplant-api";
+import { schemas } from "~/api";
 
-export type KitConfigurationState = KitConfiguration & {
-  peripherals: { [peripheralId: string]: Peripheral };
+export type KitConfigurationState = schemas["KitConfiguration"] & {
+  peripherals: { [peripheralId: string]: schemas["Peripheral"] };
 };
 
 export interface Measurement {
@@ -22,7 +21,7 @@ export interface RawMeasurement extends Measurement {
 }
 
 export interface KitState {
-  details: Kit | null;
+  details: schemas["Kit"] | null;
   configurations: { [id: string]: KitConfigurationState } | null;
   loadingConfigurations: boolean;
   rawMeasurements: { [key: string]: RawMeasurement };
@@ -171,8 +170,8 @@ const kitConfigurationReducerWrapper = (
   return { ...state2, peripherals: newPeripherals };
 };
 
-const peripheralReducer = createReducer<Peripheral>(
-  {} as Peripheral,
+const peripheralReducer = createReducer<schemas["Peripheral"]>(
+  {} as schemas["Peripheral"],
   (builder) =>
     builder
       .addCase(actions.peripheralCreated, (state, action) => {

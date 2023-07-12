@@ -4,13 +4,13 @@ import { DateTime } from "luxon";
 
 import RelativeTime from "~/Components/RelativeTime";
 import { RawMeasurement as RawMeasurementState } from "modules/kit/reducer";
-import { Peripheral, PeripheralDefinition, QuantityType } from "astroplant-api";
 import Option from "utils/option";
+import { schemas } from "~/api";
 
 export type Props = CardProps & {
-  peripheral: Peripheral;
-  peripheralDefinition: PeripheralDefinition;
-  quantityType: QuantityType;
+  peripheral: schemas["Peripheral"];
+  peripheralDefinition: schemas["PeripheralDefinition"];
+  quantityType: schemas["QuantityType"];
   rawMeasurement: Option<RawMeasurementState>;
 };
 

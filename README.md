@@ -34,8 +34,3 @@ $ yarn build
 ```
 
 This builds the app for production to the `./build` folder.
-
-## AstroPlant API client module
-This project includes a client for the AstroPlant API as a local module in `./local_modules/astroplant-api`. It is generated automatically from [the openapi.yaml file in the AstroPlant API repository](https://github.com/AstroPlant/astroplant-api/blob/master/openapi.yaml).
-
-To regenerate the API client module, clone the AstroPlant API repository and make your changes to `openapi.yaml`. Make sure the path in `./generate.sh` points to the correct location. Then execute `./generate.sh` in your shell.

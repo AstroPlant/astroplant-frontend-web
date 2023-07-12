@@ -1,10 +1,9 @@
 import { createReducer, createEntityAdapter } from "@reduxjs/toolkit";
 import * as actions from "./actions";
 import { RootState } from "~/types";
+import { schemas } from "~/api";
 
-import { PeripheralDefinition } from "astroplant-api";
-
-export const definitionsAdapter = createEntityAdapter<PeripheralDefinition>({
+export const definitionsAdapter = createEntityAdapter<schemas["PeripheralDefinition"]>({
   selectId: (peripheralDefinition) => peripheralDefinition.id,
 });
 

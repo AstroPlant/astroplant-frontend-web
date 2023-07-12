@@ -1,13 +1,12 @@
 import React from "react";
 import { Header, Table } from "semantic-ui-react";
 
-import { Peripheral, QuantityType } from "astroplant-api";
-
 import { InputSettings } from "../schemas";
+import { schemas } from "~/api";
 
 export type Props = {
-  peripheral: Peripheral;
-  quantityType: QuantityType;
+  peripheral: schemas["Peripheral"];
+  quantityType: schemas["QuantityType"];
   inputSettings: InputSettings;
 };
 

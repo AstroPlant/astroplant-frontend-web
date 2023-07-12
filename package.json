@@ -1,11 +1,10 @@
 {
   "scripts": {
-    "start": "yarn workspace astroplant-api run build && yarn workspace astroplant-frontend run start",
-    "build": "yarn workspace astroplant-api run build && yarn workspace astroplant-frontend run build"
+    "start": "yarn workspace astroplant-frontend run start",
+    "build": "yarn workspace astroplant-frontend run build"
   },
   "private": true,
   "workspaces": [
-    "astroplant-api",
     "astroplant-frontend"
   ]
 }

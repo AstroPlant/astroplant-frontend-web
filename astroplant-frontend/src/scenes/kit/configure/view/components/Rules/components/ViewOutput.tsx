@@ -2,12 +2,11 @@ import React from "react";
 import { Table, Header, Divider } from "semantic-ui-react";
 import { JSONSchema7 } from "json-schema";
 
-import { Peripheral } from "astroplant-api";
-
 import { OutputSettings, ScheduledOutputSettings } from "../schemas";
+import { schemas } from "~/api";
 
 export type Props = {
-  peripheral: Peripheral;
+  peripheral: schemas["Peripheral"];
   command: string;
   schema: JSONSchema7;
   outputSettings: OutputSettings;

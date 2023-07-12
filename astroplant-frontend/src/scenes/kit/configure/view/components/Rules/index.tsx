@@ -21,13 +21,6 @@ import { kitConfigurationUpdated } from "~/modules/kit/actions";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { selectors as quantityTypesSelectors } from "~/modules/quantity-type/reducer";
 
-import {
-  Kit,
-  Peripheral,
-  PeripheralDefinition,
-  QuantityType,
-  KitConfiguration,
-} from "astroplant-api";
 import Option from "~/utils/option";
 
 import {
@@ -49,21 +42,23 @@ import Loading from "~/Components/Loading";
 import { api, Response, schemas } from "~/api";
 
 export type Props = WithTranslation & {
-  kit: Kit;
+  kit: schemas["Kit"];
   configuration: KitConfigurationState;
-  peripheralDefinitions: { [id: string]: PeripheralDefinition | undefined };
-  quantityTypes: { [id: string]: QuantityType | undefined };
+  peripheralDefinitions: {
+    [id: string]: schemas["PeripheralDefinition"] | undefined;
+  };
+  quantityTypes: { [id: string]: schemas["QuantityType"] | undefined };
   kitConfigurationUpdated: (kitConfiguration: {
     serial: string;
-    configuration: KitConfiguration;
+    configuration: schemas["KitConfiguration"];
   }) => void;
 };
 
 type State = {
   editing: boolean;
   loading: boolean;
-  editingInput: Option<[Peripheral, QuantityType]>;
-  editingOutput: Option<[Peripheral, string, JSONSchema7]>;
+  editingInput: Option<[schemas["Peripheral"], schemas["QuantityType"]]>;
+  editingOutput: Option<[schemas["Peripheral"], string, JSONSchema7]>;
   editingRule: Option<number>;
   inputSettings: any;
   fuzzyControl: FuzzyControl;
@@ -254,7 +249,10 @@ class Rules extends React.Component<Props, State> {
     this.setState({ loading: false });
   }
 
-  addEmptyInput = (peripheral: Peripheral, quantityType: QuantityType) => {
+  addEmptyInput = (
+    peripheral: schemas["Peripheral"],
+    quantityType: schemas["QuantityType"]
+  ) => {
     const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
       if (!(peripheral.name in draft.input)) {
         draft.input[peripheral.name] = {};
@@ -275,7 +273,7 @@ class Rules extends React.Component<Props, State> {
   };
 
   addEmptyOutput = (
-    peripheral: Peripheral,
+    peripheral: schemas["Peripheral"],
     command: string,
     schema: JSONSchema7
   ) => {
@@ -331,8 +329,8 @@ class Rules extends React.Component<Props, State> {
   };
 
   editInput = (
-    peripheral: Peripheral,
-    quantityType: QuantityType,
+    peripheral: schemas["Peripheral"],
+    quantityType: schemas["QuantityType"],
     inputSettings: InputSettings
   ) => {
     const inputSettingsSorted = produce(inputSettings, (draft) => {
@@ -355,7 +353,7 @@ class Rules extends React.Component<Props, State> {
   };
 
   editOutput = (
-    peripheral: Peripheral,
+    peripheral: schemas["Peripheral"],
     command: string,
     outputSettings: OutputSettings
   ) => {
@@ -374,7 +372,10 @@ class Rules extends React.Component<Props, State> {
     this.update(fuzzyControl);
   };
 
-  deleteInput = (peripheral: Peripheral, quantityType: QuantityType) => {
+  deleteInput = (
+    peripheral: schemas["Peripheral"],
+    quantityType: schemas["QuantityType"]
+  ) => {
     const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
       delete draft.input[peripheral.name]![quantityType.id];
       if (Object.values(draft.input[peripheral.name]!).length === 0) {
@@ -385,7 +386,7 @@ class Rules extends React.Component<Props, State> {
     this.update(fuzzyControl);
   };
 
-  deleteOutput = (peripheral: Peripheral, command: string) => {
+  deleteOutput = (peripheral: schemas["Peripheral"], command: string) => {
     const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
       delete draft.output[peripheral.name]![command];
       if (Object.values(draft.output[peripheral.name]!).length === 0) {
@@ -409,7 +410,10 @@ class Rules extends React.Component<Props, State> {
       this.props;
     const { fuzzyControl } = this.state;
 
-    let undefinedPeripheralQuantityTypes: [Peripheral, QuantityType][] = [];
+    let undefinedPeripheralQuantityTypes: [
+      schemas["Peripheral"],
+      schemas["QuantityType"]
+    ][] = [];
     for (const peripheral of Object.values(configuration.peripherals)) {
       const peripheralDefinition =
         peripheralDefinitions[peripheral.peripheralDefinitionId];
@@ -431,7 +435,11 @@ class Rules extends React.Component<Props, State> {
       }
     }
 
-    let undefinedPeripheralCommands: [Peripheral, string, JSONSchema7][] = [];
+    let undefinedPeripheralCommands: [
+      schemas["Peripheral"],
+      string,
+      JSONSchema7
+    ][] = [];
     for (const peripheral of Object.values(configuration.peripherals)) {
       const peripheralDefinition =
         peripheralDefinitions[peripheral.peripheralDefinitionId]!;
@@ -673,7 +681,7 @@ class Rules extends React.Component<Props, State> {
           {this.state.editingRule
             .map((index) => {
               const rule = fuzzyControl.rules[index]!;
-              let conditionChoices: [string, QuantityType][] = [];
+              let conditionChoices: [string, schemas["QuantityType"]][] = [];
               let implicationChoices: [string, string][] = [];
               let scheduleChoices: [string, string][] = [];
               for (const [peripheralName, qtSettings] of Object.entries(

@@ -1,11 +1,11 @@
 import { createAction } from "@reduxjs/toolkit";
-import { FullUser, KitMembership } from "astroplant-api";
+import { schemas } from "~/api";
 
-export const setDetails = createAction<FullUser>("me/SET_DETAILS");
+export const setDetails = createAction<schemas["FullUser"]>("me/SET_DETAILS");
 
 export const loadingKitMemberships = createAction("me/LOADING_KIT_MEMBERSHIPS");
 
-export const setKitMemberships = createAction<KitMembership[]>(
+export const setKitMemberships = createAction<schemas["KitMembership"][]>(
   "me/SET_KIT_MEMBERSHIPS"
 );
 

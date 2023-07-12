@@ -1,4 +1,3 @@
-import { Configuration, Middleware, RequestArgs } from "astroplant-api";
 import {
   Observable,
   EMPTY,
@@ -9,46 +8,8 @@ import {
 } from "rxjs";
 import { retry } from "rxjs/operators";
 
-import { store } from "~/store";
 import { recurse } from "./observables";
 import { ErrorResponse } from "~/api";
-
-/**
- * Configuration for typescript-rxjs API.
- */
-export class AuthConfiguration extends Configuration {
-  private static config: AuthConfiguration;
-
-  private constructor() {
-    const middleware: Middleware[] = [
-      {
-        pre(request: RequestArgs): RequestArgs {
-          const token = store.getState().auth.accessToken;
-
-          if (token) {
-            return {
-              ...request,
-              headers: {
-                ...(request.headers || {}),
-                Authorization: `Bearer ${token}`,
-              },
-            };
-          } else {
-            return {
-              ...request,
-            };
-          }
-        },
-      },
-    ];
-
-    super({ middleware });
-  }
-
-  public static get Instance() {
-    return AuthConfiguration.config || (AuthConfiguration.config = new this());
-  }
-}
 
 /**
  * @deprecated this is a no-op now. Rate-limiting will be moved to the global request handler.

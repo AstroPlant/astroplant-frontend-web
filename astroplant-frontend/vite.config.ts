@@ -21,10 +21,6 @@ export default defineConfig({
     outDir: "build",
   },
   plugins: [react(), tsconfigPaths()],
-  optimizeDeps: {
-    // Exclude workspace dependency astroplant-api from bundling
-    exclude: ["astroplant-api"],
-  },
   test: {
     environment: "jsdom",
   },

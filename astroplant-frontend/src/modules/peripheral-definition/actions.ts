@@ -1,6 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
-import { PeripheralDefinition } from "astroplant-api";
+import { schemas } from "~/api";
 
-export const addDefinitions = createAction<PeripheralDefinition[]>(
+export const addDefinitions = createAction<schemas["PeripheralDefinition"][]>(
   "peripheralDefinition/ADD_DEFINITIONS"
 );

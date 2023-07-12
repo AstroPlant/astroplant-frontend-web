@@ -1,8 +1,8 @@
 import { createReducer } from "@reduxjs/toolkit";
 import isEqual from "lodash/isEqual";
-import { FullUser } from "astroplant-api";
 import * as actions from "./actions";
 import { RootState } from "~/types";
+import { schemas } from "~/api";
 
 export interface KitMembership {
   accessConfigure: boolean;
@@ -10,7 +10,7 @@ export interface KitMembership {
 }
 
 export interface MeState {
-  details: FullUser | null;
+  details: schemas["FullUser"] | null;
   loadingKitMemberships: boolean;
   kitMemberships: { [serial: string]: KitMembership };
 }

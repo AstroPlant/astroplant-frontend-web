@@ -5,17 +5,20 @@ import { withTranslation, WithTranslation } from "react-i18next";
 import { Modal, Card, Header, Button, Icon } from "semantic-ui-react";
 
 import { RootState } from "~/types";
-import { PeripheralDefinition, Peripheral, QuantityType } from "astroplant-api";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
+import { schemas } from "~/api";
 
 export type Props = {
-  choices: [Peripheral, QuantityType][];
-  add: (peripheral: Peripheral, quantityType: QuantityType) => void;
+  choices: [schemas["Peripheral"], schemas["QuantityType"]][];
+  add: (
+    peripheral: schemas["Peripheral"],
+    quantityType: schemas["QuantityType"]
+  ) => void;
 };
 
 type PInner = Props &
   WithTranslation & {
-    peripheralDefinitions: { [id: string]: PeripheralDefinition };
+    peripheralDefinitions: { [id: string]: schemas["PeripheralDefinition"] };
   };
 
 type State = {
@@ -36,8 +39,8 @@ class AddPeripheral extends React.Component<PInner, State> {
   };
 
   selectPeripheralQuantityType(
-    peripheral: Peripheral,
-    quantityType: QuantityType
+    peripheral: schemas["Peripheral"],
+    quantityType: schemas["QuantityType"]
   ) {
     this.props.add(peripheral, quantityType);
     this.handleClose();
@@ -74,9 +77,8 @@ class AddPeripheral extends React.Component<PInner, State> {
           </Header>
           <Card.Group centered stackable columns={3}>
             {choices.map(([peripheral, quantityType]) => {
-              const pDef = peripheralDefinitions[
-                peripheral.peripheralDefinitionId
-              ]!;
+              const pDef =
+                peripheralDefinitions[peripheral.peripheralDefinitionId]!;
               return (
                 <Card
                   key={`${peripheral.name}-${quantityType.id}`}

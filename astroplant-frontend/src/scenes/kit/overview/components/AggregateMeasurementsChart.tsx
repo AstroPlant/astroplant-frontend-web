@@ -13,7 +13,6 @@ import {
 import { DateTime } from "luxon";
 import { map, tap } from "rxjs/operators";
 import { firstValueFrom, Observable } from "rxjs";
-import { Peripheral, PeripheralDefinition, QuantityType } from "astroplant-api";
 import Option from "~/utils/option";
 import { KitState } from "~/modules/kit/reducer";
 
@@ -32,9 +31,9 @@ export type Aggregate = {
 
 export type Props = CardProps & {
   kitState: KitState;
-  peripheral: Peripheral;
-  peripheralDefinition: PeripheralDefinition;
-  quantityType: QuantityType;
+  peripheral: schemas["Peripheral"];
+  peripheralDefinition: schemas["PeripheralDefinition"];
+  quantityType: schemas["QuantityType"];
 };
 
 const fillColor = "#35EF7F";

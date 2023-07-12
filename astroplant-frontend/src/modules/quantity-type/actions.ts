@@ -1,6 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
-import { QuantityType } from "astroplant-api";
+import { schemas } from "~/api";
 
-export const addQuantityTypes = createAction<QuantityType[]>(
+export const addQuantityTypes = createAction<schemas["QuantityType"][]>(
   "quantityType/ADD_QUANTITY_TYPES"
 );

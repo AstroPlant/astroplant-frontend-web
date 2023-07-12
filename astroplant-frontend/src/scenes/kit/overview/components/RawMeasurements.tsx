@@ -4,10 +4,10 @@ import { Container, Card } from "semantic-ui-react";
 import { KitConfigurationState, KitState } from "~/modules/kit/reducer";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { selectors as quantityTypesSelectors } from "~/modules/quantity-type/reducer";
-import { PeripheralDefinition, QuantityType } from "astroplant-api";
 import Option from "~/utils/option";
 
 import RawMeasurementComp from "./RawMeasurement";
+import { schemas } from "~/api";
 
 export type Props = {
   kitState: KitState;
@@ -32,14 +32,14 @@ export default function RawMeasurements(props: Props) {
     let hasMeasurements = false;
     const cards = Object.values(activeConfiguration.peripherals).map(
       (peripheral) => {
-        const def: Option<PeripheralDefinition> = Option.from(
+        const def: Option<schemas["PeripheralDefinition"]> = Option.from(
           peripheralDefinitions[peripheral.peripheralDefinitionId]
         );
         return def
-          .map((def: PeripheralDefinition) =>
+          .map((def: schemas["PeripheralDefinition"]) =>
             def.expectedQuantityTypes!.map((quantityType) => {
               hasMeasurements = true;
-              const qt: Option<QuantityType> = Option.from(
+              const qt: Option<schemas["QuantityType"]> = Option.from(
                 quantityTypes[quantityType]
               );
               return qt

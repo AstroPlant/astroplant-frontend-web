@@ -5,7 +5,6 @@ WORKDIR /usr/src/astroplant-frontend-web
 COPY package.json .
 COPY yarn.lock .
 COPY tsconfig.json .
-COPY astroplant-api ./astroplant-api
 COPY astroplant-frontend ./astroplant-frontend
 
 RUN yarn install

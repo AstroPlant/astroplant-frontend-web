@@ -21,7 +21,6 @@
     "@types/react-leaflet": "~2.5.0",
     "@types/react-router-dom": "~5.1.2",
     "@types/recharts": "^1.8.5",
-    "astroplant-api": "0.1.0-alpha.1",
     "history": "~4.10.1",
     "http-status-codes": "^1.4.0",
     "i18next": "^17.3.1",

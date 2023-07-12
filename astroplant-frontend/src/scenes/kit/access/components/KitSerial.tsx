@@ -1,10 +1,9 @@
 import React from "react";
 import { Card } from "semantic-ui-react";
-
-import { Kit } from "astroplant-api";
+import { schemas } from "~/api";
 
 export type Props = {
-  kit: Kit;
+  kit: schemas["Kit"];
 };
 
 export default function KitSerial({ kit }: Props) {

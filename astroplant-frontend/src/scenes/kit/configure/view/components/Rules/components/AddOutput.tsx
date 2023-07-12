@@ -6,17 +6,17 @@ import { Modal, Card, Header, Button, Icon } from "semantic-ui-react";
 import { JSONSchema7 } from "json-schema";
 
 import { RootState } from "~/types";
-import { PeripheralDefinition, Peripheral } from "astroplant-api";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
+import { schemas } from "~/api";
 
 export type Props = {
-  choices: [Peripheral, string, JSONSchema7][];
-  add: (peripheral: Peripheral, command: string, schema: JSONSchema7) => void;
+  choices: [schemas["Peripheral"], string, JSONSchema7][];
+  add: (peripheral: schemas["Peripheral"], command: string, schema: JSONSchema7) => void;
 };
 
 type PInner = Props &
   WithTranslation & {
-    peripheralDefinitions: { [id: string]: PeripheralDefinition };
+    peripheralDefinitions: { [id: string]: schemas["PeripheralDefinition"] };
   };
 
 type State = {
@@ -37,7 +37,7 @@ class AddPeripheral extends React.Component<PInner, State> {
   };
 
   selectPeripheralCommand(
-    peripheral: Peripheral,
+    peripheral: schemas["Peripheral"],
     command: string,
     schema: JSONSchema7
   ) {

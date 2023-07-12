@@ -1,9 +1,9 @@
 import React from "react";
 import { Card, CardProps } from "semantic-ui-react";
-import { PeripheralDefinition } from "astroplant-api";
+import { schemas } from "~/api";
 
 export type Props = CardProps & {
-  peripheralDefinition: PeripheralDefinition;
+  peripheralDefinition: schemas["PeripheralDefinition"];
 };
 
 export default function PeripheralDefinitionCard(props: Props) {

@@ -1,14 +1,11 @@
 /**
- * Currently there are two API client implementations living side-by-side in this codebase:
- * ./local_modules/astroplant-api, which is automatically generated, and the implementation
- * here, which is created manually.
- *
- * This manual implementation provides more features, such as utilities for following pages
- * in Link headers. However, this implementation does not yet provide all endpoints and its
- * interface is subject to change.
- *
- * The intention is to, over time, complete this manual implementation and remove the
- * implementation at ./local_modules/astroplant-api.
+ * This is the AstroPlant API client implementation. It provides utilities such
+ * as recursively following pages in Link headers. API requests return an
+ * `Observable`: this is an asynchronous datatype similar to a `Promise`, with
+ * powerful additional features. Observables for regular requests emit one
+ * response and then finish. Observables for recursive requests can emit
+ * multiple items before finishing. Observables are inherently retryable and
+ * cancelable, so API requests are inherently retryable and cancelable.
  */
 
 import parseLinkHeader from "parse-link-header";

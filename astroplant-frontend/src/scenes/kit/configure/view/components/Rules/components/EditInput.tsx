@@ -6,24 +6,23 @@ import validator from "@rjsf/validator-ajv8";
 
 import RjsfForm from "~/rjsf-theme-semantic-ui";
 
-import { Peripheral, QuantityType } from "astroplant-api";
-
 import {
   InputSettings,
   inputSettingsSchema,
   inputSettingsUiSchema,
 } from "../schemas";
+import { schemas } from "~/api";
 
 export type Props = {
-  peripheral: Peripheral;
-  quantityType: QuantityType;
+  peripheral: schemas["Peripheral"];
+  quantityType: schemas["QuantityType"];
   inputSettings: InputSettings;
   edit: (
-    peripheral: Peripheral,
-    quantityType: QuantityType,
+    peripheral: schemas["Peripheral"],
+    quantityType: schemas["QuantityType"],
     inputSettings: InputSettings
   ) => void;
-  delete: (peripheral: Peripheral, quantityType: QuantityType) => void;
+  delete: (peripheral: schemas["Peripheral"], quantityType: schemas["QuantityType"]) => void;
   close: () => void;
 };
 
@@ -39,14 +38,14 @@ function EditPeripheral(props: PInner) {
     props.close();
   };
 
-  const handleDelete = (peripheral: Peripheral, quantityType: QuantityType) => {
+  const handleDelete = (peripheral: schemas["Peripheral"], quantityType: schemas["QuantityType"]) => {
     props.delete(peripheral, quantityType);
     handleClose();
   };
 
   const handleSubmit = (
-    peripheral: Peripheral,
-    quantityType: QuantityType,
+    peripheral: schemas["Peripheral"],
+    quantityType: schemas["QuantityType"],
     inputSettings: InputSettings
   ) => {
     props.edit(peripheral, quantityType, inputSettings);

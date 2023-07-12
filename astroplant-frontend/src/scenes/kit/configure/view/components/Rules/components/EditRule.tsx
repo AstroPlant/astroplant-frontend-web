@@ -14,10 +14,10 @@ import {
   inputFuzzySetSchema,
   outputFuzzySetSchema,
 } from "../schemas";
-import { QuantityType } from "astroplant-api";
+import { schemas } from "~/api";
 
 export type Props = {
-  conditionChoices: [string, QuantityType][];
+  conditionChoices: [string, schemas["QuantityType"]][];
   implicationChoices: [string, string][];
   scheduleChoices: [string, string][];
   fuzzyRule: FuzzyRule;
