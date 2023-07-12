@@ -11,6 +11,9 @@ export default class Option<T> {
     this._some = some;
   }
 
+  /**
+   * Construct an option from a value that is possible null or undefined. If
+   * the value is null or undefined, the option is None, else it is Some. */
   static from<T>(value?: T | null) {
     if (typeof value === "undefined" || value === null) {
       return Option.none<T>();
@@ -19,24 +22,30 @@ export default class Option<T> {
     }
   }
 
+  /** Construct an option from a value. The option will be Some. */
   static some<T>(value: T) {
     return new Option<T>(true, value);
   }
 
+  /** Construct an empty option. The option will be None. */
   static none<T>() {
     return new Option<T>(false);
   }
 
+  /** Whether the option is Some. */
   isSome(): boolean {
     return this._some;
   }
 
+  /** Whether the option is None. */
   isNone(): boolean {
     return !this._some;
   }
 
   /**
    * Get the value inside the option if it is Some. Throws an error otherwise.
+   *
+   * @throws If and only if the option is None.
    */
   unwrap(): T {
     if (this._some) {
@@ -70,6 +79,7 @@ export default class Option<T> {
     }
   }
 
+  /** Get the value inside the option if it is Some. Otherwise return null. */
   unwrapOrNull(): T | null {
     if (this.isSome()) {
       return this.unwrap();
@@ -78,6 +88,10 @@ export default class Option<T> {
     }
   }
 
+  /**
+   * Returns None if the option is None. Otherwise calls the provided function
+   * with the wrapped Some value, returning a new Some option.
+   */
   map<U>(f: (value: T) => U): Option<U> {
     if (this.isSome()) {
       return Option.some(f(this.unwrap()));
@@ -86,6 +100,10 @@ export default class Option<T> {
     }
   }
 
+  /**
+   * Returns None if the option is None. Otherwise calls the provided function
+   * with the wrapped Some value, returning that function's result.
+   */
   andThen<U>(f: (value: T) => Option<U>): Option<U> {
     if (this.isSome()) {
       return f(this.unwrap());
