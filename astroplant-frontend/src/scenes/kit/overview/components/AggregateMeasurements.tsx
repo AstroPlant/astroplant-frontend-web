@@ -1,13 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Container, Card } from "semantic-ui-react";
-import Option from "~/utils/option";
 import { KitConfigurationState, KitState } from "~/modules/kit/reducer";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { selectors as quantityTypesSelectors } from "~/modules/quantity-type/reducer";
 
 import AggregateMeasurementsChart from "./AggregateMeasurementsChart";
-import { schemas } from "~/api";
 
 export type Props = {
   kitState: KitState;
@@ -26,53 +24,46 @@ export default function AggregateMeasurements(props: Props) {
       activeConfiguration = configuration;
     }
   }
+  if (activeConfiguration === null) {
+    return null;
+  }
 
-  if (activeConfiguration !== null) {
-    let hasMeasurements = false;
-    const cards = Object.values(activeConfiguration.peripherals).map(
-      (peripheral) => {
-        const def: Option<schemas["PeripheralDefinition"]> = Option.from(
-          peripheralDefinitions[peripheral.peripheralDefinitionId]
-        );
-        return def
-          .map((def: schemas["PeripheralDefinition"]) =>
-            def.expectedQuantityTypes!.map((quantityType) => {
-              hasMeasurements = true;
-              const qt: Option<schemas["QuantityType"]> = Option.from(
-                quantityTypes[quantityType]
-              );
-              return qt
-                .map((qt) => {
-                  return (
-                    <AggregateMeasurementsChart
-                      key={peripheral.id + "." + qt.id}
-                      kitState={kitState}
-                      peripheral={peripheral}
-                      peripheralDefinition={def}
-                      quantityType={qt}
-                    />
-                  );
-                })
-                .unwrapOrNull();
-            })
-          )
-          .unwrapOrNull();
-      }
-    );
-    if (hasMeasurements) {
+  let hasMeasurements = false;
+  const cards = Object.values(activeConfiguration.peripherals).map(
+    (peripheral) => {
+      const def = peripheralDefinitions[peripheral.peripheralDefinitionId];
       return (
-        <Container>
-          <Card.Group centered>{cards}</Card.Group>
-        </Container>
-      );
-    } else {
-      return (
-        <Container>
-          No measurements are being made on this configuration.
-        </Container>
+        def !== undefined &&
+        (def.expectedQuantityTypes ?? []).map((quantityType) => {
+          hasMeasurements = true;
+          const qt = quantityTypes[quantityType];
+          return (
+            qt !== undefined && (
+              <AggregateMeasurementsChart
+                key={peripheral.id + "." + qt.id}
+                kitState={kitState}
+                peripheral={peripheral}
+                peripheralDefinition={def}
+                quantityType={qt}
+              />
+            )
+          );
+        })
       );
     }
+  );
+
+  if (hasMeasurements) {
+    return (
+      <Container>
+        <Card.Group centered>{cards}</Card.Group>
+      </Container>
+    );
   } else {
-    return null;
+    return (
+      <Container>
+        No measurements are being made on this configuration.
+      </Container>
+    );
   }
 }
