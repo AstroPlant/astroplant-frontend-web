@@ -28,12 +28,8 @@ function KitOverview(props: Props) {
     );
   }
 
-  let activeConfiguration = null;
-  for (const configuration of Object.values(kitState.configurations)) {
-    if (configuration.active) {
-      activeConfiguration = configuration;
-    }
-  }
+  let activeConfiguration =
+    Object.values(configurations).find((conf) => conf.active) ?? null;
 
   if (activeConfiguration === null) {
     return (
