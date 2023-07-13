@@ -70,6 +70,8 @@ export default function ViewEditPeripheral({
     dispatch(
       peripheralDeleted({
         serial: kit.serial,
+        kitId: peripheral.kitId,
+        kitConfigurationId: peripheral.kitConfigurationId,
         peripheralId: peripheral.id,
       })
     );

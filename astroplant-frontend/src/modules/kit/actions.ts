@@ -33,9 +33,10 @@ export const kitConfigurationCreated = createAction<{
   configuration: schemas["KitConfiguration"];
 }>("kit/KIT_CONFIGURATION_CREATED");
 
-export const kitSetAllConfigurationsInactive = createAction<{ serial: string }>(
-  "kit/KIT_SET_ALL_CONFIGURATIONS_INACTIVE"
-);
+export const kitSetAllConfigurationsInactive = createAction<{
+  serial: string;
+  kitId: number;
+}>("kit/KIT_SET_ALL_CONFIGURATIONS_INACTIVE");
 
 export const kitConfigurationUpdated = createAction<{
   serial: string;
@@ -54,6 +55,8 @@ export const peripheralUpdated = createAction<{
 
 export const peripheralDeleted = createAction<{
   serial: string;
+  kitId: number;
+  kitConfigurationId: number;
   peripheralId: number;
 }>("kit/PERIPHERAL_DELETED");
 

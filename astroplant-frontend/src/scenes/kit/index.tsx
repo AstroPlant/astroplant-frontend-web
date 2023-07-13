@@ -12,7 +12,7 @@ import { awaitAuthenticationRan } from "~/Components/AuthenticatedGuard";
 import HeadTitle from "~/Components/HeadTitle";
 import Loading from "~/Components/Loading";
 
-import { KitState } from "~/modules/kit/reducer";
+import { KitState, allConfigurationsOfKit } from "~/modules/kit/reducer";
 import { startWatching, stopWatching, fetchKit } from "~/modules/kit/actions";
 import { KitMembership } from "~/modules/me/reducer";
 
@@ -27,6 +27,7 @@ import Download from "./download";
 import Configure from "./configure";
 import Access from "./access";
 import Rpc from "./rpc";
+import { useAppSelector } from "~/hooks";
 
 type Params = { kitSerial: string };
 
@@ -60,7 +61,14 @@ const KitDashboard = (props: KitDashboardProps) => {
   const canQueryRpc = membership.map((m) => m.accessSuper).unwrapOr(false);
 
   const kit = kitState.details!;
-  const configurations = kitState.configurations!;
+  const configurations = useAppSelector((state) =>
+    allConfigurationsOfKit(state, kit.serial)
+  );
+
+  if (configurations === null) {
+    return <Loading />;
+  }
+
   return (
     <KitContext.Provider value={kit}>
       <ConfigurationsContext.Provider value={configurations}>
@@ -122,9 +130,7 @@ const KitDashboard = (props: KitDashboardProps) => {
                 path={`${path}/rpc`}
                 render={(props: any) => <Rpc {...props} />}
               />
-              <Route
-                render={(props: any) => <Overview {...props} kitState={kitState} />}
-              />
+              <Route render={(props: any) => <Overview {...props} kitState={kitState} />} />
             </Switch>
           </Container>
         </MembershipContext.Provider>
@@ -231,7 +237,7 @@ const Kit = (props: Props) => {
 
 const mapStateToProps = (state: RootState, ownProps: Props) => {
   const { kitSerial } = ownProps.match.params;
-  const kit = Option.from(state.kit.kits[kitSerial]);
+  const kit = Option.from(state.kit.kits.entities[kitSerial]);
   const membership = Option.from(state.me.kitMemberships[kitSerial]);
 
   return {

@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Container, Image, Table, Button, Modal } from "semantic-ui-react";
 import { DateTime } from "luxon";
 
 import RelativeTime from "~/Components/RelativeTime";
 import Loading from "~/Components/Loading";
-import { KitState, KitConfigurationState } from "~/modules/kit/reducer";
+import { KitState, peripheralSelectors } from "~/modules/kit/reducer";
 import { api, schemas } from "~/api";
-import { rateLimit } from "~/utils/api";
 import { rtkApi } from "~/services/astroplant";
 import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { firstValueFrom } from "rxjs";
+import { ConfigurationsContext } from "../../contexts";
+import { useAppSelector } from "~/hooks";
 
 export type Props = {
   kitState: KitState;
@@ -18,13 +19,11 @@ export type Props = {
 export default function Media(props: Props) {
   const { kitState } = props;
 
-  let activeConfiguration: KitConfigurationState | undefined;
-  for (const configuration of Object.values(kitState.configurations!)) {
-    if (configuration.active) {
-      activeConfiguration = configuration;
-      break;
-    }
-  }
+  const peripherals = useAppSelector(peripheralSelectors.selectEntities);
+
+  const configurations = useContext(ConfigurationsContext);
+  let activeConfiguration =
+    Object.values(configurations).find((conf) => conf.active) ?? null;
 
   const {
     data: mediaList,
@@ -49,7 +48,7 @@ export default function Media(props: Props) {
       (async () => {
         try {
           const response = await firstValueFrom(
-            api.getMediaContent({ mediaId: displayMedia.id }).pipe(rateLimit)
+            api.getMediaContent({ mediaId: displayMedia.id })
           );
 
           const url = URL.createObjectURL(response.data);
@@ -106,11 +105,7 @@ export default function Media(props: Props) {
                       />
                     </Table.Cell>
                     <Table.Cell>
-                      {
-                        activeConfiguration!.peripherals[
-                          displayMedia.peripheralId
-                        ]!.name
-                      }
+                      {peripherals[displayMedia.peripheralId]!.name}
                     </Table.Cell>
                     <Table.Cell>{displayMedia.name}</Table.Cell>
                     <Table.Cell>{displayMedia.type}</Table.Cell>
@@ -134,8 +129,7 @@ export default function Media(props: Props) {
           </Table.Header>
           <Table.Body>
             {mediaList.map((media) => {
-              const peripheral =
-                activeConfiguration!.peripherals[media.peripheralId]!;
+              const peripheral = peripherals[media.peripheralId]!;
               const displayable =
                 media.type === "image/png" ||
                 media.type === "image/jpeg" ||

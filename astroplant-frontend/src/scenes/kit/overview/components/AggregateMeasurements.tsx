@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useSelector } from "react-redux";
 import { Container, Card } from "semantic-ui-react";
-import { KitConfigurationState, KitState } from "~/modules/kit/reducer";
+import { KitState, peripheralSelectors } from "~/modules/kit/reducer";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { selectors as quantityTypesSelectors } from "~/modules/quantity-type/reducer";
 
 import AggregateMeasurementsChart from "./AggregateMeasurementsChart";
+import { ConfigurationsContext } from "../../contexts";
+import { useAppSelector } from "~/hooks";
 
 export type Props = {
   kitState: KitState;
@@ -15,22 +17,22 @@ export default function AggregateMeasurements(props: Props) {
   const peripheralDefinitions = useSelector(
     peripheralDefinitionsSelectors.selectEntities
   );
-  const quantityTypes = useSelector(quantityTypesSelectors.selectEntities);
+  const quantityTypes = useAppSelector(quantityTypesSelectors.selectEntities);
+  const peripherals = useAppSelector(peripheralSelectors.selectEntities);
 
   const { kitState } = props;
-  let activeConfiguration: null | KitConfigurationState = null;
-  for (const configuration of Object.values(kitState.configurations!)) {
-    if (configuration.active) {
-      activeConfiguration = configuration;
-    }
-  }
+  const configurations = useContext(ConfigurationsContext);
+  let activeConfiguration =
+    Object.values(configurations).find((conf) => conf.active) ?? null;
+
   if (activeConfiguration === null) {
     return null;
   }
 
   let hasMeasurements = false;
-  const cards = Object.values(activeConfiguration.peripherals).map(
-    (peripheral) => {
+  const cards = Object.values(activeConfiguration.peripherals)
+    .map((id) => peripherals[id]!)
+    .map((peripheral) => {
       const def = peripheralDefinitions[peripheral.peripheralDefinitionId];
       return (
         def !== undefined &&
@@ -50,8 +52,7 @@ export default function AggregateMeasurements(props: Props) {
           );
         })
       );
-    }
-  );
+    });
 
   if (hasMeasurements) {
     return (

@@ -22,7 +22,9 @@ export default function ActivateDeactivate({ kit, configuration }: Props) {
   const dispatch = useDispatch();
 
   const onResponse = (response: Response<schemas["KitConfiguration"]>) => {
-    dispatch(kitSetAllConfigurationsInactive({ serial: kit.serial }));
+    dispatch(
+      kitSetAllConfigurationsInactive({ serial: kit.serial, kitId: kit.id })
+    );
     dispatch(
       kitConfigurationUpdated({
         serial: kit.serial,

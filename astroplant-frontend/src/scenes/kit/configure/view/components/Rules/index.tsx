@@ -16,7 +16,10 @@ import produce from "immer";
 import { JSONSchema7 } from "json-schema";
 
 import { RootState } from "~/types";
-import { KitConfigurationState } from "~/modules/kit/reducer";
+import {
+  KitConfigurationState,
+  peripheralSelectors,
+} from "~/modules/kit/reducer";
 import { kitConfigurationUpdated } from "~/modules/kit/actions";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { selectors as quantityTypesSelectors } from "~/modules/quantity-type/reducer";
@@ -48,6 +51,7 @@ export type Props = WithTranslation & {
     [id: string]: schemas["PeripheralDefinition"] | undefined;
   };
   quantityTypes: { [id: string]: schemas["QuantityType"] | undefined };
+  peripherals: { [id: string]: schemas["Peripheral"] | undefined };
   kitConfigurationUpdated: (kitConfiguration: {
     serial: string;
     configuration: schemas["KitConfiguration"];
@@ -406,15 +410,22 @@ class Rules extends React.Component<Props, State> {
   };
 
   render() {
-    const { configuration, quantityTypes, peripheralDefinitions, t } =
-      this.props;
+    const {
+      configuration,
+      quantityTypes,
+      peripheralDefinitions,
+      peripherals,
+      t,
+    } = this.props;
     const { fuzzyControl } = this.state;
 
     let undefinedPeripheralQuantityTypes: [
       schemas["Peripheral"],
       schemas["QuantityType"]
     ][] = [];
-    for (const peripheral of Object.values(configuration.peripherals)) {
+    for (const peripheral of Object.values(configuration.peripherals).map(
+      (id) => peripherals[id]!
+    )) {
       const peripheralDefinition =
         peripheralDefinitions[peripheral.peripheralDefinitionId];
 
@@ -440,7 +451,9 @@ class Rules extends React.Component<Props, State> {
       string,
       JSONSchema7
     ][] = [];
-    for (const peripheral of Object.values(configuration.peripherals)) {
+    for (const peripheral of Object.values(configuration.peripherals).map(
+      (id) => peripherals[id]!
+    )) {
       const peripheralDefinition =
         peripheralDefinitions[peripheral.peripheralDefinitionId]!;
 
@@ -464,7 +477,9 @@ class Rules extends React.Component<Props, State> {
     }
 
     if (this.state.editing) {
-      for (const peripheral of Object.values(configuration.peripherals)) {
+      for (const peripheral of Object.values(configuration.peripherals).map(
+        (id) => peripherals[id]!
+      )) {
         const peripheralDefinition =
           peripheralDefinitions[peripheral.peripheralDefinitionId]!;
         if (peripheralDefinition.commandSchema) {
@@ -497,9 +512,9 @@ class Rules extends React.Component<Props, State> {
               <Segment key={peripheralName}>
                 <Header as="h4">{peripheralName}</Header>
                 {Object.entries(qtInput).map(([quantityTypeId, settings]) => {
-                  const peripheral = Object.values(
-                    configuration.peripherals
-                  ).filter((p) => p.name === peripheralName)[0]!;
+                  const peripheral = Object.values(configuration.peripherals)
+                    .map((id) => peripherals[id]!)
+                    .filter((p) => p.name === peripheralName)[0]!;
                   const quantityType = quantityTypes[quantityTypeId]!;
                   return (
                     <div key={quantityTypeId}>
@@ -575,9 +590,9 @@ class Rules extends React.Component<Props, State> {
               <Segment key={peripheralName}>
                 <Header as="h4">{peripheralName}</Header>
                 {Object.entries(commandOutput).map(([command, settings]) => {
-                  const peripheral = Object.values(
-                    configuration.peripherals
-                  ).filter((p) => p.name === peripheralName)[0]!;
+                  const peripheral = Object.values(configuration.peripherals)
+                    .map((id) => peripherals[id]!)
+                    .filter((p) => p.name === peripheralName)[0]!;
                   const peripheralDefinition =
                     peripheralDefinitions[peripheral.peripheralDefinitionId]!;
                   const schema = (peripheralDefinition.commandSchema as any)
@@ -755,6 +770,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     peripheralDefinitions: peripheralDefinitionsSelectors.selectEntities(state),
     quantityTypes: quantityTypesSelectors.selectEntities(state),
+    peripherals: peripheralSelectors.selectEntities(state),
   };
 };
 

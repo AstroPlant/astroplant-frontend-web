@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
 import { RouteComponentProps, Switch, Route } from "react-router";
 import { NavLink } from "react-router-dom";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Container, Loader, Tab } from "semantic-ui-react";
+import { Container, Tab } from "semantic-ui-react";
 import { KitState } from "modules/kit/reducer";
 
 import RawMeasurements from "./components/RawMeasurements";
 import AggregateMeasurements from "./components/AggregateMeasurements";
 import Media from "./components/Media";
+import { ConfigurationsContext } from "../contexts";
 
 type Params = { kitSerial: string };
 
@@ -20,22 +21,22 @@ function KitOverview(props: Props) {
   const baseUrl = props.match.url;
   const { kitState } = props;
 
-  if (kitState.configurations === null) {
-    return (
-      <Container>
-        <Loader active />
-      </Container>
-    );
-  }
-
+  const configurations = useContext(ConfigurationsContext);
   let activeConfiguration =
     Object.values(configurations).find((conf) => conf.active) ?? null;
 
-  if (activeConfiguration === null) {
+  if (
+    activeConfiguration === null ||
+    Object.values(configurations).length === 0
+  ) {
     return (
       <Container text>
         <div>
-          <p>This kit has no configurations yet.</p>
+          <p>
+            {activeConfiguration === null
+              ? "This kit has no active configuration."
+              : "This kit has no configurations yet."}
+          </p>
           <p>
             For help on how to configure your kit you can read the documentation{" "}
             <a

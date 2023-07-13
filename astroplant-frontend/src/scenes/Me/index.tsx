@@ -43,7 +43,7 @@ class Me extends Component<Props> {
               {Object.keys(this.props.kitMemberships).length > 0 && (
                 <Card.Group>
                   {Object.keys(this.props.kitMemberships).map((serial) => {
-                    const kitState = this.props.kitStates[serial];
+                    const kitState = this.props.kitStates.entities[serial];
                     return (
                       <Card
                         fluid
