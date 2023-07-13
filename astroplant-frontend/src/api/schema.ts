@@ -107,7 +107,7 @@ export interface components {
     Peripheral: {
       id: number;
       kitId: number;
-      configurationId: number;
+      kitConfigurationId: number;
       peripheralDefinitionId: number;
       name: string;
       configuration: { [key: string]: any };
