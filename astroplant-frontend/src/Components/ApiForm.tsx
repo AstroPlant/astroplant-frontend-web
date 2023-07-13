@@ -81,7 +81,6 @@ function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
           props.addNotificationRequest(notificationConnectionIssue(t));
         }
 
-        console.warn(e);
         if (e.details.type === "APPLICATION") {
           const formErrors = PDInvalidParameters.toFormErrors(
             t,

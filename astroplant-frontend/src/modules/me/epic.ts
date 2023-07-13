@@ -14,8 +14,6 @@ const fetchUserDetailsEpic: Epic = (action$, _state$) =>
   action$.pipe(
     filter(authActions.setAccessToken.match),
     switchMap(() => {
-      console.warn("FETCH USER DETAILS");
-
       return api.showMe().pipe(
         map((resp) => resp.data),
         catchError((err) => {

@@ -21,7 +21,6 @@ export default function SignUpPage() {
   const [done, setDone] = useState(false);
 
   const validate = (formData: any, errors: any) => {
-    console.warn("VALIDATE");
     if (formData.password !== formData.passwordRepeat) {
       errors.passwordRepeat.addError("passwords do not match");
     }

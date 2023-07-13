@@ -51,10 +51,6 @@ async function baseQueryFn(
   headers = { ...headers, ...args.headers };
 
   try {
-    const response = await firstValueFrom(
-      unwrappedApi.request({ headers, ...args })
-    );
-    console.warn("response", response);
     return await firstValueFrom(unwrappedApi.request({ headers, ...args }));
   } catch (e) {
     if (e instanceof ErrorResponse) {
