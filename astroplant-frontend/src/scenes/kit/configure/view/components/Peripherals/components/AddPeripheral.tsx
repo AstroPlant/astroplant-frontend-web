@@ -100,7 +100,7 @@ export default function AddPeripheral({ kit, configuration }: Props) {
       required: ["name", "configuration"],
       properties: {
         name: { type: "string", title: t("common.name") },
-        configuration: peripheralDefinition.configurationSchema,
+        configuration: peripheralDefinition.configurationSchema as object,
       },
     };
     content = (

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# This script assume it's being executed from the root of the
+# astroplant-frontend-web repository. It looks for the AstroPlant API
+# specification at ../astroplant-api/openapi.yaml.
+
+SPEC=../astroplant-api/openapi.yaml
+
+if ! test -f "$SPEC"; then
+  echo Could not find $SPEC
+  exit 1
+fi
+
+yarn openapi-typescript "$SPEC" -o ./astroplant-frontend/src/api/schema.ts

@@ -86,7 +86,7 @@ export default function ViewEditPeripheral({
     required: ["name", "configuration"],
     properties: {
       name: { type: "string", title: t("common.name") },
-      configuration: peripheralDefinition.configurationSchema,
+      configuration: peripheralDefinition.configurationSchema as object,
     },
   };
 

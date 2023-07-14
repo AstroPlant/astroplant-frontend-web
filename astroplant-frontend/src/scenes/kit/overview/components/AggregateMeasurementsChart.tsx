@@ -76,7 +76,11 @@ export default function AggregateMeasurementsChart(props: Props) {
           datetimeStartNumber: new Date(measurement.datetimeStart).getTime(),
           datetimeEnd: new Date(measurement.datetimeEnd),
           datetimeEndNumber: new Date(measurement.datetimeEnd).getTime(),
-          values: measurement.values,
+
+          // See https://github.com/drwpow/openapi-typescript/issues/1070 for
+          // the reason for the cast. (We currently have noUncheckedIndexAccess
+          // enabled.)
+          values: measurement.values as { [key: string]: number },
         }));
 
         setMeasurements((measurements) =>
