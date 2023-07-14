@@ -8,7 +8,7 @@ class Footer extends Component {
       <footer id="footer">
         <Container>
           <p>
-            Copyright © AstroPlant 2018&ndash;2022. Source code available on <a href="https://github.com/astroplant">GitHub</a>.
+            Copyright © AstroPlant 2018&ndash;2023. Source code available on <a href="https://github.com/astroplant">GitHub</a>.
           </p>
           <p>
             Version: {packageJson.version} {import.meta.env.VITE_BUILD_STRING && "(" + import.meta.env.VITE_BUILD_STRING + ")"}
