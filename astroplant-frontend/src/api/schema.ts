@@ -68,7 +68,7 @@ export interface paths {
   "/kits/{kitSerial}/configurations": {
     /** The configurations of the specified kit. */
     get: operations["listConfigurations"];
-    /** Create a new configuration. */
+    /** Create a new configuration. Either the `source` query parameter or the request body must be set (but not both). */
     post: operations["createConfiguration"];
   };
   "/kit-rpc/{kitSerial}/version": {
@@ -749,16 +749,20 @@ export interface operations {
       500: components["responses"]["ErrorInternalServer"];
     };
   };
-  /** Create a new configuration. */
+  /** Create a new configuration. Either the `source` query parameter or the request body must be set (but not both). */
   createConfiguration: {
     parameters: {
+      query?: {
+        /** @description The id of the source configuration to clone. If this is set, the request body must not be set. */
+        source?: string;
+      };
       path: {
         /** @description The serial of the kit to create a configuration for. */
         kitSerial: string;
       };
     };
-    /** @description The configuration to create. */
-    requestBody: {
+    /** @description The configuration to create. If this is set, the `source` query parameter must not be set. */
+    requestBody?: {
       content: {
         "application/json": components["schemas"]["NewKitConfiguration"];
       };
