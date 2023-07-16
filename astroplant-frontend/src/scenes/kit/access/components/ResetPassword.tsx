@@ -37,6 +37,7 @@ export default function ResetPassword({ kit }: Props) {
               fluid
               icon={<Icon name="lock" inverted circular link />}
               value={password || ""}
+              onClick={(ev: any) => ev.target.select()}
               readOnly
             />
           ) : (

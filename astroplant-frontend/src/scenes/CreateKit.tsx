@@ -149,6 +149,7 @@ function CreateKit() {
                         fluid
                         icon={<Icon name="lock" inverted circular link />}
                         value={result?.kitSerial ?? ""}
+                        onClick={(ev: any) => ev.target.select()}
                         readOnly
                       />
                     </Card.Description>
@@ -162,6 +163,7 @@ function CreateKit() {
                         fluid
                         icon={<Icon name="lock" inverted circular link />}
                         value={result?.password ?? ""}
+                        onClick={(ev: any) => ev.target.select()}
                         readOnly
                       />
                     </Card.Description>
