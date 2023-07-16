@@ -1,24 +1,17 @@
 import React, { useContext } from "react";
-import { RouteComponentProps, Switch, Route } from "react-router";
-import { NavLink } from "react-router-dom";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Container, Tab } from "semantic-ui-react";
+import { Container } from "semantic-ui-react";
 import { KitState } from "modules/kit/reducer";
 
 import RawMeasurements from "./components/RawMeasurements";
 import AggregateMeasurements from "./components/AggregateMeasurements";
-import Media from "./components/Media";
 import { ConfigurationsContext } from "../contexts";
 
-type Params = { kitSerial: string };
-
-export type Props = WithTranslation &
-  RouteComponentProps<Params> & {
-    kitState: KitState;
-  };
+export type Props = WithTranslation & {
+  kitState: KitState;
+};
 
 function KitOverview(props: Props) {
-  const baseUrl = props.match.url;
   const { kitState } = props;
 
   const configurations = useContext(ConfigurationsContext);
@@ -51,63 +44,13 @@ function KitOverview(props: Props) {
       </Container>
     );
   } else {
-    const panes = [
-      {
-        menuItem: {
-          as: NavLink,
-          content: "Measurements",
-          to: `${baseUrl}`,
-          exact: true,
-          key: "measurements",
-        },
-        pane: (
-          <Route
-            key={"measurements-pane"}
-            path={`${baseUrl}`}
-            exact
-            render={() => (
-              <Tab.Pane>
-                <>
-                  <h2>Now</h2>
-                  <RawMeasurements kitState={kitState} />
-                  <h2>Past</h2>
-                  <AggregateMeasurements kitState={kitState} />
-                </>
-              </Tab.Pane>
-            )}
-          />
-        ),
-      },
-      {
-        menuItem: {
-          as: NavLink,
-          content: "Media",
-          to: `${baseUrl}/media`,
-          exact: true,
-          key: "media",
-        },
-        pane: (
-          <Route
-            key={"media-pane"}
-            path={`${baseUrl}/media`}
-            render={() => (
-              <Tab.Pane>
-                <Media kitState={kitState} />
-              </Tab.Pane>
-            )}
-          />
-        ),
-      },
-    ];
-
     return (
-      <Container>
-        <Switch>
-          <>
-            <Tab panes={panes} renderActiveOnly={false} activeIndex={-1} />
-          </>
-        </Switch>
-      </Container>
+      <>
+        <h2>Now</h2>
+        <RawMeasurements kitState={kitState} />
+        <h2>Past</h2>
+        <AggregateMeasurements kitState={kitState} />
+      </>
     );
   }
 }

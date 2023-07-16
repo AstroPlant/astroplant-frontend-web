@@ -1,5 +1,4 @@
 import React, { useState, useContext } from "react";
-import { RouteComponentProps } from "react-router";
 import { Container, Button, Input, Divider } from "semantic-ui-react";
 import { firstValueFrom } from "rxjs";
 
@@ -7,10 +6,7 @@ import { KitContext } from "../contexts";
 import PeripheralCommand from "./PeripheralCommand";
 import { api } from "~/api";
 
-type Params = { kitSerial: string };
-export type Props = RouteComponentProps<Params>;
-
-export default function KitRpc(_props: Props) {
+export default function KitRpc() {
   const [versionRequesting, setVersionRequesting] = useState(false);
   const [versionResponse, setVersionResponse] = useState<string | null>(null);
   const [uptimeRequesting, setUptimeRequesting] = useState(false);

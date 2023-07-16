@@ -1,5 +1,5 @@
 import React, { useContext, useState, useMemo } from "react";
-import { RouteComponentProps, Route, Switch } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   Button,
@@ -12,7 +12,6 @@ import {
 } from "semantic-ui-react";
 import ReactMarkdown from "react-markdown";
 import { removeNull, undefinedToNull, emptyStringToNull } from "~/utils/form";
-import { pushUpOne } from "~/utils/router";
 
 import { addKit } from "~/modules/kit/actions";
 
@@ -29,10 +28,10 @@ import { Response, api, schemas } from "~/api";
 
 const PatchKitForm = ApiForm<any, Response<schemas["Kit"]>>();
 
-export default function KitDetails(props: RouteComponentProps) {
+export default function KitDetails() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { url, path } = props.match;
+  const navigate = useNavigate();
 
   const [done, setDone] = useState(false);
 
@@ -92,7 +91,7 @@ export default function KitDetails(props: RouteComponentProps) {
   const onPatchResponse = (response: Response<schemas["Kit"]>) => {
     dispatch(addKit(response.data));
     setDone(true);
-    pushUpOne(props.history);
+    navigate("");
   };
 
   const canEditDetails = membership.map((m) => m.accessSuper).unwrapOr(false);
@@ -100,25 +99,24 @@ export default function KitDetails(props: RouteComponentProps) {
   return (
     <Container text>
       <Segment padded>
-        <Switch>
+        <Routes>
           <Route
-            path={`${path}/edit`}
-            render={(_props) => {
-              return (
-                <PatchKitForm
-                  key={0}
-                  schema={schema as any}
-                  uiSchema={patchUiSchema as any}
-                  transform={(formData) => patchTransform(formData)}
-                  send={(formData) => patchSend(removeNull(formData))}
-                  onResponse={(formData) => onPatchResponse(formData)}
-                  formData={kitDetails}
-                />
-              );
-            }}
+            path="/edit"
+            element={
+              <PatchKitForm
+                key={0}
+                schema={schema as any}
+                uiSchema={patchUiSchema as any}
+                transform={(formData) => patchTransform(formData)}
+                send={(formData) => patchSend(removeNull(formData))}
+                onResponse={(formData) => onPatchResponse(formData)}
+                formData={kitDetails}
+              />
+            }
           />
           <Route
-            render={(props) => (
+            path="/"
+            element={
               <>
                 {done && (
                   <>
@@ -138,10 +136,7 @@ export default function KitDetails(props: RouteComponentProps) {
                 )}
                 <div>
                   {canEditDetails && (
-                    <Button
-                      onClick={() => props.history.push(`${url}/edit`)}
-                      primary
-                    >
+                    <Button onClick={() => navigate("edit")} primary>
                       Edit kit details
                     </Button>
                   )}
@@ -167,9 +162,9 @@ export default function KitDetails(props: RouteComponentProps) {
                     )}
                 </div>
               </>
-            )}
+            }
           />
-        </Switch>
+        </Routes>
       </Segment>
     </Container>
   );

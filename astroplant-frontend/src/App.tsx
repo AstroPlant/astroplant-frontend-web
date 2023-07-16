@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 import "./App.css";
 import { RootState } from "./types";
 
-import { NavLink, Redirect, Route, Switch } from "react-router-dom";
+import { Navigate, NavLink, Route, Routes } from "react-router-dom";
 
 import ConnectionStatus from "./Components/ConnectionStatus";
 import Footer from "./Components/Footer";
@@ -93,22 +93,21 @@ class App extends Component<Props> {
                 ]
           }
         >
-          <Switch>
-            <Redirect exact from="/" to="home" />
-            <Route exact path="/home" component={Home} />
+          <Routes>
+            <Route path="/" element={<Navigate to="home" replace />} />
+            <Route path="/home" element={<Home />} />
             <Route
-              exact
               path="/terms-and-conditions"
-              component={TermsAndConditions}
+              element={<TermsAndConditions />}
             />
-            <Route path="/map" component={Map} />
-            <Route path="/log-in" component={LogIn} />
-            <Route path="/sign-up" component={SignUp} />
-            <Route path="/me" component={Me} />
-            <Route path="/create-kit" component={CreateKit} />
-            <Route path="/kit/:kitSerial" component={Kit} />
-            <Route component={NotFound} />
-          </Switch>
+            <Route path="/map" element={<Map />} />
+            <Route path="/log-in" element={<LogIn />} />
+            <Route path="/sign-up" element={<SignUp />} />
+            <Route path="/me" element={<Me />} />
+            <Route path="/create-kit" element={<CreateKit />} />
+            <Route path="/kit/:kitSerial/*" element={<Kit />} />
+            <Route element={<NotFound />} />
+          </Routes>
 
           <div style={{ minHeight: "1rem", flex: "auto" }} />
 

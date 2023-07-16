@@ -1,18 +1,20 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { Switch, Route, RouteComponentProps } from "react-router";
-import { NavLink } from "react-router-dom";
+import { NavLink, useParams, Routes, Route } from "react-router-dom";
 import { withTranslation, WithTranslation, Trans } from "react-i18next";
 import compose from "~/utils/compose";
 import { Container, Menu, Icon } from "semantic-ui-react";
-import { RootState } from "~/types";
 import Option from "~/utils/option";
 import { awaitAuthenticationRan } from "~/Components/AuthenticatedGuard";
 import HeadTitle from "~/Components/HeadTitle";
 import Loading from "~/Components/Loading";
 
-import { KitState, allConfigurationsOfKit } from "~/modules/kit/reducer";
+import {
+  KitState,
+  allConfigurationsOfKit,
+  kitSelectors,
+} from "~/modules/kit/reducer";
 import { startWatching, stopWatching, fetchKit } from "~/modules/kit/actions";
 import { KitMembership } from "~/modules/me/reducer";
 
@@ -28,21 +30,19 @@ import Configure from "./configure";
 import Access from "./access";
 import Rpc from "./rpc";
 import { useAppSelector } from "~/hooks";
+import Media from "./overview/components/Media";
 
 type Params = { kitSerial: string };
 
-type Props = RouteComponentProps<Params> &
-  WithTranslation & {
-    kitState: Option<KitState>;
-    membership: Option<KitMembership>;
-    fetchKit: (payload: { serial: string }) => void;
-    startWatching: (payload: { serial: string }) => void;
-    stopWatching: (payload: { serial: string }) => void;
-  };
+type Props = WithTranslation & {
+  kitState: Option<KitState>;
+  membership: Option<KitMembership>;
+  fetchKit: (payload: { serial: string }) => void;
+  startWatching: (payload: { serial: string }) => void;
+  stopWatching: (payload: { serial: string }) => void;
+};
 
 type InnerKitProps = {
-  url: string;
-  path: string;
   kitState: KitState;
   membership: Option<KitMembership>;
 };
@@ -50,7 +50,7 @@ type InnerKitProps = {
 type KitDashboardProps = WithTranslation & InnerKitProps;
 
 const KitDashboard = (props: KitDashboardProps) => {
-  const { path, url, kitState, membership } = props;
+  const { kitState, membership } = props;
 
   const canConfigure = membership
     .map((m) => m.accessSuper || m.accessConfigure)
@@ -76,62 +76,52 @@ const KitDashboard = (props: KitDashboardProps) => {
           <HeadTitle main={kit.name || kit.serial} />
           <Container>
             <Menu pointing secondary>
-              <Menu.Item as={NavLink} exact to={`${url}`}>
+              <Menu.Item as={NavLink} end to={""}>
                 <Icon name="chart bar" />
                 Overview
               </Menu.Item>
-              <Menu.Item as={NavLink} to={`${url}/details`}>
+              <Menu.Item as={NavLink} to={"media"}>
+                <Icon name="file image" />
+                Media
+              </Menu.Item>
+              <Menu.Item as={NavLink} to={"details"}>
                 <Icon name="clipboard" />
                 Details
               </Menu.Item>
               {/* currently downloading only requires the View permission (which is always present if the user can see this page), this may change */}
-              <Menu.Item as={NavLink} to={`${url}/download`}>
+              <Menu.Item as={NavLink} to={"download"}>
                 <Icon name="cloud download" />
                 Download
               </Menu.Item>
               {canConfigure && (
-                <Menu.Item as={NavLink} to={`${url}/configure`}>
+                <Menu.Item as={NavLink} to={"configure"}>
                   <Icon name="setting" />
                   Configure
                 </Menu.Item>
               )}
               {canConfigureAccess && (
-                <Menu.Item as={NavLink} to={`${url}/access`}>
+                <Menu.Item as={NavLink} to={"access"}>
                   <Icon name="lock open" />
                   Access
                 </Menu.Item>
               )}
               {canQueryRpc && (
-                <Menu.Item as={NavLink} to={`${url}/rpc`}>
+                <Menu.Item as={NavLink} to={"rpc"}>
                   <Icon name="tty" />
                   RPC
                 </Menu.Item>
               )}
             </Menu>
 
-            <Switch>
-              <Route
-                path={`${path}/details`}
-                render={(props) => <Details {...props} />}
-              />
-              <Route
-                path={`${path}/download`}
-                render={(props) => <Download {...props} />}
-              />
-              <Route
-                path={`${path}/configure`}
-                render={(props: any) => <Configure {...props} />}
-              />
-              <Route
-                path={`${path}/access`}
-                render={(props) => <Access {...props} />}
-              />
-              <Route
-                path={`${path}/rpc`}
-                render={(props: any) => <Rpc {...props} />}
-              />
-              <Route render={(props: any) => <Overview {...props} kitState={kitState} />} />
-            </Switch>
+            <Routes>
+              <Route path="/" element={<Overview kitState={kitState} />} />
+              <Route path="/media" element={<Media kitState={kitState} />} />
+              <Route path="/details/*" element={<Details />} />
+              <Route path="/download" element={<Download />} />
+              <Route path="/configure/*" element={<Configure />} />
+              <Route path="/access" element={<Access />} />
+              <Route path="/rpc" element={<Rpc />} />
+            </Routes>
           </Container>
         </MembershipContext.Provider>
       </ConfigurationsContext.Provider>
@@ -154,15 +144,16 @@ const InnerKit = compose<KitDashboardProps, InnerKitProps>(
 )(KitDashboard);
 
 const Kit = (props: Props) => {
-  const {
-    t,
-    kitState: kit,
-    membership,
-    fetchKit,
-    startWatching,
-    stopWatching,
-  } = props;
-  const { kitSerial } = props.match.params;
+  const { t, fetchKit, startWatching, stopWatching } = props;
+  const { kitSerial: kitSerial_ } = useParams<Params>();
+  const kitSerial = kitSerial_!;
+
+  const kit = Option.from(
+    useAppSelector((state) => kitSelectors.selectById(state, kitSerial))
+  );
+  const membership = Option.from(
+    useAppSelector((state) => state.me.kitMemberships[kitSerial])
+  );
 
   useEffect(() => {
     fetchKit({ serial: kitSerial });
@@ -189,14 +180,7 @@ const Kit = (props: Props) => {
       kitState.details !== null &&
       kitState.configurations !== null)
   ) {
-    return (
-      <InnerKit
-        path={props.match.path}
-        url={props.match.url}
-        kitState={kitState}
-        membership={membership}
-      />
-    );
+    return <InnerKit kitState={kitState} membership={membership} />;
   } else if (
     kitState.status === "None" ||
     kitState.status === "Fetching" ||
@@ -235,17 +219,6 @@ const Kit = (props: Props) => {
   }
 };
 
-const mapStateToProps = (state: RootState, ownProps: Props) => {
-  const { kitSerial } = ownProps.match.params;
-  const kit = Option.from(state.kit.kits.entities[kitSerial]);
-  const membership = Option.from(state.me.kitMemberships[kitSerial]);
-
-  return {
-    kitState: kit,
-    membership,
-  };
-};
-
 const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
@@ -258,6 +231,6 @@ const mapDispatchToProps = (dispatch: any) =>
 
 export default compose<Props, {}>(
   awaitAuthenticationRan(),
-  connect(mapStateToProps, mapDispatchToProps),
+  connect(null, mapDispatchToProps),
   withTranslation()
 )(Kit);

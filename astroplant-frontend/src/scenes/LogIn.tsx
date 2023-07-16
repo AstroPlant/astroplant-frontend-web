@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { useHistory } from "react-router";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Container } from "semantic-ui-react";
 import { JSONSchema7 } from "json-schema";
@@ -21,7 +21,7 @@ export default function LogInPage() {
   const { t } = useTranslation();
 
   const dispatch = useAppDispatch();
-  const history = useHistory();
+  const navigate = useNavigate();
   const [rememberMeState, setRememberMeState] = useState(false);
 
   const send = useCallback((data: any) => {
@@ -36,9 +36,9 @@ export default function LogInPage() {
       dispatch(setRememberMe(rememberMeState));
       dispatch(setRefreshToken(response.data.refreshToken));
       dispatch(setAccessToken(response.data.accessToken));
-      history.push("/me");
+      navigate("/me");
     },
-    [dispatch, history, rememberMeState]
+    [dispatch, navigate, rememberMeState]
   );
 
   const schema: JSONSchema7 = {

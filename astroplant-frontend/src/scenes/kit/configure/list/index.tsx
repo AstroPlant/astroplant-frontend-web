@@ -1,16 +1,10 @@
 import React, { useContext } from "react";
-import { RouteComponentProps } from "react-router";
 import { Link } from "react-router-dom";
 import { Container, Card, Label, Button } from "semantic-ui-react";
 
 import { ConfigurationsContext } from "../../contexts";
 
-type Params = { kitSerial: string };
-
-export type Props = RouteComponentProps<Params>;
-
-export default function KitConfigure(props: Props) {
-  const { url } = props.match;
+export default function KitConfigure() {
 
   const configurations = useContext(ConfigurationsContext);
 
@@ -19,7 +13,7 @@ export default function KitConfigure(props: Props) {
   return (
     <Container text>
       <p>
-        <Link to={`${url}/create`}>
+        <Link to="create">
           <Button primary>Create a new configuration.</Button>
         </Link>
       </p>
@@ -27,7 +21,7 @@ export default function KitConfigure(props: Props) {
         <Card.Group>
           {Object.entries(configurations).map(([id, configuration]) => {
             return (
-              <Card fluid key={id} color="orange" as={Link} to={`${url}/${id}`}>
+              <Card fluid key={id} color="orange" as={Link} to={`${id}`}>
                 <Card.Content>
                   {configuration.neverUsed && (
                     <Label attached="bottom right" color="black">

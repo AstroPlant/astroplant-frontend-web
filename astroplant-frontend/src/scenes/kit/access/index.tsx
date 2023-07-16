@@ -1,14 +1,11 @@
 import React, { useContext } from "react";
-import { RouteComponentProps } from "react-router";
 import { Container } from "semantic-ui-react";
 
 import { KitContext } from "../contexts";
 import KitSerial from "./components/KitSerial";
 import ResetPassword from "./components/ResetPassword";
 
-export type Props = RouteComponentProps<{}>;
-
-export default function KitConfigure(_props: Props) {
+export default function KitConfigure() {
   const kit = useContext(KitContext);
 
   return (

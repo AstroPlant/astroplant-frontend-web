@@ -1,5 +1,4 @@
 import React, { useContext, useState } from "react";
-import { RouteComponentProps } from "react-router-dom";
 import { withTranslation, WithTranslation } from "react-i18next";
 import compose from "~/utils/compose";
 import { DateTime } from "luxon";
@@ -12,7 +11,7 @@ import { KitContext, ConfigurationsContext } from "../contexts";
 import { firstValueFrom } from "rxjs";
 
 export type Props = {};
-export type InnerProps = WithTranslation & RouteComponentProps<{}>;
+export type InnerProps = WithTranslation;
 
 function KitDownload(_props: InnerProps) {
   const kit = useContext(KitContext);

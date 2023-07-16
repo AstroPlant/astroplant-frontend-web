@@ -12,7 +12,10 @@ import Peripherals from "./components/Peripherals";
 
 export default function ViewConfiguration() {
   const { t } = useTranslation();
-  const { configurationId } = useParams<{ configurationId: string }>();
+  const { configurationId: configurationId_ } = useParams<{
+    configurationId: string;
+  }>();
+  const configurationId = configurationId_!;
 
   const kit = useContext(KitContext);
   const configurations = useContext(ConfigurationsContext);

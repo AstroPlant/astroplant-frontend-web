@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Redirect } from "react-router";
+import { Navigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Container, Segment } from "semantic-ui-react";
 
@@ -62,7 +62,7 @@ export default function CreateConfiguration() {
     <Container text>
       <Segment padded>
         {done ? (
-          <Redirect to={`/kit/${kit.serial}/configure/${result!.id}`} />
+          <Navigate to={`/kit/${kit.serial}/configure/${result!.id}`} replace />
         ) : (
           <>
             <CreateConfigurationForm
