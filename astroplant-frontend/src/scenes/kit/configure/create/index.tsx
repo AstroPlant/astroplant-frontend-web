@@ -62,7 +62,7 @@ export default function CreateConfiguration() {
     <Container text>
       <Segment padded>
         {done ? (
-          <Navigate to={`/kit/${kit.serial}/configure/${result!.id}`} replace />
+          <Navigate to={`../${result!.id}`} replace />
         ) : (
           <>
             <CreateConfigurationForm
