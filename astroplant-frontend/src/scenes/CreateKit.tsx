@@ -143,6 +143,19 @@ function CreateKit() {
                 </p>
                 <Card color="orange" centered raised fluid>
                   <Card.Content>
+                    <Card.Header>Kit serial</Card.Header>
+                    <Card.Description>
+                      <Input
+                        fluid
+                        icon={<Icon name="lock" inverted circular link />}
+                        value={result?.kitSerial ?? ""}
+                        readOnly
+                      />
+                    </Card.Description>
+                  </Card.Content>
+                </Card>
+                <Card color="orange" centered raised fluid>
+                  <Card.Content>
                     <Card.Header>Kit password</Card.Header>
                     <Card.Description>
                       <Input
