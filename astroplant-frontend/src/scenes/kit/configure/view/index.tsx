@@ -26,7 +26,16 @@ export default function ViewConfiguration() {
       <Container>
         <Segment raised>
           <Header>Description</Header>
-          <Description kit={kit} configuration={configuration} />
+          <Description
+            kit={kit}
+            configuration={configuration}
+            readOnly={
+              /* The description can be changed as long as the person viewing
+               * this kit has the EditConfiguration permission.
+               * TODO: handle permissions on the frontend */
+              false
+            }
+          />
         </Segment>
         <Container textAlign="right">
           <ActivateDeactivate kit={kit} configuration={configuration} />
@@ -34,12 +43,20 @@ export default function ViewConfiguration() {
         <Divider />
         <Container>
           <Header>{t("control.header")}</Header>
-          <Rules kit={kit} configuration={configuration} />
+          <Rules
+            kit={kit}
+            configuration={configuration}
+            readOnly={!configuration.neverUsed}
+          />
         </Container>
         <Divider />
         <Container>
           <Header>Peripherals</Header>
-          <Peripherals kit={kit} configuration={configuration} />
+          <Peripherals
+            kit={kit}
+            configuration={configuration}
+            readOnly={!configuration.neverUsed}
+          />
         </Container>
       </Container>
     );

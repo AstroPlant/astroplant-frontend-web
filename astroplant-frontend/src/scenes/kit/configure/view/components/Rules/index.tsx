@@ -47,6 +47,7 @@ import { api, Response, schemas } from "~/api";
 export type Props = WithTranslation & {
   kit: schemas["Kit"];
   configuration: KitConfigurationState;
+  readOnly: boolean;
   peripheralDefinitions: {
     [id: string]: schemas["PeripheralDefinition"] | undefined;
   };
@@ -412,6 +413,7 @@ class Rules extends React.Component<Props, State> {
   render() {
     const {
       configuration,
+      readOnly: _, // TODO: handle read-only mode
       quantityTypes,
       peripheralDefinitions,
       peripherals,

@@ -21,6 +21,7 @@ export type Props = {
   kit: schemas["Kit"];
   configuration: KitConfigurationState;
   peripheral: schemas["Peripheral"];
+  readOnly: boolean;
 };
 
 const PeripheralForm = ApiForm<any, any>();
@@ -30,6 +31,7 @@ export default function ViewEditPeripheral({
   kit,
   configuration: _,
   peripheral,
+  readOnly = false,
 }: Props) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -124,34 +126,37 @@ export default function ViewEditPeripheral({
           >
             <div />
           </RjsfForm>
-          <div style={{ overflow: "hidden" }}>
-            <Button
-              primary
-              icon
-              labelPosition="left"
-              floated="left"
-              onClick={() => setEditing(true)}
-            >
-              <Icon name="pencil" />
-              Edit
-            </Button>
-            <DeletePeripheralButton
-              send={sendDelete}
-              onResponse={responseDelete}
-              buttonProps={{
-                negative: true,
-                icon: true,
-                labelPosition: "right",
-                floated: "right",
-              }}
-              confirm={() => ({
-                content: t("kitConfiguration.peripherals.deleteConfirm"),
-              })}
-            >
-              <Icon name="delete" />
-              Delete
-            </DeletePeripheralButton>
-          </div>
+
+          {!readOnly && (
+            <div style={{ overflow: "hidden" }}>
+              <Button
+                primary
+                icon
+                labelPosition="left"
+                floated="left"
+                onClick={() => setEditing(true)}
+              >
+                <Icon name="pencil" />
+                Edit
+              </Button>
+              <DeletePeripheralButton
+                send={sendDelete}
+                onResponse={responseDelete}
+                buttonProps={{
+                  negative: true,
+                  icon: true,
+                  labelPosition: "right",
+                  floated: "right",
+                }}
+                confirm={() => ({
+                  content: t("kitConfiguration.peripherals.deleteConfirm"),
+                })}
+              >
+                <Icon name="delete" />
+                Delete
+              </DeletePeripheralButton>
+            </div>
+          )}
         </>
       )}
     </Segment>

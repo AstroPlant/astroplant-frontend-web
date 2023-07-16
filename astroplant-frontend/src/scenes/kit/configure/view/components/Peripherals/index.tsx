@@ -13,16 +13,15 @@ import { useAppSelector } from "~/hooks";
 export type Props = {
   kit: schemas["Kit"];
   configuration: KitConfigurationState;
+  readOnly: boolean;
 };
 
-export default function Peripherals({ kit, configuration }: Props) {
+export default function Peripherals({ kit, configuration, readOnly }: Props) {
   const peripherals = useAppSelector(peripheralSelectors.selectEntities);
 
   return (
     <>
-      {configuration.neverUsed && (
-        <AddPeripheral kit={kit} configuration={configuration} />
-      )}
+      {!readOnly && <AddPeripheral kit={kit} configuration={configuration} />}
       {Object.values(configuration.peripherals)
         .map((id) => peripherals[id]!)
         .map((peripheral) => {
@@ -32,6 +31,7 @@ export default function Peripherals({ kit, configuration }: Props) {
               kit={kit}
               configuration={configuration}
               peripheral={peripheral}
+              readOnly={readOnly}
             />
           );
         })}

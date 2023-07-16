@@ -11,6 +11,7 @@ import { useAppDispatch } from "~/hooks";
 export type Props = {
   kit: schemas["Kit"];
   configuration: KitConfigurationState;
+  readOnly: boolean;
 };
 
 const DescriptionForm = ApiForm<
@@ -18,7 +19,7 @@ const DescriptionForm = ApiForm<
   Response<schemas["KitConfiguration"]>
 >();
 
-export default function Description({ kit, configuration }: Props) {
+export default function Description({ kit, configuration, readOnly }: Props) {
   const dispatch = useAppDispatch();
 
   const [editing, setEditing] = useState(false);
@@ -59,6 +60,8 @@ export default function Description({ kit, configuration }: Props) {
         />
       </div>
     );
+  } else if (readOnly) {
+    return <div>{configuration.description}</div>;
   } else {
     return (
       <div onClick={() => setEditing(true)}>
