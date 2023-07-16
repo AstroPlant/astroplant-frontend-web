@@ -64,14 +64,12 @@ export default function CreateConfiguration() {
         {done ? (
           <Navigate to={`../${result!.id}`} replace />
         ) : (
-          <>
-            <CreateConfigurationForm
-              schema={schema}
-              uiSchema={uiSchema}
-              send={send}
-              onResponse={onResponse}
-            />
-          </>
+          <CreateConfigurationForm
+            schema={schema}
+            uiSchema={uiSchema}
+            send={send}
+            onResponse={onResponse}
+          />
         )}
       </Segment>
     </Container>
