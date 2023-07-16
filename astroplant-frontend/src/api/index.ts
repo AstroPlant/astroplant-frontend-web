@@ -359,6 +359,26 @@ export class Api extends BaseApi {
   };
 
   /**
+   * Clone a configuration. The configuration to clone is specified by `id` in
+   * the source parameter.
+   * @throws {ErrorResponse}
+   */
+  cloneConfiguration = ({
+    kitSerial,
+    /** The old configuration id */
+    source,
+  }: {
+    kitSerial: string;
+    source: number;
+  }): Observable<Response<schemas["KitConfiguration"]>> => {
+    return this.request({
+      path: `/kits/${encodeURI(kitSerial)}/configurations`,
+      method: "POST",
+      query: { source },
+    });
+  };
+
+  /**
    * Create a kit.
    * @throws {ErrorResponse}
    */
