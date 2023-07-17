@@ -17,12 +17,17 @@ export default function KitMap() {
   const {
     data: kitsData,
     isLoading: kitsIsLoading,
-    error: kitsError_,
+    error: kitsError,
   } = rtkApi.useListKitsQuery();
 
   return (
     <div>
       <HeadTitle main="Map" secondary="See Astroplant kits around the world" />
+      {!kitsIsLoading && kitsError !== undefined && (
+        <Container style={{ marginTop: "1rem" }}>
+          <p>Could not fetch the list of kits.</p>
+        </Container>
+      )}
       <Container style={{ paddingTop: "1rem" }}>
         <Segment attached="top" secondary>
           <p>{t("map.description")}</p>
@@ -41,9 +46,7 @@ export default function KitMap() {
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
               />
-              {kitsData === undefined ? (
-                <></>
-              ) : (
+              {kitsData !== undefined &&
                 kitsData.map((kit) => {
                   if (
                     typeof kit.latitude == "number" &&
@@ -79,8 +82,7 @@ export default function KitMap() {
                   } else {
                     return null;
                   }
-                })
-              )}
+                })}
             </Map>
           )}
         </Segment>
