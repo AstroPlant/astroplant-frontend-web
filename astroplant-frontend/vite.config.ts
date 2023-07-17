@@ -19,6 +19,13 @@ export default defineConfig({
   },
   build: {
     outDir: "build",
+    // debug:
+    // minify: false,
+    // rollupOptions: {
+    //   output: {
+    //     assetFileNames: "[name].[ext]",
+    //   },
+    // },
   },
   plugins: [react(), tsconfigPaths()],
   test: {
