@@ -1,6 +1,22 @@
-body #root {
-  font-family: 'Lato', sans-serif;
-  font-size: 16px;
+/* Colors */
+:root {
+  --theme: #35ef7f;
+  --theme-dark: #37e07b;
+}
+
+*,
+::after,
+::before {
+  box-sizing: border-box;
+  border: 0 solid #000;
+}
+
+/* FIXME: body tag should be removed when semantic-ui is removed */
+html,
+body {
+  font:
+    16px/26px "Lato",
+    sans-serif;
 }
 
 h1,
@@ -9,7 +25,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Roboto';
+  font-family: "Roboto";
   font-weight: 300;
 }
 
@@ -23,16 +39,16 @@ h2 {
 
 a,
 a:hover {
-  color: #35EF7F;
+  color: var(--theme);
 }
 
 .ui.primary.button {
-  background-color: #35EF7F;
+  background-color: var(--theme);
   color: black;
 }
 
 .ui.primary.button:hover {
-  background-color: #37e07b;
+  background-color: var(--theme-dark);
   color: black;
 }
 
@@ -47,7 +63,11 @@ a:hover {
 
 .headTitleBackground {
   height: 10em;
-  background-image: linear-gradient(to top left, #35EF7F 0, #35EF7F 85%);
+  background-image: linear-gradient(
+    to top left,
+    var(--theme) 0,
+    var(--theme-dark) 85%
+  );
 }
 
 .headTitleBackground .container {
@@ -65,7 +85,7 @@ a:hover {
 
 .p_title {
   margin-left: 1em;
-  padding-top: 1em
+  padding-top: 1em;
 }
 
 .p_body {
