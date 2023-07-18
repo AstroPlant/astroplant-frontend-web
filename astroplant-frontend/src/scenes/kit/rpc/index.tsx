@@ -53,7 +53,7 @@ export default function KitRpc() {
         onClick={() => versionRequest()}
         loading={versionRequesting}
         disabled={versionRequesting}
-        primary
+        variant="primary"
       >
         Query kit version
       </Button>
@@ -67,7 +67,7 @@ export default function KitRpc() {
         onClick={() => uptimeRequest()}
         loading={uptimeRequesting}
         disabled={uptimeRequesting}
-        primary
+        variant="primary"
       >
         Query kit uptime
       </Button>

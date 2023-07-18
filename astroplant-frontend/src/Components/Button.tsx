@@ -5,18 +5,14 @@ import commonStyles from "~/Common.module.css";
 import styles from "./Button.module.css";
 
 export type ButtonProps = {
-  primary?: boolean;
-  ok?: boolean;
-  cancel?: boolean;
+  variant?: "regular" | "primary" | "positive" | "negative";
   loading?: boolean;
   disabled?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
 };
 
 export function Button({
-  primary = false,
-  ok = false,
-  cancel = false,
+  variant = "regular",
   loading = false,
   disabled = false,
   onClick,
@@ -29,13 +25,9 @@ export function Button({
       disabled={disabled}
       className={clsx(
         styles.btn,
-        primary
-          ? styles.primary
-          : ok
-          ? styles.ok
-          : cancel
-          ? styles.cancel
-          : null,
+        variant === "primary" && styles.primary,
+        variant === "positive" && styles.ok,
+        variant === "negative" && styles.cancel,
         commonStyles.focusRing,
         loading && styles.loading,
       )}
