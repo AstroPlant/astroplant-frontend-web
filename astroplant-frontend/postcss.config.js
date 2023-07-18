@@ -1,7 +1,8 @@
 const config = {
   plugins: [
     require("postcss-nesting"),
-    require("@csstools/postcss-oklab-function")({ preserve: true }),
+    require("@csstools/postcss-oklab-function"),
+    require("@csstools/postcss-color-mix-function"),
   ],
 };
 

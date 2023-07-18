@@ -1,0 +1,90 @@
+.btn {
+  --btn-fg: var(--white);
+  --btn-bg: var(--slate-600);
+  --btn-hover-bg: var(--slate-700);
+  --btn-disabled-bg: var(--slate-400);
+}
+
+.btn.primary {
+  --btn-bg: var(--blue-500);
+  --btn-hover-bg: var(--blue-600);
+  --btn-disabled-bg: var(--blue-300);
+}
+
+.btn.ok {
+  --btn-bg: var(--green-500);
+  --btn-hover-bg: var(--green-600);
+  --btn-disabled-bg: var(--green-300);
+}
+
+.btn.cancel {
+  --btn-bg: var(--red-500);
+  --btn-hover-bg: var(--red-600);
+  --btn-disabled-bg: var(--red-300);
+}
+
+.btn {
+  position: relative;
+  cursor: pointer;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 3rem;
+  margin: 0 0.2rem;
+  padding: 0 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  color: var(--btn-fg);
+  background-color: var(--btn-bg);
+  transition: background-color 0.1s ease;
+
+  &:disabled {
+    cursor: inherit;
+    color: var(--btn-fg);
+    /* Works in modern browsers, else falls back to --btn-fg. */
+    color: color-mix(in srgb, var(--btn-fg), transparent 10%);
+    background-color: var(--btn-disabled-bg);
+  }
+
+  &:hover:not(:disabled) {
+    background-color: var(--btn-hover-bg);
+  }
+}
+
+.loading {
+  color: rgba(0, 0, 0, 0) !important;
+
+  &::before,
+  &::after {
+    position: absolute;
+    content: "";
+    top: 50%;
+    left: 50%;
+    margin-top: calc(-1.3em / 2);
+    margin-left: calc(-1.3em / 2);
+    width: 1.3em;
+    height: 1.3em;
+    border-radius: 100%;
+    border: 0.2em solid var(--slate-100);
+    opacity: 0.15;
+  }
+
+  &::after {
+    opacity: 1;
+    animation: spin 0.8s linear;
+    animation-iteration-count: infinite;
+    border-color: var(--slate-100) transparent transparent;
+    border-style: solid;
+    border-width: 0.2em;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(1turn);
+  }
+}

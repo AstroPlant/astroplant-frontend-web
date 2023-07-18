@@ -1,10 +1,11 @@
 import React, { useState, useContext } from "react";
-import { Container, Button, Input, Divider } from "semantic-ui-react";
+import { Container, Input, Divider } from "semantic-ui-react";
 import { firstValueFrom } from "rxjs";
 
 import { KitContext } from "../contexts";
 import PeripheralCommand from "./PeripheralCommand";
 import { api } from "~/api";
+import { Button } from "~/Components/Button";
 
 export default function KitRpc() {
   const [versionRequesting, setVersionRequesting] = useState(false);
@@ -22,7 +23,7 @@ export default function KitRpc() {
       const versionResponse = await firstValueFrom(
         api.version({
           kitSerial: kit.serial,
-        })
+        }),
       );
       setVersionResponse(versionResponse.data);
     } finally {
@@ -38,7 +39,7 @@ export default function KitRpc() {
       const uptimeResponse = await firstValueFrom(
         api.uptime({
           kitSerial: kit.serial,
-        })
+        }),
       );
       setUptimeResponse(`${uptimeResponse.data} seconds`);
     } finally {
