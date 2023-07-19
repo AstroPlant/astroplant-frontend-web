@@ -1,11 +1,12 @@
 import React, { useState, useContext } from "react";
-import { Container, Input, Divider } from "semantic-ui-react";
+import { Container, Divider } from "semantic-ui-react";
 import { firstValueFrom } from "rxjs";
 
 import { KitContext } from "../contexts";
 import PeripheralCommand from "./PeripheralCommand";
 import { api } from "~/api";
 import { Button } from "~/Components/Button";
+import { Input } from "~/Components/Input";
 
 export default function KitRpc() {
   const [versionRequesting, setVersionRequesting] = useState(false);
