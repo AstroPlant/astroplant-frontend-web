@@ -62,6 +62,7 @@
   --red-900: oklch(10% 0.142 28.8);
   --red-950: oklch(5% 0.142 28.8);
 
+  --outline-color: var(--slate-400);
   --theme: #35ef7f;
   --theme-dark: #37e07b;
 }
