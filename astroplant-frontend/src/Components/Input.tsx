@@ -3,12 +3,7 @@ import clsx from "clsx";
 
 import style from "./Input.module.css";
 
-export type InputProps = {
-  value: string;
-  placeholder?: string;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
-  onClick?: React.MouseEventHandler<HTMLInputElement>;
-  readOnly?: boolean;
+export type InputProps = React.HTMLProps<HTMLInputElement> & {
   /** A React node to use as an adornment at the left side of the input field. */
   leftAdornment?: React.ReactNode;
   /** A React node to use as an adornment at the right side of the input field. */
@@ -18,14 +13,10 @@ export type InputProps = {
 };
 
 export function Input({
-  value,
-  placeholder,
-  onChange,
-  onClick,
-  readOnly,
   leftAdornment,
   rightAdornment,
   fullWidth = false,
+  ...props
 }: InputProps) {
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -41,11 +32,7 @@ export function Input({
   const adorned = leftAdornment !== undefined || rightAdornment !== undefined;
   const input = (
     <input
-      value={value}
-      readOnly={readOnly}
-      placeholder={placeholder}
-      onChange={onChange}
-      onClick={onClick}
+      {...props}
       ref={inputRef}
       className={clsx(
         style.input,
