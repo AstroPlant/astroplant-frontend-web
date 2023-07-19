@@ -52,6 +52,36 @@
   }
 }
 
+.leftAdornment,
+.rightAdornment {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.75rem;
+  border-radius: inherit;
+  background-color: rgba(0, 0, 0, 0.1);
+
+  /* FIXME: this should be removed when our icons are not <i> based anymore */
+  > i {
+    margin: 0;
+  }
+}
+
+.leftAdornment {
+  margin-left: -1.5rem;
+  margin-right: 0.75rem;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.rightAdornment {
+  margin-right: -1.5rem;
+  margin-left: 0.75rem;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
 .loading {
   color: rgba(0, 0, 0, 0) !important;
 
