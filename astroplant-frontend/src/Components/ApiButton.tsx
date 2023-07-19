@@ -3,7 +3,8 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { firstValueFrom, Observable } from "rxjs";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Button, ButtonProps } from "semantic-ui-react";
+
+import { Button, ButtonProps } from "./Button";
 
 import {
   Notification,

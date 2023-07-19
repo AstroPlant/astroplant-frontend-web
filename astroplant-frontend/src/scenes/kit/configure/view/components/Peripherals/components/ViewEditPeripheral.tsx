@@ -39,8 +39,8 @@ export default function ViewEditPeripheral({
   const peripheralDefinition = useAppSelector((state) =>
     peripheralDefinitionsSelectors.selectById(
       state,
-      peripheral.peripheralDefinitionId
-    )
+      peripheral.peripheralDefinitionId,
+    ),
   );
 
   const [editing, setEditing] = useState(false);
@@ -57,7 +57,7 @@ export default function ViewEditPeripheral({
       peripheralUpdated({
         serial: kit.serial,
         peripheral: response.data,
-      })
+      }),
     );
     setEditing(false);
   };
@@ -75,7 +75,7 @@ export default function ViewEditPeripheral({
         kitId: peripheral.kitId,
         kitConfigurationId: peripheral.kitConfigurationId,
         peripheralId: peripheral.id,
-      })
+      }),
     );
   };
 
@@ -143,16 +143,13 @@ export default function ViewEditPeripheral({
                 send={sendDelete}
                 onResponse={responseDelete}
                 buttonProps={{
-                  negative: true,
-                  icon: true,
-                  labelPosition: "right",
-                  floated: "right",
+                  variant: "negative",
+                  leftAdornment: <Icon name="delete" />,
                 }}
                 confirm={() => ({
                   content: t("kitConfiguration.peripherals.deleteConfirm"),
                 })}
               >
-                <Icon name="delete" />
                 Delete
               </DeletePeripheralButton>
             </div>

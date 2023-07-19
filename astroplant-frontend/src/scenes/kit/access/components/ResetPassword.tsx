@@ -45,7 +45,7 @@ export default function ResetPassword({ kit }: Props) {
               send={send}
               onResponse={onResponse}
               label={t("kitAccess.resetPassword")}
-              buttonProps={{ negative: true }}
+              buttonProps={{ variant: "negative" }}
               confirm={() => ({
                 content: t("kitAccess.resetPasswordConfirm", {
                   kitName,

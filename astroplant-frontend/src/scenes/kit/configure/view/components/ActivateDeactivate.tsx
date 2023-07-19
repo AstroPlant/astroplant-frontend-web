@@ -55,7 +55,7 @@ export default function ActivateDeactivate({ kit, configuration }: Props) {
         send={send}
         onResponse={onResponse}
         label={t("common.deactivate")}
-        buttonProps={{ negative: true }}
+        buttonProps={{ variant: "negative" }}
         confirm={() => ({
           content: t("kitConfiguration.deactivateConfirm", {
             kitName,
@@ -70,7 +70,7 @@ export default function ActivateDeactivate({ kit, configuration }: Props) {
         send={send}
         onResponse={onResponse}
         label={t("common.activate")}
-        buttonProps={{ positive: true }}
+        buttonProps={{ variant: "positive" }}
         confirm={() => ({
           content: t(
             configuration.neverUsed
