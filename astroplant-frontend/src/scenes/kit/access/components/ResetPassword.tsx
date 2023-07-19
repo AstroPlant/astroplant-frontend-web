@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, Icon, Input } from "semantic-ui-react";
+import { Card, Icon } from "semantic-ui-react";
 
 import ApiButton from "~/Components/ApiButton";
+import { Input } from "~/Components/Input";
 import { api, Response, schemas } from "~/api";
 
 export type Props = {
@@ -34,8 +35,8 @@ export default function ResetPassword({ kit }: Props) {
         <Card.Description>
           {password ? (
             <Input
-              fluid
-              icon={<Icon name="lock" inverted circular link />}
+              fullWidth
+              leftAdornment={<Icon name="lock" inverted circular link />}
               value={password || ""}
               onClick={(ev: any) => ev.target.select()}
               readOnly
