@@ -16,7 +16,10 @@
       "activate": "Activate",
       "deactivate": "Deactivate",
       "remove": "Remove",
-      "position": "Position"
+      "position": "Position",
+      "cancel": "Cancel",
+      "ok": "OK",
+      "confirm": "Confirm"
     },
     "home": {
       "header": "AstroPlant Prototype",

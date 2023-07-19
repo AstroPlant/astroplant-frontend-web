@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { firstValueFrom, Observable } from "rxjs";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Confirm, Button, ButtonProps } from "semantic-ui-react";
+import { Button, ButtonProps } from "semantic-ui-react";
 
 import {
   Notification,
@@ -12,6 +12,7 @@ import {
 import { addNotificationRequest } from "~/modules/notification/actions";
 
 import { requestWrapper } from "~/utils/api";
+import { ModalConfirmDialog } from "./ModalDialog";
 
 export type ConfirmLabels = {
   cancelButton?: string;
@@ -38,7 +39,7 @@ type AllProps<R> = WithTranslation &
   Props<R> & {
     addNotificationRequest: (
       notification: Notification,
-      timeout?: number | null
+      timeout?: number | null,
     ) => void;
   };
 
@@ -60,7 +61,7 @@ class ApiButton<R = any> extends Component<AllProps<R>, State> {
 
     try {
       const response = await firstValueFrom(
-        this.props.send().pipe(requestWrapper())
+        this.props.send().pipe(requestWrapper()),
       );
 
       this.setState({ submitting: false });
@@ -118,15 +119,16 @@ class ApiButton<R = any> extends Component<AllProps<R>, State> {
         >
           {this.props.children || this.props.label || t("form.submit")}
         </Button>
-        <Confirm
+        <ModalConfirmDialog
           open={this.state.confirming}
           onConfirm={() => this.confirm()}
           onCancel={() => this.cancel()}
-          cancelButton={this.state.confirmLabels.cancelButton}
-          confirmButton={this.state.confirmLabels.confirmButton}
+          cancelLabel={this.state.confirmLabels.cancelButton}
+          confirmLabel={this.state.confirmLabels.confirmButton}
           header={this.state.confirmLabels.header}
-          content={this.state.confirmLabels.content}
-        />
+        >
+          {this.state.confirmLabels.content}
+        </ModalConfirmDialog>
       </>
     );
   }
@@ -137,13 +139,13 @@ const mapDispatchToProps = (dispatch: any) =>
     {
       addNotificationRequest,
     },
-    dispatch
+    dispatch,
   );
 
 export default function Conn<R>(): React.ComponentType<Props<R>> {
   return connect(
     null,
-    mapDispatchToProps
+    mapDispatchToProps,
   )(withTranslation()(ApiButton as React.ComponentType<AllProps<R>>));
 }
 
