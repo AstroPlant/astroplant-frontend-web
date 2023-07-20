@@ -5,7 +5,7 @@ import commonStyles from "~/Common.module.css";
 import styles from "./Button.module.css";
 
 export type ButtonProps = {
-  variant?: "regular" | "primary" | "positive" | "negative";
+  variant?: "regular" | "primary" | "muted" | "positive" | "negative";
   loading?: boolean;
   disabled?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
@@ -32,6 +32,7 @@ export function Button({
       className={clsx(
         styles.btn,
         variant === "primary" && styles.primary,
+        variant === "muted" && styles.muted,
         variant === "positive" && styles.ok,
         variant === "negative" && styles.cancel,
         commonStyles.focusRing,

@@ -11,6 +11,13 @@
   --btn-disabled-bg: var(--blue-300);
 }
 
+.btn.muted {
+  --btn-fg: #444;
+  --btn-bg: var(--gray-100);
+  --btn-hover-bg: var(--gray-200);
+  --btn-disabled-bg: var(--gray-50);
+}
+
 .btn.ok {
   --btn-bg: var(--green-500);
   --btn-hover-bg: var(--green-600);
@@ -39,11 +46,17 @@
   background-color: var(--btn-bg);
   transition: background-color 0.1s ease;
 
+  &.small {
+    font-size: 0.7rem;
+    height: 2rem;
+    padding: 0 0.5rem;
+  }
+
   &:disabled {
     cursor: inherit;
     color: var(--btn-fg);
     /* Works in modern browsers, else falls back to --btn-fg. */
-    color: color-mix(in srgb, var(--btn-fg), transparent 10%);
+    color: color-mix(in srgb, var(--btn-fg), transparent 40%);
     background-color: var(--btn-disabled-bg);
   }
 
