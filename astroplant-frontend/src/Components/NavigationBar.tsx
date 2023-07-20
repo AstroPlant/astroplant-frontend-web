@@ -1,11 +1,5 @@
-import React, { Component } from "react";
-import {
-  Container,
-  Icon,
-  Menu,
-  Sidebar,
-  Responsive
-} from "semantic-ui-react";
+import React, { useCallback, useState } from "react";
+import { Container, Icon, Menu, Sidebar, Responsive } from "semantic-ui-react";
 import { Logo } from "./Logo";
 
 const NavBarMobile = ({
@@ -14,7 +8,7 @@ const NavBarMobile = ({
   onPusherClick,
   onToggle,
   rightItems,
-  visible
+  visible,
 }: any) => (
   <Sidebar.Pushable>
     <Sidebar
@@ -59,7 +53,7 @@ const NavBarMobile = ({
 
 const NavBarDesktop = ({
   leftItems,
-  rightItems
+  rightItems,
 }: {
   leftItems: any;
   rightItems: any;
@@ -88,121 +82,43 @@ type NavigationBarProps = React.PropsWithChildren<{
   rightItems: any[];
 }>;
 
-class NavigationBar extends Component<
-  NavigationBarProps,
-  { visible: boolean }
-> {
-  state = {
-    visible: false
-  };
+export default function NavigationBar({
+  children,
+  leftItems,
+  rightItems,
+}: NavigationBarProps) {
+  const [visible, setVisible] = useState(false);
 
-  handlePusher = () => {
-    const { visible } = this.state;
+  const handlePusher = useCallback(() => {
+    if (visible) setVisible(false);
+  }, [visible]);
 
-    if (visible) this.setState({ visible: false });
-  };
+  const handleToggle = useCallback(() => setVisible(!visible), [visible]);
 
-  handleToggle = () => this.setState({ visible: !this.state.visible });
-
-  render() {
-    const { children, leftItems, rightItems } = this.props;
-    const { visible } = this.state;
-
-    return (
-      <>
-        <Responsive maxWidth={Responsive.onlyMobile.maxWidth}>
-          <NavBarMobile
-            leftItems={leftItems}
-            onPusherClick={this.handlePusher}
-            onToggle={this.handleToggle}
-            rightItems={rightItems}
-            visible={visible}
-          >
-            <Content>{children}</Content>
-          </NavBarMobile>
-        </Responsive>
-        <Responsive
-          style={{
-            minHeight: "100vh",
-            display: "flex",
-            flexDirection: "column"
-          }}
-          minWidth={Responsive.onlyTablet.minWidth}
+  return (
+    <>
+      <Responsive maxWidth={Responsive.onlyMobile.maxWidth}>
+        <NavBarMobile
+          leftItems={leftItems}
+          onPusherClick={handlePusher}
+          onToggle={handleToggle}
+          rightItems={rightItems}
+          visible={visible}
         >
-          <NavBarDesktop leftItems={leftItems} rightItems={rightItems} />
           <Content>{children}</Content>
-        </Responsive>
-      </>
-    );
-  }
+        </NavBarMobile>
+      </Responsive>
+      <Responsive
+        style={{
+          minHeight: "100vh",
+          display: "flex",
+          flexDirection: "column",
+        }}
+        minWidth={Responsive.onlyTablet.minWidth}
+      >
+        <NavBarDesktop leftItems={leftItems} rightItems={rightItems} />
+        <Content>{children}</Content>
+      </Responsive>
+    </>
+  );
 }
-
-/*
-class Navbar extends Component {
-  state = {};
-
-  routeChange() {
-    let path = "/login";
-    this.props.history.push(path);
-  }
-
-  render() {
-    return (
-      <Menu fixed="top" stackable={true}>
-        {isBrowser || isTablet ? (
-          <Container>
-            <Menu.Item header>
-              <h2>AstroPlant</h2>
-            </Menu.Item>
-            <Menu.Item as={NavLink} to="/home" name="home">
-              <Icon name="home" />
-              Home
-            </Menu.Item>
-            <Menu.Item as={NavLink} to="/map" name="map">
-              <Icon name="map marker alternate" />
-              Map
-            </Menu.Item>
-            <Menu.Item as={NavLink} to="/analyze" name="myAstroPlant">
-              <Icon name="dashboard" />
-              myAstroPlant
-            </Menu.Item>
-
-            <Menu.Item position="right">
-              <Button as={Link} to="/login" basic content="Login" />
-              <Button
-                as={Link}
-                to="/signup"
-                basic
-                content="Sing Up"
-                style={{ marginLeft: "0.5em" }}
-              />
-            </Menu.Item>
-          </Container>
-        ) : (
-          <Container>
-            <Menu.Item header>
-              <h2>AstroPlant</h2>
-            </Menu.Item>
-            <Menu.Item as={NavLink} to="/home" name="home">
-              <Icon name="home" />
-            </Menu.Item>
-            <Menu.Item as={NavLink} to="/map" name="map">
-              <Icon name="map marker alternate" />
-            </Menu.Item>
-            <Menu.Item as={NavLink} to="/analyze" name="analyze">
-              <Icon name="dashboard" />
-            </Menu.Item>
-
-            <Menu.Item position="right">
-              <Button basic content="Login" />
-              <Button basic content="Sing Up" style={{ marginLeft: "0.5em" }} />
-            </Menu.Item>
-          </Container>
-        )}
-      </Menu>
-    );
-  }
-}
-*/
-
-export default NavigationBar; //withRouter(NavBar);
