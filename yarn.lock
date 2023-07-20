@@ -1235,13 +1235,6 @@
   dependencies:
     regenerator-runtime "^0.13.11"
 
-"@babel/runtime@^7.10.4", "@babel/runtime@^7.10.5":
-  version "7.21.5"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.21.5.tgz#8492dddda9644ae3bda3b45eabe87382caee7200"
-  integrity sha512-8jI69toZqqcsnqGGqwGS4Qb1VwLOEp4hz+CXPywcvjs60u3B4Pom/U/7rm4W8tMOYEB+E9wgD0mW1l3r8qlI9Q==
-  dependencies:
-    regenerator-runtime "^0.13.11"
-
 "@babel/template@^7.10.4", "@babel/template@^7.18.10", "@babel/template@^7.20.7", "@babel/template@^7.3.3":
   version "7.20.7"
   resolved "https://registry.yarnpkg.com/@babel/template/-/template-7.20.7.tgz#a15090c2839a83b02aa996c0b4994005841fd5a8"
@@ -1554,21 +1547,6 @@
   version "8.44.0"
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.44.0.tgz#961a5903c74139390478bdc808bcde3fc45ab7af"
   integrity sha512-Ag+9YM4ocKQx9AarydN0KY2j0ErMHNIocPDrVo8zAE44xLTjEtz81OdR68/cydGtk6m6jDb5Za3r2useMzYmSw==
-
-"@fluentui/react-component-event-listener@~0.51.1":
-  version "0.51.7"
-  resolved "https://registry.yarnpkg.com/@fluentui/react-component-event-listener/-/react-component-event-listener-0.51.7.tgz#158adb970d8bc982c91c57fd1322a0036042d86e"
-  integrity sha512-NjVm+crN0T9A7vITL8alZeHnuV8zi2gos0nezU/2YOxaUAB9E4zKiPxt/6k5U50rJs/gj8Nu45iXxnjO41HbZg==
-  dependencies:
-    "@babel/runtime" "^7.10.4"
-
-"@fluentui/react-component-ref@~0.51.1":
-  version "0.51.7"
-  resolved "https://registry.yarnpkg.com/@fluentui/react-component-ref/-/react-component-ref-0.51.7.tgz#bfb0312e926c213bed35e53ee5105a68732eea99"
-  integrity sha512-CX27jVJYaFoBCWpuWAizQZ2se137ku1dmDyn8sw+ySNJa+kkQf7LnMydiPW5K7cRdUSqUJW3eS4EjKRvVAx8xA==
-  dependencies:
-    "@babel/runtime" "^7.10.4"
-    react-is "^16.6.3"
 
 "@gar/promisify@^1.0.1":
   version "1.1.3"
@@ -1989,14 +1967,6 @@
     markdown-to-jsx "^7.2.0"
     nanoid "^3.3.6"
     prop-types "^15.8.1"
-
-"@rjsf/semantic-ui@~5.6.2":
-  version "5.6.2"
-  resolved "https://registry.yarnpkg.com/@rjsf/semantic-ui/-/semantic-ui-5.6.2.tgz#b9c5632f910a4f9d3b411492f28c24975eb8404b"
-  integrity sha512-TaX2g5HIgWqQ3/pV8fr2eR1jeuIOCZSjvcmvy6mgbQOnok5+Cmc+oAnolfmM0btQ04RmprmxAnOQEkp/a7ICNw==
-  dependencies:
-    semantic-ui-css "^2.5.0"
-    semantic-ui-react "^1.3.1"
 
 "@rjsf/utils@~5.6.2":
   version "5.6.2"
@@ -4271,11 +4241,6 @@ cliui@^6.0.0:
     string-width "^4.2.0"
     strip-ansi "^6.0.0"
     wrap-ansi "^6.2.0"
-
-clsx@^1.1.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/clsx/-/clsx-1.2.1.tgz#0ddc4a20a549b59c93a4116bb26f5294ca17dc12"
-  integrity sha512-EcR6r5a8bj6pu3ycsa/E/cKVGuTgZJZdsyUYHOksG/UHIiKfjxzRxYJpyVBwYaQeOvghal9fcc4PidlgzugAQg==
 
 clsx@^2.0.0:
   version "2.0.0"
@@ -8567,7 +8532,7 @@ jsonpointer@^5.0.1:
     array-includes "^3.1.5"
     object.assign "^4.1.3"
 
-keyboard-key@^1.0.4, keyboard-key@^1.1.0:
+keyboard-key@^1.0.4:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/keyboard-key/-/keyboard-key-1.1.0.tgz#6f2e8e37fa11475bb1f1d65d5174f1b35653f5b7"
   integrity sha512-qkBzPTi3rlAKvX7k0/ub44sqOfXeLc/jcnGGmj5c7BJpU8eDrEVPyhCvNYAaoubbsLm9uGWwQJO1ytQK1a9/dQ==
@@ -8726,7 +8691,7 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
-lodash-es@^4.17.15, lodash-es@^4.17.21:
+lodash-es@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash-es/-/lodash-es-4.17.21.tgz#43e626c46e6591b7750beb2b50117390c609e3ee"
   integrity sha512-mKnC+QJ9pWVzv+C4/U3rRsHapFfHvQFoFB92e52xeyGMcX6/OlIl78je1u8vePzYZSkkogMPJ2yjxxsb89cxyw==
@@ -11348,7 +11313,7 @@ react-markdown@^8.0.7:
     unist-util-visit "^4.0.0"
     vfile "^5.0.0"
 
-react-popper@^1.3.4, react-popper@^1.3.7:
+react-popper@^1.3.4:
   version "1.3.11"
   resolved "https://registry.yarnpkg.com/react-popper/-/react-popper-1.3.11.tgz#a2cc3f0a67b75b66cfa62d2c409f9dd1fcc71ffd"
   integrity sha512-VSA/bS+pSndSF2fiasHK/PTEEAyOpX60+H5EPAjoArr8JGm+oihu4UbrqcEBpQibJxBVCpYyjAX7abJ+7DoYVg==
@@ -12135,37 +12100,12 @@ selfsigned@^1.10.8:
   dependencies:
     node-forge "^0.10.0"
 
-semantic-ui-css@^2.5.0:
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/semantic-ui-css/-/semantic-ui-css-2.5.0.tgz#b3b7b58b5ffbe6d6fb6549beded16e79a9aa64eb"
-  integrity sha512-jIWn3WXXE2uSaWCcB+gVJVRG3masIKtTMNEP2X8Aw909H2rHpXGneYOxzO3hT8TpyvB5/dEEo9mBFCitGwoj1A==
-  dependencies:
-    jquery x.*
-
 semantic-ui-css@~2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/semantic-ui-css/-/semantic-ui-css-2.4.1.tgz#f5aea39fafb787cbd905ec724272a3f9cba9004a"
   integrity sha512-Pkp0p9oWOxlH0kODx7qFpIRYpK1T4WJOO4lNnpNPOoWKCrYsfHqYSKgk5fHfQtnWnsAKy7nLJMW02bgDWWFZFg==
   dependencies:
     jquery x.*
-
-semantic-ui-react@^1.3.1:
-  version "1.3.1"
-  resolved "https://registry.yarnpkg.com/semantic-ui-react/-/semantic-ui-react-1.3.1.tgz#254a8e53f13f4e09a0a4692e971202dcb7b72834"
-  integrity sha512-3EE8Cl2Tq9re+J5An8QOZHgjRJjHqNDBq+Aoaa0TLFnd79UgYzovJPQGy3AWIxgCkxDPj4c3yxl72ImumJLyeA==
-  dependencies:
-    "@babel/runtime" "^7.10.5"
-    "@fluentui/react-component-event-listener" "~0.51.1"
-    "@fluentui/react-component-ref" "~0.51.1"
-    "@semantic-ui-react/event-stack" "^3.1.0"
-    clsx "^1.1.1"
-    keyboard-key "^1.1.0"
-    lodash "^4.17.19"
-    lodash-es "^4.17.15"
-    prop-types "^15.7.2"
-    react-is "^16.8.6"
-    react-popper "^1.3.7"
-    shallowequal "^1.1.0"
 
 semantic-ui-react@~0.88.2:
   version "0.88.2"
