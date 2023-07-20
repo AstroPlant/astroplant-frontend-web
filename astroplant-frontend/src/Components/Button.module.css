@@ -65,6 +65,23 @@
   }
 }
 
+/* the global selector is a workaround to style RJSF without overriding the
+ * default template */
+:global(.btn-group),
+.buttonGroup {
+  .btn:not(:first-child) {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    margin-left: 0;
+  }
+
+  .btn:not(:last-child) {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-right: 0;
+  }
+}
+
 .leftAdornment,
 .rightAdornment {
   display: flex;

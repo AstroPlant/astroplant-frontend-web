@@ -16,6 +16,10 @@ export type ButtonProps = React.HTMLProps<HTMLButtonElement> & {
   rightAdornment?: React.ReactNode;
 };
 
+export function Buttons({ children }: PropsWithChildren<{}>) {
+  return <div className={styles.buttonGroup}>{children}</div>;
+}
+
 export function Button({
   variant = "regular",
   size,
