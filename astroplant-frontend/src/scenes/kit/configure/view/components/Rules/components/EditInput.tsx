@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import compose from "~/utils/compose";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Modal, Header, Icon } from "semantic-ui-react";
+import { Icon } from "semantic-ui-react";
 import validator from "@rjsf/validator-ajv8";
 
 import RjsfForm from "~/rjsf-theme-semantic-ui";
@@ -13,6 +13,7 @@ import {
 } from "../schemas";
 import { schemas } from "~/api";
 import { Button } from "~/Components/Button";
+import { ModalDialog } from "~/Components/ModalDialog";
 
 export type Props = {
   peripheral: schemas["Peripheral"];
@@ -60,53 +61,53 @@ function EditPeripheral(props: PInner) {
   };
 
   return (
-    <Modal
-      closeOnEscape={true}
-      closeOnDimmerClick={true}
+    <ModalDialog
       open={true}
       onClose={handleClose}
+      header={
+        <>
+          <Icon name="thermometer" /> {peripheral.name} —{" "}
+          {quantityType.physicalQuantity} in {quantityType.physicalUnit}
+        </>
+      }
+      actions={
+        <>
+          <Button variant="muted" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button
+            variant="negative"
+            onClick={() => handleDelete(peripheral, quantityType)}
+          >
+            Delete
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => (submitButtonRef.current! as any).click()}
+          >
+            Submit
+          </Button>
+        </>
+      }
     >
-      <Modal.Header>
-        <Icon name="thermometer" /> {peripheral.name} —{" "}
-        {quantityType.physicalQuantity} in {quantityType.physicalUnit}
-      </Modal.Header>
-      <Modal.Content scrolling>
-        <Header size="small">Please choose the input settings.</Header>
-        <RjsfForm
-          schema={inputSettingsSchema}
-          uiSchema={inputSettingsUiSchema}
-          onSubmit={({ formData }) =>
-            handleSubmit(peripheral, quantityType, formData)
-          }
-          onChange={({ formData }) => setFormData(formData)}
-          formData={formData}
-          validator={validator}
-        >
-          <input
-            ref={submitButtonRef}
-            type="submit"
-            style={{ display: "none" }}
-          />
-        </RjsfForm>
-      </Modal.Content>
-      <Modal.Actions>
-        <Button variant="muted" onClick={handleClose}>
-          Cancel
-        </Button>
-        <Button
-          variant="negative"
-          onClick={() => handleDelete(peripheral, quantityType)}
-        >
-          Delete
-        </Button>
-        <Button
-          variant="primary"
-          onClick={() => (submitButtonRef.current! as any).click()}
-        >
-          Submit
-        </Button>
-      </Modal.Actions>
-    </Modal>
+      <h3>Please choose the input settings.</h3>
+      <RjsfForm
+        schema={inputSettingsSchema}
+        uiSchema={inputSettingsUiSchema}
+        onSubmit={({ formData }) =>
+          handleSubmit(peripheral, quantityType, formData)
+        }
+        onChange={({ formData }) => setFormData(formData)}
+        formData={formData}
+        validator={validator}
+      >
+        <input
+          ref={submitButtonRef}
+          type="submit"
+          style={{ display: "none" }}
+        />
+      </RjsfForm>
+    </ModalDialog>
   );
 }
 

@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import compose from "~/utils/compose";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Modal, Header, Icon } from "semantic-ui-react";
+import { Icon } from "semantic-ui-react";
 import produce from "immer";
 import { JSONSchema7 } from "json-schema";
 import validator from "@rjsf/validator-ajv8";
@@ -18,6 +18,7 @@ import {
 import { schemas } from "~/api";
 import { Button } from "~/Components/Button";
 import { Select } from "~/Components/Select";
+import { ModalDialog } from "~/Components/ModalDialog";
 
 export type Props = {
   peripheral: schemas["Peripheral"];
@@ -135,60 +136,58 @@ function EditOutput(props: PInner) {
   };
 
   return (
-    <Modal
-      closeOnEscape={true}
-      closeOnDimmerClick={true}
+    <ModalDialog
       open={true}
       onClose={handleClose}
+      header={
+        <>
+          <Icon name="cogs" /> {peripheral.name} — {command}
+        </>
+      }
+      actions={
+        <>
+          <Button variant="muted" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button
+            variant="negative"
+            onClick={() => handleDelete(peripheral, command)}
+          >
+            Delete
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => (submitButtonRef.current! as any).click()}
+          >
+            Submit
+          </Button>
+        </>
+      }
     >
-      <Modal.Header>
-        <Icon name="cogs" /> {peripheral.name} — {command}
-      </Modal.Header>
-      <Modal.Content scrolling>
-        <Header size="small">Please choose the output type:</Header>
-        <Select
-          value={outputType}
-          onChange={(e) => setOutputType(e.currentTarget.value as OutputType)}
-        >
-          {possibleOutputTypes.map((outputType) => (
-            <option value={outputType}>{outputType}</option>
-          ))}
-        </Select>
-        <RjsfForm
-          schema={outputSettingsSchemaModified}
-          uiSchema={outputSettingsUiSchema}
-          onSubmit={({ formData }) =>
-            handleSubmit(peripheral, command, formData)
-          }
-          formData={formData}
-          onChange={({ formData }) => setFormData(formData)}
-          validator={validator}
-        >
-          <input
-            ref={submitButtonRef}
-            type="submit"
-            style={{ display: "none" }}
-          />
-        </RjsfForm>
-      </Modal.Content>
-      <Modal.Actions>
-        <Button variant="muted" onClick={handleClose}>
-          Cancel
-        </Button>
-        <Button
-          variant="negative"
-          onClick={() => handleDelete(peripheral, command)}
-        >
-          Delete
-        </Button>
-        <Button
-          variant="primary"
-          onClick={() => (submitButtonRef.current! as any).click()}
-        >
-          Submit
-        </Button>
-      </Modal.Actions>
-    </Modal>
+      <h3>Please choose the output type:</h3>
+      <Select
+        value={outputType}
+        onChange={(e) => setOutputType(e.currentTarget.value as OutputType)}
+      >
+        {possibleOutputTypes.map((outputType) => (
+          <option value={outputType}>{outputType}</option>
+        ))}
+      </Select>
+      <RjsfForm
+        schema={outputSettingsSchemaModified}
+        uiSchema={outputSettingsUiSchema}
+        onSubmit={({ formData }) => handleSubmit(peripheral, command, formData)}
+        formData={formData}
+        onChange={({ formData }) => setFormData(formData)}
+        validator={validator}
+      >
+        <input
+          ref={submitButtonRef}
+          type="submit"
+          style={{ display: "none" }}
+        />
+      </RjsfForm>
+    </ModalDialog>
   );
 }
 
