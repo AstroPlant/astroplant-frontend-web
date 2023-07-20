@@ -4,7 +4,7 @@ import clsx from "clsx";
 import commonStyles from "~/Common.module.css";
 import styles from "./Button.module.css";
 
-export type ButtonProps = {
+export type ButtonProps = React.HTMLProps<HTMLButtonElement> & {
   variant?: "regular" | "primary" | "muted" | "positive" | "negative";
   size?: "regular" | "small";
   loading?: boolean;
@@ -25,9 +25,11 @@ export function Button({
   rightAdornment,
   onClick,
   children,
+  ...props
 }: PropsWithChildren<ButtonProps>) {
   return (
     <button
+      {...props}
       type="button"
       onClick={onClick}
       disabled={disabled}
