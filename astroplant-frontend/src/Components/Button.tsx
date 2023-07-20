@@ -4,7 +4,7 @@ import clsx from "clsx";
 import commonStyles from "~/Common.module.css";
 import styles from "./Button.module.css";
 
-export type ButtonProps = React.HTMLProps<HTMLButtonElement> & {
+export type ButtonProps = Omit<React.HTMLProps<HTMLButtonElement>, "size"> & {
   variant?: "regular" | "primary" | "muted" | "positive" | "negative";
   size?: "regular" | "small";
   loading?: boolean;
