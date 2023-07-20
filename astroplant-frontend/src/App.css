@@ -174,3 +174,8 @@ code {
   border-radius: 3px;
   padding: 0.2em;
 }
+
+/* FIXME: Workaround until we remove <i> style icons */
+i.icon {
+  margin: 0;
+}
