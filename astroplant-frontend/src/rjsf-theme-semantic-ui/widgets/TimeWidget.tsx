@@ -1,6 +1,7 @@
 import React from "react";
 import { WidgetProps } from "@rjsf/utils";
 import { Input } from "semantic-ui-react";
+import { countCharOccurrences } from "~/utils/string";
 
 function processInput(input: string): string {
   // const dt = DateTime.fromFormat(input, "HH:mm");
@@ -13,7 +14,13 @@ function processInput(input: string): string {
   // } else {
   //   return input;
   // }
-  return input;
+  //
+  // Seconds are not always added by the browser, but are required by the schema.
+  if (countCharOccurrences(":", input) === 1) {
+    return `${input}:00`;
+  } else {
+    return input;
+  }
 }
 
 export function TimeWidget(props: any) {

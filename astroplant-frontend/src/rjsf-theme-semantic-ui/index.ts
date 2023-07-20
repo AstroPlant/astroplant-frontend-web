@@ -3,7 +3,7 @@ import { withTheme, ThemeProps } from "@rjsf/core";
 // @ts-ignore
 import { Theme as SemanticUITheme } from "@rjsf/semantic-ui";
 
-import TimeWidget from "./TimeWidget";
+import TimeWidget from "./widgets/TimeWidget";
 import CoordinateField from "./CoordinateField";
 
 const Theme = produce(SemanticUITheme, (draft) => {
