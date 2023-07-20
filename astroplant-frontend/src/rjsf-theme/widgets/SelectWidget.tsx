@@ -58,7 +58,7 @@ function SelectWidget<
         enumOptionsValueForIndex<S>(newValue, enumOptions, optEmptyVal),
       );
     },
-    [onFocus, id, schema, multiple, options, enumOptions, optEmptyVal],
+    [onFocus, id, multiple, enumOptions, optEmptyVal],
   );
 
   const handleBlur = useCallback(
@@ -69,7 +69,7 @@ function SelectWidget<
         enumOptionsValueForIndex<S>(newValue, enumOptions, optEmptyVal),
       );
     },
-    [onBlur, id, schema, multiple, options, enumOptions, optEmptyVal],
+    [onBlur, id, multiple, enumOptions, optEmptyVal],
   );
 
   const handleChange = useCallback(
@@ -79,7 +79,7 @@ function SelectWidget<
         enumOptionsValueForIndex<S>(newValue, enumOptions, optEmptyVal),
       );
     },
-    [onChange, schema, multiple, options, enumOptions, optEmptyVal],
+    [onChange, multiple, enumOptions, optEmptyVal],
   );
 
   const selectedIndexes = enumOptionsIndexForValue<S>(
