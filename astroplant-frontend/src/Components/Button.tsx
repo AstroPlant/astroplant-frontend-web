@@ -6,6 +6,7 @@ import styles from "./Button.module.css";
 
 export type ButtonProps = {
   variant?: "regular" | "primary" | "muted" | "positive" | "negative";
+  size?: "regular" | "small";
   loading?: boolean;
   disabled?: boolean;
   onClick?: MouseEventHandler<HTMLButtonElement>;
@@ -17,6 +18,7 @@ export type ButtonProps = {
 
 export function Button({
   variant = "regular",
+  size,
   loading = false,
   disabled = false,
   leftAdornment,
@@ -35,6 +37,7 @@ export function Button({
         variant === "muted" && styles.muted,
         variant === "positive" && styles.ok,
         variant === "negative" && styles.cancel,
+        size === "small" && styles.small,
         commonStyles.focusRing,
         loading && styles.loading,
       )}
