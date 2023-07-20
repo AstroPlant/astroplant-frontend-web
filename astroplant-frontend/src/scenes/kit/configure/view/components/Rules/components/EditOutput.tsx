@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import compose from "~/utils/compose";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Modal, Header, Button, Select, Icon } from "semantic-ui-react";
+import { Modal, Header, Icon } from "semantic-ui-react";
 import produce from "immer";
 import { JSONSchema7 } from "json-schema";
 import validator from "@rjsf/validator-ajv8";
@@ -16,6 +16,8 @@ import {
   scheduledOutputSettingsUiSchema,
 } from "../schemas";
 import { schemas } from "~/api";
+import { Button } from "~/Components/Button";
+import { Select } from "~/Components/Select";
 
 export type Props = {
   peripheral: schemas["Peripheral"];
@@ -25,7 +27,7 @@ export type Props = {
   edit: (
     peripheral: schemas["Peripheral"],
     command: string,
-    outputSettings: OutputSettings
+    outputSettings: OutputSettings,
   ) => void;
   delete: (peripheral: schemas["Peripheral"], command: string) => void;
   close: () => void;
@@ -64,7 +66,7 @@ function EditOutput(props: PInner) {
         draft.properties.minimal = schema;
         // @ts-ignore
         draft.properties.maximal = schema;
-      }
+      },
     );
     outputSettingsUiSchema = continuousOutputSettingsUiSchema;
     data = outputSettings.continuous;
@@ -75,14 +77,14 @@ function EditOutput(props: PInner) {
         // @ts-ignore
         draft.properties.schedules.items.properties.schedule.items.properties.value =
           schema;
-      }
+      },
     );
     outputSettingsUiSchema = produce(
       scheduledOutputSettingsUiSchema,
       (draft) => {
         // @ts-ignore
         draft.interpolated["ui:disabled"] = !commandIsNumber;
-      }
+      },
     );
     data = outputSettings.scheduled;
   } else {
@@ -104,7 +106,7 @@ function EditOutput(props: PInner) {
   const handleSubmit = (
     peripheral: schemas["Peripheral"],
     command: string,
-    outputSettings: any
+    outputSettings: any,
   ) => {
     if (outputType === "continuous") {
       props.edit(peripheral, command, {
@@ -145,13 +147,13 @@ function EditOutput(props: PInner) {
       <Modal.Content scrolling>
         <Header size="small">Please choose the output type:</Header>
         <Select
-          options={possibleOutputTypes.map((outputType) => ({
-            text: outputType,
-            value: outputType,
-          }))}
           value={outputType}
-          onChange={(_e, data) => setOutputType(data.value as OutputType)}
-        />
+          onChange={(e) => setOutputType(e.currentTarget.value as OutputType)}
+        >
+          {possibleOutputTypes.map((outputType) => (
+            <option value={outputType}>{outputType}</option>
+          ))}
+        </Select>
         <RjsfForm
           schema={outputSettingsSchemaModified}
           uiSchema={outputSettingsUiSchema}
@@ -170,17 +172,20 @@ function EditOutput(props: PInner) {
         </RjsfForm>
       </Modal.Content>
       <Modal.Actions>
+        <Button variant="muted" onClick={handleClose}>
+          Cancel
+        </Button>
         <Button
-          primary
+          variant="negative"
+          onClick={() => handleDelete(peripheral, command)}
+        >
+          Delete
+        </Button>
+        <Button
+          variant="primary"
           onClick={() => (submitButtonRef.current! as any).click()}
         >
           Submit
-        </Button>
-        <Button secondary onClick={() => handleDelete(peripheral, command)}>
-          Delete
-        </Button>
-        <Button color="red" onClick={handleClose}>
-          Cancel
         </Button>
       </Modal.Actions>
     </Modal>

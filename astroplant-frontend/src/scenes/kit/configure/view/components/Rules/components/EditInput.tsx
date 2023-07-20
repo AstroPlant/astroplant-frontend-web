@@ -1,7 +1,7 @@
 import React, { useState, useRef } from "react";
 import compose from "~/utils/compose";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Modal, Header, Button, Icon } from "semantic-ui-react";
+import { Modal, Header, Icon } from "semantic-ui-react";
 import validator from "@rjsf/validator-ajv8";
 
 import RjsfForm from "~/rjsf-theme-semantic-ui";
@@ -12,6 +12,7 @@ import {
   inputSettingsUiSchema,
 } from "../schemas";
 import { schemas } from "~/api";
+import { Button } from "~/Components/Button";
 
 export type Props = {
   peripheral: schemas["Peripheral"];
@@ -20,9 +21,12 @@ export type Props = {
   edit: (
     peripheral: schemas["Peripheral"],
     quantityType: schemas["QuantityType"],
-    inputSettings: InputSettings
+    inputSettings: InputSettings,
   ) => void;
-  delete: (peripheral: schemas["Peripheral"], quantityType: schemas["QuantityType"]) => void;
+  delete: (
+    peripheral: schemas["Peripheral"],
+    quantityType: schemas["QuantityType"],
+  ) => void;
   close: () => void;
 };
 
@@ -38,7 +42,10 @@ function EditPeripheral(props: PInner) {
     props.close();
   };
 
-  const handleDelete = (peripheral: schemas["Peripheral"], quantityType: schemas["QuantityType"]) => {
+  const handleDelete = (
+    peripheral: schemas["Peripheral"],
+    quantityType: schemas["QuantityType"],
+  ) => {
     props.delete(peripheral, quantityType);
     handleClose();
   };
@@ -46,7 +53,7 @@ function EditPeripheral(props: PInner) {
   const handleSubmit = (
     peripheral: schemas["Peripheral"],
     quantityType: schemas["QuantityType"],
-    inputSettings: InputSettings
+    inputSettings: InputSettings,
   ) => {
     props.edit(peripheral, quantityType, inputSettings);
     handleClose();
@@ -83,20 +90,20 @@ function EditPeripheral(props: PInner) {
         </RjsfForm>
       </Modal.Content>
       <Modal.Actions>
-        <Button
-          primary
-          onClick={() => (submitButtonRef.current! as any).click()}
-        >
-          Submit
+        <Button variant="muted" onClick={handleClose}>
+          Cancel
         </Button>
         <Button
-          secondary
+          variant="negative"
           onClick={() => handleDelete(peripheral, quantityType)}
         >
           Delete
         </Button>
-        <Button color="red" onClick={handleClose}>
-          Cancel
+        <Button
+          variant="primary"
+          onClick={() => (submitButtonRef.current! as any).click()}
+        >
+          Submit
         </Button>
       </Modal.Actions>
     </Modal>
