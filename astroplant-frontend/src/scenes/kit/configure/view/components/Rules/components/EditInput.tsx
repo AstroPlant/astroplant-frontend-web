@@ -4,7 +4,7 @@ import { withTranslation, WithTranslation } from "react-i18next";
 import { Icon } from "semantic-ui-react";
 import validator from "@rjsf/validator-ajv8";
 
-import RjsfForm from "~/rjsf-theme-semantic-ui";
+import RjsfForm from "~/rjsf-theme";
 
 import {
   InputSettings,

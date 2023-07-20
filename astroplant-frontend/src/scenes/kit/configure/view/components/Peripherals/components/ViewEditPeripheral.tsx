@@ -10,7 +10,7 @@ import { selectors as peripheralDefinitionsSelectors } from "~/modules/periphera
 import { JSONSchema7 } from "json-schema";
 import ApiForm from "~/Components/ApiForm";
 import ApiButton from "~/Components/ApiButton";
-import RjsfForm from "~/rjsf-theme-semantic-ui";
+import RjsfForm from "~/rjsf-theme";
 
 import PeripheralDefinitionCard from "~/Components/PeripheralDefinitionCard";
 import { useAppDispatch, useAppSelector } from "~/hooks";

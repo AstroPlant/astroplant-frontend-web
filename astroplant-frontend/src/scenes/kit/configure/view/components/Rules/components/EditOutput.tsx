@@ -6,7 +6,7 @@ import produce from "immer";
 import { JSONSchema7 } from "json-schema";
 import validator from "@rjsf/validator-ajv8";
 
-import RjsfForm from "~/rjsf-theme-semantic-ui";
+import RjsfForm from "~/rjsf-theme";
 
 import {
   OutputSettings,

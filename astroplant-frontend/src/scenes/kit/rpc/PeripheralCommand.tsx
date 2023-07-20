@@ -9,7 +9,7 @@ import {
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { api } from "~/api";
 import PeripheralDefinitionCard from "~/Components/PeripheralDefinitionCard";
-import RjsfForm from "~/rjsf-theme-semantic-ui";
+import RjsfForm from "~/rjsf-theme";
 
 import { KitContext, ConfigurationsContext } from "../contexts";
 import { firstValueFrom } from "rxjs";

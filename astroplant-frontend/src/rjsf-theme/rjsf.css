@@ -1,0 +1,68 @@
+form.rjsf {
+  fieldset {
+    padding: 0;
+    margin: 0;
+    margin-bottom: 0.5rem;
+    border: none;
+  }
+
+  fieldset fieldset {
+    padding-left: 1rem;
+  }
+
+  legend {
+    display: inline-block;
+    width: 100%;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  label {
+    font-weight: 600;
+    font-size: 0.85em;
+  }
+
+  label,
+  legend {
+    .required {
+      color: var(--red-500);
+    }
+  }
+
+  .field-description {
+    margin-bottom: 0.5em;
+  }
+
+  .array-item-list {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .array-item {
+    display: flex;
+    border-radius: 0.5rem;
+    border-left: 0.2rem solid var(--gray-100);
+    border-right: 0.2rem solid var(--gray-100);
+
+    .col-xs-9 {
+      flex: 1;
+    }
+
+    .array-item-toolbox {
+      display: flex;
+      align-items: center;
+      padding: 0.25rem 1rem;
+    }
+  }
+
+  [type="checkbox"] {
+    margin-right: 0.5em;
+  }
+
+  select {
+    width: 100%;
+  }
+}

@@ -8,7 +8,7 @@ import { JSONSchema7 } from "json-schema";
 import { UiSchema, FormValidation } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
 
-import RjsfForm from "~/rjsf-theme-semantic-ui";
+import RjsfForm from "~/rjsf-theme";
 
 import {
   Notification,
