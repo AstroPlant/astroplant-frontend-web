@@ -14,11 +14,15 @@ export type ModalDialogProps = {
   open?: boolean;
   /** Called when the modal dialog should be closed (from a modal-fired event). */
   onClose: () => unknown;
+  header?: React.ReactNode;
+  actions?: React.ReactNode;
 };
 
 export function ModalDialog({
   open = false,
   onClose,
+  header,
+  actions,
   children,
 }: PropsWithChildren<ModalDialogProps>) {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -66,7 +70,15 @@ export function ModalDialog({
       className={style.dialog}
     >
       {/* this div is used for the "click-outside" handler */}
-      <div>{children}</div>
+      <div>
+        {header && (
+          <header className={style.header}>
+            <h1>{header}</h1>
+          </header>
+        )}
+        <section className={style.content}>{children}</section>
+        {actions && <section className={style.actions}>{actions}</section>}
+      </div>
     </dialog>
   );
 }
@@ -96,19 +108,22 @@ export function ModalConfirmDialog({
   const { t } = useTranslation();
 
   return (
-    <ModalDialog open={open} onClose={onCancel}>
-      <header className={style.confirmationHeader}>
-        <h1>{header ? header : t("common.confirm")}</h1>
-      </header>
-      <section className={style.confirmationQuery}>{children}</section>
-      <section className={style.confirmationButtons}>
-        <Button variant="negative" onClick={() => onCancel()}>
-          {confirmLabel ? cancelLabel : t("common.cancel")}
-        </Button>
-        <Button variant="primary" onClick={() => onConfirm()}>
-          {confirmLabel ? confirmLabel : t("common.ok")}
-        </Button>
-      </section>
+    <ModalDialog
+      open={open}
+      onClose={onCancel}
+      header={header ? header : t("common.confirm")}
+      actions={
+        <>
+          <Button variant="negative" onClick={() => onCancel()}>
+            {confirmLabel ? cancelLabel : t("common.cancel")}
+          </Button>
+          <Button variant="primary" onClick={() => onConfirm()}>
+            {confirmLabel ? confirmLabel : t("common.ok")}
+          </Button>
+        </>
+      }
+    >
+      {children}
     </ModalDialog>
   );
 }
