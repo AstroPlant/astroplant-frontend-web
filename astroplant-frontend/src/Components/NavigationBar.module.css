@@ -90,10 +90,7 @@
 
   .auth {
     flex: 1;
-
-    ul {
-      justify-content: right;
-    }
+    justify-content: right;
   }
 }
 

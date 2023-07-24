@@ -59,8 +59,8 @@ function Inner({ pages, auth }: NavigationBarProps) {
         className={clsx(style.main, expanded && style.expanded)}
         style={{ maxHeight: maxHeight }}
       >
-        <div className={style.pages}>{pages}</div>
-        <div className={style.auth}>{auth}</div>
+        {pages}
+        {auth}
       </nav>
     </header>
   );
@@ -74,7 +74,7 @@ export default function NavigationBar({
   const { t } = useTranslation();
 
   const pages = (
-    <ul>
+    <ul className={style.pages}>
       <li>
         <NavLink to="/home" key="home">
           {t("common.home")}
@@ -89,7 +89,7 @@ export default function NavigationBar({
   );
 
   const auth = (
-    <ul>
+    <ul className={style.auth}>
       {displayName !== null ? (
         <>
           <li>
