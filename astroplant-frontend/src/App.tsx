@@ -1,11 +1,10 @@
 import "leaflet/dist/leaflet.css";
 import { Component } from "react";
-import { withTranslation, WithTranslation } from "react-i18next";
 import { connect } from "react-redux";
 import "./App.css";
 import { RootState } from "./types";
 
-import { Navigate, NavLink, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import ConnectionStatus from "./Components/ConnectionStatus";
 import Footer from "./Components/Footer";
@@ -16,16 +15,14 @@ import Home from "./pages/Home";
 import NotFound from "./pages/NotFound";
 import TermsAndConditions from "./pages/TermsAndConditions";
 
-import { Button } from "semantic-ui-react";
 import CreateKit from "./scenes/CreateKit";
 import Kit from "./scenes/kit";
 import LogIn from "./scenes/LogIn";
 import Map from "./scenes/map";
 import Me from "./scenes/Me";
 import SignUp from "./scenes/SignUp";
-import { persistor } from "./store";
 
-type Props = WithTranslation & {
+type Props = {
   displayName: string | null;
 };
 
@@ -40,79 +37,28 @@ class App extends Component<Props> {
   }
 
   render() {
-    const { t } = this.props;
     return (
       <>
-        <NavigationBar
-          leftItems={[
-            {
-              as: NavLink,
-              content: t("common.home"),
-              to: "/home",
-              key: "home",
-            },
-            {
-              as: NavLink,
-              content: t("common.map"),
-              to: "/map",
-              key: "map",
-            },
-          ]}
-          rightItems={
-            this.props.displayName !== null
-              ? [
-                  {
-                    as: NavLink,
-                    content: this.props.displayName,
-                    to: "/me",
-                    key: "me",
-                  },
-                  {
-                    as: Button,
-                    content: t("common.logOut"),
-                    key: "logOut",
-                    onClick: () => {
-                      persistor.purge();
-                      window.location.href = "/";
-                    },
-                  },
-                ]
-              : [
-                  {
-                    as: NavLink,
-                    content: t("common.logIn"),
-                    to: "/log-in",
-                    key: "logIn",
-                  },
-                  {
-                    as: NavLink,
-                    content: t("common.signUp"),
-                    to: "/sign-up",
-                    key: "signUp",
-                  },
-                ]
-          }
-        >
-          <Routes>
-            <Route path="/" element={<Navigate to="home" replace />} />
-            <Route path="/home" element={<Home />} />
-            <Route
-              path="/terms-and-conditions"
-              element={<TermsAndConditions />}
-            />
-            <Route path="/map" element={<Map />} />
-            <Route path="/log-in" element={<LogIn />} />
-            <Route path="/sign-up" element={<SignUp />} />
-            <Route path="/me" element={<Me />} />
-            <Route path="/create-kit" element={<CreateKit />} />
-            <Route path="/kit/:kitSerial/*" element={<Kit />} />
-            <Route element={<NotFound />} />
-          </Routes>
+        <NavigationBar displayName={this.props.displayName} />
+        <Routes>
+          <Route path="/" element={<Navigate to="home" replace />} />
+          <Route path="/home" element={<Home />} />
+          <Route
+            path="/terms-and-conditions"
+            element={<TermsAndConditions />}
+          />
+          <Route path="/map" element={<Map />} />
+          <Route path="/log-in" element={<LogIn />} />
+          <Route path="/sign-up" element={<SignUp />} />
+          <Route path="/me" element={<Me />} />
+          <Route path="/create-kit" element={<CreateKit />} />
+          <Route path="/kit/:kitSerial/*" element={<Kit />} />
+          <Route element={<NotFound />} />
+        </Routes>
 
-          <div style={{ minHeight: "1rem", flex: "auto" }} />
+        <div style={{ minHeight: "1rem", flex: "auto" }} />
 
-          <Footer />
-        </NavigationBar>
+        <Footer />
         <ConnectionStatus />
         <Notifications />
       </>
@@ -125,4 +71,4 @@ const mapStateToProps = (state: RootState) => {
   return { displayName: details?.displayName ?? null };
 };
 
-export default connect(mapStateToProps)(withTranslation()(App));
+export default connect(mapStateToProps)(App);

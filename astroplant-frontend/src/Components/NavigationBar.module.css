@@ -1,0 +1,142 @@
+.header {
+  --headerHeight: 3.2rem;
+  --itemPadding: 0.75rem;
+
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.wrap {
+  height: var(--headerHeight);
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  img {
+    display: block;
+  }
+}
+
+.main ul {
+  display: flex;
+  margin: 0;
+  padding: 0;
+
+  li {
+    list-style-type: none;
+    line-height: var(--headerHeight);
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .header {
+    display: flex;
+    align-items: center;
+    height: var(--headerHeight);
+    gap: 2rem;
+    padding-inline: calc(
+      (100vw - var(--siteWidth) - var(--itemPadding) * 2) / 2
+    );
+  }
+
+  .logo {
+    padding-left: var(--itemPadding);
+  }
+
+  .expand {
+    display: none !important;
+  }
+
+  .main {
+    max-height: initial !important;
+    display: flex;
+    flex: 1;
+  }
+
+  .main ul {
+    height: var(--headerHeight);
+
+    li {
+      a {
+        display: inline-block;
+        padding: 0 var(--itemPadding);
+        color: #000;
+
+        &:hover,
+        &:global(.active) {
+          background-color: rgba(0, 0, 0, 0.05);
+        }
+      }
+
+      button {
+        margin: 0;
+        height: var(--headerHeight) !important;
+        padding: 0 var(--itemPadding) !important;
+
+        &:hover {
+          background-color: rgba(0, 0, 0, 0.05) !important;
+        }
+      }
+    }
+
+    li + li {
+      border-left: 1px solid rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .auth {
+    flex: 1;
+
+    ul {
+      justify-content: right;
+    }
+  }
+}
+
+@media only screen and (max-width: 767px) {
+  .header {
+    flex-direction: column;
+    justify-content: left;
+    align-items: center;
+    width: var(--siteWidth);
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+
+  .logo {
+    flex: 1;
+  }
+
+  .main {
+    flex-direction: column;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+
+  .main ul {
+    flex-direction: column;
+
+    li {
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+      a {
+        display: inline-block;
+        padding: var(--itemPadding) 0;
+        color: #000;
+        width: 100%;
+      }
+
+      button {
+        display: inline-block;
+        margin: var(--itemPadding) 0 !important;
+        height: var(--headerHeight) !important;
+        width: 100%;
+        text-align: left;
+      }
+    }
+  }
+}

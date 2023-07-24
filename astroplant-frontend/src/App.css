@@ -73,6 +73,22 @@
     0px 20px 25px -5px rgba(0, 0, 0, 0.1), 0px 8px 10px -6px rgba(0, 0, 0, 0.1);
 }
 
+@media only screen and (max-width: 767px) {
+  :root { --siteWidth: 100%; }
+}
+
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+  :root { --siteWidth: 723px; }
+}
+
+@media only screen and (min-width: 992px) and (max-width: 1200px) {
+  :root { --siteWidth: 933px; }
+}
+
+@media only screen and (min-width: 1201px) {
+  :root { --siteWidth: 1127px; }
+}
+
 *,
 ::after,
 ::before {
