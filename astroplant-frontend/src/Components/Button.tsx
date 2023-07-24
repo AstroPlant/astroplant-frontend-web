@@ -5,7 +5,7 @@ import commonStyles from "~/Common.module.css";
 import styles from "./Button.module.css";
 
 export type ButtonProps = Omit<React.HTMLProps<HTMLButtonElement>, "size"> & {
-  variant?: "regular" | "primary" | "muted" | "positive" | "negative";
+  variant?: "regular" | "primary" | "muted" | "positive" | "negative" | "text";
   size?: "regular" | "small";
   loading?: boolean;
   disabled?: boolean;
@@ -29,6 +29,7 @@ export function Button({
   rightAdornment,
   onClick,
   children,
+  className,
   ...props
 }: PropsWithChildren<ButtonProps>) {
   return (
@@ -38,11 +39,13 @@ export function Button({
       onClick={onClick}
       disabled={disabled}
       className={clsx(
+        className,
         styles.btn,
         variant === "primary" && styles.primary,
         variant === "muted" && styles.muted,
         variant === "positive" && styles.ok,
         variant === "negative" && styles.cancel,
+        variant === "text" && styles.text,
         size === "small" && styles.small,
         commonStyles.focusRing,
         loading && styles.loading,

@@ -41,6 +41,7 @@
   padding: 0 1.5rem;
   font-size: 0.9rem;
   font-weight: 600;
+  font-family: inherit;
   border-radius: 0.5rem;
   color: var(--btn-fg);
   background-color: var(--btn-bg);
@@ -62,6 +63,21 @@
 
   &:hover:not(:disabled) {
     background-color: var(--btn-hover-bg);
+  }
+}
+
+.btn.text {
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  font-weight: inherit;
+  font-size: inherit;
+  color: inherit;
+  height: unset;
+
+  &:hover:not(:disabled) {
+    background: none;
   }
 }
 
