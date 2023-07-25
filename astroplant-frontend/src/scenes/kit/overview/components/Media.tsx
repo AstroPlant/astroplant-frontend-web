@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Container, Image, Table, Button, Modal } from "semantic-ui-react";
+import { Container, Image, Table } from "semantic-ui-react";
 import { DateTime } from "luxon";
 
 import RelativeTime from "~/Components/RelativeTime";
@@ -11,6 +11,8 @@ import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { firstValueFrom } from "rxjs";
 import { ConfigurationsContext } from "../../contexts";
 import { useAppSelector } from "~/hooks";
+import { Button } from "~/Components/Button";
+import { ModalDialog } from "~/Components/ModalDialog";
 
 export type Props = {
   kitState: KitState;
@@ -83,10 +85,17 @@ export default function Media(props: Props) {
     return (
       <>
         {displayMedia !== null && displayUrl !== null && (
-          <Modal open={true} onClose={() => setDisplayUrl(null)}>
-            <Modal.Header>{displayMedia.name}</Modal.Header>
-            <Modal.Content>
-              <Image src={displayUrl} centered />
+          <ModalDialog
+            open={true}
+            onClose={() => setDisplayUrl(null)}
+            header={displayMedia.name}
+            actions={
+              <Button variant="muted" onClick={() => setDisplayUrl(null)}>
+                Close
+              </Button>
+            }
+          >
+            <>
               <Table>
                 <Table.Header>
                   <Table.Row>
@@ -113,8 +122,9 @@ export default function Media(props: Props) {
                   </Table.Row>
                 </Table.Body>
               </Table>
-            </Modal.Content>
-          </Modal>
+              <Image src={displayUrl} centered />
+            </>
+          </ModalDialog>
         )}
         <Table>
           <Table.Header>
@@ -160,7 +170,6 @@ export default function Media(props: Props) {
                     </Button>*/}
                     {displayable && (
                       <Button
-                        primary
                         onClick={() => setDisplayMedia(media)}
                         disabled={disabled}
                         loading={loading}
