@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import { FieldProps } from "@rjsf/utils";
@@ -11,6 +11,13 @@ import {
 } from "react-leaflet";
 import { Button } from "semantic-ui-react";
 import { MarkerIcon } from "~/Components/MarkerIcon";
+
+export type Field = {
+  latitude: string | number | null;
+  longitude: string | number | null;
+};
+
+const NUM_DIGITS = 4;
 
 function MapListener({
   click,
@@ -28,25 +35,30 @@ function MapListener({
   return null;
 }
 
-export default function CoordinateField(props: FieldProps) {
+export default function CoordinateField(props: FieldProps<Field>) {
   const { onChange, formData } = props;
   const { t } = useTranslation();
 
-  const [latitude, setLatitude] = useState<number | null>(null);
-  const [longitude, setLongitude] = useState<number | null>(null);
-
   useEffect(() => {
-    setLatitude(formData?.latitude);
-    setLongitude(formData?.longitude);
-  }, [formData]);
+    let changed = false;
+    let latitude = formData?.latitude ?? null;
+    let longitude = formData?.longitude ?? null;
 
-  useEffect(() => {
-    if (latitude === null || longitude === null) {
-      onChange(undefined);
-    } else {
+    if (typeof formData?.latitude === "string") {
+      changed = true;
+      latitude = parseFloat(formData?.latitude ?? "");
+    }
+    if (typeof formData?.longitude === "string") {
+      changed = true;
+      longitude = parseFloat(formData?.longitude ?? "");
+    }
+
+    if (changed) {
       onChange({ latitude, longitude });
     }
-  }, [onChange, latitude, longitude]);
+  }, [formData]);
+
+  const { latitude, longitude } = formData ?? {};
 
   return (
     <div>
@@ -57,8 +69,10 @@ export default function CoordinateField(props: FieldProps) {
       <MapContainer center={[35, 0]} zoom={2} style={{ height: "45em" }}>
         <MapListener
           click={(latLng) => {
-            setLatitude(latLng.lat);
-            setLongitude(latLng.lng);
+            onChange({
+              latitude: latLng.lat.toFixed(NUM_DIGITS),
+              longitude: latLng.lng.toFixed(NUM_DIGITS),
+            });
           }}
         />
         <TileLayer
@@ -66,20 +80,19 @@ export default function CoordinateField(props: FieldProps) {
           attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         />
         {typeof latitude === "number" && typeof longitude === "number" && (
-          <Marker icon={MarkerIcon} position={[latitude!, longitude!]}>
+          <Marker icon={MarkerIcon} position={[latitude, longitude]}>
             <Popup>
               <h3>{t("common.position")}</h3>
               <p>
-                {t("common.latitude")}: {latitude.toFixed(4)}
+                {t("common.latitude")}: {latitude}
                 <br />
-                {t("common.longitude")}: {longitude.toFixed(4)}
+                {t("common.longitude")}: {longitude}
               </p>
               <p>
                 <Button
                   onClick={(e) => {
                     e.stopPropagation();
-                    setLatitude(null);
-                    setLongitude(null);
+                    onChange({ latitude: null, longitude: null });
                   }}
                 >
                   {t("common.remove")}
