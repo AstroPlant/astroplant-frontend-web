@@ -13,16 +13,16 @@ import * as meActions from "../me/actions";
 import * as genericActions from "../generic/actions";
 
 import { PDNotFound, PDForbidden } from "../../problems";
-import { api } from "~/api";
+import { ErrorResponse, api } from "~/api";
 
 const addKitFromKitMemberships: Epic = (actions$, _state$) =>
   actions$.pipe(
     filter(meActions.setKitMemberships.match),
     map((action) => action.payload),
     switchMap((kitMemberships) =>
-      from(kitMemberships.map((kitMembership) => kitMembership.kit))
+      from(kitMemberships.map((kitMembership) => kitMembership.kit)),
     ),
-    map(actions.addKit)
+    map(actions.addKit),
   );
 
 const fetchKit: Epic = (actions$, _state$) =>
@@ -36,16 +36,22 @@ const fetchKit: Epic = (actions$, _state$) =>
       req.pipe(
         map((kit) => actions.addKit(kit.data)),
         catchError((err) => {
-          if (PDNotFound.is(err.response)) {
-            return of(actions.notFound({ serial }));
-          } else if (PDForbidden.is(err.response)) {
-            return of(actions.notAuthorized({ serial }));
-          } else {
-            return of(genericActions.setApiConnectionFailed(true));
+          if (
+            err instanceof ErrorResponse &&
+            err.details.type === "APPLICATION"
+          ) {
+            console.warn(err.details);
+            if (PDNotFound.is(err.details.data)) {
+              return of(actions.notFound({ serial }));
+            } else if (PDForbidden.is(err.details.data)) {
+              return of(actions.notAuthorized({ serial }));
+            }
           }
-        })
-      )
-    )
+
+          return of(genericActions.setApiConnectionFailed(true));
+        }),
+      ),
+    ),
   );
 
 const kitWatching: Epic = (actions$, _state$) =>
@@ -55,16 +61,16 @@ const kitWatching: Epic = (actions$, _state$) =>
     mergeMap((serial) =>
       timer(0, 60 * 1000).pipe(
         mergeMap(() =>
-          concat(of(actions.kitConfigurationsRequest({ serial })))
+          concat(of(actions.kitConfigurationsRequest({ serial }))),
         ),
         takeUntil(
           actions$.pipe(
             filter(actions.stopWatching.match),
-            filter((action) => action.payload.serial === serial)
-          )
-        )
-      )
-    )
+            filter((action) => action.payload.serial === serial),
+          ),
+        ),
+      ),
+    ),
   );
 
 const kitConfigurationsRequest: Epic = (actions$, _state$) =>
@@ -78,16 +84,16 @@ const kitConfigurationsRequest: Epic = (actions$, _state$) =>
       req.pipe(
         map((response) => response.data),
         map((configurations) =>
-          actions.kitConfigurationsSuccess({ serial, configurations })
+          actions.kitConfigurationsSuccess({ serial, configurations }),
         ),
-        catchError((_err) => of(genericActions.setApiConnectionFailed(true)))
-      )
-    )
+        catchError((_err) => of(genericActions.setApiConnectionFailed(true))),
+      ),
+    ),
   );
 
 export default combineEpics(
   addKitFromKitMemberships,
   fetchKit,
   kitWatching,
-  kitConfigurationsRequest
+  kitConfigurationsRequest,
 );
