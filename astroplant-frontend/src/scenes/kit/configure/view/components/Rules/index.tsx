@@ -11,7 +11,7 @@ import {
   Loader,
   Message,
 } from "semantic-ui-react";
-import produce from "immer";
+import { produce } from "immer";
 import { JSONSchema7 } from "json-schema";
 
 import { RootState } from "~/types";
