@@ -83,7 +83,7 @@ export default function KitDetails() {
           "description",
           "privacyPublicDashboard",
           "privacyShowOnMap",
-        ])
+        ]),
       ),
     });
   };
@@ -108,7 +108,7 @@ export default function KitDetails() {
                 schema={schema as any}
                 uiSchema={patchUiSchema as any}
                 transform={(formData) => patchTransform(formData)}
-                send={(formData) => patchSend(removeNull(formData))}
+                send={(formData) => patchSend(formData)}
                 onResponse={(formData) => onPatchResponse(formData)}
                 formData={kitDetails}
               />
