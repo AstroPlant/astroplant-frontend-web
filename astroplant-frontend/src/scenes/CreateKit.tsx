@@ -36,7 +36,7 @@ function CreateKit() {
   } | null>(null);
 
   const onResponse = (
-    response: Response<{ kitSerial: string; password: string }>
+    response: Response<{ kitSerial: string; password: string }>,
   ) => {
     dispatch(kitCreated());
     setDone(true);

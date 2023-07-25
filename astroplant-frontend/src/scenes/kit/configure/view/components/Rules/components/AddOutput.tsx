@@ -11,7 +11,11 @@ import { schemas } from "~/api";
 
 export type Props = {
   choices: [schemas["Peripheral"], string, JSONSchema7][];
-  add: (peripheral: schemas["Peripheral"], command: string, schema: JSONSchema7) => void;
+  add: (
+    peripheral: schemas["Peripheral"],
+    command: string,
+    schema: JSONSchema7,
+  ) => void;
 };
 
 type PInner = Props &
@@ -39,7 +43,7 @@ class AddPeripheral extends React.Component<PInner, State> {
   selectPeripheralCommand(
     peripheral: schemas["Peripheral"],
     command: string,
-    schema: JSONSchema7
+    schema: JSONSchema7,
   ) {
     this.props.add(peripheral, command, schema);
     this.handleClose();
@@ -76,9 +80,8 @@ class AddPeripheral extends React.Component<PInner, State> {
           </Header>
           <Card.Group centered stackable columns={3}>
             {choices.map(([peripheral, command, schema]) => {
-              const pDef = peripheralDefinitions[
-                peripheral.peripheralDefinitionId
-              ]!;
+              const pDef =
+                peripheralDefinitions[peripheral.peripheralDefinitionId]!;
               return (
                 <Card
                   key={`${peripheral.name}-${command}`}
@@ -117,5 +120,5 @@ const mapStateToProps = (state: RootState) => {
 
 export default compose<PInner, Props>(
   connect(mapStateToProps),
-  withTranslation()
+  withTranslation(),
 )(AddPeripheral);

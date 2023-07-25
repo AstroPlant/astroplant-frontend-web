@@ -14,7 +14,7 @@ const clearRefreshTokenEpic: Epic = (action$, state$) =>
   action$.pipe(
     filter(sessionActions.sessionInitialize.match),
     filter((_ev) => !state$.value.auth.rememberMe),
-    map((_ev) => actions.clearTokens)
+    map((_ev) => actions.clearTokens),
   );
 
 /**
@@ -36,12 +36,12 @@ const refreshAuthenticationEpic: Epic = (action$, state$) =>
           .pipe(
             map((response) => response.data),
             map((accessToken) => actions.setAccessToken(accessToken)),
-            catchError((_err) => of(actions.notAuthenticated()))
+            catchError((_err) => of(actions.notAuthenticated())),
           );
       } else {
         return of(actions.notAuthenticated());
       }
-    })
+    }),
   );
 
 export default combineEpics(clearRefreshTokenEpic, refreshAuthenticationEpic);

@@ -82,19 +82,19 @@ function EditRule(props: PInner) {
       ({ peripheral, quantityType, ...rest }) => ({
         ...rest,
         peripheralQuantityType: `${peripheral}-${quantityType}`,
-      })
+      }),
     ),
     implication: fuzzyRuleGiven.implication.map(
       ({ peripheral, command, ...rest }) => ({
         ...rest,
         peripheralCommand: `${peripheral}-${command}`,
-      })
+      }),
     ),
     schedules: fuzzyRuleGiven.schedules.map(
       ({ peripheral, command, ...rest }) => ({
         ...rest,
         peripheralCommand: `${peripheral}-${command}`,
-      })
+      }),
     ),
     activeFrom: fuzzyRuleGiven.activeFrom,
     activeTo: fuzzyRuleGiven.activeTo,
@@ -118,11 +118,11 @@ function EditRule(props: PInner) {
         const splitIdx = peripheralQuantityType.lastIndexOf("-");
         const peripheral = peripheralQuantityType.substring(0, splitIdx);
         const quantityType = Number(
-          peripheralQuantityType.substring(splitIdx + 1)
+          peripheralQuantityType.substring(splitIdx + 1),
         );
 
         return { ...rest, peripheral, quantityType };
-      }
+      },
     );
     fuzzyRule.implication = fuzzyRule.implication.map(
       ({ peripheralCommand, ...rest }: any) => {
@@ -131,7 +131,7 @@ function EditRule(props: PInner) {
         const command = peripheralCommand.substring(splitIdx + 1);
 
         return { ...rest, peripheral, command };
-      }
+      },
     );
     fuzzyRule.schedules = fuzzyRule.schedules.map(
       ({ peripheralCommand, ...rest }: any) => {
@@ -140,7 +140,7 @@ function EditRule(props: PInner) {
         const command = peripheralCommand.substring(splitIdx + 1);
 
         return { ...rest, peripheral, command };
-      }
+      },
     );
     props.edit(fuzzyRule);
     handleClose();
@@ -194,14 +194,14 @@ function EditRule(props: PInner) {
       draft.properties.condition.items.properties.peripheralQuantityType[
         "enum"
       ] = conditionChoices.map(
-        ([peripheral, quantityType]) => `${peripheral}-${quantityType.id}`
+        ([peripheral, quantityType]) => `${peripheral}-${quantityType.id}`,
       );
       // @ts-ignore
       draft.properties.condition.items.properties.peripheralQuantityType[
         "enumNames"
       ] = conditionChoices.map(
         ([peripheral, quantityType]) =>
-          `${peripheral} - ${quantityType.physicalQuantity} in ${quantityType.physicalUnit}`
+          `${peripheral} - ${quantityType.physicalQuantity} in ${quantityType.physicalUnit}`,
       );
     } else {
       uiSchema.condition["ui:disabled"] = true;
@@ -211,13 +211,13 @@ function EditRule(props: PInner) {
       // @ts-ignore
       draft.properties.implication.items.properties.peripheralCommand["enum"] =
         implicationChoices.map(
-          ([peripheral, command]) => `${peripheral}-${command}`
+          ([peripheral, command]) => `${peripheral}-${command}`,
         );
       // @ts-ignore
       draft.properties.implication.items.properties.peripheralCommand[
         "enumNames"
       ] = implicationChoices.map(
-        ([peripheral, command]) => `${peripheral} - ${command}`
+        ([peripheral, command]) => `${peripheral} - ${command}`,
       );
     } else {
       uiSchema.implication["ui:disabled"] = true;
@@ -227,13 +227,13 @@ function EditRule(props: PInner) {
       // @ts-ignore
       draft.properties.schedules.items.properties.peripheralCommand["enum"] =
         scheduleChoices.map(
-          ([peripheral, command]) => `${peripheral}-${command}`
+          ([peripheral, command]) => `${peripheral}-${command}`,
         );
       // @ts-ignore
       draft.properties.schedules.items.properties.peripheralCommand[
         "enumNames"
       ] = scheduleChoices.map(
-        ([peripheral, command]) => `${peripheral} - ${command}`
+        ([peripheral, command]) => `${peripheral} - ${command}`,
       );
     } else {
       uiSchema.schedules["ui:disabled"] = true;

@@ -41,7 +41,7 @@ export default createReducer<MeState>(initial, (build) =>
     })
     .addCase(actions.loadingKitMemberships, (state) => {
       state.loadingKitMemberships = true;
-    })
+    }),
 );
 
 export const selectMe = (state: RootState) => state.me;

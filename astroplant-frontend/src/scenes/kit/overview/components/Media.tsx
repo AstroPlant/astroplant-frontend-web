@@ -35,11 +35,11 @@ export default function Media(props: Props) {
           kitSerial: kitState.details!.serial,
           configuration: activeConfiguration.id,
         }
-      : skipToken
+      : skipToken,
   );
 
   const [displayMedia, setDisplayMedia] = useState<schemas["Media"] | null>(
-    null
+    null,
   );
   const [displayUrl, setDisplayUrl] = useState<string | null>(null);
 
@@ -48,7 +48,7 @@ export default function Media(props: Props) {
       (async () => {
         try {
           const response = await firstValueFrom(
-            api.getMediaContent({ mediaId: displayMedia.id })
+            api.getMediaContent({ mediaId: displayMedia.id }),
           );
 
           const url = URL.createObjectURL(response.data);

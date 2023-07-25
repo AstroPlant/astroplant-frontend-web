@@ -29,7 +29,7 @@ class Notifications extends React.Component<Props> {
                     time={notification.time}
                   />
                 </List.Item>
-              )
+              ),
             )}
           </Transition.Group>
         </Container>
@@ -45,12 +45,9 @@ const mapStateToProps = (state: RootState) => {
 const mapDispatchToProps = (dispatch: any) =>
   bindActionCreators(
     {
-      removeNotification
+      removeNotification,
     },
-    dispatch
+    dispatch,
   );
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Notifications);
+export default connect(mapStateToProps, mapDispatchToProps)(Notifications);

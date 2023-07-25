@@ -42,7 +42,7 @@ export type HttpQuery = {
 async function baseQueryFn(
   args: RequestOptions,
   api: BaseQueryApi,
-  _extraOptions: {}
+  _extraOptions: {},
 ): Promise<QueryReturnValue<unknown, ErrorDetails, Meta<unknown>>> {
   const auth = selectAuth(api.getState() as RootState);
   let headers: HttpHeaders = auth.accessToken
@@ -114,10 +114,10 @@ export const rtkApi = createApi({
 });
 
 export async function dispatchQueryOneOff<
-  D extends QueryDefinition<any, any, any, any>
+  D extends QueryDefinition<any, any, any, any>,
 >(
   dispatch: AppDispatch,
-  query: ThunkAction<QueryActionCreatorResult<D>, any, any, any>
+  query: ThunkAction<QueryActionCreatorResult<D>, any, any, any>,
 ): Promise<QueryResultSelectorResult<D>> {
   const result = dispatch(query);
   const res = await result;
@@ -137,7 +137,7 @@ export async function dispatchQueryOneOff<
  */
 export async function baseWalkCursors<
   D extends QueryDefinition<any, any, any, any>,
-  T
+  T,
 >(
   dispatch: AppDispatch,
   endpoint: ApiEndpointQuery<D, any>,
@@ -146,7 +146,7 @@ export async function baseWalkCursors<
     items: T[];
     nextCursor?: string;
   },
-  maxRequests: number = 20
+  maxRequests: number = 20,
 ): Promise<T[]> {
   let collected: T[] = [];
 
@@ -177,7 +177,7 @@ export async function baseWalkCursors<
 }
 
 export type WalkCursorReturnType<
-  D extends QueryDefinition<any, any, any, any>
+  D extends QueryDefinition<any, any, any, any>,
 > = ResultTypeFrom<D> extends {
   items: (infer ResultItem)[];
   nextAfter?: string;
@@ -196,12 +196,12 @@ export type WalkCursorReturnType<
  */
 export function walkCursors<
   Args extends object,
-  D extends QueryDefinition<Args & { after?: string }, any, any, any>
+  D extends QueryDefinition<Args & { after?: string }, any, any, any>,
 >(
   dispatch: AppDispatch,
   endpoint: ApiEndpointQuery<D, any>,
   args: Args,
-  maxRequests: number = 20
+  maxRequests: number = 20,
 ): Promise<WalkCursorReturnType<D>> {
   // TODO: this currently doesn't fail typechecking endpoints that don't return
   // an object with `{ items, nextafter? }` (though it does infer types
@@ -209,8 +209,8 @@ export function walkCursors<
   return baseWalkCursors(
     dispatch,
     endpoint,
-    (cursor) => ({ ...args, after: cursor } as QueryArgFrom<D>),
+    (cursor) => ({ ...args, after: cursor }) as QueryArgFrom<D>,
     (result) => ({ items: result.items, nextCursor: result.nextAfter }),
-    maxRequests
+    maxRequests,
   ) as Promise<WalkCursorReturnType<D>>;
 }

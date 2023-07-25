@@ -14,9 +14,7 @@ class Notifications extends React.Component<Props> {
 
     if (this.props.apiConnectionFailed) {
       return (
-        <div
-          style={{ position: "fixed", top: "3em", left: "3em" }}
-        >
+        <div style={{ position: "fixed", top: "3em", left: "3em" }}>
           <Container text>
             <Message
               error={true}

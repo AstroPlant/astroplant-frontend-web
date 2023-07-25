@@ -5,7 +5,6 @@ import { Container, Card, Label, Button } from "semantic-ui-react";
 import { ConfigurationsContext } from "../../contexts";
 
 export default function KitConfigure() {
-
   const configurations = useContext(ConfigurationsContext);
 
   const numConfigurations = Object.keys(configurations).length;

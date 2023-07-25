@@ -12,18 +12,18 @@ const sessionInitializeEpic = (action$: any, state$: any) =>
   combineLatest(
     action$.pipe(
       ofType(REHYDRATE),
-      filter((action: any) => action.key === "auth")
+      filter((action: any) => action.key === "auth"),
     ),
     action$.pipe(
       ofType(REHYDRATE),
-      filter((action: any) => action.key === "session")
-    )
+      filter((action: any) => action.key === "session"),
+    ),
   ).pipe(
     map(() =>
       state$.value.session.initialized
         ? actions.sessionInitialized()
-        : actions.sessionInitialize()
-    )
+        : actions.sessionInitialize(),
+    ),
   );
 
 /**
@@ -33,7 +33,7 @@ const sessionInitializedEpic = (action$: any) =>
   action$.pipe(
     filter(actions.sessionInitialize.match),
     delay(10),
-    map(() => actions.sessionInitialized())
+    map(() => actions.sessionInitialized()),
   );
 
 export default combineEpics(sessionInitializeEpic, sessionInitializedEpic);

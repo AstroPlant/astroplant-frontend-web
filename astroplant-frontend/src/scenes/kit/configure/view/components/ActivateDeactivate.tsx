@@ -23,16 +23,16 @@ export default function ActivateDeactivate({ kit, configuration }: Props) {
 
   const onResponse = (response: Response<schemas["KitConfiguration"]>) => {
     dispatch(
-      kitSetAllConfigurationsInactive({ serial: kit.serial, kitId: kit.id })
+      kitSetAllConfigurationsInactive({ serial: kit.serial, kitId: kit.id }),
     );
     dispatch(
       kitConfigurationUpdated({
         serial: kit.serial,
         configuration: response.data,
-      })
+      }),
     );
     alert(
-      "Configuration updated. Make sure to restart the kit for the configuration to activate."
+      "Configuration updated. Make sure to restart the kit for the configuration to activate.",
     );
   };
 
@@ -79,7 +79,7 @@ export default function ActivateDeactivate({ kit, configuration }: Props) {
             {
               kitName,
               configurationDescription,
-            }
+            },
           ),
         })}
       />

@@ -15,7 +15,7 @@ export type Props = {
 
 export default function AggregateMeasurements(props: Props) {
   const peripheralDefinitions = useSelector(
-    peripheralDefinitionsSelectors.selectEntities
+    peripheralDefinitionsSelectors.selectEntities,
   );
   const quantityTypes = useAppSelector(quantityTypesSelectors.selectEntities);
   const peripherals = useAppSelector(peripheralSelectors.selectEntities);

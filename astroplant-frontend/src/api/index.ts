@@ -131,7 +131,7 @@ export class ErrorResponse extends Error {
     super(
       `An API ${details.type} error occurred${
         meta.request.url && " (" + meta.request.url + ")"
-      }`
+      }`,
     );
     Object.setPrototypeOf(this, ErrorResponse.prototype);
 
@@ -151,11 +151,11 @@ function processRequestMeta(ajaxRequest: AjaxRequest): RequestMeta {
 
 function processResponse<T = unknown>(
   api: BaseApi,
-  ajaxResponse: AjaxResponse<T>
+  ajaxResponse: AjaxResponse<T>,
 ): Response<T> {
   if (ajaxResponse.status < 200 || ajaxResponse.status >= 400) {
     throw new Error(
-      `expected a successful API response (status 200-399), but got ${ajaxResponse.status}`
+      `expected a successful API response (status 200-399), but got ${ajaxResponse.status}`,
     );
   }
 
@@ -210,7 +210,7 @@ function processError(error: AjaxError): ErrorResponse {
         type: "AJAX",
         status,
       },
-      meta
+      meta,
     );
   } else if (status >= 400 && status < 600 && typeof data === "object") {
     if (
@@ -224,7 +224,7 @@ function processError(error: AjaxError): ErrorResponse {
           status,
           data: data as ProblemDetails,
         },
-        meta
+        meta,
       );
     } else {
       // An unknown error response.
@@ -234,7 +234,7 @@ function processError(error: AjaxError): ErrorResponse {
           status,
           data,
         },
-        meta
+        meta,
       );
     }
   } else {
@@ -243,7 +243,7 @@ function processError(error: AjaxError): ErrorResponse {
         type: "OTHER",
         status,
       },
-      meta
+      meta,
     );
   }
 }
@@ -311,16 +311,16 @@ export class BaseApi {
             // explicitly remove the query part (it's set in uriNext by the server)
             query: undefined,
             path: uriNext,
-          })
+          }),
         ).pipe(
           map((res) => {
             return processResponse(this, res);
-          })
+          }),
         );
       }),
       catchError((ajaxError) => {
         throw processError(ajaxError as AjaxError);
-      })
+      }),
     );
   };
 
@@ -407,7 +407,7 @@ export class Api extends BaseApi {
   }): Observable<Response<schemas["Peripheral"]>> => {
     return this.request({
       path: `/kit-configurations/${encodeURI(
-        String(configurationId)
+        String(configurationId),
       )}/peripherals`,
       method: "POST",
       body: newPeripheral,
@@ -548,7 +548,7 @@ export class Api extends BaseApi {
    * @throws {ErrorResponse}
    */
   listKits = (
-    headers: HttpHeaders
+    headers: HttpHeaders,
   ): Observable<Response<Array<schemas["Kit"]>>> => {
     return this.request<Array<schemas["Kit"]>>({
       path: "/kits",
@@ -560,7 +560,7 @@ export class Api extends BaseApi {
           val.data = acc.data!.concat(val.data!);
         }
         return val;
-      })
+      }),
     );
   };
 
@@ -653,7 +653,7 @@ export class Api extends BaseApi {
     to?: DateTime;
   }): string | null => {
     let url = `${this.configuration.basePath}/kits/${encodeUri(
-      kitSerial
+      kitSerial,
     )}/archive`;
 
     let query = {};
@@ -747,7 +747,7 @@ export class Api extends BaseApi {
       withExpectedQuantityTypes?: boolean;
       after?: number;
     },
-    { recursePages }: { recursePages?: boolean } = {}
+    { recursePages }: { recursePages?: boolean } = {},
   ): Observable<Response<Array<schemas["PeripheralDefinition"]>>> => {
     return this.request({
       path: `/peripheral-definitions`,
@@ -761,7 +761,7 @@ export class Api extends BaseApi {
     query: {
       after?: number;
     },
-    { recursePages }: { recursePages?: boolean } = {}
+    { recursePages }: { recursePages?: boolean } = {},
   ): Observable<Response<Array<schemas["QuantityType"]>>> => {
     return this.request({
       path: `/quantity-types`,

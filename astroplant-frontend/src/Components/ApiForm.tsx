@@ -40,7 +40,7 @@ type AllProps<T, R> = PropsWithChildren<
     Props<T, R> & {
       addNotificationRequest: (
         notification: Notification,
-        timeout?: number | null
+        timeout?: number | null,
       ) => void;
     }
 >;
@@ -66,7 +66,7 @@ function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
     try {
       const payload = props.transform ? props.transform(formData) : formData;
       const response = await firstValueFrom(
-        props.send(payload).pipe(requestWrapper())
+        props.send(payload).pipe(requestWrapper()),
       );
 
       setSubmitting(false);
@@ -84,7 +84,7 @@ function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
         if (e.details.type === "APPLICATION") {
           const formErrors = PDInvalidParameters.toFormErrors(
             t,
-            e.details.data
+            e.details.data,
           );
           if (formErrors !== null) {
             setAdditionalFormErrors(formErrors);
@@ -135,12 +135,12 @@ const mapDispatchToProps = (dispatch: any) =>
     {
       addNotificationRequest,
     },
-    dispatch
+    dispatch,
   );
 
 export default function Conn<T, R>(): React.ComponentType<Props<T, R>> {
   return connect(
     null,
-    mapDispatchToProps
+    mapDispatchToProps,
   )(withTranslation()(ApiForm as React.ComponentType<AllProps<T, R>>));
 }

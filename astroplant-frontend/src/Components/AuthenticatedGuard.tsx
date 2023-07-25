@@ -17,9 +17,9 @@ export interface WithAuthentication {
  * ran yet, shows a loading page.
  */
 export function withAuthentication<P extends object>(
-  showLoading: boolean = true
+  showLoading: boolean = true,
 ): (
-  Component: React.ComponentType<P & WithAuthentication>
+  Component: React.ComponentType<P & WithAuthentication>,
 ) => React.ComponentType<P> {
   console.debug("Authentication guard instantiated");
 
@@ -50,7 +50,7 @@ export function withAuthentication<P extends object>(
  * invalid from the store).
  */
 export function awaitAuthenticationRan<P extends object>(): (
-  Component: React.ComponentType<P>
+  Component: React.ComponentType<P>,
 ) => React.ComponentType<P> {
   return (Component) => {
     return (props: P) => {

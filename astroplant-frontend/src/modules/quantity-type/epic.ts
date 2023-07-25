@@ -14,7 +14,7 @@ const fetchQuantityTypes: Epic = (actions$, _state$) =>
         map((response) => response.data),
         reduce(
           (all, quantityTypes) => all.concat(quantityTypes),
-          [] as Array<schemas["QuantityType"]>
+          [] as Array<schemas["QuantityType"]>,
         ),
         map(actions.addQuantityTypes),
         catchError((_err) => {
@@ -23,9 +23,9 @@ const fetchQuantityTypes: Epic = (actions$, _state$) =>
           // definitions. Maybe there should be a global loading screen and
           // error screen?
           return of(genericActions.setApiConnectionFailed(true));
-        })
-      )
-    )
+        }),
+      ),
+    ),
   );
 
 export default combineEpics(fetchQuantityTypes);

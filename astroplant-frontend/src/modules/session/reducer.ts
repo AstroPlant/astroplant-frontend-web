@@ -19,7 +19,7 @@ const initial: SessionState = {
 const reducer = createReducer<SessionState>(initial, (build) =>
   build.addCase(actions.sessionInitialize, (state, action) => {
     state.initialized = true;
-  })
+  }),
 );
 
 export default persistReducer(sessionStoragePersistConfig, reducer);

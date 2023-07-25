@@ -14,7 +14,7 @@ function MustBeLoggedIn(props: Props) {
     <>
       <HeadTitle main="Oh no!" />
       <Container text style={{ marginTop: "1em" }}>
-        <Segment >
+        <Segment>
           <Header>{t("mustBeLoggedIn.content.title")}</Header>
           <p>
             <Trans i18nKey="mustBeLoggedIn.content.body">

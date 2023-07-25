@@ -16,6 +16,6 @@ export default function compose<TInner, TOutter>(
       (...args) =>
         a(b(...args)),
     // @ts-ignore
-    (arg) => arg
+    (arg) => arg,
   );
 }

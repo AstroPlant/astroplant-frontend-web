@@ -3,11 +3,11 @@ import md5 from "md5";
 import querystring from "query-string";
 
 type Props = {
-  identifier: string
-  size?: number,
-  rating?: string,
-  default?: string,
-}
+  identifier: string;
+  size?: number;
+  rating?: string;
+  default?: string;
+};
 
 class Gravatar extends Component<Props> {
   base = "//www.gravatar.com/avatar/";
@@ -23,7 +23,7 @@ class Gravatar extends Component<Props> {
     let hash = md5(formattedIdentifier);
 
     const src = `${this.base}${hash}?${query}`;
-    return <img alt={`Gravatar for ${formattedIdentifier}`} src={src} />
+    return <img alt={`Gravatar for ${formattedIdentifier}`} src={src} />;
   }
 }
 

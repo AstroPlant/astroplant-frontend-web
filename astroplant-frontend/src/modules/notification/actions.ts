@@ -10,7 +10,7 @@ export const addNotificationRequest = createAction(
       notification,
       timeout,
     },
-  })
+  }),
 );
 
 export const addNotificationSuccess = createAction(
@@ -19,10 +19,10 @@ export const addNotificationSuccess = createAction(
     nextId: number,
     id: string,
     notification: Notification,
-    time: Option<{ from: DateTime; to: DateTime }>
-  ) => ({ payload: { nextId, id, notification, time } })
+    time: Option<{ from: DateTime; to: DateTime }>,
+  ) => ({ payload: { nextId, id, notification, time } }),
 );
 
 export const removeNotification = createAction<string>(
-  "notification/REMOVE_NOTIFICATION"
+  "notification/REMOVE_NOTIFICATION",
 );

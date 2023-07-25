@@ -15,7 +15,9 @@ interface OptionGuardProps<P, T> {
   none?: React.ComponentType<P>;
 }
 
-export function OptionGuard<P extends object, T>(props: OptionGuardProps<P, T> & P) {
+export function OptionGuard<P extends object, T>(
+  props: OptionGuardProps<P, T> & P,
+) {
   const { option, some, none, ...rest } = props;
 
   const passthrough = rest as P;
@@ -42,9 +44,9 @@ export function OptionGuard<P extends object, T>(props: OptionGuardProps<P, T> &
  * NoneComponent: the component to render if the Option is None.
  */
 export function withOption<T, P extends object>(
-  NoneComponent?: React.ComponentType<P>
+  NoneComponent?: React.ComponentType<P>,
 ): (
-  component: React.ComponentType<P & WithValue<T>>
+  component: React.ComponentType<P & WithValue<T>>,
 ) => React.ComponentType<P & WithOption<T>> {
   return (Component) => {
     return (props) => {

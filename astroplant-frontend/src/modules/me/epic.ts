@@ -19,10 +19,10 @@ const fetchUserDetailsEpic: Epic = (action$, _state$) =>
         catchError((err) => {
           console.warn("error fetching user details", err);
           return EMPTY;
-        })
+        }),
       );
     }),
-    map(actions.setDetails)
+    map(actions.setDetails),
   );
 
 /**
@@ -32,7 +32,7 @@ const fetchUserKitsEpic: Epic = (actions$, state$) =>
   actions$.pipe(
     filter(
       (action) =>
-        actions.setDetails.match(action) || actions.kitCreated.match(action)
+        actions.setDetails.match(action) || actions.kitCreated.match(action),
     ),
     switchMap(() =>
       concat(
@@ -45,11 +45,11 @@ const fetchUserKitsEpic: Epic = (actions$, state$) =>
             map((resp) => resp.data),
             map(actions.setKitMemberships),
             catchError((_err) =>
-              of(genericActions.setApiConnectionFailed(true))
-            )
-          )
-      )
-    )
+              of(genericActions.setApiConnectionFailed(true)),
+            ),
+          ),
+      ),
+    ),
   );
 
 export default combineEpics(fetchUserDetailsEpic, fetchUserKitsEpic);

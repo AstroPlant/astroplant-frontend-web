@@ -9,10 +9,12 @@ export default function TermsAndConditions() {
     <>
       <HeadTitle main="Oh no!" />
       <Container text style={{ marginTop: "1em" }}>
-        <Segment >
+        <Segment>
           <Header>That page was not found</Header>
           <p>The page you browsed to could not be found.</p>
-          <p>Consider going to the <Link to="/home">home page</Link>.</p>
+          <p>
+            Consider going to the <Link to="/home">home page</Link>.
+          </p>
         </Segment>
       </Container>
     </>

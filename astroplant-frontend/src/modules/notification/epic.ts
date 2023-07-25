@@ -28,19 +28,19 @@ const notificationRequestEpic: Epic = (action$, state$) =>
           nextId,
           id.toString(),
           notification,
-          time
-        )
+          time,
+        ),
       );
 
       if (timeout) {
         return concat(
           addObservable,
-          of(actions.removeNotification(id)).pipe(delay(timeout))
+          of(actions.removeNotification(id)).pipe(delay(timeout)),
         );
       } else {
         return addObservable;
       }
-    })
+    }),
   );
 
 export default combineEpics(notificationRequestEpic);

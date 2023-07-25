@@ -15,22 +15,22 @@ const fetchPeripheralDefinitions: Epic = (actions$, _state$) =>
           {
             withExpectedQuantityTypes: true,
           },
-          { recursePages: true }
+          { recursePages: true },
         )
         .pipe(
           map((response) => response.data),
           reduce(
             (all, quantityTypes) => all.concat(quantityTypes),
-            [] as Array<schemas["PeripheralDefinition"]>
+            [] as Array<schemas["PeripheralDefinition"]>,
           ),
           map(actions.addDefinitions),
           // TODO: fetching peripheral definitions is important for
           // initialization. Many views depend on us knowing the peripheral
           // definitions. Maybe there should be a global loading screen and
           // error screen?
-          catchError(() => of(genericActions.setApiConnectionFailed(true)))
+          catchError(() => of(genericActions.setApiConnectionFailed(true))),
         );
-    })
+    }),
   );
 
 export default combineEpics(fetchPeripheralDefinitions);

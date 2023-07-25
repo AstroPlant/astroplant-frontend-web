@@ -10,11 +10,11 @@ export interface State<T> {
 export type ItemReducer<T> = (
   state: T | undefined,
   action: AnyAction,
-  id: string
+  id: string,
 ) => T | undefined;
 export type GetId<T> = (
   action: AnyAction,
-  state: State<T>
+  state: State<T>,
 ) => string | undefined;
 
 export function byId<T>(getId: GetId<T>, itemReducer: ItemReducer<T>) {
@@ -49,10 +49,7 @@ export function compose<T>(
  * Turn an array of items into an object of items, where the keys are provided
  * by the keySelector function.
  */
-export function arrayToObject<T>(
-  array: T[],
-  keySelector: (v: T) => string
-) {
+export function arrayToObject<T>(array: T[], keySelector: (v: T) => string) {
   return array.reduce((obj: { [id: string]: T }, v: T) => {
     obj[keySelector(v)] = v;
     return obj;

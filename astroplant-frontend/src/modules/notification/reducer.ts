@@ -28,5 +28,5 @@ export default createReducer<NotificationState>(initial, (build) =>
     })
     .addCase(actions.removeNotification, (state, action) => {
       delete state.notifications[action.payload];
-    })
+    }),
 );

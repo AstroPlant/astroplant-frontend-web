@@ -43,7 +43,7 @@ export function requestWrapper<T = unknown>(): UnaryFunction<
         }
         return timer(retryCount * RETRY_DELAY_INCREASE + RETRY_DELAY_START);
       },
-    })
+    }),
   );
 }
 
@@ -54,7 +54,7 @@ export function requestWrapper<T = unknown>(): UnaryFunction<
  * better to utilize that header.
  */
 export function walkPages<T extends { id: number }>(
-  request: (page?: number) => Observable<Array<T>>
+  request: (page?: number) => Observable<Array<T>>,
 ): Observable<Array<T>> {
   return recurse((result?: Array<T>) => {
     if (typeof result === "undefined") {

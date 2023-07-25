@@ -21,7 +21,7 @@ function KitDownload(_props: InnerProps) {
   const now = DateTime.now();
 
   const [configurationId, setConfigurationId] = useState<number | undefined>(
-    undefined
+    undefined,
   );
 
   // Formatting from: https://github.com/moment/luxon/discussions/1136
@@ -30,14 +30,14 @@ function KitDownload(_props: InnerProps) {
       includeOffset: false,
       suppressSeconds: true,
       suppressMilliseconds: true,
-    })!
+    })!,
   );
   const [end, setEnd] = useState(
     now.startOf("minute").toISO({
       includeOffset: false,
       suppressSeconds: true,
       suppressMilliseconds: true,
-    })!
+    })!,
   );
 
   const configOptions = Object.entries(configurations).map(
@@ -47,7 +47,7 @@ function KitDownload(_props: InnerProps) {
       text: `#${configId} - ${
         configuration.description || "Unnamed configuration"
       }`,
-    })
+    }),
   );
 
   const startM = DateTime.fromISO(start);
@@ -175,7 +175,7 @@ async function initiateDownload(
     configurationId?: number;
     from?: DateTime;
     to?: DateTime;
-  }
+  },
 ) {
   try {
     const token = (

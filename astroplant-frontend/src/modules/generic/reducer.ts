@@ -12,5 +12,5 @@ const initial: GenericState = {
 export default createReducer<GenericState>(initial, (builder) =>
   builder.addCase(actions.setApiConnectionFailed, (state, action) => {
     state.apiConnectionFailed = action.payload;
-  })
+  }),
 );

@@ -9,4 +9,6 @@ export const KitContext = React.createContext<schemas["Kit"]>(null as any);
 export const ConfigurationsContext = React.createContext<{
   [id: string]: KitConfigurationState;
 }>({});
-export const MembershipContext = React.createContext<Option<KitMembership>>(Option.none());
+export const MembershipContext = React.createContext<Option<KitMembership>>(
+  Option.none(),
+);

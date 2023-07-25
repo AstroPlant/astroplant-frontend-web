@@ -8,19 +8,19 @@ export const addKit = createAction<schemas["Kit"]>("kit/ADD");
 
 export const notFound = createAction<{ serial: string }>("kit/NOT_FOUND");
 export const notAuthorized = createAction<{ serial: string }>(
-  "kit/NOT_AUTHORIZED"
+  "kit/NOT_AUTHORIZED",
 );
 
 export const startWatching = createAction<{ serial: string }>(
-  "kit/START_WATCHING"
+  "kit/START_WATCHING",
 );
 
 export const stopWatching = createAction<{ serial: string }>(
-  "kit/STOP_WATCHING"
+  "kit/STOP_WATCHING",
 );
 
 export const kitConfigurationsRequest = createAction<{ serial: string }>(
-  "kit/KIT_CONFIGURATIONS_REQUEST"
+  "kit/KIT_CONFIGURATIONS_REQUEST",
 );
 
 export const kitConfigurationsSuccess = createAction<{

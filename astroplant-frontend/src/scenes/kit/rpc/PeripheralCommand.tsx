@@ -19,7 +19,7 @@ export type Props = {};
 
 export default function PeripheralCommand(props: Props) {
   const peripheralDefinitions = useAppSelector(
-    peripheralDefinitionsSelectors.selectEntities
+    peripheralDefinitionsSelectors.selectEntities,
   );
   const peripherals = useAppSelector(peripheralSelectors.selectEntities);
 
@@ -35,7 +35,7 @@ export default function PeripheralCommand(props: Props) {
 
   useEffect(() => {
     setActiveConfiguration(
-      Object.values(configurations).find((conf) => conf.active) ?? null
+      Object.values(configurations).find((conf) => conf.active) ?? null,
     );
   }, [configurations]);
 
@@ -56,7 +56,7 @@ export default function PeripheralCommand(props: Props) {
         kitSerial: kit.serial,
         peripheral: peripheral.name,
         command: formData,
-      })
+      }),
     );
 
     if (
@@ -111,7 +111,7 @@ export default function PeripheralCommand(props: Props) {
               .filter(
                 (peripheral) =>
                   peripheralDefinitions[peripheral.peripheralDefinitionId]!
-                    .commandSchema !== null
+                    .commandSchema !== null,
               )
               .map((peripheral) => ({
                 text: peripheral.name,

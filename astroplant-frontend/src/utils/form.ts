@@ -11,7 +11,10 @@ export function removeNull(obj: object): object {
 
 /// Copies all properties from `obj`. All properties named in `properties`, but
 /// undefined in `obj`, are set to `null`.
-export function undefinedToNull(obj: object, properties: Array<string>): object {
+export function undefinedToNull(
+  obj: object,
+  properties: Array<string>,
+): object {
   let newObj: any = { ...obj };
   for (const property of properties) {
     // @ts-ignore

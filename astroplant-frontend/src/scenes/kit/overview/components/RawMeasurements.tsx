@@ -16,7 +16,7 @@ export type Props = {
 
 export default function RawMeasurements(props: Props) {
   const peripheralDefinitions = useAppSelector(
-    peripheralDefinitionsSelectors.selectEntities
+    peripheralDefinitionsSelectors.selectEntities,
   );
   const quantityTypes = useAppSelector(quantityTypesSelectors.selectEntities);
   const peripherals = useAppSelector(peripheralSelectors.selectEntities);
@@ -33,19 +33,19 @@ export default function RawMeasurements(props: Props) {
       .map((id) => peripherals[id]!)
       .map((peripheral) => {
         const def: Option<schemas["PeripheralDefinition"]> = Option.from(
-          peripheralDefinitions[peripheral.peripheralDefinitionId]
+          peripheralDefinitions[peripheral.peripheralDefinitionId],
         );
         return def
           .map((def: schemas["PeripheralDefinition"]) =>
             def.expectedQuantityTypes!.map((quantityType) => {
               hasMeasurements = true;
               const qt: Option<schemas["QuantityType"]> = Option.from(
-                quantityTypes[quantityType]
+                quantityTypes[quantityType],
               );
               return qt
                 .map((qt) => {
                   const measurement = Option.from(
-                    rawMeasurements[peripheral.id + "." + qt.id]
+                    rawMeasurements[peripheral.id + "." + qt.id],
                   );
                   return (
                     <RawMeasurementComp
@@ -58,7 +58,7 @@ export default function RawMeasurements(props: Props) {
                   );
                 })
                 .unwrapOrNull();
-            })
+            }),
           )
           .unwrapOrNull();
       });

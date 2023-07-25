@@ -118,7 +118,7 @@ const kitsSlice = createSlice({
           id: action.payload.serial,
           changes: {
             configurations: Object.values(action.payload.configurations).map(
-              (conf) => conf.id
+              (conf) => conf.id,
             ),
           },
         });
@@ -149,7 +149,7 @@ const configurationsSlice = createSlice({
           action.payload.configurations.map((conf) => ({
             ...conf,
             peripherals: conf.peripherals.map((peripheral) => peripheral.id),
-          }))
+          })),
         );
       })
       .addCase(actions.kitConfigurationCreated, (state, action) => {
@@ -182,7 +182,7 @@ const configurationsSlice = createSlice({
         const configuration = state.entities[action.payload.kitConfigurationId];
         if (configuration !== undefined) {
           configuration.peripherals = configuration.peripherals.filter(
-            (id) => id !== action.payload.peripheralId
+            (id) => id !== action.payload.peripheralId,
           );
         }
       }),
@@ -201,7 +201,7 @@ const peripheralsSlice = createSlice({
       .addCase(actions.kitConfigurationsSuccess, (state, action) => {
         peripheralsAdapter.setMany(
           state,
-          action.payload.configurations.flatMap((conf) => conf.peripherals)
+          action.payload.configurations.flatMap((conf) => conf.peripherals),
         );
       })
       .addCase(actions.peripheralCreated, (state, action) => {
@@ -222,18 +222,18 @@ export default combineReducers({
 });
 
 export const kitSelectors = kitsAdapter.getSelectors(
-  (state: RootState) => state.kit.kits
+  (state: RootState) => state.kit.kits,
 );
 export const configurationSelectors = configurationsAdapter.getSelectors(
-  (state: RootState) => state.kit.configurations
+  (state: RootState) => state.kit.configurations,
 );
 export const peripheralSelectors = peripheralsAdapter.getSelectors(
-  (state: RootState) => state.kit.peripherals
+  (state: RootState) => state.kit.peripherals,
 );
 
 export const configurationsById = createSelector(
   [configurationSelectors.selectEntities, (_state, ids: number[]) => ids],
-  (configurations, ids) => ids.map((id) => configurations[id])
+  (configurations, ids) => ids.map((id) => configurations[id]),
 );
 
 /**
@@ -241,7 +241,7 @@ export const configurationsById = createSelector(
  */
 export const allConfigurationsOfKit: (
   state: RootState,
-  serial: string
+  serial: string,
 ) => { [id: string]: KitConfigurationState } | null = createSelector(
   [kitSelectors.selectById, configurationSelectors.selectEntities],
   (kit, configurations) => {
@@ -250,7 +250,7 @@ export const allConfigurationsOfKit: (
     }
 
     const kitConfigurations = kit.configurations.map(
-      (configurationId) => configurations[configurationId]
+      (configurationId) => configurations[configurationId],
     );
 
     // Invariant
@@ -266,5 +266,5 @@ export const allConfigurationsOfKit: (
       acc[val.id.toString()] = val;
       return acc;
     }, {});
-  }
+  },
 );

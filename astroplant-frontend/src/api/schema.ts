@@ -3,7 +3,6 @@
  * Do not make direct changes to the file.
  */
 
-
 export interface paths {
   "/version": {
     /** Grab the version of the API. */
@@ -144,7 +143,7 @@ export type webhooks = Record<string, never>;
 export interface components {
   schemas: {
     /**
-     * @description A basic problem report, conforming to RFC7807. Most problems will provide additional fields with information. 
+     * @description A basic problem report, conforming to RFC7807. Most problems will provide additional fields with information.
      * @example {
      *   "type": "about:blank",
      *   "title": "Bad Request",
@@ -182,33 +181,39 @@ export interface components {
      *   }
      * }
      */
-    ProblemInvalidParameters: components["schemas"]["ProblemDetails"] & ({
+    ProblemInvalidParameters: components["schemas"]["ProblemDetails"] & {
       invalidParameters?: {
         [key: string]: components["schemas"]["InvalidParameter"] | undefined;
       };
-    });
-    InvalidParameter: (("mustBeEmailAddress" | "mustBeUrl" | "alreadyExists" | "other") | {
-        mustBeInRange: {
-          /** Format: float */
-          min: number;
-          /** Format: float */
-          max: number;
-        };
-      } | {
-        mustHaveLengthBetween: {
-          min?: number;
-          max?: number;
-        };
-      } | {
-        mustHaveLengthExactly: {
-          length: number;
-        };
-      } | ({
-        invalidToken: {
-          /** @enum {string} */
-          category: "missing" | "malformed" | "expired";
-        };
-      }))[];
+    };
+    InvalidParameter: (
+      | ("mustBeEmailAddress" | "mustBeUrl" | "alreadyExists" | "other")
+      | {
+          mustBeInRange: {
+            /** Format: float */
+            min: number;
+            /** Format: float */
+            max: number;
+          };
+        }
+      | {
+          mustHaveLengthBetween: {
+            min?: number;
+            max?: number;
+          };
+        }
+      | {
+          mustHaveLengthExactly: {
+            length: number;
+          };
+        }
+      | {
+          invalidToken: {
+            /** @enum {string} */
+            category: "missing" | "malformed" | "expired";
+          };
+        }
+    )[];
     ProblemKitRpc: components["schemas"]["ProblemDetails"];
     Kit: {
       /** Format: int32 */
@@ -251,7 +256,7 @@ export interface components {
       privacyPublicDashboard: boolean;
       privacyShowOnMap: boolean;
     };
-    Kits: (components["schemas"]["Kit"])[];
+    Kits: components["schemas"]["Kit"][];
     KitMembership: {
       /** Format: int32 */
       id: number;
@@ -337,9 +342,9 @@ export interface components {
       configurationSchema: unknown;
       /** @description A JSON schema specifying valid command documents. */
       commandSchema: Record<string, unknown> | null;
-      expectedQuantityTypes?: (number)[];
+      expectedQuantityTypes?: number[];
     };
-    PeripheralDefinitions: (components["schemas"]["PeripheralDefinition"])[];
+    PeripheralDefinitions: components["schemas"]["PeripheralDefinition"][];
     ExpectedQuantityType: {
       /** Format: int32 */
       id: number;
@@ -373,7 +378,7 @@ export interface components {
       /** @description A configuration document. Should conform to the JSON schema specified by the corresponding peripheral definition. */
       configuration?: unknown;
     };
-    Peripherals: (components["schemas"]["Peripheral"])[];
+    Peripherals: components["schemas"]["Peripheral"][];
     QuantityType: {
       /** Format: int32 */
       id: number;
@@ -381,10 +386,16 @@ export interface components {
       physicalUnit: string;
       physicalUnitSymbol?: string;
     };
-    QuantityTypes: (components["schemas"]["QuantityType"])[];
+    QuantityTypes: components["schemas"]["QuantityType"][];
     /** @enum {string} */
-    Permission: "view" | "subscribeRealTimeMeasurements" | "editDetails" | "editConfiguration" | "editMembers" | "setSuperMember";
-    Permissions: (components["schemas"]["Permission"])[];
+    Permission:
+      | "view"
+      | "subscribeRealTimeMeasurements"
+      | "editDetails"
+      | "editConfiguration"
+      | "editMembers"
+      | "setSuperMember";
+    Permissions: components["schemas"]["Permission"][];
     KitConfiguration: {
       /** Format: int32 */
       id: number;
@@ -497,7 +508,6 @@ export interface components {
 export type external = Record<string, never>;
 
 export interface operations {
-
   /** List all kits set to be shown on the public map. */
   listKits: {
     parameters: {
@@ -640,7 +650,7 @@ export interface operations {
           Link: components["headers"]["Link"];
         };
         content: {
-          "application/json": (components["schemas"]["AggregateMeasurement"])[];
+          "application/json": components["schemas"]["AggregateMeasurement"][];
         };
       };
       401: components["responses"]["ErrorUnauthorized"];
@@ -721,7 +731,7 @@ export interface operations {
           Link: components["headers"]["Link"];
         };
         content: {
-          "application/json": (components["schemas"]["Media"])[];
+          "application/json": components["schemas"]["Media"][];
         };
       };
       401: components["responses"]["ErrorUnauthorized"];
@@ -741,7 +751,7 @@ export interface operations {
       /** @description The retrieved configurations. */
       200: {
         content: {
-          "application/json": (components["schemas"]["KitConfigurationWithPeripherals"])[];
+          "application/json": components["schemas"]["KitConfigurationWithPeripherals"][];
         };
       };
       401: components["responses"]["ErrorUnauthorized"];
@@ -891,7 +901,7 @@ export interface operations {
       /** @description Kit memberships. */
       200: {
         content: {
-          "application/json": (components["schemas"]["KitMembership"])[];
+          "application/json": components["schemas"]["KitMembership"][];
         };
       };
       401: components["responses"]["ErrorUnauthorized"];

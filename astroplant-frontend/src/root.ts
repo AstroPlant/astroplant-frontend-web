@@ -59,5 +59,5 @@ export const rootEpic = combineEpics(
   quantityTypeEpic,
   notificationEpic,
   sessionEpic,
-  webSocketEpic
+  webSocketEpic,
 );

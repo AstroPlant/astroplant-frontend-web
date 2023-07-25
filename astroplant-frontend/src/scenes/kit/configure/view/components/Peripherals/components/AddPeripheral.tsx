@@ -31,7 +31,7 @@ const PeripheralForm = ApiForm<any, any>();
 export default function AddPeripheral({ kit, configuration }: Props) {
   const { t } = useTranslation();
   const peripheralDefinitions = useAppSelector(
-    peripheralDefinitionsSelectors.selectAll
+    peripheralDefinitionsSelectors.selectAll,
   );
   const dispatch = useAppDispatch();
 
@@ -52,7 +52,7 @@ export default function AddPeripheral({ kit, configuration }: Props) {
   };
 
   const selectPeripheralDefinition = (
-    peripheralDefinition: schemas["PeripheralDefinition"]
+    peripheralDefinition: schemas["PeripheralDefinition"],
   ) => {
     setPeripheralDefinition(peripheralDefinition);
   };
@@ -72,7 +72,7 @@ export default function AddPeripheral({ kit, configuration }: Props) {
       peripheralCreated({
         serial: kit.serial,
         peripheral: response.data,
-      })
+      }),
     );
     setDone(true);
   };

@@ -48,7 +48,7 @@ const reducer = createReducer(initial, (builder) =>
     .addCase(actions.clearTokens, (state, _) => {
       state.refreshToken = null;
       state.accessToken = null;
-    })
+    }),
 );
 
 export const selectAuth = (state: RootState): AuthState => state.auth;

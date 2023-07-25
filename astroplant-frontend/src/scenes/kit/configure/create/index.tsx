@@ -24,7 +24,7 @@ export default function CreateConfiguration() {
 
   const [done, setDone] = useState(false);
   const [result, setResult] = useState<schemas["KitConfiguration"] | null>(
-    null
+    null,
   );
 
   const onResponse = (response: Response<schemas["KitConfiguration"]>) => {
@@ -34,7 +34,7 @@ export default function CreateConfiguration() {
       kitConfigurationCreated({
         serial: kit.serial,
         configuration: response.data,
-      })
+      }),
     );
   };
 

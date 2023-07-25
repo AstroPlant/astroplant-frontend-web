@@ -113,5 +113,5 @@ const mapStateToProps = (state: RootState) => {
 };
 
 export default withAuthentication()(
-  connect(mapStateToProps)(withTranslation()(Me))
+  connect(mapStateToProps)(withTranslation()(Me)),
 );

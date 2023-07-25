@@ -27,7 +27,7 @@ const PlaceholderSegment = (props: Props) => (
 );
 PlaceholderSegment.defaultProps = {
   header: true,
-  paragraph: true
+  paragraph: true,
 };
 
 export default PlaceholderSegment;

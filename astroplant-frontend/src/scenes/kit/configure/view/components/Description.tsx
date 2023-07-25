@@ -30,7 +30,7 @@ export default function Description({ kit, configuration, readOnly }: Props) {
       kitConfigurationUpdated({
         serial: kit.serial,
         configuration: response.data,
-      })
+      }),
     );
   };
 

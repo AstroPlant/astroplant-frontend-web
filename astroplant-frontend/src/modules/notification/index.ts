@@ -4,7 +4,7 @@ export enum NotificationKind {
   neutral,
   success,
   warning,
-  error
+  error,
 }
 
 export interface Notification {
@@ -16,12 +16,12 @@ export interface Notification {
 export function notification(
   title: string,
   body: string,
-  kind: NotificationKind
+  kind: NotificationKind,
 ): Notification {
   return {
     title,
     body,
-    kind
+    kind,
   };
 }
 
@@ -40,13 +40,13 @@ export function notificationError(title: string, body: string): Notification {
 export function notificationConnectionIssue(t: TFunction) {
   return notificationError(
     t("notification.connectionIssue.title"),
-    t("notification.connectionIssue.body")
+    t("notification.connectionIssue.body"),
   );
 }
 
 export function notificationUnknownIssue(t: TFunction) {
   return notificationError(
     t("notification.unknownIssue.title"),
-    t("notification.unknownIssue.body")
+    t("notification.unknownIssue.body"),
   );
 }

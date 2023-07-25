@@ -18,7 +18,7 @@ import * as kitActions from "../kit/actions";
 import { RawMeasurement } from "../kit/reducer";
 
 const webSocketSubject = webSocket(
-  import.meta.env.VITE_WEBSOCKET_URL || "ws://localhost:8080/ws"
+  import.meta.env.VITE_WEBSOCKET_URL || "ws://localhost:8080/ws",
 );
 const webSocketMessages: Observable<any> = webSocketSubject.pipe(share());
 let webSocketRequestId = 0;
@@ -56,7 +56,8 @@ const rpcSubscription = (method: string, params: any) => {
         return webSocketMessages.pipe(
           filter(
             (message: any) =>
-              message.method === method && message.params.subscription === subId
+              message.method === method &&
+              message.params.subscription === subId,
           ),
           map((message: any) => message.params.result),
           // FIXME: When this observable is retried, the unsubscribe message is sent on a _new_ websocket connection.
@@ -65,10 +66,10 @@ const rpcSubscription = (method: string, params: any) => {
               subId,
             ]);
             webSocketSubject.next(request);
-          })
+          }),
         );
-      })
-    )
+      }),
+    ),
   );
 };
 
@@ -88,24 +89,24 @@ const rawMeasurementsEpic: Epic = (action$, state$) =>
           kitActions.rawMeasurementReceived({
             serial: kitSerial,
             rawMeasurement: rawMeasurement as RawMeasurement,
-          })
+          }),
         ),
         takeUntil(
           action$.pipe(
             filter(kitActions.stopWatching.match),
-            filter((action) => action.payload.serial === kitSerial)
-          )
+            filter((action) => action.payload.serial === kitSerial),
+          ),
         ),
         // Try re-establishing the connection 10 times, waiting 5 seconds each time.
         retryWhen((errors) =>
           errors.pipe(
             tap((err) => console.warn(`WS error: ${err}`)),
             delay(5000),
-            take(10)
-          )
-        )
+            take(10),
+          ),
+        ),
       );
-    })
+    }),
   );
 
 export default combineEpics(rawMeasurementsEpic);

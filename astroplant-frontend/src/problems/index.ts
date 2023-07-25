@@ -26,7 +26,7 @@ export class PDInvalidParameters {
    */
   static toFormErrors(
     t: any, // TODO: improve type
-    problemDetails: ProblemDetails | null
+    problemDetails: ProblemDetails | null,
   ): InvalidParametersFormErrors | null {
     if (
       problemDetails &&
@@ -38,10 +38,10 @@ export class PDInvalidParameters {
       let formErrors: InvalidParametersFormErrors = {};
 
       for (let [parameter, reasons] of Object.entries(
-        invalidParametersReasons
+        invalidParametersReasons,
       )) {
         formErrors[parameter] = {
-          __errors: reasons.map(reason => {
+          __errors: reasons.map((reason) => {
             if (reason === "mustBeEmailAddress") {
               return t("invalidParameter.mustBeEmailAddress");
             } else if (
@@ -50,14 +50,14 @@ export class PDInvalidParameters {
             ) {
               return t(
                 "invalidParameter.mustHaveLengthBetween",
-                reason.mustHaveLengthBetween
+                reason.mustHaveLengthBetween,
               );
             } else if (reason === "alreadyExists") {
               return t("invalidParameter.alreadyExists");
             } else {
               return t("invalidParameter.unexpected");
             }
-          })
+          }),
         };
       }
 

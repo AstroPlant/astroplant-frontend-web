@@ -38,7 +38,7 @@ export default function LogInPage() {
       dispatch(setAccessToken(response.data.accessToken));
       navigate("/me");
     },
-    [dispatch, navigate, rememberMeState]
+    [dispatch, navigate, rememberMeState],
   );
 
   const schema: JSONSchema7 = {

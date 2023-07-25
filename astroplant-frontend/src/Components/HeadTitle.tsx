@@ -2,9 +2,9 @@ import React, { Component } from "react";
 import { Grid, Container } from "semantic-ui-react";
 
 type HeadTitleProps = {
-  main?: string,
-  secondary?: string,
-}
+  main?: string;
+  secondary?: string;
+};
 
 class HeadTitle extends Component<HeadTitleProps, {}> {
   render() {

@@ -12,7 +12,7 @@ export type Props = {
   choices: [schemas["Peripheral"], schemas["QuantityType"]][];
   add: (
     peripheral: schemas["Peripheral"],
-    quantityType: schemas["QuantityType"]
+    quantityType: schemas["QuantityType"],
   ) => void;
 };
 
@@ -40,7 +40,7 @@ class AddPeripheral extends React.Component<PInner, State> {
 
   selectPeripheralQuantityType(
     peripheral: schemas["Peripheral"],
-    quantityType: schemas["QuantityType"]
+    quantityType: schemas["QuantityType"],
   ) {
     this.props.add(peripheral, quantityType);
     this.handleClose();
@@ -124,5 +124,5 @@ const mapStateToProps = (state: RootState) => {
 
 export default compose<PInner, Props>(
   connect(mapStateToProps),
-  withTranslation()
+  withTranslation(),
 )(AddPeripheral);

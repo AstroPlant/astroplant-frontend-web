@@ -47,7 +47,7 @@ export default function AggregateMeasurementsChart(props: Props) {
   const kitSerial = kitState.details!.serial;
 
   const [measurements, setMeasurements] = useState<Option<Array<Aggregate>>>(
-    Option.none()
+    Option.none(),
   );
   const [loading, setLoading] = useState(false);
   const [requestNext, setRequestNext] = useState<Observable<
@@ -56,7 +56,7 @@ export default function AggregateMeasurementsChart(props: Props) {
 
   const load = useCallback(
     async (
-      request: Observable<Response<Array<schemas["AggregateMeasurement"]>>>
+      request: Observable<Response<Array<schemas["AggregateMeasurement"]>>>,
     ) => {
       setLoading(true);
 
@@ -64,11 +64,11 @@ export default function AggregateMeasurementsChart(props: Props) {
         const result = await firstValueFrom(
           request.pipe(
             tap((response) =>
-              setRequestNext(response.meta.response?.next ?? null)
+              setRequestNext(response.meta.response?.next ?? null),
             ),
             map((response) => response.data.reverse()),
-            rateLimit
-          )
+            rateLimit,
+          ),
         );
 
         const newMeasurements = result.map((measurement) => ({
@@ -87,14 +87,14 @@ export default function AggregateMeasurementsChart(props: Props) {
           Option.some(
             measurements
               .map((measurements) => [...newMeasurements, ...measurements])
-              .unwrapOrElse(() => newMeasurements)
-          )
+              .unwrapOrElse(() => newMeasurements),
+          ),
         );
       } finally {
         setLoading(false);
       }
     },
-    []
+    [],
   );
 
   const loadNext = async () => {
@@ -167,7 +167,7 @@ export default function AggregateMeasurementsChart(props: Props) {
                 }
                 labelFormatter={(time: any) =>
                   DateTime.fromMillis(time).toLocaleString(
-                    DateTime.DATETIME_SHORT
+                    DateTime.DATETIME_SHORT,
                   )
                 }
               />
@@ -175,7 +175,7 @@ export default function AggregateMeasurementsChart(props: Props) {
                 dataKey="datetimeStartNumber"
                 tickFormatter={(tick) =>
                   DateTime.fromMillis(tick).toLocaleString(
-                    DateTime.DATETIME_SHORT
+                    DateTime.DATETIME_SHORT,
                   )
                 }
                 minTickGap={40}
@@ -221,11 +221,11 @@ export default function AggregateMeasurementsChart(props: Props) {
                   height={40}
                   tickFormatter={(time: any) =>
                     DateTime.fromMillis(time).toLocaleString(
-                      DateTime.DATETIME_SHORT
+                      DateTime.DATETIME_SHORT,
                     )
                   }
                   startIndex={calculateWindowStartIndex(
-                    measurements.unwrapOr([])
+                    measurements.unwrapOr([]),
                   )}
                 />
               )}
