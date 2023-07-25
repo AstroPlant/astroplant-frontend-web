@@ -88,7 +88,7 @@
       },
       "notAuthorized": {
         "header": "Kit is private",
-        "body": "Sorry, you are not authorized to access kit with serial <2>{{serial}}</2>. Please ensure you are logged in with the correct account"
+        "body": "Sorry, you are not authorized to access kit with serial <1>{{serial}}</1>. Please ensure you are logged in with the correct account."
       },
       "aggregateMeasurements": {
         "measuredBy": "Measured by {{peripheral.name}}",

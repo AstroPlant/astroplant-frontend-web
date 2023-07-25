@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Container, Segment, Divider } from "semantic-ui-react";
-import { Map, Marker, TileLayer, Popup } from "react-leaflet";
+import { Marker, TileLayer, Popup, MapContainer } from "react-leaflet";
 import ReactMarkdown from "react-markdown";
 
 import HeadTitle from "~/Components/HeadTitle";
@@ -36,12 +36,7 @@ export default function KitMap() {
           {kitsIsLoading ? (
             <Loading />
           ) : (
-            <Map
-              center={[35, 0]}
-              zoom={2}
-              height={400}
-              style={{ height: "45em" }}
-            >
+            <MapContainer center={[35, 0]} zoom={2} style={{ height: "45em" }}>
               <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -83,7 +78,7 @@ export default function KitMap() {
                     return null;
                   }
                 })}
-            </Map>
+            </MapContainer>
           )}
         </Segment>
       </Container>

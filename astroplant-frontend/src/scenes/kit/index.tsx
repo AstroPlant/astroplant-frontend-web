@@ -62,7 +62,7 @@ const KitDashboard = (props: KitDashboardProps) => {
 
   const kit = kitState.details!;
   const configurations = useAppSelector((state) =>
-    allConfigurationsOfKit(state, kit.serial)
+    allConfigurationsOfKit(state, kit.serial),
   );
 
   if (configurations === null) {
@@ -135,12 +135,12 @@ const innerMapDispatchToProps = (dispatch: any) =>
       startWatching,
       stopWatching,
     },
-    dispatch
+    dispatch,
   );
 
 const InnerKit = compose<KitDashboardProps, InnerKitProps>(
   connect(null, innerMapDispatchToProps),
-  withTranslation()
+  withTranslation(),
 )(KitDashboard);
 
 const Kit = (props: Props) => {
@@ -149,10 +149,10 @@ const Kit = (props: Props) => {
   const kitSerial = kitSerial_!;
 
   const kit = Option.from(
-    useAppSelector((state) => kitSelectors.selectById(state, kitSerial))
+    useAppSelector((state) => kitSelectors.selectById(state, kitSerial)),
   );
   const membership = Option.from(
-    useAppSelector((state) => state.me.kitMemberships[kitSerial])
+    useAppSelector((state) => state.me.kitMemberships[kitSerial]),
   );
 
   useEffect(() => {
@@ -193,9 +193,9 @@ const Kit = (props: Props) => {
         <HeadTitle main={t("kit.notFound.header")} />
         <Container text>
           <p>
-            <Trans i18nKey="kit.notFound.body">
-              Sorry, the kit with serial <code>{{ serial: kitSerial }}</code>{" "}
-              could not be found.
+            <Trans i18nKey="kit.notFound.body" values={{ serial: kitSerial }}>
+              Sorry, the kit with serial <code>{kitSerial}</code> could not be
+              found.
             </Trans>
           </p>
         </Container>
@@ -206,10 +206,13 @@ const Kit = (props: Props) => {
       <>
         <HeadTitle main={t("kit.notAuthorized.header")} />
         <Container text>
-          <Trans i18nKey="kit.notAuthorized.body">
-            Sorry, you are not authorized to access kit with serial{" "}
-            <code>{{ serial: kitSerial }}</code>. Please ensure you are logged
-            in with the correct account.
+          <Trans
+            i18nKey="kit.notAuthorized.body"
+            values={{ serial: kitSerial }}
+          >
+            Sorry, you are not authorized to access kit with serial
+            <code>{kitSerial}</code>. Please ensure you are logged in with the
+            correct account.
           </Trans>
         </Container>
       </>
@@ -226,11 +229,11 @@ const mapDispatchToProps = (dispatch: any) =>
       startWatching,
       stopWatching,
     },
-    dispatch
+    dispatch,
   );
 
 export default compose<Props, {}>(
   awaitAuthenticationRan(),
   connect(null, mapDispatchToProps),
-  withTranslation()
+  withTranslation(),
 )(Kit);

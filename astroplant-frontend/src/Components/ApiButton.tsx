@@ -28,13 +28,13 @@ type State = {
   confirmLabels: ConfirmLabels;
 };
 
-export type Props<R> = {
+export type Props<R> = React.PropsWithChildren<{
   send: () => Observable<R>;
   onResponse: (response: R) => void;
   label?: string;
   buttonProps?: ButtonProps;
   confirm?: () => {} | null;
-};
+}>;
 
 type AllProps<R> = WithTranslation &
   Props<R> & {

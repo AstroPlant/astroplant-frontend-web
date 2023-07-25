@@ -3,7 +3,13 @@ import compose from "~/utils/compose";
 import { withTranslation, WithTranslation } from "react-i18next";
 
 import { FieldProps } from "@rjsf/utils";
-import { Map, Marker, TileLayer, Popup } from "react-leaflet";
+import {
+  MapContainer,
+  Marker,
+  TileLayer,
+  Popup,
+  useMapEvent,
+} from "react-leaflet";
 import { Button } from "semantic-ui-react";
 import { MarkerIcon } from "~/Components/MarkerIcon";
 
@@ -14,17 +20,33 @@ type State = {
 
 type InnerProps = FieldProps & WithTranslation;
 
+function MapListener({
+  click,
+}: {
+  click: (latLng: { lat: number; lng: number }) => unknown;
+}) {
+  useMapEvent("click", (event) => {
+    const latLng = {
+      lat: Math.round(event.latlng.lat * 10000) / 10000,
+      lng: Math.round(event.latlng.lng * 10000) / 10000,
+    };
+    click(latLng);
+  });
+
+  return null;
+}
+
 class CoordinateField extends React.Component<InnerProps, State> {
   state: State = {
     latitude: null,
-    longitude: null
+    longitude: null,
   };
 
   constructor(props: InnerProps) {
     super(props);
     this.state = {
       latitude: (props.formData || {}).latitude || null,
-      longitude: (props.formData || {}).longitude || null
+      longitude: (props.formData || {}).longitude || null,
     };
   }
 
@@ -49,21 +71,12 @@ class CoordinateField extends React.Component<InnerProps, State> {
     const { latitude, longitude } = this.state;
     return (
       <div>
-        <p><strong>Kit location</strong></p>
+        <p>
+          <strong>Kit location</strong>
+        </p>
         <p>Select a position on the map to set as your kit's location</p>
-        <Map
-          center={[35, 0]}
-          zoom={2}
-          height={200}
-          style={{ height: "45em" }}
-          onClick={(event: any) => {
-            const latLng = {
-              lat: Math.round(event.latlng.lat * 10000) / 10000,
-              lng: Math.round(event.latlng.lng * 10000) / 10000
-            };
-            this.onChange(latLng);
-          }}
-        >
+        <MapContainer center={[35, 0]} zoom={2} style={{ height: "45em" }}>
+          <MapListener click={(latLng) => this.onChange(latLng)} />
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -78,19 +91,24 @@ class CoordinateField extends React.Component<InnerProps, State> {
                   {t("common.longitude")}: {longitude.toFixed(4)}
                 </p>
                 <p>
-                  <Button onClick={() => this.onChange({ lat: null, lng: null })}>
+                  <Button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      this.onChange({ lat: null, lng: null });
+                    }}
+                  >
                     {t("common.remove")}
                   </Button>
                 </p>
               </Popup>
             </Marker>
           )}
-        </Map>
+        </MapContainer>
       </div>
     );
   }
 }
 
 export default compose<InnerProps, FieldProps>(withTranslation())(
-  CoordinateField
+  CoordinateField,
 );
