@@ -14,6 +14,9 @@
 
 .header {
   display: flex;
+  position: sticky;
+  top: 0;
+  z-index: 1;
   align-items: center;
   height: 3rem;
   margin-left: -1.5rem;
@@ -30,10 +33,14 @@
 
 .content {
   padding: 1.75rem 0;
+  z-index: 0;
 }
 
 .actions {
   display: flex;
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
   gap: 2rem;
   justify-content: right;
   align-items: center;
