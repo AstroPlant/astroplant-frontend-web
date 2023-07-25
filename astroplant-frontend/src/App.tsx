@@ -56,7 +56,7 @@ class App extends Component<Props> {
           <Route element={<NotFound />} />
         </Routes>
 
-        <div style={{ minHeight: "1rem", flex: "auto" }} />
+        <div style={{ minHeight: "1rem", flex: "1" }} />
 
         <Footer />
         <ConnectionStatus />
