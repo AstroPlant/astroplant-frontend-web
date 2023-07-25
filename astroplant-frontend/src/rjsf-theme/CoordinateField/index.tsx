@@ -39,6 +39,7 @@ export default function CoordinateField(props: FieldProps<Field>) {
   const { onChange, formData } = props;
   const { t } = useTranslation();
 
+  // Ensure latitude and longitude are numbers, not strings.
   useEffect(() => {
     let changed = false;
     let latitude = formData?.latitude ?? null;
