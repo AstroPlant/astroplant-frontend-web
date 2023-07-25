@@ -122,9 +122,12 @@ h2 {
   font-size: 2rem;
 }
 
-a,
-a:hover {
+a {
   color: var(--theme);
+}
+
+a:hover {
+  color: var(--theme-dark);
 }
 
 .ui.primary.button {
