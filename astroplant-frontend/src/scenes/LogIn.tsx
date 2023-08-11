@@ -65,6 +65,7 @@ export default function LogInPage() {
       <HeadTitle main="Log in" />
       <Container text style={{ marginTop: "1em" }} width={2}>
         <LogInForm
+          idPrefix="logInForm"
           schema={schema}
           uiSchema={uiSchema}
           send={send}

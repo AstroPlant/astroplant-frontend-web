@@ -178,6 +178,7 @@ function CreateKit() {
           ) : (
             <>
               <CreateKitForm
+                idPrefix="createKitForm"
                 schema={schema}
                 uiSchema={uiSchema}
                 transform={transform}

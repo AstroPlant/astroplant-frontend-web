@@ -104,6 +104,7 @@ export default function KitDetails() {
             path="/edit"
             element={
               <PatchKitForm
+                idPrefix="patchKitForm"
                 key={0}
                 schema={schema as any}
                 uiSchema={patchUiSchema as any}

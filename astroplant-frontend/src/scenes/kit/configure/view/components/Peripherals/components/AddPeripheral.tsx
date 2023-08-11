@@ -106,6 +106,7 @@ export default function AddPeripheral({ kit, configuration }: Props) {
     content = (
       <>
         <PeripheralForm
+          idPrefix="peripheralForm"
           schema={schema}
           uiSchema={{}}
           send={send}

@@ -99,6 +99,7 @@ export default function SignUpPage() {
             </>
           ) : (
             <SignUpForm
+              idPrefix="signUpForm"
               schema={schema}
               uiSchema={uiSchema}
               validate={validate}

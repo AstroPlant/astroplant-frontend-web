@@ -21,6 +21,7 @@ import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
 import { ErrorResponse } from "~/api";
 
 export type Props<T, R> = {
+  idPrefix: string;
   schema: JSONSchema7;
   uiSchema: UiSchema;
   validate?: (formData: T, errors: FormValidation) => FormValidation;
@@ -98,6 +99,7 @@ function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
     <>
       <RjsfForm
         key={formEpoch}
+        idPrefix={props.idPrefix}
         schema={props.schema}
         uiSchema={props.uiSchema}
         customValidate={props.validate}

@@ -65,6 +65,7 @@ export default function CreateConfiguration() {
           <Navigate to={`../${result!.id}`} replace />
         ) : (
           <CreateConfigurationForm
+            idPrefix="createConfigurationForm"
             schema={schema}
             uiSchema={uiSchema}
             send={send}

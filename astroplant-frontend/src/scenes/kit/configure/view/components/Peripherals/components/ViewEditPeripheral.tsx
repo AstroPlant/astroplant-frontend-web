@@ -104,6 +104,7 @@ export default function ViewEditPeripheral({
       {editing ? (
         <>
           <PeripheralForm
+            idPrefix="peripheralForm"
             schema={schema}
             uiSchema={{}}
             send={sendUpdate}

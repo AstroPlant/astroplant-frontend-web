@@ -52,6 +52,7 @@ export default function Description({ kit, configuration, readOnly }: Props) {
     return (
       <div>
         <DescriptionForm
+          idPrefix="descriptionForm"
           schema={schema}
           uiSchema={uiSchema}
           send={send}
