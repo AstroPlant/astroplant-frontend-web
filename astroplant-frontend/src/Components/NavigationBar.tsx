@@ -15,7 +15,7 @@ import { useTranslation } from "react-i18next";
 import { Button } from "./Button";
 import { persistor } from "~/store";
 import clsx from "clsx";
-import { Icon } from "semantic-ui-react";
+import { IconUserCircle, IconMenu2 } from "@tabler/icons-react";
 
 type NavigationBarProps = {
   pages: React.ReactNode;
@@ -50,7 +50,7 @@ function Inner({ pages, auth }: NavigationBarProps) {
           aria-controls="navbarDropdown"
           aria-expanded={expanded}
         >
-          <Icon name="bars" />
+          <IconMenu2 aria-hidden />
         </Button>
       </div>
       <nav
@@ -94,7 +94,7 @@ export default function NavigationBar({
         <>
           <li>
             <NavLink to="/me">
-              <Icon name="user circle" /> {displayName}
+              <IconUserCircle /> {displayName}
             </NavLink>
           </li>
           <li>
