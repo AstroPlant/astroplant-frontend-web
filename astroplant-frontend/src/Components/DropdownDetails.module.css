@@ -1,0 +1,66 @@
+.dropdown {
+  position: relative;
+
+  /* nested styles may use this (e.g., ConfigurationSelector) — is there a way
+   * to check that relationship statically? */
+  --padding-inline: 0.5rem;
+}
+
+.button {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-darker);
+  font-size: 1rem;
+  padding: 0.2rem 1rem;
+  transition: background var(--fast-transition-time);
+}
+
+.button:hover {
+  background-color: var(--bg-menu-hover);
+}
+
+.dropdown[open] .button::before {
+  content: " ";
+  cursor: default;
+  display: block;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 19;
+  background: transparent;
+}
+
+.menu {
+  position: absolute;
+  margin-top: 0.4rem;
+  background-color: var(--bg);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  z-index: 20;
+  width: 20rem;
+  box-shadow: var(--ring-box-shadow);
+
+  &.right {
+    right: 0;
+  }
+
+  > header {
+    display: flex;
+    font-size: 0.875em;
+    font-weight: 600;
+    align-items: center;
+    padding: 0.5rem var(--padding-inline);
+    border-bottom: 1px solid var(--border-color);
+
+    > span {
+      flex: 1;
+    }
+  }
+}
