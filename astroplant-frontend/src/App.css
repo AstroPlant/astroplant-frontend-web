@@ -112,12 +112,14 @@
   border: none;
 }
 
-/* FIXME: body tag should be removed when semantic-ui is removed */
+/* FIXME: body tag and !important should be removed when semantic-ui is removed */
 html,
 body {
   font:
     16px/26px "Lato",
-    sans-serif;
+    sans-serif !important;
+  color: var(--fg) !important;
+  background-color: var(--bg);
 }
 
 h1,
