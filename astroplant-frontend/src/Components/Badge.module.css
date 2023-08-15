@@ -1,0 +1,14 @@
+.label {
+  display: inline-block;
+  border-radius: 2em;
+  border: 1px solid var(--border-muted-color);
+  padding: 0 0.75em;
+}
+
+.muted {
+  color: var(--gray-500);
+}
+
+.small {
+  font-size: 0.875em;
+}
