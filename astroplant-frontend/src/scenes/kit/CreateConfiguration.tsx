@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useState } from "react";
 import { Navigate } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Container, Segment } from "semantic-ui-react";

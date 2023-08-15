@@ -1,4 +1,3 @@
-import React, { useContext } from "react";
 import { Container, Card } from "semantic-ui-react";
 import {
   KitConfigurationState,

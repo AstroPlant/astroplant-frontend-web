@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { Container, Image, Table } from "semantic-ui-react";
 import { DateTime } from "luxon";
 

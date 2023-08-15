@@ -9,18 +9,18 @@ import {
   KitState,
   configurationsById,
 } from "~/modules/kit/reducer";
-import ApiButton from "~/Components/ApiButton";
+import { default as apiButton } from "~/Components/ApiButton";
 import { Response, api, schemas } from "~/api";
 import {
   kitConfigurationUpdated,
   kitSetAllConfigurationsInactive,
 } from "~/modules/kit/actions";
-import { Button, ButtonLink } from "~/Components/Button";
+import { ButtonLink } from "~/Components/Button";
 
 import style from "./Configurations.module.css";
 import CreateConfiguration from "./CreateConfiguration";
 
-const Button_ = ApiButton<any>();
+const ApiButton = apiButton<any>();
 
 export type ConfigurationsProps = {
   kit: KitState;
@@ -105,7 +105,7 @@ function ConfigurationRow({
             <Icon name="trash" />
           </ButtonLink>
           {showActivate && (
-            <Button_
+            <ApiButton
               buttonProps={{
                 variant: "text",
                 title: "Activate this configuration",
@@ -127,7 +127,7 @@ function ConfigurationRow({
               })}
             >
               <Icon name="play" />
-            </Button_>
+            </ApiButton>
           )}
         </span>
       </div>
@@ -163,7 +163,9 @@ export function Configurations({ kit }: ConfigurationsProps) {
         element={
           <article>
             <section className={style.top}>
-              <ButtonLink to="create" variant="primary">New configuration</ButtonLink>
+              <ButtonLink to="create" variant="primary">
+                New configuration
+              </ButtonLink>
             </section>
             <section className={style.listContainer}>
               <header>

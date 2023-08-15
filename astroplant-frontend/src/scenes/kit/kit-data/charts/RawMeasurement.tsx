@@ -1,5 +1,4 @@
-import React from "react";
-import { Card, CardProps, Statistic, Loader } from "semantic-ui-react";
+import { Card, CardProps, Statistic } from "semantic-ui-react";
 import { DateTime } from "luxon";
 
 import RelativeTime from "~/Components/RelativeTime";

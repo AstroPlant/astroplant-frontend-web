@@ -18,7 +18,7 @@ export type Props = {
 };
 
 export function KitData({ kitState }: Props) {
-  let [searchParams, _setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const currentSearchParams = searchParams.toString();
   let routeConfigurationId = searchParams.get("c");
 
