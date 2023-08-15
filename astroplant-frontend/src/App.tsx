@@ -40,21 +40,23 @@ class App extends Component<Props> {
     return (
       <>
         <NavigationBar displayName={this.props.displayName} />
-        <Routes>
-          <Route path="/" element={<Navigate to="home" replace />} />
-          <Route path="/home" element={<Home />} />
-          <Route
-            path="/terms-and-conditions"
-            element={<TermsAndConditions />}
-          />
-          <Route path="/map" element={<Map />} />
-          <Route path="/log-in" element={<LogIn />} />
-          <Route path="/sign-up" element={<SignUp />} />
-          <Route path="/me" element={<Me />} />
-          <Route path="/create-kit" element={<CreateKit />} />
-          <Route path="/kit/:kitSerial/*" element={<Kit />} />
-          <Route element={<NotFound />} />
-        </Routes>
+        <main>
+          <Routes>
+            <Route path="/" element={<Navigate to="home" replace />} />
+            <Route path="/home" element={<Home />} />
+            <Route
+              path="/terms-and-conditions"
+              element={<TermsAndConditions />}
+            />
+            <Route path="/map" element={<Map />} />
+            <Route path="/log-in" element={<LogIn />} />
+            <Route path="/sign-up" element={<SignUp />} />
+            <Route path="/me" element={<Me />} />
+            <Route path="/create-kit" element={<CreateKit />} />
+            <Route path="/kit/:kitSerial/*" element={<Kit />} />
+            <Route element={<NotFound />} />
+          </Routes>
+        </main>
 
         <div style={{ minHeight: "1rem", flex: "1" }} />
 
