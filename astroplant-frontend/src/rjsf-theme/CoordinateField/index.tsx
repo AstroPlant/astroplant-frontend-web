@@ -57,7 +57,7 @@ export default function CoordinateField(props: FieldProps<Field>) {
     if (changed) {
       onChange({ latitude, longitude });
     }
-  }, [formData]);
+  }, [formData, onChange]);
 
   const { latitude, longitude } = formData ?? {};
 

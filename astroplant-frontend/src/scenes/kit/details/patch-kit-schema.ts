@@ -10,8 +10,16 @@ export const schema = (t: TFunction) => ({
       type: "object",
       required: ["latitude", "longitude"],
       properties: {
-        latitude: { type: "number", title: t("common.latitude") },
-        longitude: { type: "number", title: t("common.longitude") },
+        latitude: {
+          type: "number",
+          nullable: true,
+          title: t("common.latitude"),
+        },
+        longitude: {
+          type: "number",
+          nullable: true,
+          title: t("common.longitude"),
+        },
       },
     },
     privacyPublicDashboard: {
