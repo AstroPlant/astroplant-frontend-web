@@ -12,7 +12,7 @@
 }
 
 .btn.muted {
-  --btn-fg: #444;
+  --btn-fg: var(--gray-500);
   --btn-bg: var(--gray-100);
   --btn-hover-bg: var(--gray-200);
   --btn-disabled-bg: var(--gray-50);
