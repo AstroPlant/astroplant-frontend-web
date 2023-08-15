@@ -6,6 +6,7 @@ import RelativeTime from "~/Components/RelativeTime";
 import { RawMeasurement as RawMeasurementState } from "modules/kit/reducer";
 import Option from "utils/option";
 import { schemas } from "~/api";
+import { Spinner } from "~/Components/Loading";
 
 export type Props = CardProps & {
   peripheral: schemas["Peripheral"];
@@ -31,7 +32,7 @@ export default function RawMeasurement(props: Props) {
             <Statistic.Value>
               {rawMeasurement
                 .map((m) => <span>{Math.round(m.value * 100) / 100}</span>)
-                .unwrapOr(<Loader active inline="centered" />)}
+                .unwrapOr(<Spinner size="1em" />)}
             </Statistic.Value>
             <Statistic.Label>
               {quantityType.physicalUnitSymbol || quantityType.physicalUnit}
