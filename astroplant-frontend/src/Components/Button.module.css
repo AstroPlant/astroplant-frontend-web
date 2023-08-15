@@ -47,6 +47,11 @@
   background-color: var(--btn-bg);
   transition: background-color var(--fast-transition-time) ease;
 
+  &a, &a:hover {
+    color: var(--btn-fg);
+    text-decoration: none;
+  }
+
   &.small {
     font-size: 0.7rem;
     height: 2rem;
