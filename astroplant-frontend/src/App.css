@@ -65,6 +65,14 @@
   --outline-color: var(--slate-400);
   --theme: #35ef7f;
   --theme-dark: #37e07b;
+
+  --fast-transition-time: 0.1s;
+  --slow-transition-time: 0.3s;
+}
+
+@media (prefers-reduced-motion) {
+  --fast-transition-time: 0s;
+  --slow-transition-time: 0s;
 }
 
 /* Other */

@@ -45,7 +45,7 @@
   border-radius: 0.5rem;
   color: var(--btn-fg);
   background-color: var(--btn-bg);
-  transition: background-color 0.1s ease;
+  transition: background-color var(--fast-transition-time) ease;
 
   &.small {
     font-size: 0.7rem;
