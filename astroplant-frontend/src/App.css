@@ -73,6 +73,10 @@
   --link-color: oklch(52% 0.14 151.19);
   --link-gray-hover-color: oklch(50% 0.0 151.19);
 
+  --border-color: oklch(85% 0 151.19);
+  --border-active-color: oklch(75% 0.08 151.19);
+  --border-muted-color: oklch(89% 0 151.19);
+
   --fast-transition-time: 0.1s;
   --slow-transition-time: 0.3s;
 }
