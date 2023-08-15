@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, CardProps, Button } from "semantic-ui-react";
+import { Card, CardProps } from "semantic-ui-react";
 import {
   ResponsiveContainer,
   ComposedChart,
@@ -18,6 +18,7 @@ import { KitState } from "~/modules/kit/reducer";
 
 import { api, Response, schemas } from "~/api";
 import { rateLimit } from "~/utils/api";
+import { Button } from "~/Components/Button";
 
 export type Aggregate = {
   datetimeStart: Date;
@@ -249,6 +250,7 @@ export default function AggregateMeasurementsChart(props: Props) {
             </div>
           ) : (
             <Button
+              variant="muted"
               disabled={requestNext === null || loading}
               loading={loading}
               onClick={() => loadNext()}
