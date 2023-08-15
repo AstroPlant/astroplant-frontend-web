@@ -2,11 +2,9 @@
   --headerHeight: 3.2rem;
   --itemPadding: 0.75rem;
 
-  background: #fff;
-  position: sticky;
-  top: 0;
-  z-index: 100;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  background-color: var(--bg-darker);
+  overflow: hidden; /* prevent child background from flowing over border */
 }
 
 .wrap {
@@ -70,6 +68,7 @@
         padding: 0 var(--itemPadding);
         background-color: var(--bg-darker);
         color: #000;
+        transition: background-color var(--fast-transition-time);
 
         &:hover,
         &:global(.active) {
