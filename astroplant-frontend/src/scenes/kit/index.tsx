@@ -1,14 +1,21 @@
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { NavLink, useParams, Routes, Route } from "react-router-dom";
+import { useParams, Routes, Route, Navigate } from "react-router-dom";
 import { withTranslation, WithTranslation, Trans } from "react-i18next";
+
+import { useAppSelector } from "~/hooks";
+import { schemas } from "~/api";
 import compose from "~/utils/compose";
-import { Container, Menu, Icon } from "semantic-ui-react";
+import { Container, Icon } from "semantic-ui-react";
 import Option from "~/utils/option";
+
 import { awaitAuthenticationRan } from "~/Components/AuthenticatedGuard";
 import HeadTitle from "~/Components/HeadTitle";
 import Loading from "~/Components/Loading";
+import { Menu } from "~/Components/Menu";
+import { KitAvatar } from "~/Components/KitAvatar";
+import { Badge } from "~/Components/Badge";
 
 import {
   KitState,
@@ -23,14 +30,14 @@ import {
   ConfigurationsContext,
   MembershipContext,
 } from "./contexts";
-import Overview from "./overview";
+import { KitData } from "./kit-data";
+import { Configurations } from "./Configurations";
 import Details from "./details";
 import Download from "./download";
-import Configure from "./configure";
 import Access from "./access";
 import Rpc from "./rpc";
-import { useAppSelector } from "~/hooks";
-import Media from "./overview/components/Media";
+
+import style from "./index.module.css";
 
 type Params = { kitSerial: string };
 
@@ -48,6 +55,54 @@ type InnerKitProps = {
 };
 
 type KitDashboardProps = WithTranslation & InnerKitProps;
+
+function KitHeader({
+  kit,
+  canConfigure: _,
+  canConfigureAccess,
+  canQueryRpc,
+}: {
+  kit: schemas["Kit"];
+  canConfigure: boolean;
+  canConfigureAccess: boolean;
+  canQueryRpc: boolean;
+}) {
+  return (
+    <header className={style.header}>
+      <div className={style.banner}>
+        <div className={style.title}>
+          <KitAvatar serial={kit.serial} />
+          {kit.name || "Unnamed kit"} / {kit.serial}
+          {kit.privacyPublicDashboard && (
+            <Badge variant="muted" size="small" text="Public" />
+          )}
+        </div>
+      </div>
+      <Menu>
+        <Menu.Item link={{ to: "data" }}>
+          <Icon name="chart bar" /> Data and configuration
+        </Menu.Item>
+        {/* currently downloading only requires the View permission (which is always present if the user can see this page), this may change */}
+        <Menu.Item link={{ to: "download" }}>
+          <Icon name="cloud download" /> Download
+        </Menu.Item>
+        <Menu.Item link={{ to: "details" }}>
+          <Icon name="clipboard" /> Details
+        </Menu.Item>
+        {canConfigureAccess && (
+          <Menu.Item link={{ to: "access" }}>
+            <Icon name="lock open" /> Access
+          </Menu.Item>
+        )}
+        {canQueryRpc && (
+          <Menu.Item link={{ to: "rpc" }}>
+            <Icon name="tty" /> RPC
+          </Menu.Item>
+        )}
+      </Menu>
+    </header>
+  );
+}
 
 const KitDashboard = (props: KitDashboardProps) => {
   const { kitState, membership } = props;
@@ -73,52 +128,23 @@ const KitDashboard = (props: KitDashboardProps) => {
     <KitContext.Provider value={kit}>
       <ConfigurationsContext.Provider value={configurations}>
         <MembershipContext.Provider value={membership}>
-          <HeadTitle main={kit.name || kit.serial} />
+          <KitHeader
+            kit={kit}
+            canConfigure={canConfigure}
+            canConfigureAccess={canConfigureAccess}
+            canQueryRpc={canQueryRpc}
+          />
           <Container>
-            <Menu pointing secondary>
-              <Menu.Item as={NavLink} end to={""}>
-                <Icon name="chart bar" />
-                Overview
-              </Menu.Item>
-              <Menu.Item as={NavLink} to={"media"}>
-                <Icon name="file image" />
-                Media
-              </Menu.Item>
-              <Menu.Item as={NavLink} to={"details"}>
-                <Icon name="clipboard" />
-                Details
-              </Menu.Item>
-              {/* currently downloading only requires the View permission (which is always present if the user can see this page), this may change */}
-              <Menu.Item as={NavLink} to={"download"}>
-                <Icon name="cloud download" />
-                Download
-              </Menu.Item>
-              {canConfigure && (
-                <Menu.Item as={NavLink} to={"configure"}>
-                  <Icon name="setting" />
-                  Configure
-                </Menu.Item>
-              )}
-              {canConfigureAccess && (
-                <Menu.Item as={NavLink} to={"access"}>
-                  <Icon name="lock open" />
-                  Access
-                </Menu.Item>
-              )}
-              {canQueryRpc && (
-                <Menu.Item as={NavLink} to={"rpc"}>
-                  <Icon name="tty" />
-                  RPC
-                </Menu.Item>
-              )}
-            </Menu>
-
             <Routes>
-              <Route path="/" element={<Overview kitState={kitState} />} />
-              <Route path="/media" element={<Media kitState={kitState} />} />
+              {/* redirect 404, or should an error message be given? */}
+              <Route path="*" element={<Navigate to="data" />} />
+              <Route path="/data/*" element={<KitData kitState={kitState} />} />
+              <Route
+                path="/configurations/*"
+                element={<Configurations kit={kitState} />}
+              />
               <Route path="/details/*" element={<Details />} />
               <Route path="/download" element={<Download />} />
-              <Route path="/configure/*" element={<Configure />} />
               <Route path="/access" element={<Access />} />
               <Route path="/rpc" element={<Rpc />} />
             </Routes>

@@ -1,0 +1,44 @@
+.configurations {
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    /* comes from dropdown.tsx */
+    border-bottom: 1px solid var(--border-color);
+
+    > a {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.3rem var(--padding-inline);
+
+      .description {
+        flex: 1;
+
+        .identifier {
+          font-size: 0.875em;
+          color: var(--gray-500);
+        }
+      }
+
+      &,
+      &:hover {
+        color: var(--fg);
+        text-decoration: none;
+      }
+
+      &:hover {
+        background-color: var(--bg-darker);
+      }
+    }
+  }
+
+  > a {
+    padding: 0.3rem var(--padding-inline);
+    display: block;
+    text-align: center;
+  }
+}

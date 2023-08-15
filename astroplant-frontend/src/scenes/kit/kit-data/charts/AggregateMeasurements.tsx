@@ -1,36 +1,34 @@
 import React, { useContext } from "react";
 import { useSelector } from "react-redux";
 import { Container, Card } from "semantic-ui-react";
-import { KitState, peripheralSelectors } from "~/modules/kit/reducer";
+import {
+  KitConfigurationState,
+  KitState,
+  peripheralSelectors,
+} from "~/modules/kit/reducer";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { selectors as quantityTypesSelectors } from "~/modules/quantity-type/reducer";
 
 import AggregateMeasurementsChart from "./AggregateMeasurementsChart";
-import { ConfigurationsContext } from "../../contexts";
 import { useAppSelector } from "~/hooks";
 
 export type Props = {
   kitState: KitState;
+  configuration: KitConfigurationState;
 };
 
-export default function AggregateMeasurements(props: Props) {
+export default function AggregateMeasurements({
+  kitState,
+  configuration,
+}: Props) {
   const peripheralDefinitions = useSelector(
     peripheralDefinitionsSelectors.selectEntities,
   );
   const quantityTypes = useAppSelector(quantityTypesSelectors.selectEntities);
   const peripherals = useAppSelector(peripheralSelectors.selectEntities);
 
-  const { kitState } = props;
-  const configurations = useContext(ConfigurationsContext);
-  let activeConfiguration =
-    Object.values(configurations).find((conf) => conf.active) ?? null;
-
-  if (activeConfiguration === null) {
-    return null;
-  }
-
   let hasMeasurements = false;
-  const cards = Object.values(activeConfiguration.peripherals)
+  const cards = Object.values(configuration.peripherals)
     .map((id) => peripherals[id]!)
     .map((peripheral) => {
       const def = peripheralDefinitions[peripheral.peripheralDefinitionId];
@@ -62,9 +60,7 @@ export default function AggregateMeasurements(props: Props) {
     );
   } else {
     return (
-      <Container>
-        No measurements are being made on this configuration.
-      </Container>
+      <Container>No measurements are made on this configuration.</Container>
     );
   }
 }

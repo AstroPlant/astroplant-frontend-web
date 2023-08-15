@@ -1,0 +1,84 @@
+.top {
+  display: flex;
+  justify-content: end;
+  margin-bottom: 1rem;
+}
+
+.listContainer {
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+
+  header {
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    background-color: var(--bg-darker);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.4rem 1rem;
+  }
+
+  em {
+    padding-inline: 1rem;
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 1rem;
+  }
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    padding: 0.4rem 1rem;
+
+    &:not(:last-child) {
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    div {
+      flex: 1;
+    }
+  }
+}
+
+.description {
+  display: flex;
+  align-items: center;
+}
+
+.identifier {
+  margin-left: 0.5rem;
+  font-size: 0.8em;
+}
+
+.name {
+  border-radius: 0.5rem;
+}
+
+.usageIndicator {
+  flex: 1;
+  text-align: right;
+  color: var(--green-500);
+}
+
+.actions {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+  gap: 1rem;
+}
+
+.shortcuts {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+
+  /* TODO: remove this when using a different icon set */
+  i {
+    height: initial;
+  }
+}

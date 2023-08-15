@@ -4,41 +4,34 @@ import { DateTime } from "luxon";
 
 import RelativeTime from "~/Components/RelativeTime";
 import Loading from "~/Components/Loading";
-import { KitState, peripheralSelectors } from "~/modules/kit/reducer";
+import {
+  KitConfigurationState,
+  KitState,
+  peripheralSelectors,
+} from "~/modules/kit/reducer";
 import { api, schemas } from "~/api";
 import { rtkApi } from "~/services/astroplant";
-import { skipToken } from "@reduxjs/toolkit/dist/query";
 import { firstValueFrom } from "rxjs";
-import { ConfigurationsContext } from "../../contexts";
 import { useAppSelector } from "~/hooks";
 import { Button } from "~/Components/Button";
 import { ModalDialog } from "~/Components/ModalDialog";
 
 export type Props = {
   kitState: KitState;
+  configuration: KitConfigurationState;
 };
 
-export default function Media(props: Props) {
-  const { kitState } = props;
-
+export default function Media({ kitState, configuration }: Props) {
   const peripherals = useAppSelector(peripheralSelectors.selectEntities);
-
-  const configurations = useContext(ConfigurationsContext);
-  let activeConfiguration =
-    Object.values(configurations).find((conf) => conf.active) ?? null;
 
   const {
     data: mediaList,
     error: mediaListError,
     isLoading: mediaListIsLoading,
-  } = rtkApi.useListMediaQuery(
-    activeConfiguration
-      ? {
-          kitSerial: kitState.details!.serial,
-          configuration: activeConfiguration.id,
-        }
-      : skipToken,
-  );
+  } = rtkApi.useListMediaQuery({
+    kitSerial: kitState.details!.serial,
+    configuration: configuration.id,
+  });
 
   const [displayMedia, setDisplayMedia] = useState<schemas["Media"] | null>(
     null,

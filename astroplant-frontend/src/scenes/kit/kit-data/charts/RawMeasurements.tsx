@@ -1,35 +1,35 @@
 import React, { useContext } from "react";
 import { Container, Card } from "semantic-ui-react";
-import { KitState, peripheralSelectors } from "~/modules/kit/reducer";
+import {
+  KitConfigurationState,
+  KitState,
+  peripheralSelectors,
+} from "~/modules/kit/reducer";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { selectors as quantityTypesSelectors } from "~/modules/quantity-type/reducer";
 import Option from "~/utils/option";
 
 import RawMeasurementComp from "./RawMeasurement";
 import { schemas } from "~/api";
-import { ConfigurationsContext } from "../../contexts";
 import { useAppSelector } from "~/hooks";
 
 export type Props = {
   kitState: KitState;
+  configuration: KitConfigurationState;
 };
 
-export default function RawMeasurements(props: Props) {
+export default function RawMeasurements({ kitState, configuration }: Props) {
   const peripheralDefinitions = useAppSelector(
     peripheralDefinitionsSelectors.selectEntities,
   );
   const quantityTypes = useAppSelector(quantityTypesSelectors.selectEntities);
   const peripherals = useAppSelector(peripheralSelectors.selectEntities);
 
-  const { kitState } = props;
   const rawMeasurements = kitState.rawMeasurements;
-  const configurations = useContext(ConfigurationsContext);
-  let activeConfiguration =
-    Object.values(configurations).find((conf) => conf.active) ?? null;
 
-  if (activeConfiguration !== null) {
+  if (configuration !== null) {
     let hasMeasurements = false;
-    const cards = Object.values(activeConfiguration.peripherals)
+    const cards = Object.values(configuration.peripherals)
       .map((id) => peripherals[id]!)
       .map((peripheral) => {
         const def: Option<schemas["PeripheralDefinition"]> = Option.from(
@@ -72,9 +72,7 @@ export default function RawMeasurements(props: Props) {
       );
     } else {
       return (
-        <Container>
-          No measurements are being made on this configuration.
-        </Container>
+        <Container>No measurements are made on this configuration.</Container>
       );
     }
   } else {

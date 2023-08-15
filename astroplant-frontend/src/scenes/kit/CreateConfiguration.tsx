@@ -5,22 +5,23 @@ import { Container, Segment } from "semantic-ui-react";
 
 import { JSONSchema7 } from "json-schema";
 import ApiForm from "~/Components/ApiForm";
-
 import { kitConfigurationCreated } from "~/modules/kit/actions";
-
-import { KitContext } from "../../contexts";
 import { Response, api, schemas } from "~/api";
 import { useAppDispatch } from "~/hooks";
+import { KitState } from "~/modules/kit/reducer";
 
 const CreateConfigurationForm = ApiForm<
   any,
   Response<schemas["KitConfiguration"]>
 >();
 
-export default function CreateConfiguration() {
+export type CreateConfigurationProps = {
+  kit: KitState;
+};
+
+export default function CreateConfiguration({ kit }: CreateConfigurationProps) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const kit = useContext(KitContext);
 
   const [done, setDone] = useState(false);
   const [result, setResult] = useState<schemas["KitConfiguration"] | null>(
@@ -62,7 +63,13 @@ export default function CreateConfiguration() {
     <Container text>
       <Segment padded>
         {done ? (
-          <Navigate to={`../${result!.id}`} replace />
+          <Navigate
+            to={{
+              pathname: "../../data/configuration",
+              search: `?c=${result!.id}`,
+            }}
+            replace
+          />
         ) : (
           <CreateConfigurationForm
             idPrefix="createConfigurationForm"

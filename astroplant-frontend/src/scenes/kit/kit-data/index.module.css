@@ -1,0 +1,10 @@
+.header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.navigation {
+  display: flex;
+}
