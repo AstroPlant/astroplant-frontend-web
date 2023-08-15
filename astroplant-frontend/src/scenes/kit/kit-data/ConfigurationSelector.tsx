@@ -19,7 +19,11 @@ function Row({
 }) {
   return (
     <li>
-      <DropdownDetails.Link to={`?c=${configuration.id}`} aria-checked={chosen} role="menuitemradio">
+      <DropdownDetails.Link
+        to={`?c=${configuration.id}`}
+        aria-checked={chosen}
+        role="menuitemradio"
+      >
         {
           <IconCheck
             size="1em"
@@ -48,6 +52,7 @@ export function ConfigurationSelector({
 }: ConfigurationSelectorProps) {
   const configurations = useContext(ConfigurationsContext);
 
+  // TODO: ensure selected configuration is always visible
   const numConfigurations = Object.keys(configurations).length;
 
   const activeConfiguration = useMemo(
@@ -60,7 +65,7 @@ export function ConfigurationSelector({
       Object.values(configurations)
         .filter((c) => !c.active)
         .slice(0, activeConfiguration === null ? MAX_ENTRIES : MAX_ENTRIES - 1),
-    [configurations],
+    [configurations, activeConfiguration],
   );
 
   return (
