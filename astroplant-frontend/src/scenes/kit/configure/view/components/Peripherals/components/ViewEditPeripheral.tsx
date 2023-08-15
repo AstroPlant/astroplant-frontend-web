@@ -104,7 +104,7 @@ export default function ViewEditPeripheral({
       {editing ? (
         <>
           <PeripheralForm
-            idPrefix="peripheralForm"
+            idPrefix={`peripheralForm.${peripheral.id}`}
             schema={schema}
             uiSchema={{}}
             send={sendUpdate}
@@ -119,6 +119,7 @@ export default function ViewEditPeripheral({
       ) : (
         <>
           <RjsfForm
+            idPrefix={`peripheralForm.${peripheral.id}`}
             schema={schema}
             uiSchema={{}}
             disabled={true}
