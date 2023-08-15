@@ -1,6 +1,10 @@
 /* Colors */
 :root {
   --white: #fff;
+  --fg: oklch(30% 0 0);
+  --bg: #fff;
+  --bg-darker: oklch(97% 0 0);
+  --bg-menu-hover: oklch(95% 0 0);
 
   --gray-50: oklch(95% 0 0);
   --gray-100: oklch(90% 0 0);
@@ -65,6 +69,9 @@
   --outline-color: var(--slate-400);
   --theme: #35ef7f;
   --theme-dark: #37e07b;
+
+  --link-color: oklch(52% 0.14 151.19);
+  --link-gray-hover-color: oklch(50% 0.0 151.19);
 
   --fast-transition-time: 0.1s;
   --slow-transition-time: 0.3s;
@@ -141,11 +148,12 @@ h2 {
 }
 
 a {
-  color: var(--theme);
+  color: var(--link-color);
 }
 
 a:hover {
-  color: var(--theme-dark);
+  color: var(--link-color);
+  text-decoration: underline;
 }
 
 .ui.primary.button {
