@@ -36,9 +36,6 @@ export type Props = CardProps & {
   quantityType: schemas["QuantityType"];
 };
 
-const fillColor = "#35EF7F";
-const borderColor = "#2fce6f";
-
 export default function AggregateMeasurementsChart(props: Props) {
   const { t } = useTranslation();
 
@@ -192,22 +189,22 @@ export default function AggregateMeasurementsChart(props: Props) {
                 padding={{ top: 50, bottom: 0 }}
               />
               <Area
-                fill={fillColor}
-                stroke={borderColor}
+                fill="var(--green-200)"
+                stroke="var(--green-500)"
                 yAxisId="left"
                 dataKey="values.minimum"
                 name={t("kit.aggregateMeasurements.minimum") as string}
               />
               <Area
-                fill={fillColor}
-                stroke={borderColor}
+                fill="var(--green-200)"
+                stroke="var(--green-500)"
                 yAxisId="left"
                 dataKey="values.average"
                 name={t("kit.aggregateMeasurements.average") as string}
               />
               <Area
-                fill={fillColor}
-                stroke={borderColor}
+                fill="var(--green-200)"
+                stroke="var(--green-500)"
                 yAxisId="left"
                 dataKey="values.maximum"
                 name={t("kit.aggregateMeasurements.maximum") as string}
