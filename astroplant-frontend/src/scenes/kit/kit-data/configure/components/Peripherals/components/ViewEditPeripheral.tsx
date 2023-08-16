@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Segment, Label, Header, Button, Icon } from "semantic-ui-react";
+import { Segment, Label, Header, Icon } from "semantic-ui-react";
 import validator from "@rjsf/validator-ajv8";
 
 import { KitConfigurationState } from "~/modules/kit/reducer";
@@ -16,6 +16,7 @@ import PeripheralDefinitionCard from "~/Components/PeripheralDefinitionCard";
 import { useAppDispatch, useAppSelector } from "~/hooks";
 import Loading from "~/Components/Loading";
 import { api, schemas, Response } from "~/api";
+import { Button } from "~/Components/Button";
 
 export type Props = {
   kit: schemas["Kit"];
@@ -132,13 +133,10 @@ export default function ViewEditPeripheral({
           {!readOnly && (
             <div style={{ overflow: "hidden" }}>
               <Button
-                primary
-                icon
-                labelPosition="left"
-                floated="left"
+                variant="primary"
+                leftAdornment={<Icon name="pencil" />}
                 onClick={() => setEditing(true)}
               >
-                <Icon name="pencil" />
                 Edit
               </Button>
               <DeletePeripheralButton
