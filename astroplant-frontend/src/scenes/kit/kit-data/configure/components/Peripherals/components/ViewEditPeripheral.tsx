@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Segment, Label, Header, Icon } from "semantic-ui-react";
+import { Segment, Label, Header } from "semantic-ui-react";
 import validator from "@rjsf/validator-ajv8";
+import { IconX, IconPencil } from "@tabler/icons-react";
 
 import { KitConfigurationState } from "~/modules/kit/reducer";
 import { peripheralDeleted, peripheralUpdated } from "~/modules/kit/actions";
@@ -134,7 +135,7 @@ export default function ViewEditPeripheral({
             <div style={{ overflow: "hidden" }}>
               <Button
                 variant="primary"
-                leftAdornment={<Icon name="pencil" />}
+                leftAdornment={<IconPencil aria-hidden />}
                 onClick={() => setEditing(true)}
               >
                 Edit
@@ -144,7 +145,7 @@ export default function ViewEditPeripheral({
                 onResponse={responseDelete}
                 buttonProps={{
                   variant: "negative",
-                  leftAdornment: <Icon name="delete" />,
+                  leftAdornment: <IconX aria-hidden />,
                 }}
                 confirm={() => ({
                   content: t("kitConfiguration.peripherals.deleteConfirm"),
