@@ -3,11 +3,18 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { useParams, Routes, Route, Navigate } from "react-router-dom";
 import { withTranslation, WithTranslation, Trans } from "react-i18next";
+import {
+  IconChartBar,
+  IconFileDownload,
+  IconClipboard,
+  IconLockCog,
+  IconPrompt,
+} from "@tabler/icons-react";
 
 import { useAppSelector } from "~/hooks";
 import { schemas } from "~/api";
 import compose from "~/utils/compose";
-import { Container, Icon } from "semantic-ui-react";
+import { Container } from "semantic-ui-react";
 import Option from "~/utils/option";
 
 import { awaitAuthenticationRan } from "~/Components/AuthenticatedGuard";
@@ -80,23 +87,28 @@ function KitHeader({
       </div>
       <Menu>
         <Menu.Item link={{ to: "data" }}>
-          <Icon name="chart bar" /> Data and configuration
+          <IconChartBar aria-hidden />
+          Data and configuration
         </Menu.Item>
         {/* currently downloading only requires the View permission (which is always present if the user can see this page), this may change */}
         <Menu.Item link={{ to: "download" }}>
-          <Icon name="cloud download" /> Download
+          <IconFileDownload aria-hidden />
+          Download
         </Menu.Item>
         <Menu.Item link={{ to: "details" }}>
-          <Icon name="clipboard" /> Details
+          <IconClipboard aria-hidden />
+          Details
         </Menu.Item>
         {canConfigureAccess && (
           <Menu.Item link={{ to: "access" }}>
-            <Icon name="lock open" /> Access
+            <IconLockCog aria-hidden />
+            Access
           </Menu.Item>
         )}
         {canQueryRpc && (
           <Menu.Item link={{ to: "rpc" }}>
-            <Icon name="tty" /> RPC
+            <IconPrompt aria-hidden />
+            RPC
           </Menu.Item>
         )}
       </Menu>
