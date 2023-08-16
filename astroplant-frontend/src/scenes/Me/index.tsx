@@ -1,7 +1,5 @@
-import React, { Component } from "react";
-import { connect } from "react-redux";
 import { Link } from "react-router-dom";
-import { withTranslation, WithTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { Container, Divider, Card, Image, Header } from "semantic-ui-react";
 
 import { RootState } from "~/types";
@@ -13,36 +11,36 @@ import {
 import Gravatar from "~/Components/Gravatar";
 import HeadTitle from "~/Components/HeadTitle";
 import PlaceholderSegment from "~/Components/PlaceholderSegment";
+import { useAppSelector } from "~/hooks";
+import { selectMe } from "~/modules/me/reducer";
+import { kitSelectors } from "~/modules/kit/reducer";
 
-type Props = WithTranslation &
-  WithAuthentication & {
-    loadingKitMemberships: boolean;
-    kitMemberships: RootState["me"]["kitMemberships"];
-    kitStates: RootState["kit"]["kits"];
-  };
+type Props = WithAuthentication;
 
-function Me(props: Props) {
-  const { t, me } = props;
+function Me({ me }: Props) {
+  const { t } = useTranslation();
+
+  const { kitMemberships, loadingKitMemberships } = useAppSelector(selectMe);
+  const kitStates = useAppSelector(kitSelectors.selectEntities);
 
   return (
     <>
       <HeadTitle
         main={t("me.header", {
-          displayName: props.me.displayName,
+          displayName: me.displayName,
         })}
       />
       <Container text style={{ marginTop: "1em" }}>
         <Header size="large">Your kits</Header>
-        {Object.keys(props.kitMemberships).length > 0 ||
-        props.loadingKitMemberships ? (
+        {Object.keys(kitMemberships).length > 0 || loadingKitMemberships ? (
           <>
             <p>
               <Link to="/create-kit">Create another.</Link>
             </p>
-            {Object.keys(props.kitMemberships).length > 0 && (
+            {Object.keys(kitMemberships).length > 0 && (
               <Card.Group>
-                {Object.keys(props.kitMemberships).map((serial) => {
-                  const kitState = props.kitStates.entities[serial];
+                {Object.keys(kitMemberships).map((serial) => {
+                  const kitState = kitStates[serial];
                   return (
                     <Card
                       fluid
@@ -57,8 +55,7 @@ function Me(props: Props) {
                         </Image>
                         <Card.Header>
                           {kitState
-                            ? (kitState.details && kitState.details.name) ||
-                              t("kit.unnamed")
+                            ? kitState.details?.name ?? t("kit.unnamed")
                             : "Loading"}
                         </Card.Header>
                         <Card.Meta>Serial: {serial}</Card.Meta>
@@ -68,7 +65,7 @@ function Me(props: Props) {
                 })}
               </Card.Group>
             )}
-            {props.loadingKitMemberships && <PlaceholderSegment />}
+            {loadingKitMemberships && <PlaceholderSegment />}
           </>
         ) : (
           <div>
@@ -88,12 +85,12 @@ function Me(props: Props) {
             />
           </Image>
           <Card.Content>
-            <Card.Header>{props.me.displayName}</Card.Header>
-            <Card.Meta>{props.me.emailAddress}</Card.Meta>
+            <Card.Header>{me.displayName}</Card.Header>
+            <Card.Meta>{me.emailAddress}</Card.Meta>
           </Card.Content>
           <Card.Content extra>
             {t("me.content.usernameLabel", {
-              username: props.me.username,
+              username: me.username,
             })}
           </Card.Content>
         </Card>
@@ -102,14 +99,4 @@ function Me(props: Props) {
   );
 }
 
-const mapStateToProps = (state: RootState) => {
-  return {
-    loadingKitMemberships: state.me.loadingKitMemberships,
-    kitMemberships: state.me.kitMemberships,
-    kitStates: state.kit.kits,
-  };
-};
-
-export default withAuthentication()(
-  connect(mapStateToProps)(withTranslation()(Me)),
-);
+export default withAuthentication()(Me);
