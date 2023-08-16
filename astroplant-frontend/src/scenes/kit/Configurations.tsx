@@ -69,7 +69,7 @@ function ConfigurationRow({
     <li>
       <div className={style.description}>
         <span className={style.name}>
-          <Link to={`../data?c=${configuration.id}`}>
+          <Link to={`../../data?c=${configuration.id}`}>
             {configuration.description || "Unnamed configuration"}
           </Link>
         </span>
@@ -91,7 +91,7 @@ function ConfigurationRow({
           <ButtonLink
             variant="muted"
             size="small"
-            to={`../data/configuration?c=${configuration.id}`}
+            to={`../../data/configuration?c=${configuration.id}`}
           >
             {configuration.neverUsed ? "Edit" : "View"}
           </ButtonLink>
@@ -100,7 +100,7 @@ function ConfigurationRow({
           <ButtonLink
             variant="text"
             title="Delete this configuration"
-            to={`../data/danger?c=${configuration.id}`}
+            to={`../../data/danger?c=${configuration.id}`}
           >
             <Icon name="trash" />
           </ButtonLink>
