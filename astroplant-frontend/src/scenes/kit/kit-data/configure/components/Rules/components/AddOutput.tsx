@@ -2,12 +2,13 @@ import React from "react";
 import compose from "~/utils/compose";
 import { connect } from "react-redux";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Modal, Card, Header, Button, Icon } from "semantic-ui-react";
+import { Modal, Card, Header, Icon } from "semantic-ui-react";
 import { JSONSchema7 } from "json-schema";
 
 import { RootState } from "~/types";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { schemas } from "~/api";
+import { Button } from "~/Components/Button";
 
 export type Props = {
   choices: [schemas["Peripheral"], string, JSONSchema7][];
@@ -56,13 +57,11 @@ class AddPeripheral extends React.Component<PInner, State> {
       <Modal
         trigger={
           <Button
-            primary
-            icon
-            labelPosition="left"
+            variant="primary"
             disabled={choices.length === 0}
+            leftAdornment={<Icon name="plus" />}
             onClick={() => this.handleOpen()}
           >
-            <Icon name="plus" />
             Add output
           </Button>
         }
@@ -103,7 +102,7 @@ class AddPeripheral extends React.Component<PInner, State> {
           </Card.Group>
         </Modal.Content>
         <Modal.Actions>
-          <Button color="red" onClick={this.handleClose}>
+          <Button variant="negative" onClick={() => this.handleClose()}>
             Cancel
           </Button>
         </Modal.Actions>

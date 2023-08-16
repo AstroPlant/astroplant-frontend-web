@@ -2,7 +2,6 @@ import React, { useContext, useState, useMemo } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
-  Button,
   Container,
   Segment,
   Transition,
@@ -25,6 +24,7 @@ import MapWithMarker from "~/Components/MapWithMarker";
 import { KitContext, MembershipContext } from "../contexts";
 import { useAppDispatch } from "~/hooks";
 import { Response, api, schemas } from "~/api";
+import { Button } from "~/Components/Button";
 
 const PatchKitForm = ApiForm<any, Response<schemas["Kit"]>>();
 
@@ -137,7 +137,7 @@ export default function KitDetails() {
                 )}
                 <div>
                   {canEditDetails && (
-                    <Button onClick={() => navigate("edit")} primary>
+                    <Button variant="primary" onClick={() => navigate("edit")}>
                       Edit kit details
                     </Button>
                   )}

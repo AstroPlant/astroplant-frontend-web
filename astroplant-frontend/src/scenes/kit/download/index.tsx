@@ -2,13 +2,14 @@ import React, { useContext, useState } from "react";
 import { withTranslation, WithTranslation } from "react-i18next";
 import compose from "~/utils/compose";
 import { DateTime } from "luxon";
-import { Button, Container, Segment, Header } from "semantic-ui-react";
+import { Container, Segment, Header } from "semantic-ui-react";
 import { Form } from "semantic-ui-react";
 
 import { api } from "~/api";
 
 import { KitContext, ConfigurationsContext } from "../contexts";
 import { firstValueFrom } from "rxjs";
+import { Button } from "~/Components/Button";
 
 export type Props = {};
 export type InnerProps = WithTranslation;
@@ -84,12 +85,12 @@ function KitDownload(_props: InnerProps) {
               </Form.Group>
               <Form.Field>
                 {configurationId === undefined ? (
-                  <Button primary disabled>
+                  <Button variant="primary" disabled>
                     Download
                   </Button>
                 ) : (
                   <Button
-                    primary
+                    variant="primary"
                     onClick={() => {
                       const query = { configurationId };
                       initiateDownload(kit.serial, query);
@@ -146,7 +147,7 @@ function KitDownload(_props: InnerProps) {
           <Form.Field>
             {timeWindowValid ? (
               <Button
-                primary
+                variant="primary"
                 onClick={() => {
                   const query = { from: startM, to: endM };
                   initiateDownload(kit.serial, query);
@@ -155,7 +156,7 @@ function KitDownload(_props: InnerProps) {
                 Download
               </Button>
             ) : (
-              <Button primary disabled>
+              <Button variant="primary" disabled>
                 Download
               </Button>
             )}
