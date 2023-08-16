@@ -43,7 +43,7 @@ type CommonProps = {
 };
 
 export type ButtonProps = CommonProps &
-  Omit<React.HTMLProps<HTMLButtonElement>, "size"> & {
+  Omit<React.ComponentProps<"button">, "size"> & {
     disabled?: boolean;
     onClick?: MouseEventHandler<HTMLButtonElement>;
   };
@@ -64,12 +64,12 @@ export function Button({
   onClick,
   children,
   className,
+  type,
   ...props
 }: PropsWithChildren<ButtonProps>) {
   return (
     <button
       {...props}
-      type="button"
       onClick={onClick}
       disabled={disabled}
       className={clsx(className, className_(variant, size, loading))}
