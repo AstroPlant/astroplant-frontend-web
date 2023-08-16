@@ -19,6 +19,7 @@ import { addNotificationRequest } from "~/modules/notification/actions";
 import { requestWrapper } from "~/utils/api";
 import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
 import { ErrorResponse } from "~/api";
+import { Button } from "./Button";
 
 export type Props<T, R> = {
   idPrefix: string;
@@ -116,14 +117,14 @@ function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
           <>{children && <Form.Group>{children}</Form.Group>}</>
         ) : (
           <Form.Group>
-            <Form.Button
+            <Button
               type="submit"
-              primary
+              variant="positive"
               disabled={disabled || submitting}
               loading={submitting}
             >
               {props.submitLabel || t("form.submit")}
-            </Form.Button>
+            </Button>
             {children}
           </Form.Group>
         )}
