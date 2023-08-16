@@ -2,7 +2,8 @@ import React from "react";
 import compose from "~/utils/compose";
 import { connect } from "react-redux";
 import { withTranslation, WithTranslation } from "react-i18next";
-import { Modal, Card, Header, Icon } from "semantic-ui-react";
+import { Modal, Card, Header } from "semantic-ui-react";
+import { IconPlus, IconTransferIn } from "@tabler/icons-react";
 
 import { RootState } from "~/types";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
@@ -56,7 +57,7 @@ class AddPeripheral extends React.Component<PInner, State> {
           <Button
             variant="primary"
             disabled={choices.length === 0}
-            leftAdornment={<Icon name="plus" />}
+            leftAdornment={<IconPlus aria-hidden />}
             onClick={() => this.handleOpen()}
           >
             Add input
@@ -68,7 +69,9 @@ class AddPeripheral extends React.Component<PInner, State> {
         onClose={this.handleClose}
       >
         <Modal.Header>
-          <Icon name="thermometer" /> Add fuzzy input
+          <span className="flex items-center gap-1">
+            <IconTransferIn aria-hidden /> Add fuzzy input
+          </span>
         </Modal.Header>
         <Modal.Content>
           <Header size="small">

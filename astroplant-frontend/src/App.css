@@ -234,3 +234,16 @@ code {
 i.icon {
   margin: 0;
 }
+
+/* Some basic utility classes */
+.flex {
+  display: flex;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.gap-1 {
+  gap: 0.2rem;
+}

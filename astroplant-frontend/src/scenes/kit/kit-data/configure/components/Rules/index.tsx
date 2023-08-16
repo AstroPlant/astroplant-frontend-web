@@ -43,6 +43,11 @@ import EditRule from "./components/EditRule";
 import { firstValueFrom } from "rxjs";
 import Loading from "~/Components/Loading";
 import { api, Response, schemas } from "~/api";
+import {
+  IconAdjustmentsHorizontal,
+  IconTransferIn,
+  IconTransferOut,
+} from "@tabler/icons-react";
 
 export type Props = WithTranslation & {
   kit: schemas["Kit"];
@@ -505,8 +510,8 @@ class Rules extends React.Component<Props, State> {
               <strong>1.0.0b7</strong> or higher.
             </p>
           </Message>
-          <Header as="h4">
-            <Icon name="thermometer" /> Inputs
+          <Header as="h4" className="flex align-center gap-1">
+            <IconTransferIn aria-hidden /> Inputs
           </Header>
 
           {Object.entries(fuzzyControl.input).map(
@@ -582,8 +587,8 @@ class Rules extends React.Component<Props, State> {
           />
 
           <Divider />
-          <Header as="h4">
-            <Icon name="settings" /> Outputs
+          <Header as="h4" className="flex align-center gap-1">
+            <IconTransferOut aria-hidden /> Outputs
           </Header>
 
           {Object.entries(fuzzyControl.output).map(
@@ -665,8 +670,8 @@ class Rules extends React.Component<Props, State> {
           />
 
           <Divider />
-          <Header as="h4">
-            <Icon name="balance" /> Rules
+          <Header as="h4" className="flex align-center gap-1">
+            <IconAdjustmentsHorizontal aria-hidden /> Rules
           </Header>
 
           <p>{t("control.explanation")}</p>
