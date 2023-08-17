@@ -181,7 +181,9 @@ export function Configurations({ kit }: ConfigurationsProps) {
                   />
                 </ul>
               ) : (
-                <em>There is no active configuration</em>
+                <p>
+                  <em>There is no active configuration.</em>
+                </p>
               )}
             </section>
             <section className={style.listContainer}>
@@ -200,7 +202,9 @@ export function Configurations({ kit }: ConfigurationsProps) {
                   ))}
                 </ul>
               ) : (
-                <em>There are no inactive configurations</em>
+                <p>
+                  <em>There are no inactive configurations.</em>
+                </p>
               )}
             </section>
           </article>

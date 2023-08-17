@@ -16,8 +16,8 @@
     padding: 0.4rem 1rem;
   }
 
-  em {
-    padding-inline: 1rem;
+  p {
+    padding: 0.4rem 1rem;
   }
 
   &:not(:last-child) {
