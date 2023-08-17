@@ -79,8 +79,13 @@
   background: none;
   font-weight: inherit;
   font-size: inherit;
-  color: inherit;
   height: unset;
+
+  /* but what if we want to override the color? */
+  &,
+  &:hover {
+    color: var(--fg);
+  }
 
   &:hover:not(:disabled) {
     background: none;
