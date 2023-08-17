@@ -762,7 +762,7 @@ class Rules extends React.Component<Props, State> {
       return (
         <Button
           variant="primary"
-          rightAdornment={<Icon name="pencil" />}
+          leftAdornment={<Icon name="pencil" />}
           onClick={() => this.setState({ editing: true })}
         >
           Edit rules

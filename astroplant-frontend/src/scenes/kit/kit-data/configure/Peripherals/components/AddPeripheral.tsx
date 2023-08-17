@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Container,
   Modal,
   Card,
   Header,
-  Button,
   Icon,
   Transition,
 } from "semantic-ui-react";
@@ -20,6 +19,8 @@ import ApiForm from "~/Components/ApiForm";
 import PeripheralDefinitionCard from "~/Components/PeripheralDefinitionCard";
 import { api, Response, schemas } from "~/api";
 import { useAppDispatch, useAppSelector } from "~/hooks";
+import { Button } from "~/Components/Button";
+import { IconCheck, IconPlus } from "@tabler/icons-react";
 
 export type Props = {
   kit: schemas["Kit"];
@@ -145,7 +146,11 @@ export default function AddPeripheral({ kit, configuration }: Props) {
   return (
     <Modal
       trigger={
-        <Button primary onClick={handleOpen}>
+        <Button
+          variant="primary"
+          onClick={handleOpen}
+          leftAdornment={<IconPlus aria-hidden />}
+        >
           Add a peripheral
         </Button>
       }
@@ -158,11 +163,15 @@ export default function AddPeripheral({ kit, configuration }: Props) {
       <Modal.Content>{content}</Modal.Content>
       <Modal.Actions>
         {done ? (
-          <Button color="green" onClick={handleClose}>
-            <Icon name="checkmark" /> Ok
+          <Button
+            variant="positive"
+            onClick={handleClose}
+            leftAdornment={<IconCheck aria-hidden />}
+          >
+            Ok
           </Button>
         ) : (
-          <Button color="red" onClick={handleClose}>
+          <Button variant="negative" onClick={handleClose}>
             Cancel
           </Button>
         )}
