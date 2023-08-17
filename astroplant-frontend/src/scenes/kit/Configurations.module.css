@@ -61,8 +61,13 @@
 
 .usageIndicator {
   flex: 1;
-  text-align: right;
   color: var(--green-500);
+
+  span {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+  }
 }
 
 .actions {
@@ -76,9 +81,4 @@
   display: flex;
   gap: 0.5rem;
   font-size: 0.8rem;
-
-  /* TODO: remove this when using a different icon set */
-  i {
-    height: initial;
-  }
 }

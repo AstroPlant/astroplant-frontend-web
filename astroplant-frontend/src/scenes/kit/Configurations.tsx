@@ -1,6 +1,5 @@
 import { useMemo } from "react";
 import { Link, Route, Routes } from "react-router-dom";
-import { Icon } from "semantic-ui-react";
 import { useTranslation } from "react-i18next";
 
 import { useAppDispatch, useAppSelector } from "~/hooks";
@@ -19,6 +18,11 @@ import { ButtonLink } from "~/Components/Button";
 
 import style from "./Configurations.module.css";
 import CreateConfiguration from "./CreateConfiguration";
+import {
+  IconAsterisk,
+  IconPlayerPlayFilled,
+  IconTrashFilled,
+} from "@tabler/icons-react";
 
 const ApiButton = apiButton<any>();
 
@@ -78,11 +82,9 @@ function ConfigurationRow({
         </span>
         <span className={style.usageIndicator}>
           {configuration.neverUsed && (
-            <Icon
-              name="asterisk"
-              alt="Never activated"
-              title="Never activated"
-            />
+            <span title="Never activated">
+              <IconAsterisk aria-hidden size="1em" />
+            </span>
           )}
         </span>
       </div>
@@ -102,7 +104,7 @@ function ConfigurationRow({
             title="Delete this configuration"
             to={`../../data/danger?c=${configuration.id}`}
           >
-            <Icon name="trash" />
+            <IconTrashFilled aria-hidden size="1.5em" />
           </ButtonLink>
           {showActivate && (
             <ApiButton
@@ -126,7 +128,7 @@ function ConfigurationRow({
                 ),
               })}
             >
-              <Icon name="play" />
+              <IconPlayerPlayFilled aria-hidden size="1.5em" />
             </ApiButton>
           )}
         </span>
