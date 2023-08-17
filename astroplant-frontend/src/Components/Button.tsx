@@ -77,7 +77,7 @@ export function Button({
       {leftAdornment && (
         <div className={styles.leftAdornment}>{leftAdornment}</div>
       )}
-      {children}
+      {leftAdornment || rightAdornment ? <span>{children}</span> : children}
       {rightAdornment && (
         <div className={styles.rightAdornment}>{rightAdornment}</div>
       )}

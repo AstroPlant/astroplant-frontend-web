@@ -104,6 +104,11 @@
   }
 }
 
+/* Text content if the button is adorned. */
+.btn > span {
+  flex: 1;
+}
+
 .leftAdornment,
 .rightAdornment {
   display: flex;
