@@ -10,6 +10,7 @@ import {
 } from "~/modules/kit/actions";
 import { api, Response, schemas } from "~/api";
 import { IconPower } from "@tabler/icons-react";
+import { useNavigate } from "react-router-dom";
 
 export type Props = {
   kit: schemas["Kit"];
@@ -21,6 +22,7 @@ const Button = ApiButton<any>();
 export default function ActivateDeactivate({ kit, configuration }: Props) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const onResponse = (response: Response<schemas["KitConfiguration"]>) => {
     dispatch(
@@ -32,9 +34,15 @@ export default function ActivateDeactivate({ kit, configuration }: Props) {
         configuration: response.data,
       }),
     );
-    alert(
-      "Configuration updated. Make sure to restart the kit for the configuration to activate.",
-    );
+
+    if (response.data.active) {
+      alert(
+        "Configuration activated. Make sure to restart the kit for the configuration to activate.",
+      );
+    } else {
+      // ensure we're still on this configuration's page after deactivation
+      navigate({ search: `?c=${configuration.id}` });
+    }
   };
 
   const send = () => {
