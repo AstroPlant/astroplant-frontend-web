@@ -45,6 +45,7 @@ import Loading from "~/Components/Loading";
 import { api, Response, schemas } from "~/api";
 import {
   IconAdjustmentsHorizontal,
+  IconPlus,
   IconTransferIn,
   IconTransferOut,
 } from "@tabler/icons-react";
@@ -750,7 +751,7 @@ class Rules extends React.Component<Props, State> {
 
           <Button
             variant="primary"
-            leftAdornment={<Icon name="plus" />}
+            leftAdornment={<IconPlus aria-hidden />}
             onClick={() => this.addEmptyRule()}
           >
             Add rule
