@@ -20,8 +20,9 @@ import style from "./Configurations.module.css";
 import CreateConfiguration from "./CreateConfiguration";
 import {
   IconAsterisk,
-  IconPlayerPlayFilled,
-  IconTrashFilled,
+  IconCopy,
+  IconPlayerPlay,
+  IconTrash,
 } from "@tabler/icons-react";
 
 const ApiButton = apiButton<any>();
@@ -101,10 +102,17 @@ function ConfigurationRow({
         <span className={style.shortcuts}>
           <ButtonLink
             variant="text"
+            title="Clone this configuration"
+            to={`../../data/configuration/clone?c=${configuration.id}`}
+          >
+            <IconCopy aria-hidden size="1.5em" />
+          </ButtonLink>
+          <ButtonLink
+            variant="text"
             title="Delete this configuration"
             to={`../../data/danger?c=${configuration.id}`}
           >
-            <IconTrashFilled aria-hidden size="1.5em" />
+            <IconTrash aria-hidden size="1.5em" />
           </ButtonLink>
           {showActivate && (
             <ApiButton
@@ -128,7 +136,7 @@ function ConfigurationRow({
                 ),
               })}
             >
-              <IconPlayerPlayFilled aria-hidden size="1.5em" />
+              <IconPlayerPlay aria-hidden size="1.5em" />
             </ApiButton>
           )}
         </span>
