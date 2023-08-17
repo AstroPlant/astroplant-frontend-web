@@ -9,6 +9,7 @@ import {
   kitConfigurationUpdated,
 } from "~/modules/kit/actions";
 import { api, Response, schemas } from "~/api";
+import { IconPower } from "@tabler/icons-react";
 
 export type Props = {
   kit: schemas["Kit"];
@@ -55,7 +56,10 @@ export default function ActivateDeactivate({ kit, configuration }: Props) {
         send={send}
         onResponse={onResponse}
         label={t("common.deactivate")}
-        buttonProps={{ variant: "negative" }}
+        buttonProps={{
+          variant: "negative",
+          leftAdornment: <IconPower aria-hidden />,
+        }}
         confirm={() => ({
           content: t("kitConfiguration.deactivateConfirm", {
             kitName,
@@ -70,7 +74,10 @@ export default function ActivateDeactivate({ kit, configuration }: Props) {
         send={send}
         onResponse={onResponse}
         label={t("common.activate")}
-        buttonProps={{ variant: "positive" }}
+        buttonProps={{
+          variant: "positive",
+          leftAdornment: <IconPower aria-hidden />,
+        }}
         confirm={() => ({
           content: t(
             configuration.neverUsed
