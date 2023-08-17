@@ -3,10 +3,10 @@ import { useTranslation } from "react-i18next";
 
 import { Container, Segment, Header, Divider } from "semantic-ui-react";
 
-import Description from "./configure/components/Description";
-import Rules from "./configure/components/Rules";
-import ActivateDeactivate from "./configure/components/ActivateDeactivate";
-import Peripherals from "./configure/components/Peripherals";
+import Description from "./configure/Description";
+import Rules from "./configure/Rules";
+import ActivateDeactivate from "./configure/ActivateDeactivate";
+import Peripherals from "./configure/Peripherals";
 import { KitConfigurationState, KitState } from "~/modules/kit/reducer";
 
 export type ConfigurationProps = {
