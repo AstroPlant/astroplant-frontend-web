@@ -1,13 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Container,
-  Modal,
-  Card,
-  Header,
-  Icon,
-  Transition,
-} from "semantic-ui-react";
+import { Modal, Card, Header, Transition } from "semantic-ui-react";
 
 import { KitConfigurationState } from "~/modules/kit/reducer";
 import { peripheralCreated } from "~/modules/kit/actions";
@@ -20,7 +13,9 @@ import PeripheralDefinitionCard from "~/Components/PeripheralDefinitionCard";
 import { api, Response, schemas } from "~/api";
 import { useAppDispatch, useAppSelector } from "~/hooks";
 import { Button } from "~/Components/Button";
-import { IconCheck, IconPlus } from "@tabler/icons-react";
+import { IconCheck, IconCircleCheck, IconPlus } from "@tabler/icons-react";
+
+import style from "./AddPeripheral.module.css";
 
 export type Props = {
   kit: schemas["Kit"];
@@ -82,17 +77,15 @@ export default function AddPeripheral({ kit, configuration }: Props) {
 
   if (done) {
     content = (
-      <>
-        <Header size="huge" icon textAlign="center">
+      <div className={style.success}>
+        <header>
           <Transition animation="drop" duration={450} transitionOnMount>
-            <Icon name="check" circular />
+            <IconCircleCheck size="1em" aria-hidden />
           </Transition>
-          <Header.Content>Success!</Header.Content>
-        </Header>
-        <Container textAlign="center">
-          <p>The peripheral has been added.</p>
-        </Container>
-      </>
+          <h2>Success!</h2>
+        </header>
+        <p>The peripheral has been added.</p>
+      </div>
     );
   } else if (peripheralDefinition !== null) {
     const schema: JSONSchema7 = {

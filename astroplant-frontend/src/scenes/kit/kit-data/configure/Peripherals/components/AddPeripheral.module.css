@@ -1,0 +1,14 @@
+.success {
+  text-align: center;
+
+  header {
+    svg {
+      margin-inline: auto;
+      font-size: 8em;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+  }
+}
