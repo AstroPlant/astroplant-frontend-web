@@ -110,6 +110,20 @@ export const rtkApi = createApi({
         method: "POST",
       }),
     }),
+    cloneConfiguration: build.mutation<
+      schemas["KitConfiguration"],
+      {
+        kitSerial: string;
+        /** The old configuration id */
+        source: number;
+      }
+    >({
+      query: ({ kitSerial, ...params }) => ({
+        path: `/kits/${encodeUri(kitSerial)}/configurations`,
+        method: "POST",
+        query: params,
+      }),
+    }),
   }),
 });
 

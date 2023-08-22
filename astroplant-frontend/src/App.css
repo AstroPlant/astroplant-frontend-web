@@ -66,6 +66,8 @@
   --red-900: oklch(10% 0.020 28.8);
   --red-950: oklch(5% 0.010 28.8);
 
+  --danger-color: oklch(45% 0.120 28.8);
+
   --outline-color: var(--slate-400);
   --theme: #35ef7f;
   --theme-dark: #37e07b;
@@ -228,6 +230,11 @@ code {
   background-color: #f5f5f5;
   border-radius: 3px;
   padding: 0.2em;
+}
+
+.error {
+  color: var(--danger-color);
+  font-weight: 600;
 }
 
 /* FIXME: Workaround until we remove <i> style icons */
