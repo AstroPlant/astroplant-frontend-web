@@ -46,7 +46,7 @@ async function baseQueryFn(
 ): Promise<QueryReturnValue<unknown, ErrorDetails, Meta<unknown>>> {
   const auth = selectAuth(api.getState() as RootState);
   let headers: HttpHeaders = auth.accessToken
-    ? { Authorization: `Bearer: ${auth.accessToken}` }
+    ? { Authorization: `Bearer ${auth.accessToken}` }
     : {};
   headers = { ...headers, ...args.headers };
 
@@ -73,7 +73,7 @@ export const rtkApi = createApi({
       async queryFn(_arg, api, _baseQuery) {
         const auth = selectAuth(api.getState() as RootState);
         let headers: HttpHeaders = auth.accessToken
-          ? { Authorization: `Bearer: ${auth.accessToken}` }
+          ? { Authorization: `Bearer ${auth.accessToken}` }
           : {};
         try {
           return await firstValueFrom(unwrappedApi.listKits(headers));
