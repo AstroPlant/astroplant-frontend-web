@@ -57,8 +57,8 @@ export function DropdownDetails({
     <DropdownDetailsCloseContext.Provider value={close}>
       <details id={id} ref={details} className={style.dropdown}>
         <summary className={style.button} title={title}>
-          {icon && icon}
-          {label}
+          <span className={style.buttonIcon}>{icon && icon}</span>
+          <span className={style.buttonLabel}>{label}</span>
         </summary>
         <div className={clsx(style.menu, anchor === "right" && style.right)}>
           <header>

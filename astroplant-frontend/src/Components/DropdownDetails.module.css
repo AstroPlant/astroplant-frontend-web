@@ -7,6 +7,7 @@
 }
 
 .button {
+  max-width: 14rem;
   list-style: none;
   display: flex;
   align-items: center;
@@ -18,6 +19,18 @@
   font-size: 1rem;
   padding: 0.2rem 1rem;
   transition: background var(--fast-transition-time);
+}
+
+.buttonIcon {
+  flex-shrink: 0;
+  display: flex;
+}
+
+.buttonLabel {
+  overflow: hidden;
+  min-width: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .button:hover {
