@@ -94,7 +94,7 @@ export default function KitDetails() {
     navigate("");
   };
 
-  const canEditDetails = membership.map((m) => m.accessSuper).unwrapOr(false);
+  const canEditDetails = membership !== null && membership.accessSuper;
 
   return (
     <Container text>

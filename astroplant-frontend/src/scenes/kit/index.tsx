@@ -58,7 +58,7 @@ type Props = WithTranslation & {
 
 type InnerKitProps = {
   kitState: KitState;
-  membership: Option<KitMembership>;
+  membership: KitMembership | null;
 };
 
 type KitDashboardProps = WithTranslation & InnerKitProps;
@@ -119,13 +119,11 @@ function KitHeader({
 const KitDashboard = (props: KitDashboardProps) => {
   const { kitState, membership } = props;
 
-  const canConfigure = membership
-    .map((m) => m.accessSuper || m.accessConfigure)
-    .unwrapOr(false);
-  const canConfigureAccess = membership
-    .map((m) => m.accessSuper)
-    .unwrapOr(false);
-  const canQueryRpc = membership.map((m) => m.accessSuper).unwrapOr(false);
+  const canConfigure =
+    membership !== null &&
+    (membership.accessSuper || membership.accessConfigure);
+  const canConfigureAccess = membership !== null && membership.accessSuper;
+  const canQueryRpc = membership !== null && membership.accessSuper;
 
   const kit = kitState.details!;
   const configurations = useAppSelector((state) =>
@@ -189,10 +187,8 @@ const Kit = (props: Props) => {
   const kit = Option.from(
     useAppSelector((state) => kitSelectors.selectById(state, kitSerial)),
   );
-  const membership = Option.from(
-    useAppSelector((state) => state.me.kitMemberships[kitSerial]),
-  );
-
+  const membership =
+    useAppSelector((state) => state.me.kitMemberships[kitSerial]) ?? null;
   useEffect(() => {
     fetchKit({ serial: kitSerial });
   }, [kitSerial, fetchKit]);
