@@ -21,7 +21,7 @@ import {
 import ApiForm from "~/Components/ApiForm";
 import MapWithMarker from "~/Components/MapWithMarker";
 
-import { KitContext, MembershipContext } from "../contexts";
+import { KitContext, MembershipContext, PermissionsContext } from "../contexts";
 import { useAppDispatch } from "~/hooks";
 import { Response, api, schemas } from "~/api";
 import { Button } from "~/Components/Button";
@@ -36,7 +36,7 @@ export default function KitDetails() {
   const [done, setDone] = useState(false);
 
   const kit = useContext(KitContext);
-  const membership = useContext(MembershipContext);
+  const permissions = useContext(PermissionsContext);
 
   const kitDetails = useMemo(() => {
     return removeNull({
@@ -94,8 +94,6 @@ export default function KitDetails() {
     navigate("");
   };
 
-  const canEditDetails = membership !== null && membership.accessSuper;
-
   return (
     <Container text>
       <Segment padded>
@@ -136,7 +134,7 @@ export default function KitDetails() {
                   </>
                 )}
                 <div>
-                  {canEditDetails && (
+                  {permissions.editDetails && (
                     <Button variant="primary" onClick={() => navigate("edit")}>
                       Edit kit details
                     </Button>

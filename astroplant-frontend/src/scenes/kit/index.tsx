@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { useParams, Routes, Route, Navigate } from "react-router-dom";
@@ -31,11 +31,13 @@ import {
 } from "~/modules/kit/reducer";
 import { startWatching, stopWatching, fetchKit } from "~/modules/kit/actions";
 import { KitMembership } from "~/modules/me/reducer";
+import { KitPermissions, kitPermissionsFromMembership } from "~/permissions";
 
 import {
   KitContext,
   ConfigurationsContext,
   MembershipContext,
+  PermissionsContext,
 } from "./contexts";
 import { KitData } from "./kit-data";
 import { Configurations } from "./Configurations";
@@ -65,14 +67,10 @@ type KitDashboardProps = WithTranslation & InnerKitProps;
 
 function KitHeader({
   kit,
-  canConfigure: _,
-  canConfigureAccess,
-  canQueryRpc,
+  permissions,
 }: {
   kit: schemas["Kit"];
-  canConfigure: boolean;
-  canConfigureAccess: boolean;
-  canQueryRpc: boolean;
+  permissions: KitPermissions;
 }) {
   return (
     <header className={style.header}>
@@ -99,13 +97,13 @@ function KitHeader({
           <IconClipboard aria-hidden />
           Details
         </Menu.Item>
-        {canConfigureAccess && (
+        {permissions.resetPassword && (
           <Menu.Item link={{ to: "access" }}>
             <IconLockCog aria-hidden />
             Access
           </Menu.Item>
         )}
-        {canQueryRpc && (
+        {permissions.rpcPeripheralCommandLock && (
           <Menu.Item link={{ to: "rpc" }}>
             <IconPrompt aria-hidden />
             RPC
@@ -119,15 +117,14 @@ function KitHeader({
 const KitDashboard = (props: KitDashboardProps) => {
   const { kitState, membership } = props;
 
-  const canConfigure =
-    membership !== null &&
-    (membership.accessSuper || membership.accessConfigure);
-  const canConfigureAccess = membership !== null && membership.accessSuper;
-  const canQueryRpc = membership !== null && membership.accessSuper;
-
   const kit = kitState.details!;
   const configurations = useAppSelector((state) =>
     allConfigurationsOfKit(state, kit.serial),
+  );
+
+  const permissions = useMemo(
+    () => kitPermissionsFromMembership(membership),
+    [membership],
   );
 
   if (configurations === null) {
@@ -138,27 +135,27 @@ const KitDashboard = (props: KitDashboardProps) => {
     <KitContext.Provider value={kit}>
       <ConfigurationsContext.Provider value={configurations}>
         <MembershipContext.Provider value={membership}>
-          <KitHeader
-            kit={kit}
-            canConfigure={canConfigure}
-            canConfigureAccess={canConfigureAccess}
-            canQueryRpc={canQueryRpc}
-          />
-          <Container>
-            <Routes>
-              {/* redirect 404, or should an error message be given? */}
-              <Route path="*" element={<Navigate to="data" />} />
-              <Route path="/data/*" element={<KitData kitState={kitState} />} />
-              <Route
-                path="/configurations/*"
-                element={<Configurations kit={kitState} />}
-              />
-              <Route path="/details/*" element={<Details />} />
-              <Route path="/download" element={<Download />} />
-              <Route path="/access" element={<Access />} />
-              <Route path="/rpc" element={<Rpc />} />
-            </Routes>
-          </Container>
+          <PermissionsContext.Provider value={permissions}>
+            <KitHeader kit={kit} permissions={permissions} />
+            <Container>
+              <Routes>
+                {/* redirect 404, or should an error message be given? */}
+                <Route path="*" element={<Navigate to="data" />} />
+                <Route
+                  path="/data/*"
+                  element={<KitData kitState={kitState} />}
+                />
+                <Route
+                  path="/configurations/*"
+                  element={<Configurations kit={kitState} />}
+                />
+                <Route path="/details/*" element={<Details />} />
+                <Route path="/download" element={<Download />} />
+                <Route path="/access" element={<Access />} />
+                <Route path="/rpc" element={<Rpc />} />
+              </Routes>
+            </Container>
+          </PermissionsContext.Provider>
         </MembershipContext.Provider>
       </ConfigurationsContext.Provider>
     </KitContext.Provider>
