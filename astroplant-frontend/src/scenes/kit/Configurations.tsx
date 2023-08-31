@@ -154,7 +154,7 @@ function ConfigurationRow({
 }
 
 export function Configurations({ kit }: ConfigurationsProps) {
-  let configurations_ = useAppSelector((state) =>
+  const configurations_ = useAppSelector((state) =>
     configurationsById(state, kit.configurations),
   );
   const configurations: KitConfigurationState[] = useMemo(() => {
