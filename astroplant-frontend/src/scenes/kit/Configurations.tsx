@@ -154,6 +154,8 @@ function ConfigurationRow({
 }
 
 export function Configurations({ kit }: ConfigurationsProps) {
+  const permissions = useContext(PermissionsContext);
+
   const configurations_ = useAppSelector((state) =>
     configurationsById(state, kit.configurations),
   );
@@ -180,11 +182,13 @@ export function Configurations({ kit }: ConfigurationsProps) {
         path="/"
         element={
           <article>
-            <section className={style.top}>
-              <ButtonLink to="create" variant="primary">
-                New configuration
-              </ButtonLink>
-            </section>
+            {permissions.editConfiguration && (
+              <section className={style.top}>
+                <ButtonLink to="create" variant="primary">
+                  New configuration
+                </ButtonLink>
+              </section>
+            )}
             <section className={style.listContainer}>
               <header>
                 <h3>Active</h3>
