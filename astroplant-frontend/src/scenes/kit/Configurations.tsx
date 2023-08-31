@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useContext, useMemo } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
@@ -24,6 +24,7 @@ import {
   IconPlayerPlay,
   IconTrash,
 } from "@tabler/icons-react";
+import { PermissionsContext } from "./contexts";
 
 const ApiButton = apiButton<any>();
 
@@ -42,6 +43,7 @@ function ConfigurationRow({
 }) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const permissions = useContext(PermissionsContext);
 
   const onResponse = (response: Response<schemas["KitConfiguration"]>) => {
     dispatch(
@@ -96,7 +98,9 @@ function ConfigurationRow({
             size="small"
             to={`../../data/configuration?c=${configuration.id}`}
           >
-            {configuration.neverUsed ? "Edit" : "View"}
+            {permissions.editConfiguration && configuration.neverUsed
+              ? "Edit"
+              : "View"}
           </ButtonLink>
         </span>
         <span className={style.shortcuts}>
@@ -107,37 +111,41 @@ function ConfigurationRow({
           >
             <IconCopy aria-hidden size="1.5em" />
           </ButtonLink>
-          <ButtonLink
-            variant="text"
-            title="Delete this configuration"
-            to={`../../data/danger?c=${configuration.id}`}
-          >
-            <IconTrash aria-hidden size="1.5em" />
-          </ButtonLink>
-          {showActivate && (
-            <ApiButton
-              buttonProps={{
-                variant: "text",
-                title: "Activate this configuration",
-              }}
-              send={send}
-              onResponse={onResponse}
-              label={t("common.activate")}
-              confirm={() => ({
-                content: t(
-                  configuration.neverUsed
-                    ? "kitConfiguration.activateConfirmNeverUsed"
-                    : "kitConfiguration.activateConfirm",
-                  {
-                    kitName: kit.details?.name ?? "Unnamed kit",
-                    configurationDescription:
-                      configuration.description ?? "Unnamed configuration",
-                  },
-                ),
-              })}
-            >
-              <IconPlayerPlay aria-hidden size="1.5em" />
-            </ApiButton>
+          {permissions.editConfiguration && (
+            <>
+              <ButtonLink
+                variant="text"
+                title="Delete this configuration"
+                to={`../../data/danger?c=${configuration.id}`}
+              >
+                <IconTrash aria-hidden size="1.5em" />
+              </ButtonLink>
+              {showActivate && (
+                <ApiButton
+                  buttonProps={{
+                    variant: "text",
+                    title: "Activate this configuration",
+                  }}
+                  send={send}
+                  onResponse={onResponse}
+                  label={t("common.activate")}
+                  confirm={() => ({
+                    content: t(
+                      configuration.neverUsed
+                        ? "kitConfiguration.activateConfirmNeverUsed"
+                        : "kitConfiguration.activateConfirm",
+                      {
+                        kitName: kit.details?.name ?? "Unnamed kit",
+                        configurationDescription:
+                          configuration.description ?? "Unnamed configuration",
+                      },
+                    ),
+                  })}
+                >
+                  <IconPlayerPlay aria-hidden size="1.5em" />
+                </ApiButton>
+              )}
+            </>
           )}
         </span>
       </div>
