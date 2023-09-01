@@ -419,7 +419,7 @@ class Rules extends React.Component<Props, State> {
   render() {
     const {
       configuration,
-      readOnly: _, // TODO: handle read-only mode
+      readOnly,
       quantityTypes,
       peripheralDefinitions,
       peripherals,
@@ -515,6 +515,11 @@ class Rules extends React.Component<Props, State> {
             <IconTransferIn aria-hidden /> Inputs
           </Header>
 
+          {Object.keys(fuzzyControl.input).length === 0 && (
+            <p>
+              <strong>No inputs added.</strong>
+            </p>
+          )}
           {Object.entries(fuzzyControl.input).map(
             ([peripheralName, qtInput]) => (
               <Segment key={peripheralName}>
@@ -580,18 +585,25 @@ class Rules extends React.Component<Props, State> {
             })
             .unwrapOrNull()}
 
-          <AddInput
-            choices={undefinedPeripheralQuantityTypes}
-            add={(peripheral, quantityType) =>
-              this.addEmptyInput(peripheral, quantityType)
-            }
-          />
+          {!readOnly && (
+            <AddInput
+              choices={undefinedPeripheralQuantityTypes}
+              add={(peripheral, quantityType) =>
+                this.addEmptyInput(peripheral, quantityType)
+              }
+            />
+          )}
 
           <Divider />
           <Header as="h4" className="flex align-center gap-1">
             <IconTransferOut aria-hidden /> Outputs
           </Header>
 
+          {Object.keys(fuzzyControl.output).length === 0 && (
+            <p>
+              <strong>No outputs added.</strong>
+            </p>
+          )}
           {Object.entries(fuzzyControl.output).map(
             ([peripheralName, commandOutput]) => (
               <Segment key={peripheralName}>
@@ -663,20 +675,29 @@ class Rules extends React.Component<Props, State> {
             })
             .unwrapOrNull()}
 
-          <AddOutput
-            choices={undefinedPeripheralCommands}
-            add={(peripheral, command, schema) =>
-              this.addEmptyOutput(peripheral, command, schema)
-            }
-          />
+          {!readOnly && (
+            <AddOutput
+              choices={undefinedPeripheralCommands}
+              add={(peripheral, command, schema) =>
+                this.addEmptyOutput(peripheral, command, schema)
+              }
+            />
+          )}
 
           <Divider />
           <Header as="h4" className="flex align-center gap-1">
             <IconAdjustmentsHorizontal aria-hidden /> Rules
           </Header>
 
-          <p>{t("control.explanation")}</p>
+          <Message>
+            <p>{t("control.explanation")}</p>
+          </Message>
 
+          {fuzzyControl.rules.length === 0 && (
+            <p>
+              <strong>No rules created.</strong>
+            </p>
+          )}
           {fuzzyControl.rules.map((rule, index) => (
             <Segment key={index}>
               <Header as="h4">Rule #{index + 1}</Header>
@@ -749,23 +770,25 @@ class Rules extends React.Component<Props, State> {
             })
             .unwrapOrNull()}
 
-          <Button
-            variant="primary"
-            leftAdornment={<IconPlus aria-hidden />}
-            onClick={() => this.addEmptyRule()}
-          >
-            Add rule
-          </Button>
+          {!readOnly && (
+            <Button
+              variant="primary"
+              leftAdornment={<IconPlus aria-hidden />}
+              onClick={() => this.addEmptyRule()}
+            >
+              Add rule
+            </Button>
+          )}
         </Dimmer.Dimmable>
       );
     } else {
       return (
         <Button
           variant="primary"
-          leftAdornment={<Icon name="pencil" />}
+          leftAdornment={!readOnly && <Icon name="pencil" />}
           onClick={() => this.setState({ editing: true })}
         >
-          Edit rules
+          {readOnly ? "View rules" : "Edit rules"}
         </Button>
       );
     }
