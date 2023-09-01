@@ -13,7 +13,7 @@ import {
 } from "~/modules/kit/reducer";
 import { Button, ButtonLink } from "~/Components/Button";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useAppDispatch, useAppSelector } from "~/hooks";
 import { selectMe } from "~/modules/me/reducer";
 import { Select } from "~/Components/Select";
@@ -21,6 +21,7 @@ import { rtkApi } from "~/services/astroplant";
 import { kitConfigurationCreated } from "~/modules/kit/actions";
 
 import style from "./Configuration.module.css";
+import { PermissionsContext } from "../contexts";
 
 export type ConfigurationProps = {
   kit: KitState;
@@ -29,6 +30,7 @@ export type ConfigurationProps = {
 
 function InnerConfiguration({ kit, configuration }: ConfigurationProps) {
   const { t } = useTranslation();
+  const permissions = useContext(PermissionsContext);
 
   return (
     <Container>
@@ -61,7 +63,7 @@ function InnerConfiguration({ kit, configuration }: ConfigurationProps) {
         <Rules
           kit={kit.details!}
           configuration={configuration}
-          readOnly={!configuration.neverUsed}
+          readOnly={permissions.editConfiguration && !configuration.neverUsed}
         />
       </Container>
       <Divider />
