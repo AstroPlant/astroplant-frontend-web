@@ -39,12 +39,7 @@ function InnerConfiguration({ kit, configuration }: ConfigurationProps) {
         <Description
           kit={kit.details!}
           configuration={configuration}
-          readOnly={
-            /* The description can be changed as long as the person viewing
-             * this kit has the EditConfiguration permission.
-             * TODO: handle permissions on the frontend */
-            false
-          }
+          readOnly={!permissions.editConfiguration}
         />
       </Segment>
       <Container textAlign="right">
