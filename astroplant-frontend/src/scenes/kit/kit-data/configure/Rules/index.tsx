@@ -66,7 +66,7 @@ export type Props = WithTranslation & {
 };
 
 type State = {
-  editing: boolean;
+  expanded: boolean;
   loading: boolean;
   editingInput: Option<[schemas["Peripheral"], schemas["QuantityType"]]>;
   editingOutput: Option<[schemas["Peripheral"], string, JSONSchema7]>;
@@ -212,7 +212,7 @@ class Rules extends React.Component<Props, State> {
 
     const { configuration } = this.props;
     this.state = {
-      editing: false,
+      expanded: false,
       loading: false,
       editingInput: Option.none(),
       editingOutput: Option.none(),
@@ -224,7 +224,7 @@ class Rules extends React.Component<Props, State> {
 
   onResponse(response: Response<schemas["KitConfiguration"]>) {
     const { kit } = this.props;
-    this.setState({ editing: false });
+    this.setState({ expanded: false });
     this.props.kitConfigurationUpdated({
       serial: kit.serial,
       configuration: response.data,
@@ -484,7 +484,7 @@ class Rules extends React.Component<Props, State> {
       }
     }
 
-    if (this.state.editing) {
+    if (this.state.expanded) {
       for (const peripheral of Object.values(configuration.peripherals).map(
         (id) => peripherals[id]!,
       )) {
@@ -786,7 +786,7 @@ class Rules extends React.Component<Props, State> {
         <Button
           variant="primary"
           leftAdornment={!readOnly && <Icon name="pencil" />}
-          onClick={() => this.setState({ editing: true })}
+          onClick={() => this.setState({ expanded: true })}
         >
           {readOnly ? "View rules" : "Edit rules"}
         </Button>
