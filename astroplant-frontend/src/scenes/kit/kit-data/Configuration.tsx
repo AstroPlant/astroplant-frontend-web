@@ -58,7 +58,7 @@ function InnerConfiguration({ kit, configuration }: ConfigurationProps) {
         <Rules
           kit={kit.details!}
           configuration={configuration}
-          readOnly={permissions.editConfiguration && !configuration.neverUsed}
+          readOnly={!permissions.editConfiguration || !configuration.neverUsed}
         />
       </Container>
       <Divider />
