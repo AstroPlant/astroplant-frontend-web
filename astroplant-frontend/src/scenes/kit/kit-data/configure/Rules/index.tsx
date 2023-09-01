@@ -499,18 +499,22 @@ class Rules extends React.Component<Props, State> {
           <Dimmer active={this.state.loading}>
             <Loader />
           </Dimmer>
-          <Message warning>
-            <Message.Header>Note</Message.Header>
-            <p>
-              If you change this configuration's peripherals, existing rules are
-              not automatically updated. This is a known limitation, and can be
-              improved in the future.
-            </p>
-            <p>
-              This version of the control system requires kit version{" "}
-              <strong>1.0.0b7</strong> or higher.
-            </p>
-          </Message>
+
+          {!readOnly && (
+            <Message warning>
+              <Message.Header>Note</Message.Header>
+              <p>
+                If you change this configuration's peripherals, existing rules
+                are not automatically updated. This is a known limitation, and
+                can be improved in the future.
+              </p>
+              <p>
+                This version of the control system requires kit version{" "}
+                <strong>1.0.0b7</strong> or higher.
+              </p>
+            </Message>
+          )}
+
           <Header as="h4" className="flex align-center gap-1">
             <IconTransferIn aria-hidden /> Inputs
           </Header>
