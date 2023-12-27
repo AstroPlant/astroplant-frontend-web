@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Button, Select, Image, Segment } from "semantic-ui-react";
+import { Select, Image, Segment } from "semantic-ui-react";
 import validator from "@rjsf/validator-ajv8";
 
 import {
@@ -9,6 +9,7 @@ import {
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { api } from "~/api";
 import PeripheralDefinitionCard from "~/Components/PeripheralDefinitionCard";
+import { Button } from "~/Components/Button";
 import RjsfForm from "~/rjsf-theme";
 
 import { KitContext, ConfigurationsContext } from "../contexts";
@@ -92,7 +93,7 @@ export default function PeripheralCommand(props: Props) {
             onSubmit={({ formData }) => sendPeripheralCommand(formData)}
             validator={validator}
           >
-            <Button type="submit" primary>
+            <Button type="submit" variant="positive">
               Send command to kit
             </Button>
           </RjsfForm>
