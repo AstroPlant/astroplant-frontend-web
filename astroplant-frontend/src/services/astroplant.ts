@@ -124,6 +124,12 @@ export const rtkApi = createApi({
         query: params,
       }),
     }),
+    deleteConfiguration: build.mutation<void, { configurationId: number }>({
+      query: ({ configurationId }) => ({
+        path: `/kit-configurations/${encodeUri(configurationId)}`,
+        method: "DELETE",
+      }),
+    }),
   }),
 });
 

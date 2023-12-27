@@ -12,6 +12,7 @@ import { ConfigurationSelector } from "./ConfigurationSelector";
 import ViewConfiguration from "./Configuration";
 
 import style from "./index.module.css";
+import { Danger } from "./Danger";
 
 export type Props = {
   kitState: KitState;
@@ -84,6 +85,12 @@ export function KitData({ kitState }: Props) {
           path="/configuration/*"
           element={
             <ViewConfiguration kit={kitState} configuration={configuration} />
+          }
+        />
+        <Route
+          path="/danger"
+          element={
+            <Danger kit={kitState} configuration={configuration} />
           }
         />
       </Routes>
