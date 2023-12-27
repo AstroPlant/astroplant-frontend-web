@@ -33,6 +33,12 @@ export const kitConfigurationCreated = createAction<{
   configuration: schemas["KitConfiguration"];
 }>("kit/KIT_CONFIGURATION_CREATED");
 
+export const kitConfigurationDeleted = createAction<{
+  serial: string;
+  kitId: number;
+  kitConfigurationId: number;
+}>("kit/KIT_CONFIGURATION_DELETED");
+
 export const kitSetAllConfigurationsInactive = createAction<{
   serial: string;
   kitId: number;

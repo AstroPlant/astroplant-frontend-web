@@ -102,6 +102,17 @@ const kitsSlice = createSlice({
           kit.configurations.push(action.payload.configuration.id);
         }
       })
+      .addCase(actions.kitConfigurationDeleted, (state, action) => {
+        const kit = state.entities[action.payload.serial];
+        if (kit !== undefined) {
+          const idx = kit.configurations.indexOf(
+            action.payload.kitConfigurationId,
+          );
+          if (idx !== -1) {
+            kit.configurations.splice(idx, 1);
+          }
+        }
+      })
       .addCase(actions.kitConfigurationsRequest, (state, action) => {
         kitsAdapter.updateOne(state, {
           id: action.payload.serial,
@@ -164,6 +175,12 @@ const configurationsSlice = createSlice({
           changes: action.payload.configuration,
         });
       })
+      .addCase(actions.kitConfigurationDeleted, (state, action) => {
+        configurationsAdapter.removeOne(
+          state,
+          action.payload.kitConfigurationId,
+        );
+      })
       .addCase(actions.kitSetAllConfigurationsInactive, (state, action) => {
         // O-linear time in the number of loaded configurations regardless of
         // the number of kits. Not very efficient if many kits are loaded.
@@ -212,6 +229,18 @@ const peripheralsSlice = createSlice({
       })
       .addCase(actions.peripheralDeleted, (state, action) => {
         peripheralsAdapter.removeOne(state, action.payload.peripheralId);
+      })
+      .addCase(actions.kitConfigurationDeleted, (state, action) => {
+        // Find peripherals belonging to the given configuration
+        const ids = Object.values(state.entities)
+          .filter(
+            (peripheral) =>
+              peripheral?.kitConfigurationId ===
+              action.payload.kitConfigurationId,
+          )
+          .map((peripheral) => peripheral!.id);
+
+        peripheralsAdapter.removeMany(state, ids);
       }),
 });
 
