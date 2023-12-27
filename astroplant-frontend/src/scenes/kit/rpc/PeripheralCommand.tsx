@@ -85,6 +85,7 @@ export default function PeripheralCommand(props: Props) {
           <h3>Command</h3>
           <RjsfForm
             key={0}
+            idPrefix="peripheralCommandForm"
             schema={peripheralDefinition.commandSchema!}
             onChange={({ formData }) => setFormData(formData)}
             formData={formData}
