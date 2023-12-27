@@ -35,6 +35,9 @@ export function Danger({ kit, configuration }: DangerProps) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  // TODO: perhaps we should navigate away from this UI on kit/configuration
+  // change to help prevent some user mistakes.
+
   const canDelete = useMemo(
     () => delete_.toLowerCase() === "delete",
     [delete_],
