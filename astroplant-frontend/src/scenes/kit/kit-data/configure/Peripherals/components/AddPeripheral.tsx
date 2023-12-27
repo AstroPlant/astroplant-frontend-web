@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Modal, Card, Header, Transition } from "semantic-ui-react";
+import { Card, Header, Transition } from "semantic-ui-react";
 
 import { KitConfigurationState } from "~/modules/kit/reducer";
 import { peripheralCreated } from "~/modules/kit/actions";
@@ -16,6 +16,7 @@ import { Button } from "~/Components/Button";
 import { IconCheck, IconCircleCheck, IconPlus } from "@tabler/icons-react";
 
 import style from "./AddPeripheral.module.css";
+import { ModalDialog } from "~/Components/ModalDialog";
 
 export type Props = {
   kit: schemas["Kit"];
@@ -137,38 +138,38 @@ export default function AddPeripheral({ kit, configuration }: Props) {
   const closeEasily = done || peripheralDefinition === null;
 
   return (
-    <Modal
-      trigger={
-        <Button
-          variant="primary"
-          onClick={handleOpen}
-          leftAdornment={<IconPlus aria-hidden />}
-        >
-          Add a peripheral
-        </Button>
-      }
-      closeOnEscape={closeEasily}
-      closeOnDimmerClick={closeEasily}
-      open={open}
-      onClose={handleClose}
-    >
-      <Modal.Header>Add a peripheral</Modal.Header>
-      <Modal.Content>{content}</Modal.Content>
-      <Modal.Actions>
-        {done ? (
-          <Button
-            variant="positive"
-            onClick={handleClose}
-            leftAdornment={<IconCheck aria-hidden />}
-          >
-            Ok
-          </Button>
-        ) : (
-          <Button variant="negative" onClick={handleClose}>
-            Cancel
-          </Button>
-        )}
-      </Modal.Actions>
-    </Modal>
+    <>
+      <Button
+        variant="primary"
+        onClick={() => setOpen(true)}
+        leftAdornment={<IconPlus aria-hidden />}
+      >
+        Add a peripheral
+      </Button>
+      <ModalDialog
+        open={open}
+        onClose={handleClose}
+        header="Add a peripheral"
+        actions={
+          <>
+            {done ? (
+              <Button
+                variant="positive"
+                onClick={handleClose}
+                leftAdornment={<IconCheck aria-hidden />}
+              >
+                Ok
+              </Button>
+            ) : (
+              <Button variant="negative" onClick={handleClose}>
+                Cancel
+              </Button>
+            )}
+          </>
+        }
+      >
+        {content}
+      </ModalDialog>
+    </>
   );
 }
