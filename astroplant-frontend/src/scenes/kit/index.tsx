@@ -139,7 +139,7 @@ const KitDashboard = (props: KitDashboardProps) => {
             <KitHeader kit={kit} permissions={permissions} />
             <Routes>
               {/* redirect 404, or should an error message be given? */}
-              <Route path="*" element={<Navigate to="data" />} />
+              <Route path="*" element={<Navigate to="data" replace />} />
               <Route path="/data/*" element={<KitData kitState={kitState} />} />
               <Route
                 path="/configurations/*"
