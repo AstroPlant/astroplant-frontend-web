@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import { useId, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Card, Icon } from "semantic-ui-react";
+import { IconLock } from "@tabler/icons-react";
 
 import ApiButton from "~/Components/ApiButton";
 import { Input } from "~/Components/Input";
@@ -13,6 +13,8 @@ export type Props = {
 const Button = ApiButton<any>();
 
 export default function ResetPassword({ kit }: Props) {
+  const id = useId();
+
   const { t } = useTranslation();
   const [password, setPassword] = useState<string | null>(null);
 
@@ -29,33 +31,35 @@ export default function ResetPassword({ kit }: Props) {
   const kitName = kit.name || "Unnamed";
 
   return (
-    <Card color="orange" centered raised fluid>
-      <Card.Content>
-        <Card.Header>Kit password</Card.Header>
-        <Card.Description>
-          {password ? (
-            <Input
-              fullWidth
-              leftAdornment={<Icon name="lock" inverted circular link />}
-              value={password || ""}
-              onClick={(ev: any) => ev.target.select()}
-              readOnly
-            />
-          ) : (
-            <Button
-              send={send}
-              onResponse={onResponse}
-              label={t("kitAccess.resetPassword")}
-              buttonProps={{ variant: "negative" }}
-              confirm={() => ({
-                content: t("kitAccess.resetPasswordConfirm", {
-                  kitName,
-                }),
-              })}
-            />
-          )}
-        </Card.Description>
-      </Card.Content>
-    </Card>
+    <>
+      <div>
+        <label htmlFor={id}>
+          <strong>Kit password</strong>
+        </label>
+      </div>
+      {password ? (
+        <Input
+          id={id}
+          fullWidth
+          leftAdornment={<IconLock />}
+          value={password || ""}
+          onClick={(ev: any) => ev.target.select()}
+          readOnly
+        />
+      ) : (
+        <Button
+          id={id}
+          send={send}
+          onResponse={onResponse}
+          label={t("kitAccess.resetPassword")}
+          buttonProps={{ variant: "negative" }}
+          confirm={() => ({
+            content: t("kitAccess.resetPasswordConfirm", {
+              kitName,
+            }),
+          })}
+        />
+      )}
+    </>
   );
 }
