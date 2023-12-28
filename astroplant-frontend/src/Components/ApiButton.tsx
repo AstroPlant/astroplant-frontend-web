@@ -29,6 +29,7 @@ type State = {
 };
 
 export type Props<R> = React.PropsWithChildren<{
+  id?: string;
   send: () => Observable<R>;
   onResponse: (response: R) => void;
   label?: string;
@@ -110,6 +111,7 @@ class ApiButton<R = any> extends Component<AllProps<R>, State> {
     return (
       <>
         <Button
+          id={this.props.id}
           {...this.props.buttonProps}
           onClick={(e) => {
             e.preventDefault();
