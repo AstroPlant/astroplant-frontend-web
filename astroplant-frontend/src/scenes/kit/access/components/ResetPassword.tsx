@@ -6,6 +6,8 @@ import ApiButton from "~/Components/ApiButton";
 import { Input } from "~/Components/Input";
 import { api, Response, schemas } from "~/api";
 
+import style from "./style.module.css";
+
 export type Props = {
   kit: schemas["Kit"];
 };
@@ -31,11 +33,17 @@ export default function ResetPassword({ kit }: Props) {
   const kitName = kit.name || "Unnamed";
 
   return (
-    <>
+    <section className={style.item}>
       <div>
-        <label htmlFor={id}>
-          <strong>Kit password</strong>
-        </label>
+        <div>
+          <label htmlFor={id}>
+            <strong>Kit password</strong>
+          </label>
+        </div>
+        <p>
+          Generate a new password for the kit. The kit won't be able to connect
+          with the old password anymore.
+        </p>
       </div>
       {password ? (
         <Input
@@ -60,6 +68,6 @@ export default function ResetPassword({ kit }: Props) {
           })}
         />
       )}
-    </>
+    </section>
   );
 }
