@@ -1,5 +1,5 @@
 import { useId, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { IconLock } from "@tabler/icons-react";
 
 import ApiButton from "~/Components/ApiButton";
@@ -62,9 +62,11 @@ export default function ResetPassword({ kit }: Props) {
           label={t("kitAccess.resetPassword")}
           buttonProps={{ variant: "negative" }}
           confirm={() => ({
-            content: t("kitAccess.resetPasswordConfirm", {
-              kitName,
-            }),
+            content: (
+              <Trans i18nKey="kitAccess.resetPasswordConfirm">
+                {{ kitName }}
+              </Trans>
+            ),
           })}
         />
       )}

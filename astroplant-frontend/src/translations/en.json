@@ -111,8 +111,8 @@
       "activateConfirm": "Are you sure you wish to activate configuration {{configurationDescription}} of kit {{kitName}}? If any other configuration is active, that one will be deactivated."
     },
     "kitAccess": {
-      "resetPassword": "Reset Kit password",
-      "resetPasswordConfirm": "Are you sure you wish to reset the password of kit {{kitName}}? Your kit will be unable to connect until you update the credentials on the kit."
+      "resetPassword": "Reset kit password",
+      "resetPasswordConfirm": "Are you sure you wish to reset the password of kit <strong>{{kitName}}</strong>? Your kit will be unable to connect until you update the credentials on the kit."
     },
     "control": {
       "header": "Control",
