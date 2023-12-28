@@ -137,24 +137,19 @@ const KitDashboard = (props: KitDashboardProps) => {
         <MembershipContext.Provider value={membership}>
           <PermissionsContext.Provider value={permissions}>
             <KitHeader kit={kit} permissions={permissions} />
-            <Container>
-              <Routes>
-                {/* redirect 404, or should an error message be given? */}
-                <Route path="*" element={<Navigate to="data" />} />
-                <Route
-                  path="/data/*"
-                  element={<KitData kitState={kitState} />}
-                />
-                <Route
-                  path="/configurations/*"
-                  element={<Configurations kit={kitState} />}
-                />
-                <Route path="/details/*" element={<Details />} />
-                <Route path="/download" element={<Download />} />
-                <Route path="/access" element={<Access />} />
-                <Route path="/rpc" element={<Rpc />} />
-              </Routes>
-            </Container>
+            <Routes>
+              {/* redirect 404, or should an error message be given? */}
+              <Route path="*" element={<Navigate to="data" />} />
+              <Route path="/data/*" element={<KitData kitState={kitState} />} />
+              <Route
+                path="/configurations/*"
+                element={<Configurations kit={kitState} />}
+              />
+              <Route path="/details/*" element={<Details />} />
+              <Route path="/download" element={<Download />} />
+              <Route path="/access" element={<Access />} />
+              <Route path="/rpc" element={<Rpc />} />
+            </Routes>
           </PermissionsContext.Provider>
         </MembershipContext.Provider>
       </ConfigurationsContext.Provider>

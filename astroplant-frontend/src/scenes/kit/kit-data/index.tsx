@@ -11,6 +11,7 @@ import Media from "./Media";
 import { ConfigurationSelector } from "./ConfigurationSelector";
 import ViewConfiguration from "./Configuration";
 
+import commonStyle from "~/Common.module.css";
 import style from "./index.module.css";
 import { Danger } from "./Danger";
 
@@ -98,7 +99,7 @@ export function KitData({ kitState }: Props) {
   }
 
   return (
-    <section>
+    <section className={commonStyle.containerWide}>
       <header className={style.header}>
         <nav className={style.navigation}>
           <ConfigurationSelector chosenConfiguration={configuration} />
