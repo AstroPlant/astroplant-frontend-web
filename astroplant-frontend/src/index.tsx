@@ -21,6 +21,9 @@ i18n
     interpolation: {
       escapeValue: false,
     },
+    react: {
+      transSupportBasicHtmlNodes: true,
+    },
   });
 
 store.dispatch(actions.pageInitializationSuccess());
