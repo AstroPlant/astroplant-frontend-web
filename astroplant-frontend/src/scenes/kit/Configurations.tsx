@@ -16,6 +16,7 @@ import {
 } from "~/modules/kit/actions";
 import { ButtonLink } from "~/Components/Button";
 
+import commonStyle from "~/Common.module.css";
 import style from "./Configurations.module.css";
 import CreateConfiguration from "./CreateConfiguration";
 import {
@@ -181,7 +182,7 @@ export function Configurations({ kit }: ConfigurationsProps) {
       <Route
         path="/"
         element={
-          <article>
+          <article className={commonStyle.containerWide}>
             {permissions.editConfiguration && (
               <section className={style.top}>
                 <ButtonLink to="create" variant="primary">
