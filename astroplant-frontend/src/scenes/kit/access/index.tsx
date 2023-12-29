@@ -5,6 +5,7 @@ import commonStyle from "~/Common.module.css";
 import { KitContext } from "../contexts";
 import KitSerial from "./components/KitSerial";
 import ResetPassword from "./components/ResetPassword";
+import DeleteKit from "./components/DeleteKit";
 
 import style from "./index.module.css";
 
@@ -19,6 +20,9 @@ export default function KitConfigure() {
       <ul className={style.danger}>
         <li>
           <ResetPassword kit={kit} />
+        </li>
+        <li>
+          <DeleteKit kit={kit} />
         </li>
       </ul>
     </section>

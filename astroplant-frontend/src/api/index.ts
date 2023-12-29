@@ -497,6 +497,21 @@ export class Api extends BaseApi {
   };
 
   /**
+   * Delete a kit.
+   * @throws {ErrorResponse}
+   */
+  deleteKit = ({
+    kitSerial,
+  }: {
+    kitSerial: string;
+  }): Observable<Response<void>> => {
+    return this.request({
+      path: `/kits/${encodeURI(kitSerial)}`,
+      method: "DELETE",
+    });
+  };
+
+  /**
    * Update a peripheral.
    * @throws {ErrorResponse}
    */

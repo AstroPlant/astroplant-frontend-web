@@ -112,7 +112,9 @@
     },
     "kitAccess": {
       "resetPassword": "Reset kit password",
-      "resetPasswordConfirm": "Are you sure you wish to reset the password of kit <strong>{{kitName}}</strong>? Your kit will be unable to connect until you update the credentials on the kit."
+      "resetPasswordConfirm": "Are you sure you wish to reset the password of kit <strong>{{kitName}}</strong>? Your kit will be unable to connect until you update the credentials on the kit.",
+      "deleteKit": "Delete this Kit",
+      "deleteKitConfirm": "Are you sure you wish to delete kit <strong>{{kitName}}</strong>? This will permanently delete all data associated with the kit, including measurements and media. <strong>This cannot be undone.</strong>"
     },
     "control": {
       "header": "Control",
