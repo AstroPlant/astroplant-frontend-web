@@ -96,6 +96,9 @@ const kitsSlice = createSlice({
           },
         });
       })
+      .addCase(actions.deleteKit, (state, action) => {
+        kitsAdapter.removeOne(state, action.payload.serial);
+      })
       .addCase(actions.kitConfigurationCreated, (state, action) => {
         const kit = state.entities[action.payload.serial];
         if (kit !== undefined) {
@@ -202,6 +205,15 @@ const configurationsSlice = createSlice({
             (id) => id !== action.payload.peripheralId,
           );
         }
+      })
+      .addCase(actions.deleteKit, (state, action) => {
+        const ids = Object.values(state.entities)
+          .filter(
+            (configuration) => configuration?.kitId === action.payload.kitId,
+          )
+          .map((configuration) => configuration!.id);
+
+        configurationsAdapter.removeMany(state, ids);
       }),
 });
 
@@ -238,6 +250,13 @@ const peripheralsSlice = createSlice({
               peripheral?.kitConfigurationId ===
               action.payload.kitConfigurationId,
           )
+          .map((peripheral) => peripheral!.id);
+
+        peripheralsAdapter.removeMany(state, ids);
+      })
+      .addCase(actions.deleteKit, (state, action) => {
+        const ids = Object.values(state.entities)
+          .filter((peripheral) => peripheral?.kitId === action.payload.kitId)
           .map((peripheral) => peripheral!.id);
 
         peripheralsAdapter.removeMany(state, ids);
