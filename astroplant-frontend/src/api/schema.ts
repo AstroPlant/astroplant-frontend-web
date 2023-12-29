@@ -43,6 +43,8 @@ export interface paths {
   "/kits/{kitSerial}": {
     /** Info for a specific kit. */
     get: operations["showKitBySerial"];
+    /** Delete a kit. */
+    delete: operations["deleteKit"];
     /** Update the kit details. */
     patch: operations["patchKit"];
   };
@@ -578,6 +580,15 @@ export interface operations {
       500: components["responses"]["ErrorInternalServer"];
     };
   };
+  /** Delete a kit. */
+  deleteKit: {
+    parameters: {
+      path: {
+        /** @description The serial of the kit to patch. */
+        kitSerial: string;
+      };
+    };
+  };
   /** Update the kit details. */
   patchKit: {
     parameters: {
@@ -594,7 +605,7 @@ export interface operations {
     };
     responses: {
       /** @description The patched kit. */
-      201: {
+      200: {
         content: {
           "application/json": components["schemas"]["Kit"];
         };
@@ -763,7 +774,7 @@ export interface operations {
   createConfiguration: {
     parameters: {
       query?: {
-        /** @description The id of the source configuration to clone. If this is set, the request body must not be set. */
+        /** @description The id of the source configuration to clone. If this is set, the request body must not be set. The id is allowed to be of a configuration of a kit other than specified in `kitSerial`, but the agent making the request must have View permission on the kit to clone from. */
         source?: string;
       };
       path: {
@@ -1044,7 +1055,7 @@ export interface operations {
     };
     responses: {
       /** @description The patched kit configuration. */
-      201: {
+      200: {
         content: {
           "application/json": components["schemas"]["KitConfiguration"];
         };
