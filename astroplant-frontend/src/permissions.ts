@@ -1,6 +1,7 @@
 import { KitMembership } from "~/modules/me/reducer";
 
 export interface KitPermissions {
+  deleteMedia: boolean;
   resetPassword: boolean;
   editDetails: boolean;
   editConfiguration: boolean;
@@ -13,6 +14,7 @@ export interface KitPermissions {
 }
 
 export const NO_PERMISSIONS: KitPermissions = {
+  deleteMedia: false,
   resetPassword: false,
   editDetails: false,
   editConfiguration: false,
@@ -35,6 +37,7 @@ export function kitPermissionsFromMembership(
   // This corresponds to
   // https://github.com/AstroPlant/astroplant-api/blob/3cc10c726b1d1cbb4185193d756febe19a0c8e09/astroplant-api/src/authorization/mod.rs#L39-L81
   return {
+    deleteMedia: accessConfigure,
     resetPassword: accessSuper,
     editDetails: accessConfigure,
     editConfiguration: accessConfigure,

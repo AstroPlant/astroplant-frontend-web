@@ -617,6 +617,21 @@ export class Api extends BaseApi {
   };
 
   /**
+   * Delete media.
+   * @throws {ErrorResponse}
+   */
+  deleteMedia = ({
+    mediaId,
+  }: {
+    mediaId: string;
+  }): Observable<Response<void>> => {
+    return this.request({
+      path: `/media/${encodeURI(mediaId)}`,
+      method: "DELETE",
+    });
+  };
+
+  /**
    * @throws {ErrorResponse}
    */
   getMediaContent = ({

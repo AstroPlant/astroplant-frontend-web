@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Container, Image, Table } from "semantic-ui-react";
 import { DateTime } from "luxon";
+import { IconTrash } from "@tabler/icons-react";
 
 import RelativeTime from "~/Components/RelativeTime";
 import Loading from "~/Components/Loading";
@@ -12,9 +13,18 @@ import {
 import { api, schemas } from "~/api";
 import { rtkApi } from "~/services/astroplant";
 import { firstValueFrom } from "rxjs";
-import { useAppSelector } from "~/hooks";
+import { useAppDispatch, useAppSelector } from "~/hooks";
+import { default as apiButton } from "~/Components/ApiButton";
 import { Button } from "~/Components/Button";
 import { ModalDialog } from "~/Components/ModalDialog";
+
+import { PermissionsContext } from "../contexts";
+
+import style from "./Media.module.css";
+import { notificationSuccess } from "~/modules/notification";
+import { addNotificationRequest } from "~/modules/notification/actions";
+
+const ApiButton = apiButton<any>();
 
 export type Props = {
   kitState: KitState;
@@ -23,11 +33,14 @@ export type Props = {
 
 export default function Media({ kitState, configuration }: Props) {
   const peripherals = useAppSelector(peripheralSelectors.selectEntities);
+  const permissions = useContext(PermissionsContext);
+  const dispatch = useAppDispatch();
 
   const {
     data: mediaList,
     error: mediaListError,
     isLoading: mediaListIsLoading,
+    refetch,
   } = rtkApi.useListMediaQuery({
     kitSerial: kitState.details!.serial,
     configuration: configuration.id,
@@ -151,7 +164,7 @@ export default function Media({ kitState, configuration }: Props) {
                   <Table.Cell>{media.name}</Table.Cell>
                   <Table.Cell>{media.type}</Table.Cell>
                   <Table.Cell>{media.size}</Table.Cell>
-                  <Table.Cell>
+                  <Table.Cell className={style.buttons}>
                     {/*
                     <Button
                       color="olive"
@@ -163,12 +176,45 @@ export default function Media({ kitState, configuration }: Props) {
                     </Button>*/}
                     {displayable && (
                       <Button
+                        size="small"
                         onClick={() => setDisplayMedia(media)}
                         disabled={disabled}
                         loading={loading}
                       >
                         Display
                       </Button>
+                    )}
+                    {permissions.deleteMedia && (
+                      <ApiButton
+                        buttonProps={{
+                          variant: "text",
+                          onClick: () => setDisplayMedia(media),
+                          title: "Delete this media",
+                        }}
+                        confirm={() => ({
+                          content: (
+                            <>
+                              Are you sure you wish to permanently delete this
+                              media? <strong>This cannot be undone.</strong>
+                            </>
+                          ),
+                        })}
+                        send={() =>
+                          api.deleteMedia({
+                            mediaId: media.id,
+                          })
+                        }
+                        onResponse={(_response) => {
+                          refetch();
+                          const notification = notificationSuccess(
+                            "Media deleted",
+                            "The media was successfully deleted.",
+                          );
+                          dispatch(addNotificationRequest(notification));
+                        }}
+                      >
+                        <IconTrash aria-hidden size="1.5em" />
+                      </ApiButton>
                     )}
                   </Table.Cell>
                 </Table.Row>
