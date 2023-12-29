@@ -134,6 +134,10 @@ export interface paths {
     /** Update a peripheral. */
     patch: operations["patchPeripheral"];
   };
+  "/media/{mediaId}": {
+    /** Delete media. */
+    delete: operations["deleteMedia"];
+  };
   "/media/{mediaId}/content": {
     /** Download media content. */
     get: operations["getMediaContent"];
@@ -1136,6 +1140,26 @@ export interface operations {
       /** @description The peripheral has been deleted. */
       200: never;
       400: components["responses"]["InvalidJson"];
+      401: components["responses"]["ErrorUnauthorized"];
+      429: components["responses"]["ErrorRateLimit"];
+      500: components["responses"]["ErrorInternalServer"];
+    };
+  };
+  /** Delete media. */
+  deleteMedia: {
+    parameters: {
+      path: {
+        /** @description The id of the media to delete. */
+        mediaId: string;
+      };
+    };
+    responses: {
+      /** @description The media was successfully deleted. */
+      200: {
+        content: {
+          "*": unknown;
+        };
+      };
       401: components["responses"]["ErrorUnauthorized"];
       429: components["responses"]["ErrorRateLimit"];
       500: components["responses"]["ErrorInternalServer"];
