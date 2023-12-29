@@ -588,6 +588,14 @@ export interface operations {
         kitSerial: string;
       };
     };
+    responses: {
+      /** @description The kit was successfully deleted. */
+      200: never;
+      400: components["responses"]["InvalidJson"];
+      401: components["responses"]["ErrorUnauthorized"];
+      429: components["responses"]["ErrorRateLimit"];
+      500: components["responses"]["ErrorInternalServer"];
+    };
   };
   /** Update the kit details. */
   patchKit: {
