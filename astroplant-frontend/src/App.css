@@ -69,8 +69,8 @@
   --danger-color: oklch(45% 0.120 28.8);
 
   --outline-color: var(--slate-400);
-  --theme: #35ef7f;
-  --theme-dark: #37e07b;
+  --theme: oklch(80% 0.11 151.19);
+  --theme-dark: oklch(68% 0.11 151.19);
 
   --link-color: oklch(52% 0.14 151.19);
   --link-gray-hover-color: oklch(50% 0.0 151.19);

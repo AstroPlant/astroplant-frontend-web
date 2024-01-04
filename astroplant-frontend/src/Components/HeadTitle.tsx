@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import { Component } from "react";
 import { Grid, Container } from "semantic-ui-react";
 
 type HeadTitleProps = {
