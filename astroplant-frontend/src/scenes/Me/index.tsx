@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Container, Divider, Card, Image, Header } from "semantic-ui-react";
-
-import { RootState } from "~/types";
+import { Card, Image } from "semantic-ui-react";
 
 import {
   withAuthentication,
@@ -14,6 +12,11 @@ import PlaceholderSegment from "~/Components/PlaceholderSegment";
 import { useAppSelector } from "~/hooks";
 import { selectMe } from "~/modules/me/reducer";
 import { kitSelectors } from "~/modules/kit/reducer";
+
+import commonStyle from "~/Common.module.css";
+import style from "./index.module.css";
+import { KitAvatar } from "~/Components/KitAvatar";
+import { Badge } from "~/Components/Badge";
 
 type Props = WithAuthentication;
 
@@ -30,50 +33,45 @@ function Me({ me }: Props) {
           displayName: me.displayName,
         })}
       />
-      <Container text style={{ marginTop: "1em" }}>
-        <Header size="large">Your kits</Header>
+      <section
+        className={commonStyle.containerRegular}
+        style={{ marginTop: "1em" }}
+      >
+        <h2>Your kits</h2>
         {Object.keys(kitMemberships).length > 0 || loadingKitMemberships ? (
           <>
             <p>
               <Link to="/create-kit">Create another.</Link>
             </p>
-            {Object.keys(kitMemberships).length > 0 && (
-              <Card.Group>
-                {Object.keys(kitMemberships).map((serial) => {
-                  const kitState = kitStates[serial];
-                  return (
-                    <Card
-                      fluid
-                      key={serial}
-                      color="orange"
-                      as={Link}
-                      to={`/kit/${serial}`}
-                    >
-                      <Card.Content>
-                        <Image floated="right" size="mini">
-                          <Gravatar identifier={serial} />
-                        </Image>
-                        <Card.Header>
-                          {kitState
-                            ? kitState.details?.name ?? t("kit.unnamed")
-                            : "Loading"}
-                        </Card.Header>
-                        <Card.Meta>Serial: {serial}</Card.Meta>
-                      </Card.Content>
-                    </Card>
-                  );
-                })}
-              </Card.Group>
-            )}
+            <ul className={style.kitList}>
+              {Object.keys(kitMemberships).map((serial) => {
+                const kitState = kitStates[serial];
+                return (
+                  <li key={serial}>
+                    <KitAvatar serial={serial} />
+                    <div>
+                      <header className={style.itemHeader}>
+                        <Link to={`/kit/${serial}`}>
+                          <h3>{kitState?.details?.name ?? t("kit.unnamed")}</h3>
+                        </Link>
+                        {kitState?.details?.privacyPublicDashboard && (
+                          <Badge variant="muted" size="small" text="Public" />
+                        )}
+                      </header>
+                      <p>{serial}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
             {loadingKitMemberships && <PlaceholderSegment />}
           </>
         ) : (
-          <div>
+          <p>
             You have no kits yet.{" "}
             <Link to="/create-kit">You can create one!</Link>
-          </div>
+          </p>
         )}
-        <Divider />
         <Card centered raised>
           <Image>
             <Gravatar
@@ -94,7 +92,7 @@ function Me({ me }: Props) {
             })}
           </Card.Content>
         </Card>
-      </Container>
+      </section>
     </>
   );
 }
