@@ -71,11 +71,7 @@ export function ModalDialog({
     >
       {/* this div is used for the "click-outside" handler */}
       <div>
-        {header && (
-          <header className={style.header}>
-            <h1>{header}</h1>
-          </header>
-        )}
+        {header && <header className={style.header}>{header}</header>}
         <section className={style.content}>{children}</section>
         {actions && <section className={style.actions}>{actions}</section>}
       </div>
