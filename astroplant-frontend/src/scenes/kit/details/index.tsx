@@ -1,17 +1,11 @@
-import React, { useContext, useState, useMemo } from "react";
+import { useContext, useState, useMemo } from "react";
 import { Route, Routes, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  Container,
-  Segment,
-  Transition,
-  Icon,
-  Header,
-  Divider,
-} from "semantic-ui-react";
+import { Transition, Divider } from "semantic-ui-react";
 import ReactMarkdown from "react-markdown";
-import { removeNull, undefinedToNull, emptyStringToNull } from "~/utils/form";
+import { IconCircleCheck } from "@tabler/icons-react";
 
+import { removeNull, undefinedToNull, emptyStringToNull } from "~/utils/form";
 import { addKit } from "~/modules/kit/actions";
 
 import {
@@ -20,11 +14,15 @@ import {
 } from "./patch-kit-schema";
 import ApiForm from "~/Components/ApiForm";
 import MapWithMarker from "~/Components/MapWithMarker";
-
-import { KitContext, MembershipContext, PermissionsContext } from "../contexts";
+import { ModalDialog } from "~/Components/ModalDialog";
+import { Button } from "~/Components/Button";
 import { useAppDispatch } from "~/hooks";
 import { Response, api, schemas } from "~/api";
-import { Button } from "~/Components/Button";
+
+import { KitContext, PermissionsContext } from "../contexts";
+
+import commonStyle from "~/Common.module.css";
+import style from "./index.module.css";
 
 const PatchKitForm = ApiForm<any, Response<schemas["Kit"]>>();
 
@@ -95,76 +93,96 @@ export default function KitDetails() {
   };
 
   return (
-    <Container text>
-      <Segment padded>
-        <Routes>
-          <Route
-            path="/edit"
-            element={
-              <PatchKitForm
-                idPrefix="patchKitForm"
-                key={0}
-                schema={schema as any}
-                uiSchema={patchUiSchema as any}
-                transform={(formData) => patchTransform(formData)}
-                send={(formData) => patchSend(formData)}
-                onResponse={(formData) => onPatchResponse(formData)}
-                formData={kitDetails}
-              />
-            }
-          />
-          <Route
-            path="/"
-            element={
-              <>
-                {done && (
-                  <>
-                    <Header size="huge" icon textAlign="center">
-                      <Transition
-                        animation="drop"
-                        duration={450}
-                        transitionOnMount
-                      >
-                        <Icon name="check" circular />
-                      </Transition>
-                      <Header.Content>Success!</Header.Content>
-                    </Header>
+    <section className={commonStyle.containerRegular}>
+      <h2>About</h2>
+      <Routes>
+        <Route
+          path="/edit"
+          element={
+            <PatchKitForm
+              idPrefix="patchKitForm"
+              key={0}
+              schema={schema as any}
+              uiSchema={patchUiSchema as any}
+              transform={(formData) => patchTransform(formData)}
+              send={(formData) => patchSend(formData)}
+              onResponse={(formData) => onPatchResponse(formData)}
+              formData={kitDetails}
+            />
+          }
+        />
+        <Route
+          path="/"
+          element={
+            <>
+              {done && (
+                <ModalDialog
+                  open={true}
+                  onClose={() => {
+                    setDone(false);
+                  }}
+                  header={"Details were changed"}
+                  actions={
+                    <Button variant="positive" onClick={() => setDone(false)}>
+                      Ok!
+                    </Button>
+                  }
+                >
+                  <div className={style.success}>
+                    <Transition
+                      animation="drop"
+                      duration={450}
+                      transitionOnMount
+                    >
+                      <div className={style.icon}>
+                        <IconCircleCheck size={"5rem"} />
+                      </div>
+                    </Transition>
+                    <header>Success!</header>
                     <p>Your kit's details have been changed.</p>
-                    <Divider />
-                  </>
+                  </div>
+                </ModalDialog>
+              )}
+              <div>
+                {kit.description && (
+                  <section className={style.description}>
+                    <header>Description</header>
+                    <div>
+                      <ReactMarkdown>{kit.description || ""}</ReactMarkdown>
+                    </div>
+                  </section>
                 )}
-                <div>
-                  {permissions.editDetails && (
+                {typeof kit.latitude === "number" &&
+                  typeof kit.longitude === "number" && (
+                    <>
+                      <Divider />
+                      <MapWithMarker
+                        location={{
+                          latitude: kit.latitude,
+                          longitude: kit.longitude,
+                        }}
+                      >
+                        <p>
+                          {t("common.latitude")}: {kit.latitude.toFixed(4)}
+                          <br />
+                          {t("common.longitude")}: {kit.longitude.toFixed(4)}
+                        </p>
+                      </MapWithMarker>
+                    </>
+                  )}
+                {permissions.editDetails && (
+                  <>
+                    <Divider />
                     <Button variant="primary" onClick={() => navigate("edit")}>
                       Edit kit details
                     </Button>
-                  )}
-                  <h3>{kit.name || kit.serial}</h3>
-                  <ReactMarkdown>{kit.description || ""}</ReactMarkdown>
-                  {typeof kit.latitude === "number" &&
-                    typeof kit.longitude === "number" && (
-                      <>
-                        <Divider />
-                        <MapWithMarker
-                          location={{
-                            latitude: kit.latitude,
-                            longitude: kit.longitude,
-                          }}
-                        >
-                          <p>
-                            {t("common.latitude")}: {kit.latitude.toFixed(4)}
-                            <br />
-                            {t("common.longitude")}: {kit.longitude.toFixed(4)}
-                          </p>
-                        </MapWithMarker>
-                      </>
-                    )}
-                </div>
-              </>
-            }
-          />
-        </Routes>
-      </Segment>
-    </Container>
+                  </>
+                )}
+              </div>
+            </>
+          }
+        />
+      </Routes>
+    </section>
   );
 }
