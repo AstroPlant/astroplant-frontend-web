@@ -48,7 +48,7 @@ function Me({ me }: Props) {
                 const kitState = kitStates[serial];
                 return (
                   <li key={serial}>
-                    <KitAvatar serial={serial} />
+                    <KitAvatar serial={serial} fontSize="1.25rem" />
                     <div>
                       <header className={style.itemHeader}>
                         <Link to={`/kit/${serial}`}>

@@ -4,7 +4,13 @@ import style from "./KitAvatar.module.css";
 
 /** A kit avatar generated from its serial. This is used for quick visual identification. */
 // TODO: maybe take an "identicon"-style approach.
-export function KitAvatar({ serial }: { serial: string }) {
+export function KitAvatar({
+  serial,
+  fontSize = "1rem",
+}: {
+  serial: string;
+  fontSize?: string;
+}) {
   const initials = useMemo(() => {
     if (serial.length === 16 && serial[0] === "k" && serial[1] === "-") {
       return (serial[2]! + serial[3]!).toUpperCase();
@@ -15,7 +21,7 @@ export function KitAvatar({ serial }: { serial: string }) {
     }
   }, [serial]);
   return (
-    <div className={style.avatar} aria-hidden="true">
+    <div className={style.avatar} aria-hidden="true" style={{ fontSize }}>
       {initials}
     </div>
   );
