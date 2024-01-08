@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Card, Image } from "semantic-ui-react";
+import clsx from "clsx";
 
 import {
   withAuthentication,
@@ -33,66 +33,67 @@ function Me({ me }: Props) {
           displayName: me.displayName,
         })}
       />
-      <section
-        className={commonStyle.containerRegular}
+      <article
+        className={clsx(commonStyle.containerWide, style.wrapper)}
         style={{ marginTop: "1em" }}
       >
-        <h2>Your kits</h2>
-        {Object.keys(kitMemberships).length > 0 || loadingKitMemberships ? (
-          <>
-            <p>
-              <Link to="/create-kit">Create another.</Link>
-            </p>
-            <ul className={style.kitList}>
-              {Object.keys(kitMemberships).map((serial) => {
-                const kitState = kitStates[serial];
-                return (
-                  <li key={serial}>
-                    <KitAvatar serial={serial} fontSize="1.25rem" />
-                    <div>
-                      <header className={style.itemHeader}>
-                        <Link to={`/kit/${serial}`}>
-                          <h3>{kitState?.details?.name ?? t("kit.unnamed")}</h3>
-                        </Link>
-                        {kitState?.details?.privacyPublicDashboard && (
-                          <Badge variant="muted" size="small" text="Public" />
-                        )}
-                      </header>
-                      <p>{serial}</p>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-            {loadingKitMemberships && <PlaceholderSegment />}
-          </>
-        ) : (
-          <p>
-            You have no kits yet.{" "}
-            <Link to="/create-kit">You can create one!</Link>
-          </p>
-        )}
-        <Card centered raised>
-          <Image>
+        <section className={style.profile}>
+          <section className={style.avatar}>
             <Gravatar
+              size={200}
               identifier={
                 me.useEmailAddressForGravatar
                   ? me.emailAddress
                   : me.gravatarAlternative
               }
             />
-          </Image>
-          <Card.Content>
-            <Card.Header>{me.displayName}</Card.Header>
-            <Card.Meta>{me.emailAddress}</Card.Meta>
-          </Card.Content>
-          <Card.Content extra>
-            {t("me.content.usernameLabel", {
-              username: me.username,
-            })}
-          </Card.Content>
-        </Card>
-      </section>
+          </section>
+          <header>
+            <h1>{me.displayName}</h1>
+            <span>{me.username}</span>
+            <section className={style.emailAddress}>{me.emailAddress}</section>
+          </header>
+        </section>
+        <section className={style.kits}>
+          <h2>Your kits</h2>
+          {Object.keys(kitMemberships).length > 0 || loadingKitMemberships ? (
+            <>
+              <p>
+                <Link to="/create-kit">Create another.</Link>
+              </p>
+              <ul className={style.kitList}>
+                {Object.keys(kitMemberships).map((serial) => {
+                  const kitState = kitStates[serial];
+                  return (
+                    <li key={serial}>
+                      <KitAvatar serial={serial} fontSize="1.25rem" />
+                      <div>
+                        <header className={style.itemHeader}>
+                          <Link to={`/kit/${serial}`}>
+                            <h3>
+                              {kitState?.details?.name ?? t("kit.unnamed")}
+                            </h3>
+                          </Link>
+                          {kitState?.details?.privacyPublicDashboard && (
+                            <Badge variant="muted" size="small" text="Public" />
+                          )}
+                        </header>
+                        <p>{serial}</p>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
+              {loadingKitMemberships && <PlaceholderSegment />}
+            </>
+          ) : (
+            <p>
+              You have no kits yet.{" "}
+              <Link to="/create-kit">You can create one!</Link>
+            </p>
+          )}
+        </section>
+      </article>
     </>
   );
 }

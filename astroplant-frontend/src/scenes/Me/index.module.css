@@ -1,3 +1,63 @@
+.wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4rem;
+}
+
+.profile {
+  grid-column: 1;
+
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+  align-items: center;
+
+  .avatar img {
+    border-radius: 100%;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--ring-box-shadow);
+  }
+
+  > header {
+    > h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    > span {
+      color: var(--gray-500);
+    }
+  }
+
+  .emailAddress {
+    color: var(--gray-500);
+  }
+}
+
+.kits {
+  grid-column: 1;
+}
+
+@media only screen and (min-width: 768px) {
+  .wrapper {
+    grid-template-columns: max-content 1fr;
+  }
+
+  .profile {
+    grid-column: 1;
+  }
+
+  .kits {
+    grid-column: 2;
+  }
+
+  .profile {
+    flex-direction: column;
+    align-items: normal;
+  }
+}
+
 .kitList {
   margin: 0;
   padding: 0;
