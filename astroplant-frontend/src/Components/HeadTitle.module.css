@@ -1,0 +1,15 @@
+.headTitleBackground {
+  min-height: 10em;
+  background-image: linear-gradient(
+    to top left,
+    var(--theme) 0,
+    var(--theme-dark) 85%
+  );
+
+  display: flex;
+  align-items: center;
+}
+
+.headTitleBackground > header {
+  padding-block: 1rem;
+}

@@ -1,5 +1,7 @@
 import { Component } from "react";
-import { Grid, Container } from "semantic-ui-react";
+
+import commonStyle from "~/Common.module.css";
+import style from "./HeadTitle.module.css";
 
 type HeadTitleProps = {
   main?: string;
@@ -9,19 +11,11 @@ type HeadTitleProps = {
 class HeadTitle extends Component<HeadTitleProps, {}> {
   render() {
     return (
-      <div className="headTitleBackground">
-        <Container>
-          <Grid verticalAlign="middle" padded>
-            <Grid.Row>
-              <Grid.Column>
-                {this.props.main !== undefined && <h1>{this.props.main}</h1>}
-                {this.props.secondary !== undefined && (
-                  <p>{this.props.secondary}</p>
-                )}
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
-        </Container>
+      <div className={style.headTitleBackground}>
+        <header className={commonStyle.containerWide}>
+          {this.props.main !== undefined && <h1>{this.props.main}</h1>}
+          {this.props.secondary !== undefined && <p>{this.props.secondary}</p>}
+        </header>
       </div>
     );
   }

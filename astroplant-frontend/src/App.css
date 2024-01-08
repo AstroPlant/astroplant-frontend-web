@@ -181,28 +181,6 @@ a:hover {
   margin: 0;
 }
 
-.headTitleBackground {
-  height: 10em;
-  background-image: linear-gradient(
-    to top left,
-    var(--theme) 0,
-    var(--theme-dark) 85%
-  );
-}
-
-.headTitleBackground .container {
-  height: 100%;
-}
-
-.headTitleBackground .container .grid {
-  height: 100%;
-}
-
-.headTitleBackground h1,
-.headTitleBackground p {
-  color: rgb(0, 0, 0);
-}
-
 .p_title {
   margin-left: 1em;
   padding-top: 1em;
