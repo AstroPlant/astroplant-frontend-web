@@ -4,16 +4,22 @@
 }
 
 .containerWide {
-  max-width: var(--siteWidth);
+  width: var(--siteWidth);
   margin-inline: auto;
 }
 
 .containerRegular {
-  max-width: min(50rem, var(--siteWidth));
+  width: min(50rem, var(--siteWidth));
   margin-inline: auto;
 }
 
 .containerSmall {
-  max-width: min(35rem, var(--siteWidth));
+  width: min(35rem, var(--siteWidth));
   margin-inline: auto;
+}
+
+@media only screen and (max-width: 767px) {
+  .containerWide, .containerRegular, .containerSmall {
+    margin-inline: 1rem;
+  }
 }
