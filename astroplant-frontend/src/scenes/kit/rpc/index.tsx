@@ -1,5 +1,5 @@
-import React, { useState, useContext } from "react";
-import { Container, Divider } from "semantic-ui-react";
+import { useState, useContext } from "react";
+import { Divider } from "semantic-ui-react";
 import { firstValueFrom } from "rxjs";
 
 import { KitContext } from "../contexts";
@@ -7,6 +7,8 @@ import PeripheralCommand from "./PeripheralCommand";
 import { api } from "~/api";
 import { Button } from "~/Components/Button";
 import { Input } from "~/Components/Input";
+
+import commonStyle from "~/Common.module.css";
 
 export default function KitRpc() {
   const [versionRequesting, setVersionRequesting] = useState(false);
@@ -49,7 +51,7 @@ export default function KitRpc() {
   };
 
   return (
-    <Container text>
+    <article className={commonStyle.containerRegular}>
       <Button
         onClick={() => versionRequest()}
         loading={versionRequesting}
@@ -76,6 +78,6 @@ export default function KitRpc() {
       <Divider />
       <h2>Send command</h2>
       <PeripheralCommand />
-    </Container>
+    </article>
   );
 }
