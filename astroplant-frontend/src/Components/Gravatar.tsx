@@ -26,5 +26,14 @@ export default function Gravatar({
   let hash = md5(formattedIdentifier);
 
   const src = `${URL_BASE}${hash}?${query}`;
-  return <img alt={`Gravatar for ${formattedIdentifier}`} src={src} />;
+
+  // Note: gravatars are square
+  return (
+    <img
+      width={size}
+      height={size}
+      alt={`Gravatar for ${formattedIdentifier}`}
+      src={src}
+    />
+  );
 }
