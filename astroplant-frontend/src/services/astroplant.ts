@@ -68,6 +68,7 @@ const baseQueryWithRetry = retry(baseQueryFn);
 export const rtkApi = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithRetry,
+  tagTypes: ["User"],
   endpoints: (build) => ({
     listKits: build.query<schemas["Kit"][], void>({
       async queryFn(_arg, api, _baseQuery) {
@@ -128,6 +129,13 @@ export const rtkApi = createApi({
       query: ({ configurationId }) => ({
         path: `/kit-configurations/${encodeUri(configurationId)}`,
         method: "DELETE",
+      }),
+    }),
+    getMe: build.query<schemas["FullUser"], void>({
+      providesTags: (result) => [{ type: "User", id: result?.username }],
+      query: () => ({
+        path: `/me`,
+        method: "GET",
       }),
     }),
   }),

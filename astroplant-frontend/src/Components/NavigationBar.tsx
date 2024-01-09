@@ -8,14 +8,16 @@
 
 import React, { useCallback, useRef, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { IconUserCircle, IconMenu2 } from "@tabler/icons-react";
+import { useTranslation } from "react-i18next";
+import clsx from "clsx";
+
+import { rtkApi } from "~/services/astroplant";
 
 import style from "./NavigationBar.module.css";
 import { Logo } from "./Logo";
-import { useTranslation } from "react-i18next";
 import { Button } from "./Button";
 import { persistor } from "~/store";
-import clsx from "clsx";
-import { IconUserCircle, IconMenu2 } from "@tabler/icons-react";
 
 type NavigationBarProps = {
   pages: React.ReactNode;
@@ -66,12 +68,11 @@ function Inner({ pages, auth }: NavigationBarProps) {
   );
 }
 
-export default function NavigationBar({
-  displayName,
-}: {
-  displayName: string | null;
-}) {
+export default function NavigationBar() {
   const { t } = useTranslation();
+
+  const { data } = rtkApi.useGetMeQuery();
+  const displayName = data?.displayName ?? null;
 
   const pages = (
     <ul className={style.pages}>

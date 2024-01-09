@@ -3,8 +3,6 @@ import "./App.css";
 
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import { useAppSelector } from "./hooks";
-
 import ConnectionStatus from "./Components/ConnectionStatus";
 import Footer from "./Components/Footer";
 import NavigationBar from "./Components/NavigationBar";
@@ -22,13 +20,9 @@ import Me from "./scenes/Me";
 import SignUp from "./scenes/SignUp";
 
 export default function App() {
-  const displayName = useAppSelector(
-    (state) => state.me.details?.displayName ?? null,
-  );
-
   return (
     <>
-      <NavigationBar displayName={displayName} />
+      <NavigationBar />
       <main>
         <Routes>
           <Route path="/" element={<Navigate to="home" replace />} />
