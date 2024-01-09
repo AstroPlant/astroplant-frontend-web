@@ -1,7 +1,6 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Container, Segment, Divider } from "semantic-ui-react";
+import { Segment, Divider } from "semantic-ui-react";
 import { Marker, TileLayer, Popup, MapContainer } from "react-leaflet";
 import ReactMarkdown from "react-markdown";
 
@@ -10,6 +9,8 @@ import HeadTitle from "~/Components/HeadTitle";
 import { MarkerIcon } from "~/Components/MarkerIcon";
 import { rtkApi } from "~/services/astroplant";
 import Loading from "~/Components/Loading";
+
+import commonStyle from "~/Common.module.css";
 
 export default function KitMap() {
   const { t } = useTranslation();
@@ -24,11 +25,17 @@ export default function KitMap() {
     <div>
       <HeadTitle main="Map" secondary="See Astroplant kits around the world" />
       {!kitsIsLoading && kitsError !== undefined && (
-        <Container style={{ marginTop: "1rem" }}>
+        <section
+          className={commonStyle.containerWide}
+          style={{ marginTop: "1rem" }}
+        >
           <p>Could not fetch the list of kits.</p>
-        </Container>
+        </section>
       )}
-      <Container style={{ paddingTop: "1rem" }}>
+      <section
+        className={commonStyle.containerWide}
+        style={{ marginTop: "1rem" }}
+      >
         <Segment attached="top" secondary>
           <p>{t("map.description")}</p>
         </Segment>
@@ -81,7 +88,7 @@ export default function KitMap() {
             </MapContainer>
           )}
         </Segment>
-      </Container>
+      </section>
     </div>
   );
 }
