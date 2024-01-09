@@ -140,6 +140,20 @@
   border-bottom-left-radius: 0;
 }
 
+.btn.small {
+  .leftAdornment {
+    margin-left: -0.5rem;
+    margin-right: 0.5rem;
+    padding: 0 0.5rem;
+  }
+
+  .rightAdornment {
+    margin-right: -0.5rem;
+    margin-left: 0.5rem;
+    padding: 0 0.5rem;
+  }
+}
+
 .loading {
   color: rgba(0, 0, 0, 0) !important;
 
