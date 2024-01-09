@@ -15,6 +15,9 @@ import { QueryResultSelectorResult } from "@reduxjs/toolkit/dist/query/core/buil
 import { QueryReturnValue } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
 import { firstValueFrom } from "rxjs";
 
+import { RootState, AppDispatch } from "~/store";
+import { selectAuth } from "~/modules/auth/reducer";
+
 import {
   HttpHeaders,
   Meta,
@@ -24,11 +27,7 @@ import {
   ErrorDetails,
   schemas,
   apiUnauthenticated as unwrappedApi,
-} from "~/api";
-
-import { selectAuth } from "~/modules/auth/reducer";
-import { AppDispatch } from "~/store";
-import { RootState } from "~/types";
+} from "~/api/base";
 
 export type HttpQuery = {
   [key: string]:
