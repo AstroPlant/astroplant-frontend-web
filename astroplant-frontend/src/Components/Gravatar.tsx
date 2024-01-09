@@ -1,4 +1,3 @@
-import React, { Component } from "react";
 import md5 from "md5";
 import querystring from "query-string";
 
@@ -9,22 +8,23 @@ type Props = {
   default?: string;
 };
 
-class Gravatar extends Component<Props> {
-  base = "//www.gravatar.com/avatar/";
+const URL_BASE = "//www.gravatar.com/avatar/";
 
-  render() {
-    const query = querystring.stringify({
-      s: this.props.size || 350,
-      r: this.props.rating || "g",
-      d: this.props.default || "identicon",
-    });
+export default function Gravatar({
+  identifier,
+  size = 350,
+  rating = "g",
+  default: default_ = "identicon",
+}: Props) {
+  const query = querystring.stringify({
+    s: size,
+    r: rating,
+    d: default_,
+  });
 
-    const formattedIdentifier = this.props.identifier.trim().toLowerCase();
-    let hash = md5(formattedIdentifier);
+  const formattedIdentifier = identifier.trim().toLowerCase();
+  let hash = md5(formattedIdentifier);
 
-    const src = `${this.base}${hash}?${query}`;
-    return <img alt={`Gravatar for ${formattedIdentifier}`} src={src} />;
-  }
+  const src = `${URL_BASE}${hash}?${query}`;
+  return <img alt={`Gravatar for ${formattedIdentifier}`} src={src} />;
 }
-
-export default Gravatar;
