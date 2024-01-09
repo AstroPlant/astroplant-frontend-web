@@ -1,6 +1,8 @@
 import md5 from "md5";
 import querystring from "query-string";
 
+import style from "./Gravatar.module.css";
+
 type Props = {
   identifier: string;
   size?: number;
@@ -30,6 +32,7 @@ export default function Gravatar({
   // Note: gravatars are square
   return (
     <img
+      className={style.gravatar}
       width={size}
       height={size}
       alt={`Gravatar for ${formattedIdentifier}`}
