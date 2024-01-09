@@ -91,6 +91,8 @@ export interface paths {
   "/users/{username}": {
     /** Get the user's details. */
     get: operations["showUserByUsername"];
+    /** Patch the user's details. */
+    patch: operations["patchUserByUsername"];
   };
   "/users/{username}/kit-memberships": {
     /** Get a user's kit memberships. */
@@ -285,6 +287,11 @@ export interface components {
       password: string;
       /** Format: email */
       emailAddress: string;
+    };
+    PatchUser: {
+      displayName?: string;
+      emailAddress?: string;
+      useEmailAddressForGravatar?: boolean;
     };
     /**
      * @example {
@@ -898,6 +905,32 @@ export interface operations {
       path: {
         /** @description The username of the user to get the details of. */
         username: string;
+      };
+    };
+    responses: {
+      /** @description User details. */
+      200: {
+        content: {
+          "application/json": components["schemas"]["User"];
+        };
+      };
+      401: components["responses"]["ErrorUnauthorized"];
+      429: components["responses"]["ErrorRateLimit"];
+      500: components["responses"]["ErrorInternalServer"];
+    };
+  };
+  /** Patch the user's details. */
+  patchUserByUsername: {
+    parameters: {
+      path: {
+        /** @description The username of the user to patch the details of. */
+        username: string;
+      };
+    };
+    /** @description The user patch. */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["PatchUser"];
       };
     };
     responses: {
