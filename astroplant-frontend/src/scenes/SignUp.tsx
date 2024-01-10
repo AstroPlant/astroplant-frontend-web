@@ -1,18 +1,14 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import {
-  Container,
-  Segment,
-  Header,
-  Icon,
-  Transition,
-} from "semantic-ui-react";
+import { Header, Icon, Transition } from "semantic-ui-react";
 import { JSONSchema7 } from "json-schema";
 
 import ApiForm from "~/Components/ApiForm";
 import HeadTitle from "~/Components/HeadTitle";
 import { api } from "~/api";
+
+import commonStyle from "~/Common.module.css";
 
 const SignUpForm = ApiForm();
 
@@ -80,36 +76,35 @@ export default function SignUpPage() {
         main="Create an account"
         secondary="Create an account to connect to the AstroPlant world."
       />
-      <Container text style={{ marginTop: "1em" }}>
-        <Segment padded>
-          {done ? (
-            <>
-              <Header size="huge" icon textAlign="center">
-                <Transition animation="drop" duration={450} transitionOnMount>
-                  <Icon name="check" circular />
-                </Transition>
-                <Header.Content>Success!</Header.Content>
-              </Header>
-              <Container textAlign="center">
-                <p>
-                  Your account has been created.{" "}
-                  <Link to="/log-in">You can now log in.</Link>
-                </p>
-              </Container>
-            </>
-          ) : (
-            <SignUpForm
-              idPrefix="signUpForm"
-              schema={schema}
-              uiSchema={uiSchema}
-              validate={validate}
-              send={send}
-              onResponse={onResponse}
-              submitLabel={t("signUp.createAccount")}
-            />
-          )}
-        </Segment>
-      </Container>
+      <article
+        className={commonStyle.containerRegular}
+        style={{ marginTop: "1rem" }}
+      >
+        {done ? (
+          <>
+            <Header size="huge" icon textAlign="center">
+              <Transition animation="drop" duration={450} transitionOnMount>
+                <Icon name="check" circular />
+              </Transition>
+              <Header.Content>Success!</Header.Content>
+            </Header>
+            <p style={{ textAlign: "center" }}>
+              Your account has been created.{" "}
+              <Link to="/log-in">You can now log in.</Link>
+            </p>
+          </>
+        ) : (
+          <SignUpForm
+            idPrefix="signUpForm"
+            schema={schema}
+            uiSchema={uiSchema}
+            validate={validate}
+            send={send}
+            onResponse={onResponse}
+            submitLabel={t("signUp.createAccount")}
+          />
+        )}
+      </article>
     </>
   );
 }
