@@ -53,7 +53,7 @@ async function baseQueryFn(
     return await firstValueFrom(unwrappedApi.request({ headers, ...args }));
   } catch (e) {
     if (e instanceof ErrorResponse) {
-      return { error: e.details, meta: e.meta };
+      retry.fail({ error: e.details, meta: e.meta });
     } else {
       throw new Error("An unexpected error occurred");
     }
