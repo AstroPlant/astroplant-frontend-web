@@ -18,6 +18,7 @@ import style from "./NavigationBar.module.css";
 import { Logo } from "./Logo";
 import { Button } from "./Button";
 import { persistor } from "~/store";
+import { useMe } from "~/utils/api";
 
 type NavigationBarProps = {
   pages: React.ReactNode;
@@ -71,7 +72,7 @@ function Inner({ pages, auth }: NavigationBarProps) {
 export default function NavigationBar() {
   const { t } = useTranslation();
 
-  const { data } = rtkApi.useGetMeQuery();
+  const { data } = useMe();
   const displayName = data?.displayName ?? null;
 
   const pages = (
