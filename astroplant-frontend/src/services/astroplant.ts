@@ -144,6 +144,24 @@ export const rtkApi = createApi({
         method: "GET",
       }),
     }),
+    getUser: build.query<schemas["User"], { username: string }>({
+      providesTags: (result) => [{ type: "User", id: result?.username }],
+      query: (username) => ({
+        path: `/users/${encodeUri(username)}`,
+        method: "GET",
+      }),
+    }),
+    patchUser: build.mutation<
+      schemas["User"],
+      { username: string; patch: schemas["PatchUser"] }
+    >({
+      invalidatesTags: (result) => [{ type: "User", id: result?.username }],
+      query: ({ username, patch }) => ({
+        path: `/users/${encodeUri(username)}`,
+        method: "PATCH",
+        body: patch,
+      }),
+    }),
   }),
 });
 
