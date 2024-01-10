@@ -35,6 +35,10 @@
   }
 }
 
+.displayName {
+  word-break: break-word;
+}
+
 .kits {
   grid-column: 1;
 }

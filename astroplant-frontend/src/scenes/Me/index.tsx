@@ -107,7 +107,7 @@ function Me({ me }: Props) {
             </form>
           ) : (
             <header>
-              <h1>{me.displayName}</h1>
+              <h1 className={style.displayName}>{me.displayName}</h1>
               <span>{me.username}</span>
               <section className={style.emailAddress}>
                 {me.emailAddress}
