@@ -41,7 +41,8 @@
 
 @media only screen and (min-width: 768px) {
   .wrapper {
-    grid-template-columns: max-content 1fr;
+    /* First column is the profile "bar", the same width as the user avatar */
+    grid-template-columns: 202px 1fr;
   }
 
   .profile {

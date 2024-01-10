@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { IconEdit } from "@tabler/icons-react";
 import clsx from "clsx";
 
 import {
@@ -17,6 +19,9 @@ import commonStyle from "~/Common.module.css";
 import style from "./index.module.css";
 import { KitAvatar } from "~/Components/KitAvatar";
 import { Badge } from "~/Components/Badge";
+import { Input } from "~/Components/Input";
+import { Button } from "~/Components/Button";
+import { rtkApi } from "~/services/astroplant";
 
 type Props = WithAuthentication;
 
@@ -25,6 +30,12 @@ function Me({ me }: Props) {
 
   const { kitMemberships, loadingKitMemberships } = useAppSelector(selectMe);
   const kitStates = useAppSelector(kitSelectors.selectEntities);
+
+  const [submitting, setSubmitting] = useState(false);
+  const [editingProfile, setEditingProfile] = useState(false);
+  const [displayName, setDisplayName] = useState("");
+
+  const [patchUser] = rtkApi.usePatchUserMutation();
 
   return (
     <>
@@ -48,11 +59,73 @@ function Me({ me }: Props) {
               }
             />
           </section>
-          <header>
-            <h1>{me.displayName}</h1>
-            <span>{me.username}</span>
-            <section className={style.emailAddress}>{me.emailAddress}</section>
-          </header>
+          {editingProfile ? (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+              }}
+            >
+              <fieldset disabled={submitting}>
+                <label>
+                  Name
+                  <Input
+                    value={displayName}
+                    onChange={(e) => setDisplayName(e.currentTarget.value)}
+                    fullWidth
+                  />
+                </label>
+                <section style={{ marginTop: "0.5rem" }}>
+                  <Button
+                    type="submit"
+                    variant="positive"
+                    size="small"
+                    onClick={async () => {
+                      setSubmitting(true);
+                      try {
+                        await patchUser({
+                          username: me.username,
+                          patch: { displayName },
+                        });
+                        setEditingProfile(false);
+                        // TODO: show errors
+                      } finally {
+                        setSubmitting(false);
+                      }
+                    }}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    variant="muted"
+                    size="small"
+                    onClick={() => setEditingProfile(false)}
+                  >
+                    Cancel
+                  </Button>
+                </section>
+              </fieldset>
+            </form>
+          ) : (
+            <header>
+              <h1>{me.displayName}</h1>
+              <span>{me.username}</span>
+              <section className={style.emailAddress}>
+                {me.emailAddress}
+              </section>
+              <Button
+                variant="muted"
+                size="small"
+                leftAdornment={<IconEdit />}
+                style={{ width: "100%", marginTop: "1rem" }}
+                onClick={() => {
+                  setDisplayName(me.displayName);
+                  setEditingProfile(true);
+                }}
+              >
+                Edit profile
+              </Button>
+            </header>
+          )}
         </section>
         <section className={style.kits}>
           <h2>Your kits</h2>
