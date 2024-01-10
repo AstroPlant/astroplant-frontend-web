@@ -1,8 +1,8 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { withTranslation, WithTranslation } from "react-i18next";
 import compose from "~/utils/compose";
 import { DateTime } from "luxon";
-import { Container, Segment, Header } from "semantic-ui-react";
+import { Segment, Header } from "semantic-ui-react";
 import { Form } from "semantic-ui-react";
 
 import { api } from "~/api";
@@ -10,6 +10,8 @@ import { api } from "~/api";
 import { KitContext, ConfigurationsContext } from "../contexts";
 import { firstValueFrom } from "rxjs";
 import { Button } from "~/Components/Button";
+
+import commonStyle from "~/Common.module.css";
 
 export type Props = {};
 export type InnerProps = WithTranslation;
@@ -57,7 +59,7 @@ function KitDownload(_props: InnerProps) {
   const timeWindowValid = startM.isValid && endM.isValid;
 
   return (
-    <Container text>
+    <article className={commonStyle.containerRegular}>
       <div>
         <p>
           To download a data archive, please choose a time window or a
@@ -163,7 +165,7 @@ function KitDownload(_props: InnerProps) {
           </Form.Field>
         </Form>
       </Segment>
-    </Container>
+    </article>
   );
 }
 
