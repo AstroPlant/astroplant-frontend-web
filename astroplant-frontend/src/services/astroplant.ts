@@ -13,7 +13,7 @@ import { ThunkAction } from "@reduxjs/toolkit";
 import { QueryActionCreatorResult } from "@reduxjs/toolkit/dist/query/core/buildInitiate";
 import { QueryResultSelectorResult } from "@reduxjs/toolkit/dist/query/core/buildSelectors";
 import { QueryReturnValue } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
-import { firstValueFrom } from "rxjs";
+import { EmptyError, firstValueFrom, fromEvent, takeUntil } from "rxjs";
 
 import { RootState, AppDispatch } from "~/store";
 import { selectAuth } from "~/modules/auth/reducer";
@@ -50,10 +50,17 @@ async function baseQueryFn(
   headers = { ...headers, ...args.headers };
 
   try {
-    return await firstValueFrom(unwrappedApi.request({ headers, ...args }));
+    return await firstValueFrom(
+      unwrappedApi
+        .request({ headers, ...args })
+        .pipe(takeUntil(fromEvent(api.signal, "abort"))),
+    );
   } catch (e) {
     if (e instanceof ErrorResponse) {
       retry.fail({ error: e.details, meta: e.meta });
+    } else if (e instanceof EmptyError) {
+      // aborted
+      retry.fail(null);
     } else {
       throw new Error("An unexpected error occurred");
     }
