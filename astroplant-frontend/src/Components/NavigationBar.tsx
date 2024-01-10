@@ -12,8 +12,6 @@ import { IconUserCircle, IconMenu2 } from "@tabler/icons-react";
 import { useTranslation } from "react-i18next";
 import clsx from "clsx";
 
-import { rtkApi } from "~/services/astroplant";
-
 import style from "./NavigationBar.module.css";
 import { Logo } from "./Logo";
 import { Button } from "./Button";
@@ -96,7 +94,8 @@ export default function NavigationBar() {
         <>
           <li>
             <NavLink to="/me">
-              <IconUserCircle /> {displayName}
+              <IconUserCircle />{" "}
+              <span className={style.displayName}>{displayName}</span>
             </NavLink>
           </li>
           <li>
