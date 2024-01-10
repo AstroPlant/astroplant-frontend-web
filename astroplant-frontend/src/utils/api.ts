@@ -7,9 +7,20 @@ import {
   UnaryFunction,
 } from "rxjs";
 import { retry } from "rxjs/operators";
+import { useSelector } from "react-redux";
 
 import { recurse } from "./observables";
 import { ErrorResponse } from "~/api";
+import { selectAuth } from "~/modules/auth/reducer";
+import { rtkApi } from "~/services/astroplant";
+
+export function useMe() {
+  const auth = useSelector(selectAuth) ?? null;
+
+  return rtkApi.useGetMeQuery(undefined, {
+    skip: auth.accessToken === null,
+  });
+}
 
 /**
  * @deprecated this is a no-op now. Rate-limiting will be moved to the global request handler.

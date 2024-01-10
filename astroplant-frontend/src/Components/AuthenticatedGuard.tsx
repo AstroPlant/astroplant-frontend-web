@@ -1,10 +1,12 @@
-import React from "react";
 import { useSelector } from "react-redux";
+
 import { FullUser } from "~/types";
+import { selectAuth } from "~/modules/auth/reducer";
+import { useMe } from "~/utils/api";
+
 import MustBeLoggedIn from "../pages/MustBeLoggedIn";
 import Loading from "./Loading";
 import { selectMe } from "~/modules/me/reducer";
-import { selectAuth } from "~/modules/auth/reducer";
 
 export interface WithAuthentication {
   me: FullUser;
@@ -31,12 +33,12 @@ export function withAuthentication<P extends object>(
     return (props: P) => {
       console.debug("Authentication guard ran");
 
-      const me = useSelector(selectMe)?.details ?? null;
+      const { data } = useMe();
 
-      if (me === null) {
+      if (data === undefined) {
         return <GuardComponent />;
       } else {
-        return <Component me={me} {...props} />;
+        return <Component me={data} {...props} />;
       }
     };
   };
@@ -55,9 +57,12 @@ export function awaitAuthenticationRan<P extends object>(): (
   return (Component) => {
     return (props: P) => {
       const auth = useSelector(selectAuth) ?? null;
-      const me = useSelector(selectMe)?.details ?? null;
+      const username = useSelector(selectMe)?.username ?? null;
 
-      if (auth.authenticationRan && (!auth.accessToken || me !== null)) {
+      if (
+        auth.authenticationRan &&
+        (auth.accessToken === null || username !== null)
+      ) {
         return <Component {...props} />;
       } else {
         return (

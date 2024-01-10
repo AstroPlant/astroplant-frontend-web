@@ -1,9 +1,9 @@
 import { createReducer } from "@reduxjs/toolkit";
 import isEqual from "lodash/isEqual";
+
 import * as actions from "./actions";
 import * as kitActions from "../kit/actions";
 import { RootState } from "~/types";
-import { schemas } from "~/api";
 
 export interface KitMembership {
   accessConfigure: boolean;
@@ -11,21 +11,21 @@ export interface KitMembership {
 }
 
 export interface MeState {
-  details: schemas["FullUser"] | null;
+  username: string | null;
   loadingKitMemberships: boolean;
   kitMemberships: { [serial: string]: KitMembership };
 }
 
 const initial: MeState = {
-  details: null,
+  username: null,
   loadingKitMemberships: false,
   kitMemberships: {},
 };
 
 export default createReducer<MeState>(initial, (build) =>
   build
-    .addCase(actions.setDetails, (state, action) => {
-      state.details = action.payload;
+    .addCase(actions.setUsername, (state, action) => {
+      state.username = action.payload;
     })
     .addCase(actions.setKitMemberships, (state, action) => {
       // TODO delete membership no longer in payload

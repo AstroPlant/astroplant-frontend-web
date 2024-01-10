@@ -1,7 +1,7 @@
 import { createAction } from "@reduxjs/toolkit";
 import { schemas } from "~/api";
 
-export const setDetails = createAction<schemas["FullUser"]>("me/SET_DETAILS");
+export const setUsername = createAction<string>("me/SET_USERNAME");
 
 export const loadingKitMemberships = createAction("me/LOADING_KIT_MEMBERSHIPS");
 
