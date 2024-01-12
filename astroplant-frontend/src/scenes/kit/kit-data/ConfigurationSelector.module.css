@@ -6,13 +6,13 @@
   }
 
   li {
-    /* comes from dropdown.tsx */
     border-bottom: 1px solid var(--border-color);
 
     > a {
       display: flex;
       align-items: center;
       gap: 0.3rem;
+      /* `--padding-inline` comes from DropdownDetails.module.css */
       padding: 0.3rem var(--padding-inline);
 
       .description {
