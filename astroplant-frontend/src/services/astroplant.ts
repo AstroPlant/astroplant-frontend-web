@@ -57,7 +57,7 @@ async function baseQueryFn(
     );
   } catch (e) {
     if (e instanceof ErrorResponse) {
-      retry.fail({ error: e.details, meta: e.meta });
+      retry.fail(e.details);
     } else if (e instanceof EmptyError) {
       // aborted
       retry.fail(null);
