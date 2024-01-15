@@ -77,21 +77,7 @@ export const rtkApi = createApi({
   tagTypes: ["User"],
   endpoints: (build) => ({
     listKits: build.query<schemas["Kit"][], void>({
-      async queryFn(_arg, api, _baseQuery) {
-        const auth = selectAuth(api.getState() as RootState);
-        let headers: HttpHeaders = auth.accessToken
-          ? { Authorization: `Bearer ${auth.accessToken}` }
-          : {};
-        try {
-          return await firstValueFrom(unwrappedApi.listKits(headers));
-        } catch (e) {
-          if (e instanceof ErrorResponse) {
-            return { error: e.details, meta: e.meta };
-          } else {
-            throw new Error("An unexpected error occurred");
-          }
-        }
-      },
+      query: () => ({ path: "/kits", method: "GET" }),
     }),
     listMedia: build.query<
       Array<schemas["Media"]>,
