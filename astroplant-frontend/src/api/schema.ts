@@ -55,6 +55,12 @@ export interface paths {
   "/kits/{kitSerial}/members": {
     /** Members of a specific kit. */
     get: operations["getKitMembers"];
+    /** Add a membership to a kit. */
+    post: operations["addKitMember"];
+  };
+  "/kits/{kitSerial}/member-suggestions": {
+    /** Suggestions of users to add to a kit. */
+    get: operations["getKitMemberSuggestions"];
   };
   "/kit-memberships/{kitMembershipId}": {
     /** Delete the kit membership. */
@@ -284,6 +290,11 @@ export interface components {
       accessSuper: boolean;
       /** Format: date-time */
       datetimeLinked: string;
+    };
+    NewKitMembership: {
+      username: string;
+      accessConfigure: boolean;
+      accessSuper: boolean;
     };
     PatchKitMembership: {
       accessConfigure?: boolean;
@@ -681,7 +692,57 @@ export interface operations {
       /** @description The kit's members. */
       200: {
         content: {
+          "application/json": components["schemas"]["KitMembership"][];
+        };
+      };
+      401: components["responses"]["ErrorUnauthorized"];
+      429: components["responses"]["ErrorRateLimit"];
+      500: components["responses"]["ErrorInternalServer"];
+    };
+  };
+  /** Add a membership to a kit. */
+  addKitMember: {
+    parameters: {
+      path: {
+        /** @description The serial of the kit to add a membership to. */
+        kitSerial: string;
+      };
+    };
+    /** @description The membership to add. */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["NewKitMembership"];
+      };
+    };
+    responses: {
+      /** @description The kit's members. */
+      200: {
+        content: {
           "application/json": components["schemas"]["KitMembership"];
+        };
+      };
+      401: components["responses"]["ErrorUnauthorized"];
+      429: components["responses"]["ErrorRateLimit"];
+      500: components["responses"]["ErrorInternalServer"];
+    };
+  };
+  /** Suggestions of users to add to a kit. */
+  getKitMemberSuggestions: {
+    parameters: {
+      query: {
+        /** @description (Part of) a username. Suggestions are limited to users with a similar username. */
+        username: string;
+      };
+      path: {
+        /** @description The serial of the kit to get the members of. */
+        kitSerial: string;
+      };
+    };
+    responses: {
+      /** @description Suggestions of users to add to the kit. */
+      200: {
+        content: {
+          "application/json": components["schemas"]["User"][];
         };
       };
       401: components["responses"]["ErrorUnauthorized"];
