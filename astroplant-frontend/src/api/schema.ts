@@ -52,6 +52,16 @@ export interface paths {
     /** Reset the kit's password. */
     post: operations["resetPassword"];
   };
+  "/kits/{kitSerial}/members": {
+    /** Members of a specific kit. */
+    get: operations["getKitMembers"];
+  };
+  "/kit-memberships/{kitMembershipId}": {
+    /** Delete the kit membership. */
+    delete: operations["deleteKitMembership"];
+    /** Patch the kit membership. */
+    patch: operations["patchKitMembership"];
+  };
   "/kits/{kitSerial}/aggregate-measurements": {
     /** Aggregate measurements made by a kit. */
     get: operations["listAggregateMeasurements"];
@@ -268,12 +278,16 @@ export interface components {
     KitMembership: {
       /** Format: int32 */
       id: number;
-      user: string;
+      user: components["schemas"]["User"];
       kit: components["schemas"]["Kit"];
       accessConfigure: boolean;
       accessSuper: boolean;
       /** Format: date-time */
       datetimeLinked: string;
+    };
+    PatchKitMembership: {
+      accessConfigure?: boolean;
+      accessSuper?: boolean;
     };
     /**
      * @example {
@@ -648,6 +662,68 @@ export interface operations {
       200: {
         content: {
           "application/json": string;
+        };
+      };
+      401: components["responses"]["ErrorUnauthorized"];
+      429: components["responses"]["ErrorRateLimit"];
+      500: components["responses"]["ErrorInternalServer"];
+    };
+  };
+  /** Members of a specific kit. */
+  getKitMembers: {
+    parameters: {
+      path: {
+        /** @description The serial of the kit to get the members of. */
+        kitSerial: string;
+      };
+    };
+    responses: {
+      /** @description The kit's members. */
+      200: {
+        content: {
+          "application/json": components["schemas"]["KitMembership"];
+        };
+      };
+      401: components["responses"]["ErrorUnauthorized"];
+      429: components["responses"]["ErrorRateLimit"];
+      500: components["responses"]["ErrorInternalServer"];
+    };
+  };
+  /** Delete the kit membership. */
+  deleteKitMembership: {
+    parameters: {
+      path: {
+        /** @description The id of the kit membership to delete. */
+        kitMembershipId: number;
+      };
+    };
+    responses: {
+      /** @description The kit membership was successfully deleted. */
+      200: never;
+      401: components["responses"]["ErrorUnauthorized"];
+      429: components["responses"]["ErrorRateLimit"];
+      500: components["responses"]["ErrorInternalServer"];
+    };
+  };
+  /** Patch the kit membership. */
+  patchKitMembership: {
+    parameters: {
+      path: {
+        /** @description The id of the kit membership to patch. */
+        kitMembershipId: number;
+      };
+    };
+    /** @description The kit membership patch. */
+    requestBody: {
+      content: {
+        "application/json": components["schemas"]["KitMembershipPatch"];
+      };
+    };
+    responses: {
+      /** @description The updated kit membership. */
+      200: {
+        content: {
+          "application/json": components["schemas"]["KitMembership"];
         };
       };
       401: components["responses"]["ErrorUnauthorized"];

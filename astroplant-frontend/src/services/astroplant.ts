@@ -74,7 +74,7 @@ const baseQueryWithRetry = retry(baseQueryFn);
 export const rtkApi = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithRetry,
-  tagTypes: ["Users"],
+  tagTypes: ["Users", "KitMemberships"],
   endpoints: (build) => ({
     listKits: build.query<schemas["Kit"][], void>({
       query: () => ({ path: "/kits", method: "GET" }),
@@ -92,6 +92,41 @@ export const rtkApi = createApi({
         method: "GET",
         query: params,
       }),
+    }),
+    getKitMembers: build.query<
+      Array<schemas["KitMembership"]>,
+      { kitSerial: string }
+    >({
+      query: ({ kitSerial }) => ({
+        path: `/kits/${encodeUri(kitSerial)}/members`,
+        method: "GET",
+      }),
+      providesTags: (result) => [
+        { type: "KitMemberships", id: result?.[0]?.kit.id },
+      ],
+    }),
+    patchKitMembership: build.mutation<
+      schemas["KitMembership"],
+      { kitMembershipId: number; patch: schemas["PatchKitMembership"] }
+    >({
+      query: ({ kitMembershipId, patch }) => ({
+        path: `/kit-memberships/${encodeUri(kitMembershipId)}`,
+        method: "PATCH",
+        body: patch,
+      }),
+    }),
+    /// `kitId` is required to be able to target the cache invalidation
+    deleteKitMembership: build.mutation<
+      void,
+      { kitMembershipId: number; kitId: number }
+    >({
+      query: ({ kitMembershipId }) => ({
+        path: `/kit-memberships/${encodeUri(kitMembershipId)}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: (_result, _err, { kitId }) => [
+        { type: "KitMemberships", id: kitId },
+      ],
     }),
     getArchiveDownloadToken: build.query<
       string,
