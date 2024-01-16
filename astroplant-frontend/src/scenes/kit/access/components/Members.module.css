@@ -78,3 +78,57 @@
     }
   }
 }
+
+.avatar {
+  border-radius: 100%;
+  border: 1px solid var(--border-color);
+}
+
+.addMemberSelection {
+  .selectedMember {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid var(--green-200);
+    padding: 0.5rem;
+    margin: 1rem 0;
+    background-color: var(--green-50);
+
+    .username {
+      color: var(--gray-500);
+    }
+
+    .cancel {
+      flex: 1;
+      text-align: right;
+    }
+  }
+
+  .add {
+    width: 100%;
+  }
+}
+
+.memberSuggestions {
+  margin: 0;
+  padding: 0;
+
+  > li {
+    list-style: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.3rem;
+
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--gray-50);
+    }
+
+    &:first-child {
+      border-top: 1px solid var(--border-color);
+    }
+  }
+}

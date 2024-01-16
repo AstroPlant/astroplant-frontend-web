@@ -777,7 +777,7 @@ export interface operations {
     /** @description The kit membership patch. */
     requestBody: {
       content: {
-        "application/json": components["schemas"]["KitMembershipPatch"];
+        "application/json": components["schemas"]["PatchKitMembership"];
       };
     };
     responses: {
