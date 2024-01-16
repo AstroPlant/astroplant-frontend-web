@@ -74,7 +74,7 @@ const baseQueryWithRetry = retry(baseQueryFn);
 export const rtkApi = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithRetry,
-  tagTypes: ["User"],
+  tagTypes: ["Users"],
   endpoints: (build) => ({
     listKits: build.query<schemas["Kit"][], void>({
       query: () => ({ path: "/kits", method: "GET" }),
@@ -125,7 +125,7 @@ export const rtkApi = createApi({
     }),
     getMe: build.query<schemas["FullUser"], void>({
       providesTags: (result, error) =>
-        error ? [] : [{ type: "User", id: result?.username }],
+        error ? [] : [{ type: "Users", id: result?.username }],
       query: () => ({
         path: `/me`,
         method: "GET",
@@ -133,7 +133,7 @@ export const rtkApi = createApi({
     }),
     getUser: build.query<schemas["User"], { username: string }>({
       providesTags: (_result, _err, { username }) => [
-        { type: "User", id: username },
+        { type: "Users", id: username },
       ],
       query: (username) => ({
         path: `/users/${encodeUri(username)}`,
@@ -145,7 +145,7 @@ export const rtkApi = createApi({
       { username: string; patch: schemas["PatchUser"] }
     >({
       invalidatesTags: (_result, _err, { username }) => [
-        { type: "User", id: username },
+        { type: "Users", id: username },
       ],
       query: ({ username, patch }) => ({
         path: `/users/${encodeUri(username)}`,
