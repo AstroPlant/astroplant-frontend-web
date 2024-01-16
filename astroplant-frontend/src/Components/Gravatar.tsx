@@ -2,12 +2,14 @@ import md5 from "md5";
 import querystring from "query-string";
 
 import style from "./Gravatar.module.css";
+import clsx from "clsx";
 
 type Props = {
   identifier: string;
   size?: number;
   rating?: string;
   default?: string;
+  className?: string;
 };
 
 const URL_BASE = "//www.gravatar.com/avatar/";
@@ -17,6 +19,7 @@ export default function Gravatar({
   size = 350,
   rating = "g",
   default: default_ = "identicon",
+  className,
 }: Props) {
   const query = querystring.stringify({
     s: size,
@@ -32,7 +35,7 @@ export default function Gravatar({
   // Note: gravatars are square
   return (
     <img
-      className={style.gravatar}
+      className={clsx(style.gravatar, className)}
       width={size}
       height={size}
       alt={`Gravatar for ${formattedIdentifier}`}
