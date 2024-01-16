@@ -111,10 +111,10 @@ function RoleSelector({
   const admin = role.accessSuper;
 
   let currentRole = "View-only";
-  if (role.accessSuper) {
-    currentRole = "Admin";
-  } else {
+  if (configure) {
     currentRole = "Configure";
+  } else if (admin) {
+    currentRole = "Admin";
   }
 
   useEffect(() => {
