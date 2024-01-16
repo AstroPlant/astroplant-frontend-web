@@ -2,6 +2,8 @@
   padding: 0;
   border-radius: 0.75rem;
   box-shadow: var(--ring-box-shadow);
+  margin: 12vh auto;
+  max-height: 76vh;
 
   &::backdrop {
     background: rgba(0, 0, 0, 0.3);
