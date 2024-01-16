@@ -124,14 +124,17 @@ export const rtkApi = createApi({
       }),
     }),
     getMe: build.query<schemas["FullUser"], void>({
-      providesTags: (result) => [{ type: "User", id: result?.username }],
+      providesTags: (result, error) =>
+        error ? [] : [{ type: "User", id: result?.username }],
       query: () => ({
         path: `/me`,
         method: "GET",
       }),
     }),
     getUser: build.query<schemas["User"], { username: string }>({
-      providesTags: (result) => [{ type: "User", id: result?.username }],
+      providesTags: (_result, _err, { username }) => [
+        { type: "User", id: username },
+      ],
       query: (username) => ({
         path: `/users/${encodeUri(username)}`,
         method: "GET",
@@ -141,7 +144,9 @@ export const rtkApi = createApi({
       schemas["User"],
       { username: string; patch: schemas["PatchUser"] }
     >({
-      invalidatesTags: (result) => [{ type: "User", id: result?.username }],
+      invalidatesTags: (_result, _err, { username }) => [
+        { type: "User", id: username },
+      ],
       query: ({ username, patch }) => ({
         path: `/users/${encodeUri(username)}`,
         method: "PATCH",
