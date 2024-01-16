@@ -74,7 +74,7 @@ const baseQueryWithRetry = retry(baseQueryFn);
 export const rtkApi = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithRetry,
-  tagTypes: ["Users", "KitMemberships"],
+  tagTypes: ["Users", "KitMemberships", "KitMemberSuggestions"],
   endpoints: (build) => ({
     listKits: build.query<schemas["Kit"][], void>({
       query: () => ({ path: "/kits", method: "GET" }),
@@ -105,6 +105,37 @@ export const rtkApi = createApi({
         { type: "KitMemberships", id: result?.[0]?.kit.id },
       ],
     }),
+    addKitMember: build.mutation<
+      schemas["KitMembership"],
+      {
+        kitSerial: string;
+        member: {
+          username: string;
+          accessConfigure: boolean;
+          accessSuper: boolean;
+        };
+      }
+    >({
+      query: ({ kitSerial, member }) => ({
+        path: `/kits/${encodeUri(kitSerial)}/members`,
+        method: "POST",
+        body: member,
+      }),
+      invalidatesTags: (result) => [
+        { type: "KitMemberships", id: result?.kit.id },
+      ],
+    }),
+    getKitMemberSuggestions: build.query<
+      Array<schemas["User"]>,
+      { kitSerial: string; query: { username: string } }
+    >({
+      query: ({ kitSerial, query }) => ({
+        path: `/kits/${encodeUri(kitSerial)}/member-suggestions`,
+        method: "GET",
+        query,
+      }),
+      providesTags: [{ type: "KitMemberSuggestions" }],
+    }),
     patchKitMembership: build.mutation<
       schemas["KitMembership"],
       { kitMembershipId: number; patch: schemas["PatchKitMembership"] }
@@ -114,6 +145,9 @@ export const rtkApi = createApi({
         method: "PATCH",
         body: patch,
       }),
+      invalidatesTags: (result) => [
+        { type: "KitMemberships", id: result?.kit.id },
+      ],
     }),
     /// `kitId` is required to be able to target the cache invalidation
     deleteKitMembership: build.mutation<
@@ -126,6 +160,7 @@ export const rtkApi = createApi({
       }),
       invalidatesTags: (_result, _err, { kitId }) => [
         { type: "KitMemberships", id: kitId },
+        { type: "KitMemberSuggestions" },
       ],
     }),
     getArchiveDownloadToken: build.query<

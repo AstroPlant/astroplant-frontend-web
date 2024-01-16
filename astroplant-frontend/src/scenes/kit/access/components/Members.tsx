@@ -8,10 +8,11 @@ import { DropdownDetails } from "~/Components/DropdownDetails";
 
 import style from "./Members.module.css";
 import clsx from "clsx";
-import { IconCheck } from "@tabler/icons-react";
+import { IconCheck, IconPlus, IconX } from "@tabler/icons-react";
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { ModalDialog } from "~/Components/ModalDialog";
 import { Input } from "~/Components/Input";
+import { useDebounce } from "~/hooks";
 
 export type Props = {
   kit: schemas["Kit"];
@@ -21,6 +22,8 @@ export default function Members({ kit }: Props) {
   const { data } = rtkApi.useGetKitMembersQuery({ kitSerial: kit.serial });
   const [deleteKitMembership, { error: deleteKitMembershipError }] =
     rtkApi.useDeleteKitMembershipMutation();
+
+  const [addingMember, setAddingMember] = useState(false);
 
   useEffect(() => {
     if (deleteKitMembershipError !== undefined) {
@@ -42,6 +45,16 @@ export default function Members({ kit }: Props) {
 
   return (
     <>
+      <Button
+        variant="primary"
+        style={{ marginBottom: "1rem" }}
+        onClick={() => setAddingMember(true)}
+      >
+        Add a member
+      </Button>
+      <ModalDialog open={addingMember} onClose={() => setAddingMember(false)}>
+        <AddMember kit={kit} close={() => setAddingMember(false)} />
+      </ModalDialog>
       <ul className={style.members}>
         {data?.map((membership) => (
           <li key={membership.id}>
@@ -249,5 +262,137 @@ function RoleSelector({
         </ul>
       </form>
     </DropdownDetails>
+  );
+}
+
+function AddMember({ kit, close }: { kit: schemas["Kit"]; close: () => void }) {
+  const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query, 250);
+
+  const [selectedUser, setSelectedUser] = useState<schemas["User"] | null>(
+    null,
+  );
+  const [success, setSuccess] = useState(false);
+
+  const { data: suggestions } = rtkApi.useGetKitMemberSuggestionsQuery(
+    {
+      kitSerial: kit.serial,
+      query: { username: debouncedQuery },
+    },
+    { skip: debouncedQuery === "" },
+  );
+  const [addKitMember] = rtkApi.useAddKitMemberMutation();
+
+  return (
+    <>
+      <p>
+        Find people to add to <strong>{kit.serial}</strong>
+      </p>
+      {selectedUser ? (
+        success ? (
+          <section>
+            <p>
+              User <strong>{selectedUser.displayName}</strong> has successfully
+              been added as member.
+            </p>
+            <Button
+              className={style.add}
+              variant="primary"
+              leftAdornment={<IconX />}
+              onClick={async () => {
+                setSelectedUser(null);
+                setSuccess(false);
+                setQuery("");
+                close();
+              }}
+            >
+              Close
+            </Button>
+          </section>
+        ) : (
+          <section className={style.addMemberSelection}>
+            <div className={style.selectedMember}>
+              <Gravatar
+                identifier={selectedUser.gravatar}
+                size={32}
+                className={style.avatar}
+              />
+              <div>
+                <strong>{selectedUser.displayName}</strong>
+                <br />
+                <span className={style.username}>{selectedUser.username}</span>
+              </div>
+              <div className={style.cancel}>
+                <Button variant="text" onClick={() => setSelectedUser(null)}>
+                  <IconX />
+                </Button>
+              </div>
+            </div>
+            <p>
+              Do you want to add <strong>{selectedUser.displayName}</strong> to
+              this kit?
+            </p>
+            <div>
+              <Button
+                className={style.add}
+                leftAdornment={<IconPlus />}
+                variant="primary"
+                onClick={async () => {
+                  const result = await addKitMember({
+                    kitSerial: kit.serial,
+                    member: {
+                      username: selectedUser.username,
+                      accessConfigure: false,
+                      accessSuper: false,
+                    },
+                  });
+                  if ("data" in result) {
+                    setSuccess(true);
+                  } else {
+                    alert("An error occurred");
+                  }
+                }}
+              >
+                Add {selectedUser.displayName}
+              </Button>
+            </div>
+          </section>
+        )
+      ) : (
+        <section>
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.currentTarget.value)}
+            placeholder="Username"
+          />
+          {suggestions !== undefined && (
+            <div style={{ marginTop: "1rem" }}>
+              {suggestions.length === 0 ? (
+                <p>
+                  <strong>Could not find anyone with that username.</strong>
+                </p>
+              ) : (
+                <ul className={style.memberSuggestions} role="listbox">
+                  {suggestions.map((suggestion) => (
+                    <li
+                      key={suggestion.username}
+                      role="option"
+                      onClick={() => setSelectedUser(suggestion)}
+                    >
+                      <Gravatar
+                        identifier={suggestion.gravatar}
+                        size={32}
+                        className={style.avatar}
+                      />{" "}
+                      {suggestion.username}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+        </section>
+      )}
+    </>
   );
 }
