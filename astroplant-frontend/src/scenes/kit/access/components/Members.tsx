@@ -125,9 +125,11 @@ function RoleSelector({
         error.type === "APPLICATION" &&
         error.data.title !== undefined
       ) {
-        alert("Could not remove the kit member.\n\n" + error.data.title);
+        alert("Could not change the kit member's role.\n\n" + error.data.title);
       } else {
-        alert("Could not remove the kit member.\n\nAn unknown error occurred");
+        alert(
+          "Could not change the kit member's role.\n\nAn unknown error occurred",
+        );
       }
     }
   }, [error]);
