@@ -142,6 +142,10 @@ export type UseModalConfirmDialogValue = {
 /**
  * A hook to imperatively trigger a modal confirm dialog.
  *
+ * Calling `trigger` shows the dialog. It returns a promise that resolve to
+ * whether the dialog was confirmed or not. If `trigger` is called with a
+ * dialog still outstanding, the previous call to `trigger` resolves to false.
+ *
  * Example:
  *
  * ```tsx
