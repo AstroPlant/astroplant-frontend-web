@@ -12,7 +12,8 @@ import { IconCheck, IconPlus, IconX } from "@tabler/icons-react";
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import { ModalDialog } from "~/Components/ModalDialog";
 import { Input } from "~/Components/Input";
-import { useDebounce } from "~/hooks";
+import { useAppSelector, useDebounce } from "~/hooks";
+import { selectMe } from "~/modules/me/reducer";
 
 export type Props = {
   kit: schemas["Kit"];
@@ -24,6 +25,8 @@ export default function Members({ kit }: Props) {
     rtkApi.useDeleteKitMembershipMutation();
 
   const [addingMember, setAddingMember] = useState(false);
+
+  const me = useAppSelector(selectMe);
 
   useEffect(() => {
     if (deleteKitMembershipError !== undefined) {
@@ -76,6 +79,23 @@ export default function Members({ kit }: Props) {
               <Button
                 variant="muted"
                 size="small"
+                confirm={
+                  membership.user.username === me.username
+                    ? () => ({
+                        content: {
+                          header: "Please confirm",
+                          body: (
+                            <>
+                              Please confirm you wish to remove yourself from
+                              this kit. If you confirm, your membership of this
+                              kit will immediately be removed. You will no
+                              longer be able to configure this kit.
+                            </>
+                          ),
+                        },
+                      })
+                    : undefined
+                }
                 onClick={() => {
                   deleteKitMembership({
                     kitMembershipId: membership.id,
