@@ -10,7 +10,7 @@ import style from "./Members.module.css";
 import clsx from "clsx";
 import { IconCheck, IconPlus, IconX } from "@tabler/icons-react";
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
-import { ModalDialog } from "~/Components/ModalDialog";
+import { ModalDialog, useModalConfirmDialog } from "~/Components/ModalDialog";
 import { Input } from "~/Components/Input";
 import { useAppSelector, useDebounce } from "~/hooks";
 import { selectMe } from "~/modules/me/reducer";
@@ -143,6 +143,11 @@ function RoleSelector({
   const configure = role.accessConfigure && !role.accessSuper;
   const admin = role.accessSuper;
 
+  const { element: confirmElement, trigger: confirmTrigger } =
+    useModalConfirmDialog();
+
+  const me = useAppSelector(selectMe);
+
   let currentRole = "View-only";
   if (configure) {
     currentRole = "Configure";
@@ -168,7 +173,24 @@ function RoleSelector({
   }, [error]);
 
   const onChange = useMemo(
-    () => (e: ChangeEvent<HTMLInputElement>) => {
+    () => async (e: ChangeEvent<HTMLInputElement>) => {
+      if (kitMembership.user.username === me.username) {
+        const confirmed = await confirmTrigger({
+          header: "Are you sure?",
+          body: (
+            <>
+              Are you sure you wish to change your own role? If you confirm,
+              your role will be changed immediately. You may not be able to
+              change your role back.
+            </>
+          ),
+        });
+
+        if (!confirmed) {
+          return;
+        }
+      }
+
       const newRole = e.target.value;
       let patch: null | schemas["PatchKitMembership"] = null;
       switch (newRole) {
@@ -191,97 +213,100 @@ function RoleSelector({
   );
 
   return (
-    <DropdownDetails
-      className={style.configurations}
-      label={
-        <div className={style.roleLabel}>
-          <span>Role: </span>
-          <span>{currentRole}</span>
-        </div>
-      }
-      title="Change this member's role"
-      header="Choose a role"
-      anchor="right"
-    >
-      <form onSubmit={(e) => e.preventDefault}>
-        <ul role="menu" className={style.rolesOptions}>
-          <li
-            className={clsx(viewOnly && style.selected)}
-            onClick={() => {
-              refRadioViewOnly.current!.click();
-            }}
-          >
-            <input
-              ref={refRadioViewOnly}
-              type="radio"
-              hidden
-              name="role"
-              value="viewOnly"
-              checked={viewOnly}
-              onChange={onChange}
-            />
-            <div>
-              <IconCheck />
-            </div>
-            <div>
-              <header>View-only</header>
-              <div>Can view and download data</div>
-            </div>
-          </li>
-          <li
-            className={clsx(configure && style.selected)}
-            onClick={() => {
-              refRadioConfigure.current!.click();
-            }}
-          >
-            <input
-              ref={refRadioConfigure}
-              type="radio"
-              hidden
-              name="role"
-              value="configure"
-              checked={configure}
-              onChange={onChange}
-            />
-            <div>
-              <IconCheck />
-            </div>
-            <div>
-              <header>Configure</header>
+    <>
+      {confirmElement}
+      <DropdownDetails
+        className={style.configurations}
+        label={
+          <div className={style.roleLabel}>
+            <span>Role: </span>
+            <span>{currentRole}</span>
+          </div>
+        }
+        title="Change this member's role"
+        header="Choose a role"
+        anchor="right"
+      >
+        <form onSubmit={(e) => e.preventDefault}>
+          <ul role="menu" className={style.rolesOptions}>
+            <li
+              className={clsx(viewOnly && style.selected)}
+              onClick={() => {
+                refRadioViewOnly.current!.click();
+              }}
+            >
+              <input
+                ref={refRadioViewOnly}
+                type="radio"
+                hidden
+                name="role"
+                value="viewOnly"
+                checked={viewOnly}
+                onChange={onChange}
+              />
               <div>
-                Can view and download data, add and delete configurations
+                <IconCheck />
               </div>
-            </div>
-          </li>
-          <li
-            className={clsx(admin && style.selected)}
-            onClick={() => {
-              refRadioAdmin.current!.click();
-            }}
-          >
-            <input
-              ref={refRadioAdmin}
-              type="radio"
-              hidden
-              name="role"
-              value="admin"
-              checked={admin}
-              onChange={onChange}
-            />
-            <div>
-              <IconCheck />
-            </div>
-            <div>
-              <header>Admin</header>
               <div>
-                Can view and download data, add and delete configurations,
-                manage members
+                <header>View-only</header>
+                <div>Can view and download data</div>
               </div>
-            </div>
-          </li>
-        </ul>
-      </form>
-    </DropdownDetails>
+            </li>
+            <li
+              className={clsx(configure && style.selected)}
+              onClick={() => {
+                refRadioConfigure.current!.click();
+              }}
+            >
+              <input
+                ref={refRadioConfigure}
+                type="radio"
+                hidden
+                name="role"
+                value="configure"
+                checked={configure}
+                onChange={onChange}
+              />
+              <div>
+                <IconCheck />
+              </div>
+              <div>
+                <header>Configure</header>
+                <div>
+                  Can view and download data, add and delete configurations
+                </div>
+              </div>
+            </li>
+            <li
+              className={clsx(admin && style.selected)}
+              onClick={() => {
+                refRadioAdmin.current!.click();
+              }}
+            >
+              <input
+                ref={refRadioAdmin}
+                type="radio"
+                hidden
+                name="role"
+                value="admin"
+                checked={admin}
+                onChange={onChange}
+              />
+              <div>
+                <IconCheck />
+              </div>
+              <div>
+                <header>Admin</header>
+                <div>
+                  Can view and download data, add and delete configurations,
+                  manage members
+                </div>
+              </div>
+            </li>
+          </ul>
+        </form>
+      </DropdownDetails>
+    </>
   );
 }
 
