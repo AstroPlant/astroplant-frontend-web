@@ -1,9 +1,15 @@
-import React, { MouseEventHandler, PropsWithChildren } from "react";
+import React, {
+  MouseEvent,
+  MouseEventHandler,
+  PropsWithChildren,
+  useState,
+} from "react";
+import { NavLink, NavLinkProps } from "react-router-dom";
 import clsx from "clsx";
 
 import commonStyles from "~/Common.module.css";
 import styles from "./Button.module.css";
-import { NavLink, NavLinkProps } from "react-router-dom";
+import { ModalConfirmDialog } from "./ModalDialog";
 
 export type ButtonVariant =
   | "regular"
@@ -46,6 +52,9 @@ export type ButtonProps = CommonProps &
   Omit<React.ComponentProps<"button">, "size"> & {
     disabled?: boolean;
     onClick?: MouseEventHandler<HTMLButtonElement>;
+    confirm?: () => {
+      content: { header: string; body: React.ReactNode };
+    } | null;
   };
 
 export type ButtonLinkProps = CommonProps & NavLinkProps;
@@ -62,26 +71,69 @@ export function Button({
   leftAdornment,
   rightAdornment,
   onClick,
+  confirm,
   children,
   className,
   type,
   ...props
 }: PropsWithChildren<ButtonProps>) {
+  const [confirmContent, setConfirmContent] = useState<{
+    header: string;
+    body: React.ReactNode;
+  } | null>(null);
+  const [capturedEvent, setCapturedEvent] =
+    useState<MouseEvent<HTMLButtonElement> | null>(null);
+
+  // Be careful: `ModalConfirmDialog` internally uses `Button` (which is us).
+  // `ModalConfirmDialog` has to be conditionally rendered here, otherwise
+  // infinite recursion results.
   return (
-    <button
-      {...props}
-      onClick={onClick}
-      disabled={disabled}
-      className={clsx(className, className_(variant, size, loading))}
-    >
-      {leftAdornment && (
-        <div className={styles.leftAdornment}>{leftAdornment}</div>
+    <>
+      {confirm !== undefined && (
+        <ModalConfirmDialog
+          open={confirmContent !== null}
+          header={confirmContent?.header}
+          onConfirm={() => {
+            setConfirmContent(null);
+            setCapturedEvent(null);
+
+            if (onClick !== undefined) {
+              onClick(capturedEvent!);
+            }
+          }}
+          onCancel={() => setConfirmContent(null)}
+        >
+          {confirmContent?.body}
+        </ModalConfirmDialog>
       )}
-      {leftAdornment || rightAdornment ? <span>{children}</span> : children}
-      {rightAdornment && (
-        <div className={styles.rightAdornment}>{rightAdornment}</div>
-      )}
-    </button>
+      <button
+        {...props}
+        onClick={(e) => {
+          if (confirm !== undefined && confirm !== null) {
+            const confirmContent_ = confirm()?.content ?? {
+              header: "Are you sure?",
+              body: "Please confirm you wish to continue.",
+            };
+            setConfirmContent(confirmContent_);
+            setCapturedEvent(e);
+          } else {
+            if (onClick !== undefined) {
+              onClick(e);
+            }
+          }
+        }}
+        disabled={disabled}
+        className={clsx(className, className_(variant, size, loading))}
+      >
+        {leftAdornment && (
+          <div className={styles.leftAdornment}>{leftAdornment}</div>
+        )}
+        {leftAdornment || rightAdornment ? <span>{children}</span> : children}
+        {rightAdornment && (
+          <div className={styles.rightAdornment}>{rightAdornment}</div>
+        )}
+      </button>
+    </>
   );
 }
 
