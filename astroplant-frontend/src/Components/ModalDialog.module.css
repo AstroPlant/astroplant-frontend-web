@@ -4,6 +4,7 @@
   box-shadow: var(--ring-box-shadow);
   margin: 12vh auto;
   max-height: 76vh;
+  max-width: calc(min(95vw, calc(var(--siteWidth) + 1.5rem * 2)));
 
   &::backdrop {
     background: rgba(0, 0, 0, 0.3);
