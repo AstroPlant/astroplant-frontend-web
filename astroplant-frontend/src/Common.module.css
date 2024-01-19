@@ -17,9 +17,3 @@
   width: min(35rem, var(--siteWidth));
   margin-inline: auto;
 }
-
-@media only screen and (max-width: 767px) {
-  .containerWide, .containerRegular, .containerSmall {
-    margin-inline: 1rem;
-  }
-}

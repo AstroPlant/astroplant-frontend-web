@@ -109,12 +109,7 @@
 
 @media only screen and (max-width: 767px) {
   .header {
-    flex-direction: column;
-    justify-content: left;
-    align-items: center;
-    width: var(--siteWidth);
-    margin-inline: auto;
-    padding-inline: 1rem;
+    padding-inline: var(--minSiteMargin);
   }
 
   .logo {
