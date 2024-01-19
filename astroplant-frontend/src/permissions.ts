@@ -37,10 +37,10 @@ export function kitPermissionsFromMembership(
   // This corresponds to
   // https://github.com/AstroPlant/astroplant-api/blob/3cc10c726b1d1cbb4185193d756febe19a0c8e09/astroplant-api/src/authorization/mod.rs#L39-L81
   return {
-    deleteMedia: accessConfigure,
+    deleteMedia: accessConfigure || accessSuper,
     resetPassword: accessSuper,
-    editDetails: accessConfigure,
-    editConfiguration: accessConfigure,
+    editDetails: accessConfigure || accessSuper,
+    editConfiguration: accessConfigure || accessSuper,
     editMembers: accessSuper,
     setSuperMember: accessSuper,
     rpcVersion: accessSuper,
