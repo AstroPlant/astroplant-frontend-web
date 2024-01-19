@@ -18,6 +18,11 @@ import commonStyle from "~/Common.module.css";
 import style from "./index.module.css";
 
 export default function User({ username }: { username: string }) {
+  // This component is used to render both the user profile of the logged-in
+  // user as well as profiles of other users. If the profile of the logged-in
+  // user is rendered, additional options are displayed, such as the ability to
+  // edit the profile.
+
   const { username: meUsername } = useAppSelector(selectMe);
   const isMe = username === meUsername;
 
