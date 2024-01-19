@@ -257,7 +257,7 @@ export const scheduledOutputSettingsSchema: JSONSchema7 = {
 export const scheduledOutputSettingsUiSchema = {
   interpolated: {
     "ui:help":
-      "Interpolation is only possible for numeric commands. By interpolating, output command will linearly move from one output value to the next. To have a stable output command between two times, e.g. 09:00 and 18:00, set those times to the same command value.",
+      "Interpolation is only possible for numeric commands. By interpolating, the output command will linearly move from one output value to the next. To have a stable output command between two times, e.g. 09:00 and 18:00, set those times to the same command value.",
   },
   schedules: {
     "ui:description":
