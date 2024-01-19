@@ -223,6 +223,15 @@ export const rtkApi = createApi({
         body: patch,
       }),
     }),
+    getUserKitMemberships: build.query<
+      Array<schemas["KitMembership"]>,
+      { username: string }
+    >({
+      query: ({ username }) => ({
+        path: `/users/${encodeUri(username)}/kit-memberships`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 

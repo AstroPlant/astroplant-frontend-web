@@ -1,7 +1,7 @@
 import "leaflet/dist/leaflet.css";
 import "./App.css";
 
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useParams } from "react-router-dom";
 
 import ConnectionStatus from "./Components/ConnectionStatus";
 import Footer from "./Components/Footer";
@@ -18,6 +18,7 @@ import LogIn from "./scenes/LogIn";
 import Map from "./scenes/map";
 import Me from "./scenes/Me";
 import SignUp from "./scenes/SignUp";
+import User from "./scenes/user";
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/log-in" element={<LogIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/me" element={<Me />} />
+          <Route path="/user/:username" element={<User_ />} />
           <Route path="/create-kit" element={<CreateKit />} />
           <Route path="/kit/:kitSerial/*" element={<Kit />} />
           <Route path="*" element={<NotFound />} />
@@ -48,4 +50,13 @@ export default function App() {
       <Notifications />
     </>
   );
+}
+
+function User_() {
+  const { username } = useParams<{ username: string }>();
+  if (username) {
+    return <User username={username} />;
+  } else {
+    return <NotFound />;
+  }
 }
