@@ -205,7 +205,7 @@ export const rtkApi = createApi({
       providesTags: (_result, _err, { username }) => [
         { type: "Users", id: username },
       ],
-      query: (username) => ({
+      query: ({ username }) => ({
         path: `/users/${encodeUri(username)}`,
         method: "GET",
       }),
