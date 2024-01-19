@@ -1,5 +1,5 @@
 import { useContext, useState, useMemo } from "react";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Transition, Divider } from "semantic-ui-react";
 import ReactMarkdown from "react-markdown";
@@ -23,6 +23,8 @@ import { KitContext, PermissionsContext } from "../contexts";
 
 import commonStyle from "~/Common.module.css";
 import style from "./index.module.css";
+import { rtkApi } from "~/services/astroplant";
+import Gravatar from "~/Components/Gravatar";
 
 const PatchKitForm = ApiForm<any, Response<schemas["Kit"]>>();
 
@@ -35,6 +37,10 @@ export default function KitDetails() {
 
   const kit = useContext(KitContext);
   const permissions = useContext(PermissionsContext);
+
+  const { data: kitMembers } = rtkApi.useGetKitMembersQuery({
+    kitSerial: kit.serial,
+  });
 
   const kitDetails = useMemo(() => {
     return removeNull({
@@ -93,7 +99,7 @@ export default function KitDetails() {
   };
 
   return (
-    <section className={commonStyle.containerRegular}>
+    <section className={commonStyle.containerWide}>
       <h2>About</h2>
       <Routes>
         <Route
@@ -143,41 +149,67 @@ export default function KitDetails() {
                   </div>
                 </ModalDialog>
               )}
-              <div>
-                {kit.description && (
-                  <section className={style.description}>
-                    <header>Description</header>
-                    <div>
-                      <ReactMarkdown>{kit.description || ""}</ReactMarkdown>
-                    </div>
-                  </section>
-                )}
-                {typeof kit.latitude === "number" &&
-                  typeof kit.longitude === "number" && (
+              <div className={style.details}>
+                <div>
+                  {kit.description && (
+                    <section className={style.description}>
+                      <header>Description</header>
+                      <div>
+                        <ReactMarkdown>{kit.description || ""}</ReactMarkdown>
+                      </div>
+                    </section>
+                  )}
+                  {typeof kit.latitude === "number" &&
+                    typeof kit.longitude === "number" && (
+                      <>
+                        <h3>Kit location</h3>
+                        <MapWithMarker
+                          location={{
+                            latitude: kit.latitude,
+                            longitude: kit.longitude,
+                          }}
+                        >
+                          <p>
+                            {t("common.latitude")}: {kit.latitude.toFixed(4)}
+                            <br />
+                            {t("common.longitude")}: {kit.longitude.toFixed(4)}
+                          </p>
+                        </MapWithMarker>
+                      </>
+                    )}
+                  {permissions.editDetails && (
                     <>
                       <Divider />
-                      <MapWithMarker
-                        location={{
-                          latitude: kit.latitude,
-                          longitude: kit.longitude,
-                        }}
+                      <Button
+                        variant="primary"
+                        onClick={() => navigate("edit")}
                       >
-                        <p>
-                          {t("common.latitude")}: {kit.latitude.toFixed(4)}
-                          <br />
-                          {t("common.longitude")}: {kit.longitude.toFixed(4)}
-                        </p>
-                      </MapWithMarker>
+                        Edit kit details
+                      </Button>
                     </>
                   )}
-                {permissions.editDetails && (
-                  <>
-                    <Divider />
-                    <Button variant="primary" onClick={() => navigate("edit")}>
-                      Edit kit details
-                    </Button>
-                  </>
-                )}
+                </div>
+                <div>
+                  <h3>Kit members</h3>
+                  {kitMembers !== undefined && (
+                    <ul className={style.members}>
+                      {kitMembers.map((kitMember) => (
+                        <li>
+                          <Link to={`/user/${kitMember.user.username}`}>
+                            <Gravatar
+                              identifier={kitMember.user.gravatar}
+                              size={32}
+                            />
+                            <strong>{kitMember.user.displayName}</strong>
+                            <span className={style.username}>
+                              {kitMember.user.username}
+                            </span>
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
               </div>
             </>
           }

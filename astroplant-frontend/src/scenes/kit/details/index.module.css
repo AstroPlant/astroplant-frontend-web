@@ -1,3 +1,45 @@
+@media only screen and (max-width: 768px) {
+  .details {
+    flex-direction: column;
+  }
+}
+
+.details {
+  display: flex;
+  gap: 1rem;
+
+  div:first-child {
+    flex: 1;
+  }
+}
+
+.members {
+  padding: 0;
+  margin: 0;
+
+  li {
+    list-style: none;
+    a {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+
+      .username {
+        color: var(--gray-500);
+      }
+
+      img {
+        border-radius: 100%;
+        border: 1px solid var(--border-color);
+      }
+    }
+  }
+
+  li + li {
+    margin-top: 0.3rem;
+  }
+}
+
 .description {
   border-radius: 0.5rem;
   border: 1px solid var(--border-color);
