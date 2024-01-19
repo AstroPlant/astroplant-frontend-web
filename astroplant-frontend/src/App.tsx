@@ -37,7 +37,7 @@ export default function App() {
           <Route path="/me" element={<Me />} />
           <Route path="/create-kit" element={<CreateKit />} />
           <Route path="/kit/:kitSerial/*" element={<Kit />} />
-          <Route element={<NotFound />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
 
