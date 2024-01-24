@@ -211,8 +211,6 @@ export default function Rules({ readOnly, kit, configuration }: Props) {
   const quantityTypes = useAppSelector(quantityTypesSelectors.selectEntities);
   const peripherals = useAppSelector(peripheralSelectors.selectEntities);
 
-  const dispatch = useAppDispatch();
-
   const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editingInput, setEditingInput] = useState<
@@ -222,29 +220,9 @@ export default function Rules({ readOnly, kit, configuration }: Props) {
     [schemas["Peripheral"], string, JSONSchema7] | null
   >(null);
   const [editingRule, setEditingRule] = useState<number | null>(null);
-  const [inputSettings, setInputSettings] = useState<any>({});
   const [fuzzyControl, setFuzzyControl] = useState(
     parseConfiguration(configuration),
   );
-
-  const onResponse = (response: Response<schemas["KitConfiguration"]>) => {
-    setExpanded(false);
-    dispatch(
-      kitConfigurationUpdated({
-        serial: kit.serial,
-        configuration: response.data,
-      }),
-    );
-  };
-
-  const send = (formData: any) => {
-    return api.patchConfiguration({
-      configurationId: configuration.id,
-      patchKitConfiguration: {
-        controlRules: formData,
-      },
-    });
-  };
 
   const update = async (fuzzyControl: FuzzyControl) => {
     setLoading(true);
