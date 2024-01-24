@@ -196,7 +196,6 @@ export const outputSettingsSchema = {
     {
       type: "object",
       required: ["type"],
-      additionalProperties: false,
       properties: {
         type: { type: "string", enum: ["continuous", "scheduled"] },
       },
@@ -206,18 +205,24 @@ export const outputSettingsSchema = {
         {
           type: "object",
           required: ["continuous"],
-          additionalProperties: false,
           properties: { continuous: continuousOutputSettingsSchema },
         },
         {
           type: "object",
           required: ["scheduled"],
-          additionalProperties: false,
           properties: { scheduled: scheduledOutputSettingsSchema },
         },
       ],
     },
   ],
+  // Using JSON Schema draft 2019-09 this could be achieved using `unevaluatedProperties: false`,
+  // https://json-schema.org/understanding-json-schema/reference/object"
+  properties: {
+    type: true,
+    continuous: true,
+    scheduled: true,
+  },
+  additionalProperties: false,
 } as const satisfies JSONSchema;
 
 export const fuzzyRuleCondition = {
