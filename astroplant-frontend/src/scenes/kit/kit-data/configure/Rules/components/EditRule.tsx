@@ -1,6 +1,4 @@
-import React, { useState, useRef } from "react";
-import compose from "~/utils/compose";
-import { withTranslation, WithTranslation } from "react-i18next";
+import { useState, useRef } from "react";
 import { Modal, Header, Button, Icon } from "semantic-ui-react";
 import { produce } from "immer";
 import { JSONSchema7 } from "json-schema";
@@ -8,7 +6,7 @@ import validator from "@rjsf/validator-ajv8";
 
 import RjsfForm from "~/rjsf-theme";
 
-import { FuzzyRule, } from "~/control/types";
+import { FuzzyRule } from "~/control/types";
 import {
   hedgeSchema,
   inputFuzzySetSchema,
@@ -25,8 +23,6 @@ export type Props = {
   delete: () => void;
   close: () => void;
 };
-
-type PInner = Props & WithTranslation;
 
 export const fuzzyRuleConditionSchema: JSONSchema7 = {
   type: "object",
@@ -69,7 +65,7 @@ export const fuzzyRuleSchema: JSONSchema7 = {
   },
 };
 
-function EditRule(props: PInner) {
+export default function EditRule(props: Props) {
   const {
     conditionChoices,
     implicationChoices,
@@ -287,5 +283,3 @@ function EditRule(props: PInner) {
     </Modal>
   );
 }
-
-export default compose<PInner, Props>(withTranslation())(EditRule);
