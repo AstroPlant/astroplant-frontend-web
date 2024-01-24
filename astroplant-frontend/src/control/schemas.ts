@@ -192,35 +192,17 @@ export const scheduledOutputSettingsUiSchema = {
 };
 
 export const outputSettingsSchema = {
-  allOf: [
-    {
-      type: "object",
-      required: ["type"],
-      properties: {
-        type: { type: "string", enum: ["continuous", "scheduled"] },
-      },
-    },
-    {
-      oneOf: [
-        {
-          type: "object",
-          required: ["continuous"],
-          properties: { continuous: continuousOutputSettingsSchema },
-        },
-        {
-          type: "object",
-          required: ["scheduled"],
-          properties: { scheduled: scheduledOutputSettingsSchema },
-        },
-      ],
-    },
-  ],
-  // Using JSON Schema draft 2019-09 this could be achieved using `unevaluatedProperties: false`,
+  // Ideally this would be coded as a tagged union.
+  //
+  // Using JSON Schema draft 2019-09 this could be achieved using `oneOf` and
+  // `unevaluatedProperties: false`,
   // https://json-schema.org/understanding-json-schema/reference/object"
+  type: "object",
+  required: ["type"],
   properties: {
-    type: true,
-    continuous: true,
-    scheduled: true,
+    type: { type: "string", enum: ["continuous", "scheduled"] },
+    continuous: continuousOutputSettingsSchema,
+    scheduled: scheduledOutputSettingsSchema,
   },
   additionalProperties: false,
 } as const satisfies JSONSchema;
