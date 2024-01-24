@@ -390,7 +390,7 @@ export default function Rules({ readOnly, kit, configuration }: Props) {
   const deleteRule = (index: number) => {
     update(
       produce(fuzzyControl, (draft) => {
-        delete draft.rules[index];
+        draft.rules.splice(index, 1);
       }),
     );
   };
