@@ -3,14 +3,12 @@ import compose from "~/utils/compose";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Icon } from "semantic-ui-react";
 import validator from "@rjsf/validator-ajv8";
+import { JSONSchema7 } from "json-schema";
 
 import RjsfForm from "~/rjsf-theme";
 
-import {
-  InputSettings,
-  inputSettingsSchema,
-  inputSettingsUiSchema,
-} from "../schemas";
+import { InputSettings } from "~/control/types";
+import { inputSettingsSchema, inputSettingsUiSchema } from "~/control/schemas";
 import { schemas } from "~/api";
 import { Button } from "~/Components/Button";
 import { ModalDialog } from "~/Components/ModalDialog";
@@ -92,7 +90,7 @@ function EditPeripheral(props: PInner) {
     >
       <h3>Please choose the input settings.</h3>
       <RjsfForm
-        schema={inputSettingsSchema}
+        schema={inputSettingsSchema as unknown as JSONSchema7}
         uiSchema={inputSettingsUiSchema}
         onSubmit={({ formData }) =>
           handleSubmit(peripheral, quantityType, formData)

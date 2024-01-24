@@ -8,12 +8,12 @@ import validator from "@rjsf/validator-ajv8";
 
 import RjsfForm from "~/rjsf-theme";
 
+import { FuzzyRule, } from "~/control/types";
 import {
-  FuzzyRule,
   hedgeSchema,
   inputFuzzySetSchema,
   outputFuzzySetSchema,
-} from "../schemas";
+} from "~/control/schemas";
 import { schemas } from "~/api";
 
 export type Props = {
@@ -33,10 +33,10 @@ export const fuzzyRuleConditionSchema: JSONSchema7 = {
   required: ["negation", "delta", "peripheralQuantityType", "fuzzyVariable"],
   properties: {
     negation: { type: "boolean", default: false },
-    hedge: hedgeSchema,
+    hedge: hedgeSchema as unknown as JSONSchema7,
     delta: { type: "boolean", default: false },
     peripheralQuantityType: { type: "string" },
-    fuzzyVariable: inputFuzzySetSchema,
+    fuzzyVariable: inputFuzzySetSchema as unknown as JSONSchema7,
   },
 };
 
@@ -45,7 +45,7 @@ export const fuzzyRuleImplicationSchema: JSONSchema7 = {
   required: ["peripheralCommand", "fuzzyVariable"],
   properties: {
     peripheralCommand: { type: "string" },
-    fuzzyVariable: outputFuzzySetSchema,
+    fuzzyVariable: outputFuzzySetSchema as unknown as JSONSchema7,
   },
 };
 

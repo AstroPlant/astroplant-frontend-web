@@ -1,7 +1,7 @@
 import React from "react";
 import { Table, Header } from "semantic-ui-react";
 
-import { FuzzyRule } from "../schemas";
+import { FuzzyRule } from "~/control/types";
 
 export type Props = {
   index: number;

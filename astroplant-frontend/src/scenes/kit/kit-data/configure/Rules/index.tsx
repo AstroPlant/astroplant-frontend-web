@@ -31,7 +31,11 @@ import {
   FuzzyRule,
   InputSettings,
   OutputSettings,
-} from "./schemas";
+} from "~/control/types";
+import {
+  validateFuzzyControl,
+  validateFuzzyControlErrors,
+} from "~/control/schemas";
 import ViewInput from "./components/ViewInput";
 import ViewOutput from "./components/ViewOutput";
 import ViewRule from "./components/ViewRule";

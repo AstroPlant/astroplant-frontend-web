@@ -2,7 +2,7 @@ import React from "react";
 import { Table, Header, Divider } from "semantic-ui-react";
 import { JSONSchema7 } from "json-schema";
 
-import { OutputSettings, ScheduledOutputSettings } from "../schemas";
+import { OutputSettings, ScheduledOutputSettings } from "~/control/types";
 import { schemas } from "~/api";
 
 export type Props = {

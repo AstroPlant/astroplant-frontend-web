@@ -2,19 +2,19 @@ import React, { useState, useRef } from "react";
 import compose from "~/utils/compose";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Icon } from "semantic-ui-react";
-import { produce } from "immer";
+import { castDraft, produce } from "immer";
 import { JSONSchema7 } from "json-schema";
 import validator from "@rjsf/validator-ajv8";
 
 import RjsfForm from "~/rjsf-theme";
 
+import { OutputSettings } from "~/control/types";
 import {
-  OutputSettings,
   continuousOutputSettingsSchema,
   continuousOutputSettingsUiSchema,
   scheduledOutputSettingsSchema,
   scheduledOutputSettingsUiSchema,
-} from "../schemas";
+} from "~/control/schemas";
 import { schemas } from "~/api";
 import { Button } from "~/Components/Button";
 import { Select } from "~/Components/Select";
@@ -61,7 +61,7 @@ function EditOutput(props: PInner) {
   let data: any;
   if (outputType === "continuous") {
     outputSettingsSchemaModified = produce(
-      continuousOutputSettingsSchema,
+      castDraft(continuousOutputSettingsSchema),
       (draft) => {
         // @ts-ignore
         draft.properties.minimal = schema;
@@ -73,7 +73,7 @@ function EditOutput(props: PInner) {
     data = outputSettings.continuous;
   } else if (outputType === "scheduled") {
     outputSettingsSchemaModified = produce(
-      scheduledOutputSettingsSchema,
+      castDraft(scheduledOutputSettingsSchema),
       (draft) => {
         // @ts-ignore
         draft.properties.schedules.items.properties.schedule.items.properties.value =

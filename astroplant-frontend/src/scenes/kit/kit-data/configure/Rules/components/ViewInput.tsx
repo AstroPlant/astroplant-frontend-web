@@ -1,7 +1,7 @@
 import React from "react";
 import { Header, Table } from "semantic-ui-react";
 
-import { InputSettings } from "../schemas";
+import { InputSettings } from "~/control/types";
 import { schemas } from "~/api";
 
 export type Props = {
