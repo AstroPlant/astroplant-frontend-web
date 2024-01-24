@@ -1,8 +1,8 @@
 import { useState, useRef } from "react";
-import { Modal, Header, Button, Icon } from "semantic-ui-react";
 import { produce } from "immer";
 import { JSONSchema7 } from "json-schema";
 import validator from "@rjsf/validator-ajv8";
+import { IconScale } from "@tabler/icons-react";
 
 import RjsfForm from "~/rjsf-theme";
 
@@ -13,6 +13,8 @@ import {
   outputFuzzySetSchema,
 } from "~/control/schemas";
 import { schemas } from "~/api";
+import { ModalDialog } from "~/Components/ModalDialog";
+import { Button } from "~/Components/Button";
 
 export type Props = {
   conditionChoices: [string, schemas["QuantityType"]][];
@@ -238,48 +240,46 @@ export default function EditRule(props: Props) {
   });
 
   return (
-    <Modal
-      closeOnEscape={true}
-      closeOnDimmerClick={true}
+    <ModalDialog
       open={true}
       onClose={handleClose}
+      header={
+        <>
+          <IconScale aria-hidden /> Rule
+        </>
+      }
+      actions={
+        <>
+          <Button variant="muted" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button variant="negative" onClick={() => handleDelete()}>
+            Delete
+          </Button>
+          <Button
+            variant="positive"
+            onClick={() => (submitButtonRef.current! as any).click()}
+          >
+            Submit
+          </Button>
+        </>
+      }
     >
-      <Modal.Header>
-        <Icon name="balance" /> Rule
-      </Modal.Header>
-      <Modal.Content scrolling>
-        <Header size="small">
-          Please set the rule input conditions and output implications.
-        </Header>
-        <RjsfForm
-          schema={schema}
-          uiSchema={uiSchema}
-          onSubmit={({ formData }) => handleSubmit(formData)}
-          formData={formData}
-          onChange={({ formData }) => setFormData(formData)}
-          validator={validator}
-        >
-          <input
-            ref={submitButtonRef}
-            type="submit"
-            style={{ display: "none" }}
-          />
-        </RjsfForm>
-      </Modal.Content>
-      <Modal.Actions>
-        <Button
-          primary
-          onClick={() => (submitButtonRef.current! as any).click()}
-        >
-          Submit
-        </Button>
-        <Button secondary onClick={() => handleDelete()}>
-          Delete
-        </Button>
-        <Button color="red" onClick={handleClose}>
-          Cancel
-        </Button>
-      </Modal.Actions>
-    </Modal>
+      <p>Please set the rule input conditions and output implications.</p>
+      <RjsfForm
+        schema={schema}
+        uiSchema={uiSchema}
+        onSubmit={({ formData }) => handleSubmit(formData)}
+        formData={formData}
+        onChange={({ formData }) => setFormData(formData)}
+        validator={validator}
+      >
+        <input
+          ref={submitButtonRef}
+          type="submit"
+          style={{ display: "none" }}
+        />
+      </RjsfForm>
+    </ModalDialog>
   );
 }
