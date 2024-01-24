@@ -170,7 +170,9 @@ function EditOutput(props: PInner) {
         onChange={(e) => setOutputType(e.currentTarget.value as OutputType)}
       >
         {possibleOutputTypes.map((outputType) => (
-          <option value={outputType}>{outputType}</option>
+          <option key={outputType} value={outputType}>
+            {outputType}
+          </option>
         ))}
       </Select>
       <RjsfForm
