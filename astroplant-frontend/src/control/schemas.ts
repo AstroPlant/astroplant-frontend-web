@@ -123,7 +123,7 @@ export const outputSettingsScheduleSchema = {
     additionalProperties: false,
     properties: {
       time: { type: "string", format: "time" },
-      value: {},
+      value: { type: "number" },
     },
   },
   minItems: 1,
