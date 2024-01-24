@@ -1,7 +1,5 @@
-import React from "react";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
-import { withTranslation, WithTranslation } from "react-i18next";
+import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Header,
   Segment,
@@ -14,7 +12,6 @@ import {
 import { produce } from "immer";
 import { JSONSchema7 } from "json-schema";
 
-import { RootState } from "~/types";
 import {
   KitConfigurationState,
   peripheralSelectors,
@@ -53,20 +50,12 @@ import {
   IconTransferIn,
   IconTransferOut,
 } from "@tabler/icons-react";
+import { useAppDispatch, useAppSelector } from "~/hooks";
 
-export type Props = WithTranslation & {
+export type Props = {
   kit: schemas["Kit"];
   configuration: KitConfigurationState;
   readOnly: boolean;
-  peripheralDefinitions: {
-    [id: string]: schemas["PeripheralDefinition"] | undefined;
-  };
-  quantityTypes: { [id: string]: schemas["QuantityType"] | undefined };
-  peripherals: { [id: string]: schemas["Peripheral"] | undefined };
-  kitConfigurationUpdated: (kitConfiguration: {
-    serial: string;
-    configuration: schemas["KitConfiguration"];
-  }) => void;
 };
 
 type State = {
@@ -82,174 +71,184 @@ type State = {
 function parseConfiguration(
   configuration: KitConfigurationState,
 ): FuzzyControl {
+  const rules = configuration.controlRules as { fuzzyControl?: unknown };
+
+  if (!validateFuzzyControl(rules?.fuzzyControl)) {
+    console.debug(
+      "Fuzzy control rules failed to validate.",
+      validateFuzzyControlErrors(),
+    );
+    const fuzzyControl: FuzzyControl = { input: {}, output: {}, rules: [] };
+    return fuzzyControl;
+  }
+
   let fuzzyControl: FuzzyControl = { input: {}, output: {}, rules: [] };
-
-  const rules = configuration.controlRules as any;
-  try {
-    for (const [peripheralName, qtSettings] of Object.entries(
-      rules.fuzzyControl.input,
-    )) {
-      fuzzyControl.input[peripheralName] = {};
-      for (const [quantityTypeId, settings] of Object.entries(
-        qtSettings as any,
-      )) {
-        const {
-          nominalRange,
-          nominalDeltaRange,
-          deltaMeasurements,
-          interpolated,
-          setpoints,
-        } = settings as any;
-        fuzzyControl.input[peripheralName]![quantityTypeId]! = {
-          nominalRange,
-          nominalDeltaRange,
-          deltaMeasurements,
-          interpolated,
-          setpoints,
-        };
-      }
-    }
-    for (const [peripheralName, commandSettings] of Object.entries(
-      rules.fuzzyControl.output,
-    )) {
-      fuzzyControl.output[peripheralName] = {};
-      for (const [command, settings] of Object.entries(
-        commandSettings as any,
-      )) {
-        const { type, continuous, scheduled } = settings as any;
-        fuzzyControl.output[peripheralName]![command]! = {
-          type,
-          continuous,
-          scheduled,
-        };
-      }
-    }
-    for (const fuzzyRule of rules.fuzzyControl.rules) {
-      let newFuzzyRule: FuzzyRule = {
-        condition: [],
-        implication: [],
-        schedules: [],
-        activeFrom: fuzzyRule.activeFrom,
-        activeTo: fuzzyRule.activeTo,
+  for (const [peripheralName, qtSettings] of Object.entries(
+    rules.fuzzyControl.input,
+  )) {
+    fuzzyControl.input[peripheralName] = {};
+    for (const [quantityTypeId, settings] of Object.entries(qtSettings)) {
+      const {
+        nominalRange,
+        nominalDeltaRange,
+        deltaMeasurements,
+        interpolated,
+        setpoints,
+      } = settings;
+      fuzzyControl.input[peripheralName]![quantityTypeId]! = {
+        nominalRange,
+        nominalDeltaRange,
+        deltaMeasurements,
+        interpolated,
+        setpoints,
       };
-
-      for (const cond of fuzzyRule.condition) {
-        const {
-          negation,
-          hedge,
-          delta,
-          peripheral,
-          quantityType,
-          fuzzyVariable,
-        } = cond;
-
-        if (!(peripheral in fuzzyControl.input)) {
-          continue;
-        }
-
-        if (!(quantityType in fuzzyControl.input[peripheral]!)) {
-          continue;
-        }
-
-        newFuzzyRule.condition.push({
-          negation,
-          hedge,
-          delta,
-          peripheral,
-          quantityType,
-          fuzzyVariable,
-        });
-      }
-
-      for (const impl of fuzzyRule.implication) {
-        const { peripheral, command, fuzzyVariable } = impl;
-
-        if (!(peripheral in fuzzyControl.output)) {
-          continue;
-        }
-
-        if (!(command in fuzzyControl.output[peripheral]!)) {
-          continue;
-        }
-
-        newFuzzyRule.implication.push({
-          peripheral,
-          command,
-          fuzzyVariable,
-        });
-      }
-
-      for (const sched of fuzzyRule.schedules) {
-        const { peripheral, command, schedule } = sched;
-
-        if (!(peripheral in fuzzyControl.output)) {
-          continue;
-        }
-
-        if (!(command in fuzzyControl.output[peripheral]!)) {
-          continue;
-        }
-
-        newFuzzyRule.schedules.push({
-          peripheral,
-          command,
-          schedule,
-        });
-      }
-
-      if (
-        newFuzzyRule.condition.length > 0 ||
-        newFuzzyRule.implication.length > 0 ||
-        newFuzzyRule.schedules.length > 0
-      ) {
-        fuzzyControl.rules.push(newFuzzyRule);
-      }
     }
-  } catch (e) {}
+  }
+  for (const [peripheralName, commandSettings] of Object.entries(
+    rules.fuzzyControl.output,
+  )) {
+    fuzzyControl.output[peripheralName] = {};
+    for (const [command, settings] of Object.entries(commandSettings)) {
+      const { type, continuous, scheduled } = settings;
+      fuzzyControl.output[peripheralName]![command]! = {
+        type,
+        continuous,
+        scheduled,
+      };
+    }
+  }
+  for (const fuzzyRule of rules.fuzzyControl.rules) {
+    let newFuzzyRule: FuzzyRule = {
+      condition: [],
+      implication: [],
+      schedules: [],
+      activeFrom: fuzzyRule.activeFrom,
+      activeTo: fuzzyRule.activeTo,
+    };
+
+    for (const cond of fuzzyRule.condition) {
+      const {
+        negation,
+        hedge,
+        delta,
+        peripheral,
+        quantityType,
+        fuzzyVariable,
+      } = cond;
+
+      if (!(peripheral in fuzzyControl.input)) {
+        continue;
+      }
+
+      if (!(quantityType in fuzzyControl.input[peripheral]!)) {
+        continue;
+      }
+
+      newFuzzyRule.condition.push({
+        negation,
+        hedge,
+        delta,
+        peripheral,
+        quantityType,
+        fuzzyVariable,
+      });
+    }
+
+    for (const impl of fuzzyRule.implication) {
+      const { peripheral, command, fuzzyVariable } = impl;
+
+      if (!(peripheral in fuzzyControl.output)) {
+        continue;
+      }
+
+      if (!(command in fuzzyControl.output[peripheral]!)) {
+        continue;
+      }
+
+      newFuzzyRule.implication.push({
+        peripheral,
+        command,
+        fuzzyVariable,
+      });
+    }
+
+    for (const sched of fuzzyRule.schedules) {
+      const { peripheral, command, schedule } = sched;
+
+      if (!(peripheral in fuzzyControl.output)) {
+        continue;
+      }
+
+      if (!(command in fuzzyControl.output[peripheral]!)) {
+        continue;
+      }
+
+      newFuzzyRule.schedules.push({
+        peripheral,
+        command,
+        schedule,
+      });
+    }
+
+    if (
+      newFuzzyRule.condition.length > 0 ||
+      newFuzzyRule.implication.length > 0 ||
+      newFuzzyRule.schedules.length > 0
+    ) {
+      fuzzyControl.rules.push(newFuzzyRule);
+    }
+  }
 
   return fuzzyControl;
 }
 
-class Rules extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
+export default function Rules({ readOnly, kit, configuration }: Props) {
+  const { t } = useTranslation();
 
-    const { configuration } = this.props;
-    this.state = {
-      expanded: false,
-      loading: false,
-      editingInput: Option.none(),
-      editingOutput: Option.none(),
-      editingRule: Option.none(),
-      inputSettings: {},
-      fuzzyControl: parseConfiguration(configuration),
-    };
-  }
+  const peripheralDefinitions = useAppSelector(
+    peripheralDefinitionsSelectors.selectEntities,
+  );
+  const quantityTypes = useAppSelector(quantityTypesSelectors.selectEntities);
+  const peripherals = useAppSelector(peripheralSelectors.selectEntities);
 
-  onResponse(response: Response<schemas["KitConfiguration"]>) {
-    const { kit } = this.props;
-    this.setState({ expanded: false });
-    this.props.kitConfigurationUpdated({
-      serial: kit.serial,
-      configuration: response.data,
-    });
-  }
+  const dispatch = useAppDispatch();
 
-  send(formData: any) {
-    const { configuration } = this.props;
+  const [expanded, setExpanded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [editingInput, setEditingInput] = useState<
+    [schemas["Peripheral"], schemas["QuantityType"]] | null
+  >(null);
+  const [editingOutput, setEditingOutput] = useState<
+    [schemas["Peripheral"], string, JSONSchema7] | null
+  >(null);
+  const [editingRule, setEditingRule] = useState<number | null>(null);
+  const [inputSettings, setInputSettings] = useState<any>({});
+  const [fuzzyControl, setFuzzyControl] = useState(
+    parseConfiguration(configuration),
+  );
 
+  const onResponse = (response: Response<schemas["KitConfiguration"]>) => {
+    setExpanded(false);
+    dispatch(
+      kitConfigurationUpdated({
+        serial: kit.serial,
+        configuration: response.data,
+      }),
+    );
+  };
+
+  const send = (formData: any) => {
     return api.patchConfiguration({
       configurationId: configuration.id,
       patchKitConfiguration: {
         controlRules: formData,
       },
     });
-  }
+  };
 
-  async update(fuzzyControl: FuzzyControl) {
-    const { configuration } = this.props;
-
-    this.setState({ loading: true, fuzzyControl });
+  const update = async (fuzzyControl: FuzzyControl) => {
+    setLoading(true);
+    setFuzzyControl(fuzzyControl);
 
     await firstValueFrom(
       api.patchConfiguration({
@@ -261,89 +260,87 @@ class Rules extends React.Component<Props, State> {
         },
       }),
     );
-    this.setState({ loading: false });
-  }
 
-  addEmptyInput = (
+    setLoading(false);
+  };
+
+  const addEmptyInput = (
     peripheral: schemas["Peripheral"],
     quantityType: schemas["QuantityType"],
   ) => {
-    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
-      if (!(peripheral.name in draft.input)) {
-        draft.input[peripheral.name] = {};
-      }
-      draft.input[peripheral.name]![quantityType.id] = {
-        nominalRange: 1.0,
-        nominalDeltaRange: 0.1,
-        deltaMeasurements: 1,
-        interpolated: false,
-        setpoints: [],
-      };
-    });
+    setFuzzyControl(
+      produce(fuzzyControl, (draft) => {
+        if (!(peripheral.name in draft.input)) {
+          draft.input[peripheral.name] = {};
+        }
+        draft.input[peripheral.name]![quantityType.id] = {
+          nominalRange: 1.0,
+          nominalDeltaRange: 0.1,
+          deltaMeasurements: 1,
+          interpolated: false,
+          setpoints: [],
+        };
+      }),
+    );
 
-    this.setState({
-      fuzzyControl,
-      editingInput: Option.some([peripheral, quantityType]),
-    });
+    setEditingInput([peripheral, quantityType]);
   };
 
-  addEmptyOutput = (
+  const addEmptyOutput = (
     peripheral: schemas["Peripheral"],
     command: string,
     schema: JSONSchema7,
   ) => {
-    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
-      if (!(peripheral.name in draft.output)) {
-        draft.output[peripheral.name] = {};
-      }
-      if (schema.type && schema.type === "number") {
-        draft.output[peripheral.name]![command] = {
-          type: "continuous",
-          continuous: {
-            minimal: (schema as any).minimal || 0.0,
-            maximal: (schema as any).maximal || 100.0,
-          },
-        };
-      } else {
-        draft.output[peripheral.name]![command] = {
-          type: "scheduled",
-          // @ts-ignore
-          scheduled: {
-            interpolated: false,
-            schedules: [
-              {
-                schedule: [{ time: "00:00:00", value: 0 }],
-              },
-            ],
-          },
-        };
-      }
-    });
+    setFuzzyControl(
+      produce(fuzzyControl, (draft) => {
+        if (!(peripheral.name in draft.output)) {
+          draft.output[peripheral.name] = {};
+        }
+        if (schema.type && schema.type === "number") {
+          draft.output[peripheral.name]![command] = {
+            type: "continuous",
+            continuous: {
+              minimal: (schema as any).minimal || 0.0,
+              maximal: (schema as any).maximal || 100.0,
+            },
+          };
+        } else {
+          draft.output[peripheral.name]![command] = {
+            type: "scheduled",
+            // @ts-ignore
+            scheduled: {
+              interpolated: false,
+              schedules: [
+                {
+                  schedule: [{ time: "00:00:00", value: 0 }],
+                },
+              ],
+            },
+          };
+        }
+      }),
+    );
 
-    this.setState({
-      fuzzyControl,
-      editingOutput: Option.some([peripheral, command, schema]),
-    });
+    setEditingOutput([peripheral, command, schema]);
   };
 
-  addEmptyRule = () => {
-    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
-      draft.rules.push({
-        condition: [],
-        implication: [],
-        schedules: [],
-        activeFrom: "00:00:00",
-        activeTo: "23:59:59",
-      });
-    });
+  const addEmptyRule = () => {
+    setFuzzyControl(
+      produce(fuzzyControl, (draft) => {
+        draft.rules.push({
+          condition: [],
+          implication: [],
+          schedules: [],
+          activeFrom: "00:00:00",
+          activeTo: "23:59:59",
+        });
+      }),
+    );
 
-    this.setState({
-      fuzzyControl,
-      editingRule: Option.some(fuzzyControl.rules.length - 1),
-    });
+    setEditingRule(fuzzyControl.rules.length);
   };
 
-  editInput = (
+  const editInput = (
     peripheral: schemas["Peripheral"],
     quantityType: schemas["QuantityType"],
     inputSettings: InputSettings,
@@ -360,465 +357,416 @@ class Rules extends React.Component<Props, State> {
       });
     });
 
-    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
-      draft.input[peripheral.name]![quantityType.id] = inputSettingsSorted;
-    });
-
-    this.update(fuzzyControl);
+    update(
+      produce(fuzzyControl, (draft) => {
+        draft.input[peripheral.name]![quantityType.id] = inputSettingsSorted;
+      }),
+    );
   };
 
-  editOutput = (
+  const editOutput = (
     peripheral: schemas["Peripheral"],
     command: string,
     outputSettings: OutputSettings,
   ) => {
-    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
-      draft.output[peripheral.name]![command] = outputSettings;
-    });
-
-    this.update(fuzzyControl);
+    update(
+      produce(fuzzyControl, (draft) => {
+        draft.output[peripheral.name]![command] = outputSettings;
+      }),
+    );
   };
 
-  editRule = (index: number, rule: FuzzyRule) => {
-    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
-      draft.rules[index] = rule;
-    });
-
-    this.update(fuzzyControl);
+  const editRule = (index: number, rule: FuzzyRule) => {
+    update(
+      produce(fuzzyControl, (draft) => {
+        draft.rules[index] = rule;
+      }),
+    );
   };
 
-  deleteInput = (
+  const deleteInput = (
     peripheral: schemas["Peripheral"],
     quantityType: schemas["QuantityType"],
   ) => {
-    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
-      delete draft.input[peripheral.name]![quantityType.id];
-      if (Object.values(draft.input[peripheral.name]!).length === 0) {
-        delete draft.input[peripheral.name];
-      }
-    });
-
-    this.update(fuzzyControl);
-  };
-
-  deleteOutput = (peripheral: schemas["Peripheral"], command: string) => {
-    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
-      delete draft.output[peripheral.name]![command];
-      if (Object.values(draft.output[peripheral.name]!).length === 0) {
-        delete draft.output[peripheral.name];
-      }
-    });
-
-    this.update(fuzzyControl);
-  };
-
-  deleteRule = (index: number) => {
-    const fuzzyControl = produce(this.state.fuzzyControl, (draft) => {
-      delete draft.rules[index];
-    });
-
-    this.update(fuzzyControl);
-  };
-
-  render() {
-    const {
-      configuration,
-      readOnly,
-      quantityTypes,
-      peripheralDefinitions,
-      peripherals,
-      t,
-    } = this.props;
-    const { fuzzyControl } = this.state;
-
-    let undefinedPeripheralQuantityTypes: [
-      schemas["Peripheral"],
-      schemas["QuantityType"],
-    ][] = [];
-    for (const peripheral of Object.values(configuration.peripherals).map(
-      (id) => peripherals[id]!,
-    )) {
-      const peripheralDefinition =
-        peripheralDefinitions[peripheral.peripheralDefinitionId];
-
-      if (peripheralDefinition === undefined) {
-        return <Loading />;
-      }
-
-      for (const quantityType of peripheralDefinition.expectedQuantityTypes!) {
-        if (
-          !(peripheral.name in fuzzyControl.input) ||
-          !(quantityType in fuzzyControl.input[peripheral.name]!)
-        ) {
-          undefinedPeripheralQuantityTypes.push([
-            peripheral,
-            quantityTypes[quantityType]!,
-          ]);
+    update(
+      produce(fuzzyControl, (draft) => {
+        delete draft.input[peripheral.name]![quantityType.id];
+        if (Object.values(draft.input[peripheral.name]!).length === 0) {
+          delete draft.input[peripheral.name];
         }
-      }
+      }),
+    );
+  };
+
+  const deleteOutput = (peripheral: schemas["Peripheral"], command: string) => {
+    update(
+      produce(fuzzyControl, (draft) => {
+        delete draft.output[peripheral.name]![command];
+        if (Object.values(draft.output[peripheral.name]!).length === 0) {
+          delete draft.output[peripheral.name];
+        }
+      }),
+    );
+  };
+
+  const deleteRule = (index: number) => {
+    update(
+      produce(fuzzyControl, (draft) => {
+        delete draft.rules[index];
+      }),
+    );
+  };
+
+  let undefinedPeripheralQuantityTypes: [
+    schemas["Peripheral"],
+    schemas["QuantityType"],
+  ][] = [];
+  for (const peripheral of Object.values(configuration.peripherals).map(
+    (id) => peripherals[id]!,
+  )) {
+    const peripheralDefinition =
+      peripheralDefinitions[peripheral.peripheralDefinitionId];
+
+    if (peripheralDefinition === undefined) {
+      return <Loading />;
     }
 
-    let undefinedPeripheralCommands: [
-      schemas["Peripheral"],
-      string,
-      JSONSchema7,
-    ][] = [];
+    for (const quantityType of peripheralDefinition.expectedQuantityTypes!) {
+      if (
+        !(peripheral.name in fuzzyControl.input) ||
+        !(quantityType in fuzzyControl.input[peripheral.name]!)
+      ) {
+        undefinedPeripheralQuantityTypes.push([
+          peripheral,
+          quantityTypes[quantityType]!,
+        ]);
+      }
+    }
+  }
+
+  let undefinedPeripheralCommands: [
+    schemas["Peripheral"],
+    string,
+    JSONSchema7,
+  ][] = [];
+  for (const peripheral of Object.values(configuration.peripherals).map(
+    (id) => peripherals[id]!,
+  )) {
+    const peripheralDefinition =
+      peripheralDefinitions[peripheral.peripheralDefinitionId]!;
+
+    if (!peripheralDefinition.commandSchema) {
+      continue;
+    }
+
+    const schema = peripheralDefinition.commandSchema as any;
+    if (schema.type !== "object") {
+      continue;
+    }
+
+    for (const [key, val] of Object.entries(schema.properties) as any) {
+      if (
+        !(peripheral.name in fuzzyControl.output) ||
+        !(key in fuzzyControl.output[peripheral.name]!)
+      ) {
+        undefinedPeripheralCommands.push([peripheral, key, val]);
+      }
+    }
+  }
+
+  if (expanded) {
     for (const peripheral of Object.values(configuration.peripherals).map(
       (id) => peripherals[id]!,
     )) {
       const peripheralDefinition =
         peripheralDefinitions[peripheral.peripheralDefinitionId]!;
-
-      if (!peripheralDefinition.commandSchema) {
-        continue;
-      }
-
-      const schema = peripheralDefinition.commandSchema as any;
-      if (schema.type !== "object") {
-        continue;
-      }
-
-      for (const [key, val] of Object.entries(schema.properties) as any) {
-        if (
-          !(peripheral.name in fuzzyControl.output) ||
-          !(key in fuzzyControl.output[peripheral.name]!)
-        ) {
-          undefinedPeripheralCommands.push([peripheral, key, val]);
-        }
+      if (peripheralDefinition.commandSchema) {
       }
     }
 
-    if (this.state.expanded) {
-      for (const peripheral of Object.values(configuration.peripherals).map(
-        (id) => peripherals[id]!,
-      )) {
-        const peripheralDefinition =
-          peripheralDefinitions[peripheral.peripheralDefinitionId]!;
-        if (peripheralDefinition.commandSchema) {
-        }
-      }
+    return (
+      <Dimmer.Dimmable blurring>
+        <Dimmer active={loading}>
+          <Loader />
+        </Dimmer>
 
-      return (
-        <Dimmer.Dimmable blurring>
-          <Dimmer active={this.state.loading}>
-            <Loader />
-          </Dimmer>
-
-          {!readOnly && (
-            <Message warning>
-              <Message.Header>Note</Message.Header>
-              <p>
-                If you change this configuration's peripherals, existing rules
-                are not automatically updated. This is a known limitation, and
-                can be improved in the future.
-              </p>
-              <p>
-                This version of the control system requires kit version{" "}
-                <strong>1.0.0b7</strong> or higher.
-              </p>
-            </Message>
-          )}
-
-          <Header as="h4" className="flex align-center gap-1">
-            <IconTransferIn aria-hidden /> Inputs
-          </Header>
-
-          {Object.keys(fuzzyControl.input).length === 0 && (
+        {!readOnly && (
+          <Message warning>
+            <Message.Header>Note</Message.Header>
             <p>
-              <strong>No inputs added.</strong>
+              If you change this configuration's peripherals, existing rules are
+              not automatically updated. This is a known limitation, and can be
+              improved in the future.
             </p>
-          )}
-          {Object.entries(fuzzyControl.input).map(
-            ([peripheralName, qtInput]) => (
-              <Segment key={peripheralName}>
-                <Header as="h4">{peripheralName}</Header>
-                {Object.entries(qtInput).map(([quantityTypeId, settings]) => {
-                  const peripheral = Object.values(configuration.peripherals)
-                    .map((id) => peripherals[id]!)
-                    .filter((p) => p.name === peripheralName)[0]!;
-                  const quantityType = quantityTypes[quantityTypeId]!;
-                  return (
-                    <div key={quantityTypeId}>
-                      <ViewInput
-                        peripheral={peripheral}
-                        quantityType={quantityType}
-                        inputSettings={settings}
-                      />
-                      <div>
-                        <Button
-                          variant="muted"
-                          rightAdornment={<Icon name="pencil" />}
-                          onClick={() =>
-                            this.setState({
-                              editingInput: Option.some([
-                                peripheral,
-                                quantityType,
-                              ]),
-                            })
-                          }
-                        >
-                          Edit
-                        </Button>
-                      </div>
-                      <Divider />
-                    </div>
-                  );
-                })}
-              </Segment>
-            ),
-          )}
-
-          {this.state.editingInput
-            .map(([peripheral, quantityType]) => {
-              const inputSettings =
-                fuzzyControl.input[peripheral.name]![quantityType.id]!;
-              return (
-                <EditInput
-                  peripheral={peripheral}
-                  quantityType={quantityType}
-                  inputSettings={inputSettings}
-                  edit={(peripheral, quantityType, inputSettings) => {
-                    this.editInput(peripheral, quantityType, inputSettings);
-                    this.setState({ editingInput: Option.none() });
-                  }}
-                  delete={(peripheral, quantityType) => {
-                    this.deleteInput(peripheral, quantityType);
-                    this.setState({ editingInput: Option.none() });
-                  }}
-                  close={() => {
-                    this.setState({ editingInput: Option.none() });
-                  }}
-                />
-              );
-            })
-            .unwrapOrNull()}
-
-          {!readOnly && (
-            <AddInput
-              choices={undefinedPeripheralQuantityTypes}
-              add={(peripheral, quantityType) =>
-                this.addEmptyInput(peripheral, quantityType)
-              }
-            />
-          )}
-
-          <Divider />
-          <Header as="h4" className="flex align-center gap-1">
-            <IconTransferOut aria-hidden /> Outputs
-          </Header>
-
-          {Object.keys(fuzzyControl.output).length === 0 && (
             <p>
-              <strong>No outputs added.</strong>
+              This version of the control system requires kit version{" "}
+              <strong>1.0.0b7</strong> or higher.
             </p>
-          )}
-          {Object.entries(fuzzyControl.output).map(
-            ([peripheralName, commandOutput]) => (
-              <Segment key={peripheralName}>
-                <Header as="h4">{peripheralName}</Header>
-                {Object.entries(commandOutput).map(([command, settings]) => {
-                  const peripheral = Object.values(configuration.peripherals)
-                    .map((id) => peripherals[id]!)
-                    .filter((p) => p.name === peripheralName)[0]!;
-                  const peripheralDefinition =
-                    peripheralDefinitions[peripheral.peripheralDefinitionId]!;
-                  const schema = (peripheralDefinition.commandSchema as any)
-                    .properties[command] as JSONSchema7;
-                  return (
-                    <div key={command}>
-                      <ViewOutput
-                        peripheral={peripheral}
-                        command={command}
-                        schema={schema}
-                        outputSettings={settings}
-                      />
-                      <div>
-                        <Button
-                          variant="muted"
-                          rightAdornment={<Icon name="pencil" />}
-                          onClick={() =>
-                            this.setState({
-                              editingOutput: Option.some([
-                                peripheral,
-                                command,
-                                schema,
-                              ]),
-                            })
-                          }
-                        >
-                          Edit
-                        </Button>
-                      </div>
-                      <Divider />
-                    </div>
-                  );
-                })}
-              </Segment>
-            ),
-          )}
-
-          {this.state.editingOutput
-            .map(([peripheral, command, schema]) => {
-              const outputSettings =
-                fuzzyControl.output[peripheral.name]![command]!;
-              return (
-                <EditOutput
-                  peripheral={peripheral}
-                  command={command}
-                  outputSettings={outputSettings}
-                  schema={schema}
-                  edit={(peripheral, command, outputSettings) => {
-                    this.editOutput(peripheral, command, outputSettings);
-                    this.setState({ editingOutput: Option.none() });
-                  }}
-                  delete={(peripheral, command) => {
-                    this.deleteOutput(peripheral, command);
-                    this.setState({ editingOutput: Option.none() });
-                  }}
-                  close={() => {
-                    this.setState({ editingOutput: Option.none() });
-                  }}
-                />
-              );
-            })
-            .unwrapOrNull()}
-
-          {!readOnly && (
-            <AddOutput
-              choices={undefinedPeripheralCommands}
-              add={(peripheral, command, schema) =>
-                this.addEmptyOutput(peripheral, command, schema)
-              }
-            />
-          )}
-
-          <Divider />
-          <Header as="h4" className="flex align-center gap-1">
-            <IconAdjustmentsHorizontal aria-hidden /> Rules
-          </Header>
-
-          <Message>
-            <p>{t("control.explanation")}</p>
           </Message>
+        )}
 
-          {fuzzyControl.rules.length === 0 && (
-            <p>
-              <strong>No rules created.</strong>
-            </p>
-          )}
-          {fuzzyControl.rules.map((rule, index) => (
-            <Segment key={index}>
-              <Header as="h4">Rule #{index + 1}</Header>
-              <ViewRule index={index} fuzzyRule={rule} />
-              <div>
-                <Button
-                  variant="muted"
-                  rightAdornment={<Icon name="pencil" />}
-                  onClick={() =>
-                    this.setState({
-                      editingRule: Option.some(index),
-                    })
-                  }
-                >
-                  Edit
-                </Button>
-              </div>
-              <Divider />
-            </Segment>
-          ))}
+        <Header as="h4" className="flex align-center gap-1">
+          <IconTransferIn aria-hidden /> Inputs
+        </Header>
 
-          {this.state.editingRule
-            .map((index) => {
-              const rule = fuzzyControl.rules[index]!;
-              let conditionChoices: [string, schemas["QuantityType"]][] = [];
-              let implicationChoices: [string, string][] = [];
-              let scheduleChoices: [string, string][] = [];
-              for (const [peripheralName, qtSettings] of Object.entries(
-                fuzzyControl.input,
-              )) {
-                for (const quantityTypeId of Object.keys(qtSettings)) {
-                  conditionChoices.push([
-                    peripheralName,
-                    quantityTypes[quantityTypeId]!,
-                  ]);
-                }
-              }
-              for (const [peripheralName, commandSettings] of Object.entries(
-                fuzzyControl.output,
-              )) {
-                for (const [command, settings] of Object.entries(
-                  commandSettings,
-                )) {
-                  if (settings.type === "continuous") {
-                    implicationChoices.push([peripheralName, command]);
-                  } else if (settings.type === "scheduled") {
-                    scheduleChoices.push([peripheralName, command]);
-                  }
-                }
-              }
+        {Object.keys(fuzzyControl.input).length === 0 && (
+          <p>
+            <strong>No inputs added.</strong>
+          </p>
+        )}
+        {Object.entries(fuzzyControl.input).map(([peripheralName, qtInput]) => (
+          <Segment key={peripheralName}>
+            <Header as="h4">{peripheralName}</Header>
+            {Object.entries(qtInput).map(([quantityTypeId, settings]) => {
+              const peripheral = Object.values(configuration.peripherals)
+                .map((id) => peripherals[id]!)
+                .filter((p) => p.name === peripheralName)[0]!;
+              const quantityType = quantityTypes[quantityTypeId]!;
               return (
-                <EditRule
-                  conditionChoices={conditionChoices}
-                  implicationChoices={implicationChoices}
-                  scheduleChoices={scheduleChoices}
-                  fuzzyRule={rule}
-                  edit={(fuzzyRule) => {
-                    this.editRule(index, fuzzyRule);
-                    this.setState({ editingRule: Option.none() });
-                  }}
-                  delete={() => {
-                    this.deleteRule(index);
-                    this.setState({ editingRule: Option.none() });
-                  }}
-                  close={() => {
-                    this.setState({ editingRule: Option.none() });
-                  }}
-                />
+                <div key={quantityTypeId}>
+                  <ViewInput
+                    peripheral={peripheral}
+                    quantityType={quantityType}
+                    inputSettings={settings}
+                  />
+                  <div>
+                    <Button
+                      variant="muted"
+                      rightAdornment={<Icon name="pencil" />}
+                      onClick={() =>
+                        setEditingInput([peripheral, quantityType])
+                      }
+                    >
+                      Edit
+                    </Button>
+                  </div>
+                  <Divider />
+                </div>
               );
-            })
-            .unwrapOrNull()}
+            })}
+          </Segment>
+        ))}
 
-          {!readOnly && (
-            <Button
-              variant="primary"
-              leftAdornment={<IconPlus aria-hidden />}
-              onClick={() => this.addEmptyRule()}
-            >
-              Add rule
-            </Button>
-          )}
-        </Dimmer.Dimmable>
-      );
-    } else {
-      return (
-        <Button
-          variant="primary"
-          leftAdornment={!readOnly && <Icon name="pencil" />}
-          onClick={() => this.setState({ expanded: true })}
-        >
-          {readOnly ? "View rules" : "Edit rules"}
-        </Button>
-      );
-    }
+        {editingInput !== null &&
+          (() => {
+            const [peripheral, quantityType] = editingInput;
+            const inputSettings =
+              fuzzyControl.input[peripheral.name]![quantityType.id]!;
+            return (
+              <EditInput
+                peripheral={peripheral}
+                quantityType={quantityType}
+                inputSettings={inputSettings}
+                edit={(peripheral, quantityType, inputSettings) => {
+                  editInput(peripheral, quantityType, inputSettings);
+                  setEditingInput(null);
+                }}
+                delete={(peripheral, quantityType) => {
+                  deleteInput(peripheral, quantityType);
+                  setEditingInput(null);
+                }}
+                close={() => {
+                  setEditingInput(null);
+                }}
+              />
+            );
+          })()}
+
+        {!readOnly && (
+          <AddInput
+            choices={undefinedPeripheralQuantityTypes}
+            add={(peripheral, quantityType) =>
+              addEmptyInput(peripheral, quantityType)
+            }
+          />
+        )}
+
+        <Divider />
+        <Header as="h4" className="flex align-center gap-1">
+          <IconTransferOut aria-hidden /> Outputs
+        </Header>
+
+        {Object.keys(fuzzyControl.output).length === 0 && (
+          <p>
+            <strong>No outputs added.</strong>
+          </p>
+        )}
+        {Object.entries(fuzzyControl.output).map(
+          ([peripheralName, commandOutput]) => (
+            <Segment key={peripheralName}>
+              <Header as="h4">{peripheralName}</Header>
+              {Object.entries(commandOutput).map(([command, settings]) => {
+                const peripheral = Object.values(configuration.peripherals)
+                  .map((id) => peripherals[id]!)
+                  .filter((p) => p.name === peripheralName)[0]!;
+                const peripheralDefinition =
+                  peripheralDefinitions[peripheral.peripheralDefinitionId]!;
+                const schema = (peripheralDefinition.commandSchema as any)
+                  .properties[command] as JSONSchema7;
+                return (
+                  <div key={command}>
+                    <ViewOutput
+                      peripheral={peripheral}
+                      command={command}
+                      schema={schema}
+                      outputSettings={settings}
+                    />
+                    <div>
+                      <Button
+                        variant="muted"
+                        rightAdornment={<Icon name="pencil" />}
+                        onClick={() =>
+                          setEditingOutput([peripheral, command, schema])
+                        }
+                      >
+                        Edit
+                      </Button>
+                    </div>
+                    <Divider />
+                  </div>
+                );
+              })}
+            </Segment>
+          ),
+        )}
+
+        {editingOutput !== null &&
+          (() => {
+            const [peripheral, command, schema] = editingOutput;
+            const outputSettings =
+              fuzzyControl.output[peripheral.name]![command]!;
+            return (
+              <EditOutput
+                peripheral={peripheral}
+                command={command}
+                outputSettings={outputSettings}
+                schema={schema}
+                edit={(peripheral, command, outputSettings) => {
+                  editOutput(peripheral, command, outputSettings);
+                  setEditingOutput(null);
+                }}
+                delete={(peripheral, command) => {
+                  deleteOutput(peripheral, command);
+                  setEditingOutput(null);
+                }}
+                close={() => {
+                  setEditingOutput(null);
+                }}
+              />
+            );
+          })()}
+
+        {!readOnly && (
+          <AddOutput
+            choices={undefinedPeripheralCommands}
+            add={(peripheral, command, schema) =>
+              addEmptyOutput(peripheral, command, schema)
+            }
+          />
+        )}
+
+        <Divider />
+        <Header as="h4" className="flex align-center gap-1">
+          <IconAdjustmentsHorizontal aria-hidden /> Rules
+        </Header>
+
+        <Message>
+          <p>{t("control.explanation")}</p>
+        </Message>
+
+        {fuzzyControl.rules.length === 0 && (
+          <p>
+            <strong>No rules created.</strong>
+          </p>
+        )}
+        {fuzzyControl.rules.map((rule, index) => (
+          <Segment key={index}>
+            <Header as="h4">Rule #{index + 1}</Header>
+            <ViewRule index={index} fuzzyRule={rule} />
+            <div>
+              <Button
+                variant="muted"
+                rightAdornment={<Icon name="pencil" />}
+                onClick={() => setEditingRule(index)}
+              >
+                Edit
+              </Button>
+            </div>
+            <Divider />
+          </Segment>
+        ))}
+
+        {editingRule !== null &&
+          (() => {
+            const index = editingRule;
+            const rule = fuzzyControl.rules[index]!;
+            let conditionChoices: [string, schemas["QuantityType"]][] = [];
+            let implicationChoices: [string, string][] = [];
+            let scheduleChoices: [string, string][] = [];
+            for (const [peripheralName, qtSettings] of Object.entries(
+              fuzzyControl.input,
+            )) {
+              for (const quantityTypeId of Object.keys(qtSettings)) {
+                conditionChoices.push([
+                  peripheralName,
+                  quantityTypes[quantityTypeId]!,
+                ]);
+              }
+            }
+            for (const [peripheralName, commandSettings] of Object.entries(
+              fuzzyControl.output,
+            )) {
+              for (const [command, settings] of Object.entries(
+                commandSettings,
+              )) {
+                if (settings.type === "continuous") {
+                  implicationChoices.push([peripheralName, command]);
+                } else if (settings.type === "scheduled") {
+                  scheduleChoices.push([peripheralName, command]);
+                }
+              }
+            }
+            return (
+              <EditRule
+                conditionChoices={conditionChoices}
+                implicationChoices={implicationChoices}
+                scheduleChoices={scheduleChoices}
+                fuzzyRule={rule}
+                edit={(fuzzyRule) => {
+                  editRule(index, fuzzyRule);
+                  setEditingRule(null);
+                }}
+                delete={() => {
+                  deleteRule(index);
+                  setEditingRule(null);
+                }}
+                close={() => {
+                  setEditingRule(null);
+                }}
+              />
+            );
+          })()}
+
+        {!readOnly && (
+          <Button
+            variant="primary"
+            leftAdornment={<IconPlus aria-hidden />}
+            onClick={() => addEmptyRule()}
+          >
+            Add rule
+          </Button>
+        )}
+      </Dimmer.Dimmable>
+    );
+  } else {
+    return (
+      <Button
+        variant="primary"
+        leftAdornment={!readOnly && <Icon name="pencil" />}
+        onClick={() => setExpanded(true)}
+      >
+        {readOnly ? "View rules" : "Edit rules"}
+      </Button>
+    );
   }
 }
-
-const mapStateToProps = (state: RootState) => {
-  return {
-    peripheralDefinitions: peripheralDefinitionsSelectors.selectEntities(state),
-    quantityTypes: quantityTypesSelectors.selectEntities(state),
-    peripherals: peripheralSelectors.selectEntities(state),
-  };
-};
-
-const mapDispatchToProps = (dispatch: any) =>
-  bindActionCreators(
-    {
-      kitConfigurationUpdated,
-    },
-    dispatch,
-  );
-
-export default withTranslation()(
-  connect(mapStateToProps, mapDispatchToProps)(Rules),
-);
