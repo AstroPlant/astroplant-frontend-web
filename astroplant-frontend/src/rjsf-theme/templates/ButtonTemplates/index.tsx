@@ -14,7 +14,7 @@ function buttonTemplates<
 >(): TemplatesType<T, S, F>["ButtonTemplates"] {
   return {
     SubmitButton: (props) => <Button {...props}>Submit</Button>,
-    AddButton: (props) => (
+    AddButton: ({ uiSchema: _, ...props }) => (
       /* a bit hacky to specify the style here */
       <Button
         {...props}
@@ -25,22 +25,22 @@ function buttonTemplates<
         <Icon name="add" />
       </Button>
     ),
-    CopyButton: (props) => (
+    CopyButton: ({ uiSchema: _, ...props }) => (
       <Button {...props} leftAdornment="+">
         Add
       </Button>
     ),
-    MoveDownButton: (props) => (
+    MoveDownButton: ({ uiSchema: _, ...props }) => (
       <Button {...props} size="small" variant="muted">
         <Icon name="arrow down" />
       </Button>
     ),
-    MoveUpButton: (props) => (
+    MoveUpButton: ({ uiSchema: _, ...props }) => (
       <Button {...props} size="small" variant="muted">
         <Icon name="arrow up" />
       </Button>
     ),
-    RemoveButton: (props) => (
+    RemoveButton: ({ uiSchema: _, ...props }) => (
       <Button {...props} size="small" variant="muted">
         <Icon name="delete" />
       </Button>
