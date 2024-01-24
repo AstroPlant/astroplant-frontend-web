@@ -68,6 +68,19 @@ type State = {
   fuzzyControl: FuzzyControl;
 };
 
+// /** Check whether the fuzzy control references existing peripherals, etc. */
+// function checkFuzzyControlReferences(
+//   fuzzyControl: FuzzyControl,
+//   configuration: KitConfigurationState,
+// ): boolean {
+//   for (const [pName, qtSettings] of Object.entries(fuzzyControl.input)) {
+//     configuration.peripherals;
+//     for (const [qtId, _settings] of Object.entries(qtSettings)) {
+//     }
+//   }
+//   return false;
+// }
+
 function parseConfiguration(
   configuration: KitConfigurationState,
 ): FuzzyControl {
@@ -202,7 +215,7 @@ function parseConfiguration(
   return fuzzyControl;
 }
 
-export default function Rules({ readOnly, kit, configuration }: Props) {
+export default function Rules({ readOnly, kit: _, configuration }: Props) {
   const { t } = useTranslation();
 
   const peripheralDefinitions = useAppSelector(

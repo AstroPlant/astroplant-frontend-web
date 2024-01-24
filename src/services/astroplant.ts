@@ -193,6 +193,12 @@ export const rtkApi = createApi({
         method: "DELETE",
       }),
     }),
+    deletePeripheral: build.mutation<void, { peripheralId: number }>({
+      query: ({ peripheralId }) => ({
+        path: `/peripherals/${encodeUri(peripheralId)}`,
+        method: "DELETE",
+      }),
+    }),
     getMe: build.query<schemas["FullUser"], void>({
       providesTags: (result, error) =>
         error ? [] : [{ type: "Users", id: result?.username }],

@@ -18,6 +18,7 @@ import { useAppDispatch, useAppSelector } from "~/hooks";
 import Loading from "~/Components/Loading";
 import { api, schemas, Response } from "~/api";
 import { Button } from "~/Components/Button";
+import { rtkApi } from "~/services/astroplant";
 
 export type Props = {
   kit: schemas["Kit"];
@@ -31,7 +32,7 @@ const DeletePeripheralButton = ApiButton<any>();
 
 export default function ViewEditPeripheral({
   kit,
-  configuration: _,
+  configuration,
   peripheral,
   readOnly = false,
 }: Props) {
@@ -46,6 +47,8 @@ export default function ViewEditPeripheral({
   );
 
   const [editing, setEditing] = useState(false);
+
+  const [deletePeripheral] = rtkApi.useDeletePeripheralMutation();
 
   const sendUpdate = (formData: any) => {
     return api.patchPeripheral({
@@ -62,12 +65,6 @@ export default function ViewEditPeripheral({
       }),
     );
     setEditing(false);
-  };
-
-  const sendDelete = () => {
-    return api.deletePeripheral({
-      peripheralId: peripheral.id,
-    });
   };
 
   const responseDelete = () => {
@@ -140,19 +137,23 @@ export default function ViewEditPeripheral({
               >
                 Edit
               </Button>
-              <DeletePeripheralButton
-                send={sendDelete}
-                onResponse={responseDelete}
-                buttonProps={{
-                  variant: "negative",
-                  leftAdornment: <IconX aria-hidden />,
+              <Button
+                // send={sendDelete}
+                // onResponse={responseDelete}
+                variant="negative"
+                leftAdornment={<IconX aria-hidden />}
+                onClick={() => {
+                  console.warn("DELETE");
                 }}
                 confirm={() => ({
-                  content: t("kitConfiguration.peripherals.deleteConfirm"),
+                  content: {
+                    header: "Are you sure?",
+                    body: t("kitConfiguration.peripherals.deleteConfirm"),
+                  },
                 })}
               >
                 Delete
-              </DeletePeripheralButton>
+              </Button>
             </div>
           )}
         </>
