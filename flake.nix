@@ -12,7 +12,6 @@
     in
     {
       overlays.default = final: prev: {
-        astroplant-frontend-modules = final.callPackage ./nix/modules.nix { inherit version; };
         astroplant-frontend = final.callPackage ./nix/build.nix { inherit version buildString; };
       };
     } //
