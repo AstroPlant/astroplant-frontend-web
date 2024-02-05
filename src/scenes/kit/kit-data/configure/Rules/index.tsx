@@ -43,29 +43,19 @@ import EditOutput from "./components/EditOutput";
 import EditRule from "./components/EditRule";
 import { firstValueFrom } from "rxjs";
 import Loading from "~/Components/Loading";
-import { api, Response, schemas } from "~/api";
+import { api, schemas } from "~/api";
 import {
   IconAdjustmentsHorizontal,
   IconPlus,
   IconTransferIn,
   IconTransferOut,
 } from "@tabler/icons-react";
-import { useAppDispatch, useAppSelector } from "~/hooks";
+import { useAppSelector } from "~/hooks";
 
 export type Props = {
   kit: schemas["Kit"];
   configuration: KitConfigurationState;
   readOnly: boolean;
-};
-
-type State = {
-  expanded: boolean;
-  loading: boolean;
-  editingInput: Option<[schemas["Peripheral"], schemas["QuantityType"]]>;
-  editingOutput: Option<[schemas["Peripheral"], string, JSONSchema7]>;
-  editingRule: Option<number>;
-  inputSettings: any;
-  fuzzyControl: FuzzyControl;
 };
 
 // /** Check whether the fuzzy control references existing peripherals, etc. */
