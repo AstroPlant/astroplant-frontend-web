@@ -1,8 +1,6 @@
-import React, { useEffect, useMemo } from "react";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import { useEffect, useMemo } from "react";
 import { useParams, Routes, Route, Navigate } from "react-router-dom";
-import { withTranslation, WithTranslation, Trans } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import {
   IconChartBar,
   IconFileDownload,
@@ -11,11 +9,10 @@ import {
   IconPrompt,
 } from "@tabler/icons-react";
 
-import { useAppSelector } from "~/hooks";
+import { useAppDispatch, useAppSelector } from "~/hooks";
 import { schemas } from "~/api";
 import compose from "~/utils/compose";
 import { Container } from "semantic-ui-react";
-import Option from "~/utils/option";
 
 import { awaitAuthenticationRan } from "~/Components/AuthenticatedGuard";
 import HeadTitle from "~/Components/HeadTitle";
@@ -49,14 +46,6 @@ import Rpc from "./rpc";
 import style from "./index.module.css";
 
 type Params = { kitSerial: string };
-
-type Props = WithTranslation & {
-  kitState: Option<KitState>;
-  membership: Option<KitMembership>;
-  fetchKit: (payload: { serial: string }) => void;
-  startWatching: (payload: { serial: string }) => void;
-  stopWatching: (payload: { serial: string }) => void;
-};
 
 type KitDashboardProps = {
   kitState: KitState;
@@ -155,49 +144,50 @@ const KitDashboard = (props: KitDashboardProps) => {
   );
 };
 
-const Kit = (props: Props) => {
-  const { t, fetchKit, startWatching, stopWatching } = props;
+const Kit = ({}) => {
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+
   const { kitSerial: kitSerial_ } = useParams<Params>();
   const kitSerial = kitSerial_!;
 
-  const kit = Option.from(
-    useAppSelector((state) => kitSelectors.selectById(state, kitSerial)),
+  const kit = useAppSelector((state) =>
+    kitSelectors.selectById(state, kitSerial),
   );
   const membership =
     useAppSelector((state) => state.me.kitMemberships[kitSerial]) ?? null;
   useEffect(() => {
-    fetchKit({ serial: kitSerial });
+    dispatch(fetchKit({ serial: kitSerial }));
   }, [kitSerial, fetchKit]);
 
-  const kitAccessible = kit.map((kit) => kit.details !== null).unwrapOr(false);
+  const kitAccessible = kit?.details !== null ?? false;
   useEffect(() => {
     if (kitAccessible) {
-      startWatching({ serial: kitSerial });
+      dispatch(startWatching({ serial: kitSerial }));
       return () => {
-        stopWatching({ serial: kitSerial });
+        dispatch(stopWatching({ serial: kitSerial }));
       };
     }
   }, [kitAccessible, kitSerial, startWatching, stopWatching]);
 
-  if (kit.isNone()) {
+  if (kit === undefined) {
     return <Loading />;
   }
-  const kitState = kit.unwrap();
 
   if (
-    (kitState.status === "Fetched" && kitState.configurations !== null) ||
-    (kitState.status === "Fetching" &&
-      kitState.details !== null &&
-      kitState.configurations !== null)
+    (kit.status === "Fetched" && kit.configurations !== null) ||
+    (kit.status === "Fetching" &&
+      kit.details !== null &&
+      kit.configurations !== null)
   ) {
-    return <KitDashboard kitState={kitState} membership={membership} />;
+    return <KitDashboard kitState={kit} membership={membership} />;
   } else if (
-    kitState.status === "None" ||
-    kitState.status === "Fetching" ||
-    kitState.configurations === null
+    kit.status === "None" ||
+    kit.status === "Fetching" ||
+    kit.configurations === null
   ) {
     return <Loading />;
-  } else if (kitState.status === "NotFound") {
+  } else if (kit.status === "NotFound") {
     return (
       <>
         <HeadTitle main={t("kit.notFound.header")} />
@@ -211,7 +201,7 @@ const Kit = (props: Props) => {
         </Container>
       </>
     );
-  } else if (kitState.status === "NotAuthorized") {
+  } else if (kit.status === "NotAuthorized") {
     return (
       <>
         <HeadTitle main={t("kit.notAuthorized.header")} />
@@ -232,18 +222,4 @@ const Kit = (props: Props) => {
   }
 };
 
-const mapDispatchToProps = (dispatch: any) =>
-  bindActionCreators(
-    {
-      fetchKit,
-      startWatching,
-      stopWatching,
-    },
-    dispatch,
-  );
-
-export default compose<Props, {}>(
-  awaitAuthenticationRan(),
-  connect(null, mapDispatchToProps),
-  withTranslation(),
-)(Kit);
+export default compose<{}, {}>(awaitAuthenticationRan())(Kit);
