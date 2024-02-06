@@ -58,12 +58,10 @@ type Props = WithTranslation & {
   stopWatching: (payload: { serial: string }) => void;
 };
 
-type InnerKitProps = {
+type KitDashboardProps = {
   kitState: KitState;
   membership: KitMembership | null;
 };
-
-type KitDashboardProps = WithTranslation & InnerKitProps;
 
 function KitHeader({
   kit,
@@ -157,20 +155,6 @@ const KitDashboard = (props: KitDashboardProps) => {
   );
 };
 
-const innerMapDispatchToProps = (dispatch: any) =>
-  bindActionCreators(
-    {
-      startWatching,
-      stopWatching,
-    },
-    dispatch,
-  );
-
-const InnerKit = compose<KitDashboardProps, InnerKitProps>(
-  connect(null, innerMapDispatchToProps),
-  withTranslation(),
-)(KitDashboard);
-
 const Kit = (props: Props) => {
   const { t, fetchKit, startWatching, stopWatching } = props;
   const { kitSerial: kitSerial_ } = useParams<Params>();
@@ -206,7 +190,7 @@ const Kit = (props: Props) => {
       kitState.details !== null &&
       kitState.configurations !== null)
   ) {
-    return <InnerKit kitState={kitState} membership={membership} />;
+    return <KitDashboard kitState={kitState} membership={membership} />;
   } else if (
     kitState.status === "None" ||
     kitState.status === "Fetching" ||
