@@ -74,7 +74,12 @@ const baseQueryWithRetry = retry(baseQueryFn);
 export const rtkApi = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithRetry,
-  tagTypes: ["Users", "KitMemberships", "KitMemberSuggestions"],
+  tagTypes: [
+    "Users",
+    "KitMemberships",
+    "KitMemberSuggestions",
+    "KitConfigurations",
+  ],
   endpoints: (build) => ({
     listKits: build.query<schemas["Kit"][], void>({
       query: () => ({ path: "/kits", method: "GET" }),
@@ -173,6 +178,16 @@ export const rtkApi = createApi({
         method: "POST",
       }),
     }),
+    getKitConfigurations: build.query<
+      Array<schemas["KitConfigurationWithPeripherals"]>,
+      { kitSerial: string }
+    >({
+      query: ({ kitSerial }) => ({
+        path: `/kits/${encodeUri(kitSerial)}/configurations`,
+        method: "GET",
+      }),
+      providesTags: ["KitConfigurations"],
+    }),
     cloneConfiguration: build.mutation<
       schemas["KitConfiguration"],
       {
@@ -186,6 +201,7 @@ export const rtkApi = createApi({
         method: "POST",
         query: params,
       }),
+      invalidatesTags: ["KitConfigurations"],
     }),
     deleteConfiguration: build.mutation<void, { configurationId: number }>({
       query: ({ configurationId }) => ({

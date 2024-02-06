@@ -2,12 +2,8 @@ import { useContext, useMemo } from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-import { useAppDispatch, useAppSelector } from "~/hooks";
-import {
-  KitConfigurationState,
-  KitState,
-  configurationsById,
-} from "~/modules/kit/reducer";
+import { useAppDispatch } from "~/hooks";
+import { KitState } from "~/modules/kit/reducer";
 import { default as apiButton } from "~/Components/ApiButton";
 import { Response, api, schemas } from "~/api";
 import {
@@ -25,7 +21,7 @@ import {
   IconPlayerPlay,
   IconTrash,
 } from "@tabler/icons-react";
-import { PermissionsContext } from "./contexts";
+import { ConfigurationsContext, PermissionsContext } from "./contexts";
 
 const ApiButton = apiButton<any>();
 
@@ -39,7 +35,7 @@ function ConfigurationRow({
   showActivate,
 }: {
   kit: KitState;
-  configuration: KitConfigurationState;
+  configuration: schemas["KitConfigurationWithPeripherals"];
   showActivate: boolean;
 }) {
   const { t } = useTranslation();
@@ -156,24 +152,14 @@ function ConfigurationRow({
 
 export function Configurations({ kit }: ConfigurationsProps) {
   const permissions = useContext(PermissionsContext);
-
-  const configurations_ = useAppSelector((state) =>
-    configurationsById(state, kit.configurations),
-  );
-  const configurations: KitConfigurationState[] = useMemo(() => {
-    return configurations_.filter(
-      // This is clearly safe, but the TS checker doesn't actually prove type safety here :/
-      // Change the inequality into equality and it still compiles.
-      (c): c is KitConfigurationState => c !== undefined,
-    );
-  }, [configurations_]);
+  const configurations = useContext(ConfigurationsContext);
 
   const activeConfiguration = useMemo(
-    () => configurations.find((c) => c.active) ?? null,
+    () => Object.values(configurations).find((c) => c.active) ?? null,
     [configurations],
   );
   const inactiveConfigurations = useMemo(
-    () => configurations.filter((c) => !c.active) ?? null,
+    () => Object.values(configurations).filter((c) => !c.active) ?? null,
     [configurations],
   );
 

@@ -1,12 +1,13 @@
 /*! Delete configuration */
 
 import { useEffect, useMemo, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "~/Components/Button";
 import { Input } from "~/Components/Input";
+import { schemas } from "~/api";
 import { useAppDispatch } from "~/hooks";
 import { kitConfigurationDeleted } from "~/modules/kit/actions";
-import { KitConfigurationState, KitState } from "~/modules/kit/reducer";
+import { KitState } from "~/modules/kit/reducer";
 import { notificationSuccess } from "~/modules/notification";
 import { addNotificationRequest } from "~/modules/notification/actions";
 import { PDForbidden, PDNotFound } from "~/problems";
@@ -15,7 +16,7 @@ import { configurationToNameString } from "~/utils/configuration";
 
 export type DangerProps = {
   kit: KitState;
-  configuration: KitConfigurationState;
+  configuration: schemas["KitConfigurationWithPeripherals"];
 };
 
 export function DeleteSuccess() {

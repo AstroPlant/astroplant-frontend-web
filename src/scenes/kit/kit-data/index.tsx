@@ -90,9 +90,7 @@ export function KitData({ kitState }: Props) {
         />
         <Route
           path="/danger"
-          element={
-            <Danger kit={kitState} configuration={configuration} />
-          }
+          element={<Danger kit={kitState} configuration={configuration} />}
         />
       </Routes>
     );

@@ -12,10 +12,6 @@ import {
 import { produce } from "immer";
 import { JSONSchema7 } from "json-schema";
 
-import {
-  KitConfigurationState,
-  peripheralSelectors,
-} from "~/modules/kit/reducer";
 import { kitConfigurationUpdated } from "~/modules/kit/actions";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { selectors as quantityTypesSelectors } from "~/modules/quantity-type/reducer";
@@ -54,7 +50,7 @@ import { useAppSelector } from "~/hooks";
 
 export type Props = {
   kit: schemas["Kit"];
-  configuration: KitConfigurationState;
+  configuration: schemas["KitConfigurationWithPeripherals"];
   readOnly: boolean;
 };
 
@@ -72,7 +68,7 @@ export type Props = {
 // }
 
 function parseConfiguration(
-  configuration: KitConfigurationState,
+  configuration: schemas["KitConfigurationWithPeripherals"],
 ): FuzzyControl {
   const rules = configuration.controlRules as { fuzzyControl?: unknown };
 
@@ -212,7 +208,6 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
     peripheralDefinitionsSelectors.selectEntities,
   );
   const quantityTypes = useAppSelector(quantityTypesSelectors.selectEntities);
-  const peripherals = useAppSelector(peripheralSelectors.selectEntities);
 
   const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -402,9 +397,7 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
     schemas["Peripheral"],
     schemas["QuantityType"],
   ][] = [];
-  for (const peripheral of Object.values(configuration.peripherals).map(
-    (id) => peripherals[id]!,
-  )) {
+  for (const peripheral of Object.values(configuration.peripherals)) {
     const peripheralDefinition =
       peripheralDefinitions[peripheral.peripheralDefinitionId];
 
@@ -430,9 +423,7 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
     string,
     JSONSchema7,
   ][] = [];
-  for (const peripheral of Object.values(configuration.peripherals).map(
-    (id) => peripherals[id]!,
-  )) {
+  for (const peripheral of Object.values(configuration.peripherals)) {
     const peripheralDefinition =
       peripheralDefinitions[peripheral.peripheralDefinitionId]!;
 
@@ -456,9 +447,7 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
   }
 
   if (expanded) {
-    for (const peripheral of Object.values(configuration.peripherals).map(
-      (id) => peripherals[id]!,
-    )) {
+    for (const peripheral of Object.values(configuration.peripherals)) {
       const peripheralDefinition =
         peripheralDefinitions[peripheral.peripheralDefinitionId]!;
       if (peripheralDefinition.commandSchema) {
@@ -499,9 +488,9 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
           <Segment key={peripheralName}>
             <Header as="h4">{peripheralName}</Header>
             {Object.entries(qtInput).map(([quantityTypeId, settings]) => {
-              const peripheral = Object.values(configuration.peripherals)
-                .map((id) => peripherals[id]!)
-                .filter((p) => p.name === peripheralName)[0]!;
+              const peripheral = Object.values(
+                configuration.peripherals,
+              ).filter((p) => p.name === peripheralName)[0]!;
               const quantityType = quantityTypes[quantityTypeId]!;
               return (
                 <div key={quantityTypeId}>
@@ -577,9 +566,9 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
             <Segment key={peripheralName}>
               <Header as="h4">{peripheralName}</Header>
               {Object.entries(commandOutput).map(([command, settings]) => {
-                const peripheral = Object.values(configuration.peripherals)
-                  .map((id) => peripherals[id]!)
-                  .filter((p) => p.name === peripheralName)[0]!;
+                const peripheral = Object.values(
+                  configuration.peripherals,
+                ).filter((p) => p.name === peripheralName)[0]!;
                 const peripheralDefinition =
                   peripheralDefinitions[peripheral.peripheralDefinitionId]!;
                 const schema = (peripheralDefinition.commandSchema as any)

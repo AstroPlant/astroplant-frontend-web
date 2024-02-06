@@ -4,7 +4,6 @@ import { Segment, Label, Header } from "semantic-ui-react";
 import validator from "@rjsf/validator-ajv8";
 import { IconX, IconPencil } from "@tabler/icons-react";
 
-import { KitConfigurationState } from "~/modules/kit/reducer";
 import { peripheralDeleted, peripheralUpdated } from "~/modules/kit/actions";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 
@@ -22,7 +21,7 @@ import { rtkApi } from "~/services/astroplant";
 
 export type Props = {
   kit: schemas["Kit"];
-  configuration: KitConfigurationState;
+  configuration: schemas["KitConfigurationWithPeripherals"];
   peripheral: schemas["Peripheral"];
   readOnly: boolean;
 };

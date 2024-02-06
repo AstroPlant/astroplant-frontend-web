@@ -7,7 +7,7 @@ import { KitPermissions, NO_PERMISSIONS } from "~/permissions";
 
 export const KitContext = React.createContext<schemas["Kit"]>(null as any);
 export const ConfigurationsContext = React.createContext<{
-  [id: string]: KitConfigurationState;
+  [id: string]: schemas["KitConfigurationWithPeripherals"];
 }>({});
 export const MembershipContext = React.createContext<KitMembership | null>(
   null,

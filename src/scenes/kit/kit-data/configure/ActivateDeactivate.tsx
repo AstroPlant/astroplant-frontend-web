@@ -3,7 +3,6 @@ import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 
 import ApiButton from "~/Components/ApiButton";
-import { KitConfigurationState } from "~/modules/kit/reducer";
 import {
   kitSetAllConfigurationsInactive,
   kitConfigurationUpdated,
@@ -14,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 
 export type Props = {
   kit: schemas["Kit"];
-  configuration: KitConfigurationState;
+  configuration: schemas["KitConfigurationWithPeripherals"];
 };
 
 const Button = ApiButton<any>();

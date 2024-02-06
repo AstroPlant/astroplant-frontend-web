@@ -1,6 +1,8 @@
-import { KitConfigurationState } from "~/modules/kit/reducer";
+import { schemas } from "~/api";
 
-export function configurationToNameString(configuration: KitConfigurationState) {
+export function configurationToNameString<
+  T extends schemas["KitConfiguration"],
+>(configuration: T) {
   return `${configuration.description ?? "Unnamed configuration"} (#${
     configuration.id
   })`;

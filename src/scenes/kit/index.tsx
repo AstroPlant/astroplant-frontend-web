@@ -21,11 +21,7 @@ import { Menu } from "~/Components/Menu";
 import { KitAvatar } from "~/Components/KitAvatar";
 import { Badge } from "~/Components/Badge";
 
-import {
-  KitState,
-  allConfigurationsOfKit,
-  kitSelectors,
-} from "~/modules/kit/reducer";
+import { KitState, kitSelectors } from "~/modules/kit/reducer";
 import { startWatching, stopWatching, fetchKit } from "~/modules/kit/actions";
 import { KitMembership } from "~/modules/me/reducer";
 import { KitPermissions, kitPermissionsFromMembership } from "~/permissions";
@@ -44,6 +40,8 @@ import Access from "./access";
 import Rpc from "./rpc";
 
 import style from "./index.module.css";
+import { rtkApi } from "~/services/astroplant";
+import { skipToken } from "@reduxjs/toolkit/query";
 
 type Params = { kitSerial: string };
 
@@ -105,41 +103,32 @@ const KitDashboard = (props: KitDashboardProps) => {
   const { kitState, membership } = props;
 
   const kit = kitState.details!;
-  const configurations = useAppSelector((state) =>
-    allConfigurationsOfKit(state, kit.serial),
-  );
 
   const permissions = useMemo(
     () => kitPermissionsFromMembership(membership),
     [membership],
   );
 
-  if (configurations === null) {
-    return <Loading />;
-  }
-
   return (
     <KitContext.Provider value={kit}>
-      <ConfigurationsContext.Provider value={configurations}>
-        <MembershipContext.Provider value={membership}>
-          <PermissionsContext.Provider value={permissions}>
-            <KitHeader kit={kit} permissions={permissions} />
-            <Routes>
-              {/* redirect 404, or should an error message be given? */}
-              <Route path="*" element={<Navigate to="data" replace />} />
-              <Route path="/data/*" element={<KitData kitState={kitState} />} />
-              <Route
-                path="/configurations/*"
-                element={<Configurations kit={kitState} />}
-              />
-              <Route path="/details/*" element={<Details />} />
-              <Route path="/download" element={<Download />} />
-              <Route path="/access" element={<Access />} />
-              <Route path="/rpc" element={<Rpc />} />
-            </Routes>
-          </PermissionsContext.Provider>
-        </MembershipContext.Provider>
-      </ConfigurationsContext.Provider>
+      <MembershipContext.Provider value={membership}>
+        <PermissionsContext.Provider value={permissions}>
+          <KitHeader kit={kit} permissions={permissions} />
+          <Routes>
+            {/* redirect 404, or should an error message be given? */}
+            <Route path="*" element={<Navigate to="data" replace />} />
+            <Route path="/data/*" element={<KitData kitState={kitState} />} />
+            <Route
+              path="/configurations/*"
+              element={<Configurations kit={kitState} />}
+            />
+            <Route path="/details/*" element={<Details />} />
+            <Route path="/download" element={<Download />} />
+            <Route path="/access" element={<Access />} />
+            <Route path="/rpc" element={<Rpc />} />
+          </Routes>
+        </PermissionsContext.Provider>
+      </MembershipContext.Provider>
     </KitContext.Provider>
   );
 };
@@ -170,7 +159,26 @@ const Kit = ({}) => {
     }
   }, [kitAccessible, kitSerial, startWatching, stopWatching]);
 
-  if (kit === undefined) {
+  const { data: configurations } = rtkApi.useGetKitConfigurationsQuery(
+    kit === undefined
+      ? skipToken
+      : {
+          kitSerial: kit.serial,
+        },
+  );
+  const configurations_ = useMemo(() => {
+    if (configurations === undefined) {
+      return;
+    }
+
+    const v: { [id: string]: schemas["KitConfigurationWithPeripherals"] } = {};
+    for (const conf of configurations) {
+      v[conf.id] = conf;
+    }
+    return v;
+  }, [configurations]);
+
+  if (kit === undefined || configurations === undefined) {
     return <Loading />;
   }
 
@@ -180,7 +188,11 @@ const Kit = ({}) => {
       kit.details !== null &&
       kit.configurations !== null)
   ) {
-    return <KitDashboard kitState={kit} membership={membership} />;
+    return (
+      <ConfigurationsContext.Provider value={configurations_!}>
+        <KitDashboard kitState={kit} membership={membership} />
+      </ConfigurationsContext.Provider>
+    );
   } else if (
     kit.status === "None" ||
     kit.status === "Fetching" ||

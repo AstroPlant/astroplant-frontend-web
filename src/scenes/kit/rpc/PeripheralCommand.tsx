@@ -1,11 +1,7 @@
-import React, { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useMemo } from "react";
 import { Select, Image, Segment } from "semantic-ui-react";
 import validator from "@rjsf/validator-ajv8";
 
-import {
-  KitConfigurationState,
-  peripheralSelectors,
-} from "~/modules/kit/reducer";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { api } from "~/api";
 import PeripheralDefinitionCard from "~/Components/PeripheralDefinitionCard";
@@ -16,16 +12,11 @@ import { KitContext, ConfigurationsContext } from "../contexts";
 import { firstValueFrom } from "rxjs";
 import { useAppSelector } from "~/hooks";
 
-export type Props = {};
-
-export default function PeripheralCommand(props: Props) {
+export default function PeripheralCommand({}) {
   const peripheralDefinitions = useAppSelector(
     peripheralDefinitionsSelectors.selectEntities,
   );
-  const peripherals = useAppSelector(peripheralSelectors.selectEntities);
 
-  const [activeConfiguration, setActiveConfiguration] =
-    useState<KitConfigurationState | null>(null);
   const [peripheralId, setPeripheralId] = useState<number | null>(null);
   const [displayUrl, setDisplayUrl] = useState<string | null>(null);
   const [plaintext, setPlaintext] = useState<string | null>(null);
@@ -34,11 +25,10 @@ export default function PeripheralCommand(props: Props) {
   const kit = useContext(KitContext);
   const configurations = useContext(ConfigurationsContext);
 
-  useEffect(() => {
-    setActiveConfiguration(
-      Object.values(configurations).find((conf) => conf.active) ?? null,
-    );
-  }, [configurations]);
+  const activeConfiguration = useMemo(
+    () => Object.values(configurations).find((c) => c.active),
+    [configurations],
+  );
 
   useEffect(() => {
     return () => {
@@ -49,9 +39,13 @@ export default function PeripheralCommand(props: Props) {
   }, [displayUrl]);
 
   const sendPeripheralCommand = async (formData: any) => {
+    if (!activeConfiguration) {
+      return;
+    }
+
     setDisplayUrl(null);
     setPlaintext(null);
-    const peripheral = peripherals[peripheralId!]!;
+    const peripheral = activeConfiguration.peripherals[peripheralId!]!;
     const response = await firstValueFrom(
       api.peripheralCommand({
         kitSerial: kit.serial,
@@ -72,10 +66,10 @@ export default function PeripheralCommand(props: Props) {
     }
   };
 
-  if (activeConfiguration !== null) {
+  if (activeConfiguration !== undefined) {
     let form = null;
     if (peripheralId !== null) {
-      const peripheral = peripherals[peripheralId]!;
+      const peripheral = activeConfiguration.peripherals[peripheralId]!;
       const peripheralDefinition =
         peripheralDefinitions[peripheral.peripheralDefinitionId]!;
       form = (
@@ -109,7 +103,6 @@ export default function PeripheralCommand(props: Props) {
             value={peripheralId || undefined}
             onChange={(_ev, data) => setPeripheralId(data.value as number)}
             options={Object.values(activeConfiguration.peripherals)
-              .map((id) => peripherals[id]!)
               .filter(
                 (peripheral) =>
                   peripheralDefinitions[peripheral.peripheralDefinitionId]!

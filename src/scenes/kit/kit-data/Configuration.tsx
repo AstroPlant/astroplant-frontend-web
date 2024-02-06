@@ -6,11 +6,7 @@ import Description from "./configure/Description";
 import Rules from "./configure/Rules";
 import ActivateDeactivate from "./configure/ActivateDeactivate";
 import Peripherals from "./configure/Peripherals";
-import {
-  KitConfigurationState,
-  KitState,
-  kitSelectors,
-} from "~/modules/kit/reducer";
+import { KitState, kitSelectors } from "~/modules/kit/reducer";
 import { Button, ButtonLink } from "~/Components/Button";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { useContext, useState } from "react";
@@ -22,10 +18,11 @@ import { kitConfigurationCreated } from "~/modules/kit/actions";
 
 import style from "./Configuration.module.css";
 import { PermissionsContext } from "../contexts";
+import { schemas } from "~/api";
 
 export type ConfigurationProps = {
   kit: KitState;
-  configuration: KitConfigurationState;
+  configuration: schemas["KitConfigurationWithPeripherals"];
 };
 
 function InnerConfiguration({ kit, configuration }: ConfigurationProps) {

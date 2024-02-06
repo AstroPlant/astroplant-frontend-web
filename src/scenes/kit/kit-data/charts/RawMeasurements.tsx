@@ -1,9 +1,5 @@
 import { Container, Card } from "semantic-ui-react";
-import {
-  KitConfigurationState,
-  KitState,
-  peripheralSelectors,
-} from "~/modules/kit/reducer";
+import { KitState } from "~/modules/kit/reducer";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { selectors as quantityTypesSelectors } from "~/modules/quantity-type/reducer";
 import Option from "~/utils/option";
@@ -14,7 +10,7 @@ import { useAppSelector } from "~/hooks";
 
 export type Props = {
   kitState: KitState;
-  configuration: KitConfigurationState;
+  configuration: schemas["KitConfigurationWithPeripherals"];
 };
 
 export default function RawMeasurements({ kitState, configuration }: Props) {
@@ -22,14 +18,12 @@ export default function RawMeasurements({ kitState, configuration }: Props) {
     peripheralDefinitionsSelectors.selectEntities,
   );
   const quantityTypes = useAppSelector(quantityTypesSelectors.selectEntities);
-  const peripherals = useAppSelector(peripheralSelectors.selectEntities);
 
   const rawMeasurements = kitState.rawMeasurements;
 
   if (configuration !== null) {
     let hasMeasurements = false;
     const cards = Object.values(configuration.peripherals)
-      .map((id) => peripherals[id]!)
       .map((peripheral) => {
         const def: Option<schemas["PeripheralDefinition"]> = Option.from(
           peripheralDefinitions[peripheral.peripheralDefinitionId],

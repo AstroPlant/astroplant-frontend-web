@@ -20,7 +20,7 @@ import { ModalDialog } from "~/Components/ModalDialog";
 
 export type Props = {
   kit: schemas["Kit"];
-  configuration: KitConfigurationState;
+  configuration: schemas["KitConfigurationWithPeripherals"];
 };
 
 const PeripheralForm = ApiForm<any, any>();

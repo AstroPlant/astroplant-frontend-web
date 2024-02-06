@@ -5,11 +5,7 @@ import { IconTrash } from "@tabler/icons-react";
 
 import RelativeTime from "~/Components/RelativeTime";
 import Loading from "~/Components/Loading";
-import {
-  KitConfigurationState,
-  KitState,
-  peripheralSelectors,
-} from "~/modules/kit/reducer";
+import { KitConfigurationState, KitState } from "~/modules/kit/reducer";
 import { api, schemas } from "~/api";
 import { rtkApi } from "~/services/astroplant";
 import { firstValueFrom } from "rxjs";
@@ -28,11 +24,10 @@ const ApiButton = apiButton<any>();
 
 export type Props = {
   kitState: KitState;
-  configuration: KitConfigurationState;
+  configuration: schemas["KitConfigurationWithPeripherals"];
 };
 
 export default function Media({ kitState, configuration }: Props) {
-  const peripherals = useAppSelector(peripheralSelectors.selectEntities);
   const permissions = useContext(PermissionsContext);
   const dispatch = useAppDispatch();
 
@@ -120,7 +115,10 @@ export default function Media({ kitState, configuration }: Props) {
                       />
                     </Table.Cell>
                     <Table.Cell>
-                      {peripherals[displayMedia.peripheralId]!.name}
+                      {
+                        configuration.peripherals[displayMedia.peripheralId]!
+                          .name
+                      }
                     </Table.Cell>
                     <Table.Cell>{displayMedia.name}</Table.Cell>
                     <Table.Cell>{displayMedia.type}</Table.Cell>
@@ -145,7 +143,7 @@ export default function Media({ kitState, configuration }: Props) {
           </Table.Header>
           <Table.Body>
             {mediaList.map((media) => {
-              const peripheral = peripherals[media.peripheralId]!;
+              const peripheral = configuration.peripherals[media.peripheralId]!;
               const displayable =
                 media.type === "image/png" ||
                 media.type === "image/jpeg" ||

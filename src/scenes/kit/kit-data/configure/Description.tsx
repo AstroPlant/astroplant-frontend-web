@@ -1,16 +1,15 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Icon } from "semantic-ui-react";
 import { JSONSchema7 } from "json-schema";
 
 import ApiForm from "~/Components/ApiForm";
-import { KitConfigurationState } from "~/modules/kit/reducer";
 import { kitConfigurationUpdated } from "~/modules/kit/actions";
 import { Response, api, schemas } from "~/api";
 import { useAppDispatch } from "~/hooks";
 
 export type Props = {
   kit: schemas["Kit"];
-  configuration: KitConfigurationState;
+  configuration: schemas["KitConfigurationWithPeripherals"];
   readOnly: boolean;
 };
 

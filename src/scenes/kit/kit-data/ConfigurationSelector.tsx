@@ -3,10 +3,10 @@ import { IconSettings, IconCheck } from "@tabler/icons-react";
 
 import { ConfigurationsContext } from "../contexts";
 import { DropdownDetails } from "~/Components/DropdownDetails";
-import { KitConfigurationState } from "~/modules/kit/reducer";
 
 import style from "./ConfigurationSelector.module.css";
 import { Badge } from "~/Components/Badge";
+import { schemas } from "~/api";
 
 const MAX_ENTRIES = 10;
 
@@ -14,7 +14,7 @@ function Row({
   configuration,
   chosen,
 }: {
-  configuration: KitConfigurationState;
+  configuration: schemas["KitConfigurationWithPeripherals"];
   chosen: boolean;
 }) {
   return (
@@ -44,7 +44,7 @@ function Row({
 }
 
 export type ConfigurationSelectorProps = {
-  chosenConfiguration: KitConfigurationState | null;
+  chosenConfiguration: schemas["KitConfigurationWithPeripherals"] | null;
 };
 
 export function ConfigurationSelector({
