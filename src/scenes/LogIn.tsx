@@ -15,7 +15,7 @@ import ApiForm from "~/Components/ApiForm";
 import { useAppDispatch } from "~/hooks";
 import { api, schemas, Response } from "~/api";
 
-const LogInForm = ApiForm<any, Response<schemas["AuthenticationTokens"]>>();
+const LogInForm = ApiForm<any, Response<schemas["AuthenticationTokens"]>>;
 
 export default function LogInPage() {
   const { t } = useTranslation();

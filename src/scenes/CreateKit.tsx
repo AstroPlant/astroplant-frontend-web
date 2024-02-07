@@ -25,7 +25,7 @@ import commonStyle from "~/Common.module.css";
 const CreateKitForm = ApiForm<
   any,
   Response<{ kitSerial: string; password: string }>
->();
+>;
 
 function CreateKit() {
   const { t } = useTranslation();

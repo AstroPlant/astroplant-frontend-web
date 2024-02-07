@@ -22,7 +22,7 @@ export type Props = {
   configuration: schemas["KitConfigurationWithPeripherals"];
 };
 
-const PeripheralForm = ApiForm<any, any>();
+const PeripheralForm = ApiForm<any, any>;
 
 export default function AddPeripheral({ kit, configuration }: Props) {
   const { t } = useTranslation();

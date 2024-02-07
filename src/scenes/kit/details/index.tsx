@@ -26,7 +26,7 @@ import style from "./index.module.css";
 import { rtkApi } from "~/services/astroplant";
 import Gravatar from "~/Components/Gravatar";
 
-const PatchKitForm = ApiForm<any, Response<schemas["Kit"]>>();
+const PatchKitForm = ApiForm<any, Response<schemas["Kit"]>>;
 
 export default function KitDetails() {
   const { t } = useTranslation();

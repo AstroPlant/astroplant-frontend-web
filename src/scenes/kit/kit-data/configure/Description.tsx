@@ -13,10 +13,7 @@ export type Props = {
   readOnly: boolean;
 };
 
-const DescriptionForm = ApiForm<
-  string,
-  Response<schemas["KitConfiguration"]>
->();
+const DescriptionForm = ApiForm<string, Response<schemas["KitConfiguration"]>>;
 
 export default function Description({ kit, configuration, readOnly }: Props) {
   const dispatch = useAppDispatch();

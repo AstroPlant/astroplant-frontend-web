@@ -10,7 +10,7 @@ import { api } from "~/api";
 
 import commonStyle from "~/Common.module.css";
 
-const SignUpForm = ApiForm();
+const SignUpForm = ApiForm;
 
 export default function SignUpPage() {
   const { t } = useTranslation();

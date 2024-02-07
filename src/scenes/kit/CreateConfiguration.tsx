@@ -13,7 +13,7 @@ import { rtkApi } from "~/services/astroplant";
 const CreateConfigurationForm = ApiForm<
   any,
   Response<schemas["KitConfiguration"]>
->();
+>;
 
 export type CreateConfigurationProps = {
   kit: KitState;

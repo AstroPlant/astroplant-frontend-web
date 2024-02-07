@@ -1,8 +1,6 @@
-import React, { PropsWithChildren, useState } from "react";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
+import { PropsWithChildren, useState } from "react";
 import { Observable, firstValueFrom } from "rxjs";
-import { withTranslation, WithTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { Form } from "semantic-ui-react";
 import { JSONSchema7 } from "json-schema";
 import { UiSchema, FormValidation } from "@rjsf/utils";
@@ -10,16 +8,14 @@ import validator from "@rjsf/validator-ajv8";
 
 import RjsfForm from "~/rjsf-theme";
 
-import {
-  Notification,
-  notificationConnectionIssue,
-} from "~/modules/notification";
+import { notificationConnectionIssue } from "~/modules/notification";
 import { addNotificationRequest } from "~/modules/notification/actions";
 
 import { requestWrapper } from "~/utils/api";
 import { PDInvalidParameters, InvalidParametersFormErrors } from "../problems";
 import { ErrorResponse } from "~/api";
 import { Button } from "./Button";
+import { useAppDispatch } from "~/hooks";
 
 export type Props<T, R> = {
   idPrefix: string;
@@ -37,22 +33,18 @@ export type Props<T, R> = {
   readonly?: boolean;
 };
 
-type AllProps<T, R> = PropsWithChildren<
-  WithTranslation &
-    Props<T, R> & {
-      addNotificationRequest: (
-        notification: Notification,
-        timeout?: number | null,
-      ) => void;
-    }
->;
+type AllProps<T, R> = PropsWithChildren<Props<T, R>>;
 
 /** A json-schema based form with functionality to interact with the API.
  *
  * Child components are rendered in the same Form.Group as the submit button.
  */
-function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
-  const { t, children, formData: initialFormData, disabled, readonly } = props;
+export default function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
+  const { children, formData: initialFormData, disabled, readonly } = props;
+
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+
   const [formData, setFormData] = useState(initialFormData);
   const [submitting, setSubmitting] = useState(false);
   const [formEpoch, setFormEpoch] = useState(0);
@@ -80,7 +72,7 @@ function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
       // we just... ignore them. Which is bad.
       if (e instanceof ErrorResponse) {
         if (e.details.status === 0 || e.details.status >= 500) {
-          props.addNotificationRequest(notificationConnectionIssue(t));
+          dispatch(addNotificationRequest(notificationConnectionIssue(t)));
         }
 
         if (e.details.type === "APPLICATION") {
@@ -131,19 +123,4 @@ function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
       </RjsfForm>
     </>
   );
-}
-
-const mapDispatchToProps = (dispatch: any) =>
-  bindActionCreators(
-    {
-      addNotificationRequest,
-    },
-    dispatch,
-  );
-
-export default function Conn<T, R>(): React.ComponentType<Props<T, R>> {
-  return connect(
-    null,
-    mapDispatchToProps,
-  )(withTranslation()(ApiForm as React.ComponentType<AllProps<T, R>>));
 }

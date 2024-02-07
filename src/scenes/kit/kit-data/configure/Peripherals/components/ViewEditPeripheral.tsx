@@ -25,7 +25,7 @@ export type Props = {
   readOnly: boolean;
 };
 
-const PeripheralForm = ApiForm<any, any>();
+const PeripheralForm = ApiForm<any, any>;
 const DeletePeripheralButton = ApiButton<any>();
 
 export default function ViewEditPeripheral({
