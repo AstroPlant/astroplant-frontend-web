@@ -203,17 +203,33 @@ export const rtkApi = createApi({
       }),
       invalidatesTags: ["KitConfigurations"],
     }),
+    patchKitConfiguration: build.mutation<
+      void,
+      {
+        configurationId: number;
+        patchKitConfiguration: schemas["PatchKitConfiguration"];
+      }
+    >({
+      query: ({ configurationId, patchKitConfiguration }) => ({
+        path: `/kit-configurations/${encodeURI(String(configurationId))}`,
+        method: "PATCH",
+        body: patchKitConfiguration,
+      }),
+      invalidatesTags: ["KitConfigurations"],
+    }),
     deleteConfiguration: build.mutation<void, { configurationId: number }>({
       query: ({ configurationId }) => ({
         path: `/kit-configurations/${encodeUri(configurationId)}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["KitConfigurations"],
     }),
     deletePeripheral: build.mutation<void, { peripheralId: number }>({
       query: ({ peripheralId }) => ({
         path: `/peripherals/${encodeUri(peripheralId)}`,
         method: "DELETE",
       }),
+      invalidatesTags: ["KitConfigurations"],
     }),
     getMe: build.query<schemas["FullUser"], void>({
       providesTags: (result, error) =>

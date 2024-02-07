@@ -98,44 +98,6 @@ const kitsSlice = createSlice({
       .addCase(actions.deleteKit, (state, action) => {
         kitsAdapter.removeOne(state, action.payload.serial);
       })
-      .addCase(actions.kitConfigurationCreated, (state, action) => {
-        const kit = state.entities[action.payload.serial];
-        if (kit !== undefined) {
-          kit.configurations.push(action.payload.configuration.id);
-        }
-      })
-      .addCase(actions.kitConfigurationDeleted, (state, action) => {
-        const kit = state.entities[action.payload.serial];
-        if (kit !== undefined) {
-          const idx = kit.configurations.indexOf(
-            action.payload.kitConfigurationId,
-          );
-          if (idx !== -1) {
-            kit.configurations.splice(idx, 1);
-          }
-        }
-      })
-      .addCase(actions.kitConfigurationsRequest, (state, action) => {
-        kitsAdapter.updateOne(state, {
-          id: action.payload.serial,
-          changes: {
-            loadingConfigurations: true,
-          },
-        });
-      })
-      .addCase(actions.kitConfigurationsSuccess, (state, action) => {
-        // Add default if not exists
-        kitsAdapter.addOne(state, initialKit(action.payload.serial));
-
-        kitsAdapter.updateOne(state, {
-          id: action.payload.serial,
-          changes: {
-            configurations: Object.values(action.payload.configurations).map(
-              (conf) => conf.id,
-            ),
-          },
-        });
-      })
       .addCase(actions.rawMeasurementReceived, (state, action) => {
         const { peripheral, quantityType } = action.payload.rawMeasurement;
         const kitState = state.entities[action.payload.serial];

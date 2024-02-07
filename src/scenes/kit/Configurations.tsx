@@ -6,10 +6,6 @@ import { useAppDispatch } from "~/hooks";
 import { KitState } from "~/modules/kit/reducer";
 import { default as apiButton } from "~/Components/ApiButton";
 import { Response, api, schemas } from "~/api";
-import {
-  kitConfigurationUpdated,
-  kitSetAllConfigurationsInactive,
-} from "~/modules/kit/actions";
 import { ButtonLink } from "~/Components/Button";
 
 import commonStyle from "~/Common.module.css";
@@ -22,6 +18,7 @@ import {
   IconTrash,
 } from "@tabler/icons-react";
 import { ConfigurationsContext, PermissionsContext } from "./contexts";
+import { rtkApi } from "~/services/astroplant";
 
 const ApiButton = apiButton<any>();
 
@@ -42,19 +39,8 @@ function ConfigurationRow({
   const dispatch = useAppDispatch();
   const permissions = useContext(PermissionsContext);
 
-  const onResponse = (response: Response<schemas["KitConfiguration"]>) => {
-    dispatch(
-      kitSetAllConfigurationsInactive({
-        serial: kit.serial,
-        kitId: kit.details?.id!,
-      }),
-    );
-    dispatch(
-      kitConfigurationUpdated({
-        serial: kit.serial,
-        configuration: response.data,
-      }),
-    );
+  const onResponse = (_response: Response<schemas["KitConfiguration"]>) => {
+    dispatch(rtkApi.util.invalidateTags(["KitConfigurations"]));
     alert(
       "Configuration updated. Make sure to restart the kit for the configuration to activate.",
     );

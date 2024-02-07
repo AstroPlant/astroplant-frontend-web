@@ -3,9 +3,9 @@ import { Icon } from "semantic-ui-react";
 import { JSONSchema7 } from "json-schema";
 
 import ApiForm from "~/Components/ApiForm";
-import { kitConfigurationUpdated } from "~/modules/kit/actions";
 import { Response, api, schemas } from "~/api";
 import { useAppDispatch } from "~/hooks";
+import { rtkApi } from "~/services/astroplant";
 
 export type Props = {
   kit: schemas["Kit"];
@@ -23,17 +23,13 @@ export default function Description({ kit, configuration, readOnly }: Props) {
 
   const [editing, setEditing] = useState(false);
 
-  const onResponse = (response: Response<schemas["KitConfiguration"]>) => {
+  const onResponse = (_response: Response<schemas["KitConfiguration"]>) => {
     setEditing(false);
-    dispatch(
-      kitConfigurationUpdated({
-        serial: kit.serial,
-        configuration: response.data,
-      }),
-    );
+    dispatch(rtkApi.util.invalidateTags(["KitConfigurations"]));
   };
 
   const send = (formData: string) => {
+    // TODO: use `rtkApi.usePatchKitConfiguration`
     return api.patchConfiguration({
       configurationId: configuration.id,
       patchKitConfiguration: {

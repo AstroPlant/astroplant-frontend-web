@@ -12,7 +12,6 @@ import {
 import { produce } from "immer";
 import { JSONSchema7 } from "json-schema";
 
-import { kitConfigurationUpdated } from "~/modules/kit/actions";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { selectors as quantityTypesSelectors } from "~/modules/quantity-type/reducer";
 import { Button } from "~/Components/Button";
@@ -47,6 +46,7 @@ import {
   IconTransferOut,
 } from "@tabler/icons-react";
 import { useAppSelector } from "~/hooks";
+import { rtkApi } from "~/services/astroplant";
 
 export type Props = {
   kit: schemas["Kit"];
@@ -222,20 +222,20 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
     parseConfiguration(configuration),
   );
 
+  const [patchKitConfiguration] = rtkApi.usePatchKitConfigurationMutation();
+
   const update = async (fuzzyControl: FuzzyControl) => {
     setLoading(true);
     setFuzzyControl(fuzzyControl);
 
-    await firstValueFrom(
-      api.patchConfiguration({
-        configurationId: configuration.id,
-        patchKitConfiguration: {
-          controlRules: {
-            fuzzyControl,
-          },
+    await patchKitConfiguration({
+      configurationId: configuration.id,
+      patchKitConfiguration: {
+        controlRules: {
+          fuzzyControl,
         },
-      }),
-    );
+      },
+    });
 
     setLoading(false);
   };

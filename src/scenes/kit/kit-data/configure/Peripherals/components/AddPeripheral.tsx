@@ -2,8 +2,6 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, Header, Transition } from "semantic-ui-react";
 
-import { KitConfigurationState } from "~/modules/kit/reducer";
-import { peripheralCreated } from "~/modules/kit/actions";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 
 import { JSONSchema7 } from "json-schema";
@@ -17,6 +15,7 @@ import { IconCheck, IconCircleCheck, IconPlus } from "@tabler/icons-react";
 
 import style from "./AddPeripheral.module.css";
 import { ModalDialog } from "~/Components/ModalDialog";
+import { rtkApi } from "~/services/astroplant";
 
 export type Props = {
   kit: schemas["Kit"];
@@ -64,13 +63,8 @@ export default function AddPeripheral({ kit, configuration }: Props) {
     });
   };
 
-  const onResponse = (response: Response<schemas["Peripheral"]>) => {
-    dispatch(
-      peripheralCreated({
-        serial: kit.serial,
-        peripheral: response.data,
-      }),
-    );
+  const onResponse = (_response: Response<schemas["Peripheral"]>) => {
+    dispatch(rtkApi.util.invalidateTags(["KitConfigurations"]));
     setDone(true);
   };
 

@@ -3,13 +3,10 @@ import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 
 import ApiButton from "~/Components/ApiButton";
-import {
-  kitSetAllConfigurationsInactive,
-  kitConfigurationUpdated,
-} from "~/modules/kit/actions";
 import { api, Response, schemas } from "~/api";
 import { IconPower } from "@tabler/icons-react";
 import { useNavigate } from "react-router-dom";
+import { rtkApi } from "~/services/astroplant";
 
 export type Props = {
   kit: schemas["Kit"];
@@ -24,15 +21,7 @@ export default function ActivateDeactivate({ kit, configuration }: Props) {
   const navigate = useNavigate();
 
   const onResponse = (response: Response<schemas["KitConfiguration"]>) => {
-    dispatch(
-      kitSetAllConfigurationsInactive({ serial: kit.serial, kitId: kit.id }),
-    );
-    dispatch(
-      kitConfigurationUpdated({
-        serial: kit.serial,
-        configuration: response.data,
-      }),
-    );
+    dispatch(rtkApi.util.invalidateTags(["KitConfigurations"]));
 
     if (response.data.active) {
       alert(

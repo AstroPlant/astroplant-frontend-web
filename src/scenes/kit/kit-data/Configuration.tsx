@@ -14,7 +14,6 @@ import { useAppDispatch, useAppSelector } from "~/hooks";
 import { selectMe } from "~/modules/me/reducer";
 import { Select } from "~/Components/Select";
 import { rtkApi } from "~/services/astroplant";
-import { kitConfigurationCreated } from "~/modules/kit/actions";
 
 import style from "./Configuration.module.css";
 import { PermissionsContext } from "../contexts";
@@ -86,9 +85,7 @@ function Clone({ kit, configuration }: ConfigurationProps) {
   const [target, setTarget] = useState(defaultTarget);
 
   if (result.isSuccess) {
-    dispatch(
-      kitConfigurationCreated({ serial: target!, configuration: result.data }),
-    );
+    dispatch(rtkApi.util.invalidateTags(["KitConfigurations"]));
 
     return (
       <Navigate

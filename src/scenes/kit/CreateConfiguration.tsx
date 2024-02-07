@@ -5,10 +5,10 @@ import { Container, Segment } from "semantic-ui-react";
 
 import { JSONSchema7 } from "json-schema";
 import ApiForm from "~/Components/ApiForm";
-import { kitConfigurationCreated } from "~/modules/kit/actions";
 import { Response, api, schemas } from "~/api";
 import { useAppDispatch } from "~/hooks";
 import { KitState } from "~/modules/kit/reducer";
+import { rtkApi } from "~/services/astroplant";
 
 const CreateConfigurationForm = ApiForm<
   any,
@@ -31,12 +31,7 @@ export default function CreateConfiguration({ kit }: CreateConfigurationProps) {
   const onResponse = (response: Response<schemas["KitConfiguration"]>) => {
     setResult(response.data);
     setDone(true);
-    dispatch(
-      kitConfigurationCreated({
-        serial: kit.serial,
-        configuration: response.data,
-      }),
-    );
+    dispatch(rtkApi.util.invalidateTags(["KitConfigurations"]));
   };
 
   const send = (formData: any) => {

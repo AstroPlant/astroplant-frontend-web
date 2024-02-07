@@ -4,7 +4,6 @@ import { Segment, Label, Header } from "semantic-ui-react";
 import validator from "@rjsf/validator-ajv8";
 import { IconX, IconPencil } from "@tabler/icons-react";
 
-import { peripheralDeleted, peripheralUpdated } from "~/modules/kit/actions";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 
 import { JSONSchema7 } from "json-schema";
@@ -56,25 +55,13 @@ export default function ViewEditPeripheral({
     });
   };
 
-  const responseUpdate = (response: Response<schemas["Peripheral"]>) => {
-    dispatch(
-      peripheralUpdated({
-        serial: kit.serial,
-        peripheral: response.data,
-      }),
-    );
+  const responseUpdate = (_response: Response<schemas["Peripheral"]>) => {
+    dispatch(rtkApi.util.invalidateTags(["KitConfigurations"]));
     setEditing(false);
   };
 
   const responseDelete = () => {
-    dispatch(
-      peripheralDeleted({
-        serial: kit.serial,
-        kitId: peripheral.kitId,
-        kitConfigurationId: peripheral.kitConfigurationId,
-        peripheralId: peripheral.id,
-      }),
-    );
+    dispatch(rtkApi.util.invalidateTags(["KitConfigurations"]));
   };
 
   if (!peripheralDefinition) {

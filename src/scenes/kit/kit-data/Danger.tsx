@@ -6,7 +6,6 @@ import { Button } from "~/Components/Button";
 import { Input } from "~/Components/Input";
 import { schemas } from "~/api";
 import { useAppDispatch } from "~/hooks";
-import { kitConfigurationDeleted } from "~/modules/kit/actions";
 import { KitState } from "~/modules/kit/reducer";
 import { notificationSuccess } from "~/modules/notification";
 import { addNotificationRequest } from "~/modules/notification/actions";
@@ -56,13 +55,6 @@ export function Danger({ kit, configuration }: DangerProps) {
         "The configuration was successfully deleted.",
       );
       dispatch(addNotificationRequest(notification));
-      dispatch(
-        kitConfigurationDeleted({
-          serial: kit.serial,
-          kitId: kit.details!.id,
-          kitConfigurationId: configuration.id,
-        }),
-      );
       navigate("../../configurations");
     }
   }, [deleteResult, kit, configuration]);
