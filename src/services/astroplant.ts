@@ -204,7 +204,7 @@ export const rtkApi = createApi({
       invalidatesTags: ["KitConfigurations"],
     }),
     patchKitConfiguration: build.mutation<
-      void,
+      schemas["KitConfiguration"],
       {
         configurationId: number;
         patchKitConfiguration: schemas["PatchKitConfiguration"];
