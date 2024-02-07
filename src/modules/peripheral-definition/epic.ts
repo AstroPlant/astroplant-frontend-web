@@ -1,12 +1,13 @@
-import { Epic, combineEpics } from "redux-observable";
+import { combineEpics } from "redux-observable";
 import { switchMap, map, filter, reduce, catchError } from "rxjs/operators";
 import * as genericActions from "~/modules/generic/actions";
 import * as actions from "./actions";
 
 import { api, schemas } from "~/api";
 import { of } from "rxjs";
+import { AppEpic } from "~/store";
 
-const fetchPeripheralDefinitions: Epic = (actions$, _state$) =>
+const fetchPeripheralDefinitions: AppEpic = (actions$, _state$) =>
   actions$.pipe(
     filter(genericActions.pageInitializationSuccess.match),
     switchMap(() => {

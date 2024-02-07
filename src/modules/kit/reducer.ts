@@ -32,7 +32,7 @@ export interface KitState {
   status: "None" | "Fetching" | "NotFound" | "NotAuthorized" | "Fetched";
 }
 
-const kitsAdapter = createEntityAdapter<KitState>({
+const kitsAdapter = createEntityAdapter<KitState, string>({
   selectId: (kit) => kit.serial,
 });
 

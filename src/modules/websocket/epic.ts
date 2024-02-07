@@ -1,4 +1,4 @@
-import { Epic, combineEpics } from "redux-observable";
+import { combineEpics } from "redux-observable";
 import { Observable, concat } from "rxjs";
 import {
   delay,
@@ -16,6 +16,7 @@ import {
 import { webSocket } from "rxjs/webSocket";
 import * as kitActions from "../kit/actions";
 import { RawMeasurement } from "../kit/reducer";
+import { AppEpic } from "~/store";
 
 const webSocketSubject = webSocket(
   import.meta.env.VITE_WEBSOCKET_URL || "ws://localhost:8080/ws",
@@ -77,7 +78,7 @@ const rpcSubscription = (method: string, params: any) => {
 /**
  * Listens to notification requests, and add notifications.
  */
-const rawMeasurementsEpic: Epic = (action$, state$) =>
+const rawMeasurementsEpic: AppEpic = (action$, _state$) =>
   action$.pipe(
     filter(kitActions.startWatching.match),
     mergeMap((action) => {

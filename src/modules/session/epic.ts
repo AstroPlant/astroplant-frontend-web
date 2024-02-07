@@ -3,12 +3,13 @@ import { combineLatest } from "rxjs";
 import { map, filter, delay } from "rxjs/operators";
 import { REHYDRATE } from "redux-persist/lib/constants";
 import * as actions from "./actions";
+import { AppEpic } from "~/store";
 
 /**
  * Listens to session rehydration, and emit a session initialize action if the
  * session is new.
  */
-const sessionInitializeEpic = (action$: any, state$: any) =>
+const sessionInitializeEpic: AppEpic = (action$: any, state$: any) =>
   combineLatest(
     action$.pipe(
       ofType(REHYDRATE),
@@ -29,7 +30,7 @@ const sessionInitializeEpic = (action$: any, state$: any) =>
 /**
  * Hacky epic to emit session initialized after delay.
  */
-const sessionInitializedEpic = (action$: any) =>
+const sessionInitializedEpic: AppEpic = (action$: any) =>
   action$.pipe(
     filter(actions.sessionInitialize.match),
     delay(10),

@@ -1,4 +1,4 @@
-import { Epic, combineEpics } from "redux-observable";
+import { combineEpics } from "redux-observable";
 import { from, of } from "rxjs";
 import { mergeMap, switchMap, map, filter, catchError } from "rxjs/operators";
 import * as actions from "./actions";
@@ -7,8 +7,9 @@ import * as genericActions from "../generic/actions";
 
 import { PDNotFound, PDForbidden } from "../../problems";
 import { ErrorResponse, api } from "~/api";
+import { AppEpic } from "~/store";
 
-const addKitFromKitMemberships: Epic = (actions$, _state$) =>
+const addKitFromKitMemberships: AppEpic = (actions$, _state$) =>
   actions$.pipe(
     filter(meActions.setKitMemberships.match),
     map((action) => action.payload),
@@ -18,7 +19,7 @@ const addKitFromKitMemberships: Epic = (actions$, _state$) =>
     map(actions.addKit),
   );
 
-const fetchKit: Epic = (actions$, _state$) =>
+const fetchKit: AppEpic = (actions$, _state$) =>
   actions$.pipe(
     filter(actions.fetchKit.match),
     map((action) => action.payload.serial),

@@ -1,16 +1,17 @@
-import { Epic, combineEpics } from "redux-observable";
+import { combineEpics } from "redux-observable";
 import { switchMap, map, filter, catchError } from "rxjs/operators";
 import { of, timer } from "rxjs";
 import * as actions from "./actions";
 
 import * as sessionActions from "../session/actions";
 import { api } from "~/api";
+import { AppEpic } from "~/store";
 
 /**
  * Listens to session initialization, and clear the refresh token if we do not
  * want to be remembered.
  */
-const clearRefreshTokenEpic: Epic = (action$, state$) =>
+const clearRefreshTokenEpic: AppEpic = (action$, state$) =>
   action$.pipe(
     filter(sessionActions.sessionInitialize.match),
     filter((_ev) => !state$.value.auth.rememberMe),
@@ -21,7 +22,7 @@ const clearRefreshTokenEpic: Epic = (action$, state$) =>
  * Intermittently use the refresh token.
  * TODO: clear refresh token if the server deems it invalid.
  */
-const refreshAuthenticationEpic: Epic = (action$, state$) =>
+const refreshAuthenticationEpic: AppEpic = (action$, state$) =>
   action$.pipe(
     filter(sessionActions.sessionInitialized.match),
     switchMap(() => timer(0, 5 * 60 * 1000)),

@@ -74,7 +74,7 @@ export type FuzzyRule = {
 
 export type FuzzyControl = {
   input: {
-    [peripheralName: string]: { [quantityTypeId: string]: InputSettings };
+    [peripheralName: string]: { [quantityTypeId: number]: InputSettings };
   };
   output: {
     [peripheralName: string]: { [command: string]: OutputSettings };

@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
-import { createEpicMiddleware } from "redux-observable";
+import { Epic, createEpicMiddleware } from "redux-observable";
 import {
   FLUSH,
   REHYDRATE,
@@ -25,8 +25,9 @@ const logger = (store: any) => (next: any) => (action: any) => {
   return result;
 };
 
-const epicMiddleware = createEpicMiddleware();
+export type RootState = ReturnType<typeof rootReducer>;
 
+const epicMiddleware = createEpicMiddleware<unknown, unknown, RootState>();
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
@@ -41,4 +42,4 @@ export const persistor = persistStore(store);
 epicMiddleware.run(rootEpic);
 
 export type AppDispatch = typeof store.dispatch;
-export type RootState = ReturnType<typeof store.getState>;
+export type AppEpic = Epic<unknown, unknown, RootState>;

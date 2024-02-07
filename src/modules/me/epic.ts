@@ -1,4 +1,4 @@
-import { Epic, StateObservable, combineEpics } from "redux-observable";
+import { combineEpics } from "redux-observable";
 import { of, concat, EMPTY } from "rxjs";
 import { switchMap, map, filter, catchError } from "rxjs/operators";
 
@@ -6,12 +6,12 @@ import { api } from "~/api";
 import * as actions from "./actions";
 import * as authActions from "../auth/actions";
 import * as genericActions from "../generic/actions";
-import { RootState } from "~/store";
+import { AppEpic } from "~/store";
 
 /**
  * Listens to authentication token change to fetch our user details.
  */
-const fetchUserDetailsEpic: Epic = (action$, _state$) =>
+const fetchUserDetailsEpic: AppEpic = (action$, _state$) =>
   action$.pipe(
     filter(authActions.setAccessToken.match),
     switchMap(() => {
@@ -29,10 +29,7 @@ const fetchUserDetailsEpic: Epic = (action$, _state$) =>
 /**
  * Listens to user details change and kit creation to fetch our kit memberships.
  */
-const fetchUserKitsEpic: Epic = (
-  actions$,
-  state$: StateObservable<RootState>,
-) =>
+const fetchUserKitsEpic: AppEpic = (actions$, state$) =>
   actions$.pipe(
     filter(
       (action) =>

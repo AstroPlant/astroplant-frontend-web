@@ -4,7 +4,8 @@ import { RootState } from "~/types";
 import { schemas } from "~/api";
 
 export const quantityTypesAdapter = createEntityAdapter<
-  schemas["QuantityType"]
+  schemas["QuantityType"],
+  number
 >({
   selectId: (quantityType) => quantityType.id,
 });

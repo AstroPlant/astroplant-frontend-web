@@ -94,7 +94,7 @@ function parseConfiguration(
         interpolated,
         setpoints,
       } = settings;
-      fuzzyControl.input[peripheralName]![quantityTypeId]! = {
+      fuzzyControl.input[peripheralName]![Number(quantityTypeId)]! = {
         nominalRange,
         nominalDeltaRange,
         deltaMeasurements,
@@ -491,7 +491,7 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
               const peripheral = Object.values(
                 configuration.peripherals,
               ).filter((p) => p.name === peripheralName)[0]!;
-              const quantityType = quantityTypes[quantityTypeId]!;
+              const quantityType = quantityTypes[Number(quantityTypeId)]!;
               return (
                 <div key={quantityTypeId}>
                   <ViewInput
@@ -679,7 +679,7 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
               for (const quantityTypeId of Object.keys(qtSettings)) {
                 conditionChoices.push([
                   peripheralName,
-                  quantityTypes[quantityTypeId]!,
+                  quantityTypes[Number(quantityTypeId)]!,
                 ]);
               }
             }

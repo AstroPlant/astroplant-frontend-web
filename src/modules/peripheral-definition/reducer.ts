@@ -4,7 +4,8 @@ import { RootState } from "~/types";
 import { schemas } from "~/api";
 
 export const definitionsAdapter = createEntityAdapter<
-  schemas["PeripheralDefinition"]
+  schemas["PeripheralDefinition"],
+  number
 >({
   selectId: (peripheralDefinition) => peripheralDefinition.id,
 });

@@ -1,14 +1,15 @@
-import { Epic, combineEpics } from "redux-observable";
+import { combineEpics } from "redux-observable";
 import { of, concat } from "rxjs";
 import { mergeMap, filter, delay } from "rxjs/operators";
 import { DateTime } from "luxon";
 import Option from "~/utils/option";
 import * as actions from "./actions";
+import { AppEpic } from "~/store";
 
 /**
  * Listens to notification requests, and add notifications.
  */
-const notificationRequestEpic: Epic = (action$, state$) =>
+const notificationRequestEpic: AppEpic = (action$, state$) =>
   action$.pipe(
     filter(actions.addNotificationRequest.match),
     mergeMap((action) => {
@@ -35,7 +36,7 @@ const notificationRequestEpic: Epic = (action$, state$) =>
       if (timeout) {
         return concat(
           addObservable,
-          of(actions.removeNotification(id)).pipe(delay(timeout)),
+          of(actions.removeNotification(String(id))).pipe(delay(timeout)),
         );
       } else {
         return addObservable;
