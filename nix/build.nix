@@ -19,7 +19,6 @@ stdenv.mkDerivation rec {
   packageJSON = ../package.json;
 
   offlineCache = fetchYarnDeps {
-    name = "bla";
     yarnLock = "${src}/yarn.lock";
     hash = "sha256-pK+VfSTyt0ZNWvYIFsCqCZjRyfkV3aA+IwevT84dLsc=";
   };
