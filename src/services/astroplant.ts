@@ -381,6 +381,16 @@ export const rtkApi = createApi({
         path: `/users/${encodeUri(username)}/kit-memberships`,
         method: "GET",
       }),
+      providesTags: (result) => [
+        ...(result ?? []).map(
+          (membership) =>
+            ({
+              type: "KitMemberships",
+              id: membership.id,
+            }) as const,
+        ),
+        { type: "KitMemberships", id: "LIST" },
+      ],
     }),
   }),
 });
