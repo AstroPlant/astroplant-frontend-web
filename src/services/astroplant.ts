@@ -96,6 +96,13 @@ export const rtkApi = createApi({
       }),
       invalidatesTags: [{ type: "KitMemberships", id: "LIST" }],
     }),
+    deleteKit: build.mutation<void, { kitSerial: string }>({
+      query: ({ kitSerial }) => ({
+        path: `/kits/${encodeUri(kitSerial)}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [{ type: "KitMemberships", id: "LIST" }],
+    }),
     listMedia: build.query<
       Array<schemas["Media"]>,
       {
