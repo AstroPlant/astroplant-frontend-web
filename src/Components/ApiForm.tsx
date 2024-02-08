@@ -124,3 +124,107 @@ export default function ApiForm<T = any, R = any>(props: AllProps<T, R>) {
     </>
   );
 }
+
+export type RtkApiFormProps<T, R> = {
+  idPrefix: string;
+  schema: JSONSchema7;
+  uiSchema: UiSchema;
+  validate?: (formData: T, errors: FormValidation) => FormValidation;
+  send: (data: T) => Promise<{ data?: R; error?: unknown }>;
+  onResponse?: (response: R) => void;
+  submitLabel?: string;
+  formData?: any;
+  /** Show form fields (and the submit button) as disabled. */
+  disabled?: boolean;
+  /** Hide the submit button. */
+  readonly?: boolean;
+};
+
+export function RtkApiForm<T = any, R = any>(
+  props: PropsWithChildren<RtkApiFormProps<T, R>>,
+) {
+  const { children, formData: initialFormData, disabled, readonly } = props;
+
+  const { t } = useTranslation();
+  const dispatch = useAppDispatch();
+
+  const [formData, setFormData] = useState(initialFormData);
+  const [submitting, setSubmitting] = useState(false);
+  const [formEpoch, setFormEpoch] = useState(0);
+  const [additionalFormErrors, setAdditionalFormErrors] =
+    useState<InvalidParametersFormErrors>({});
+
+  const submit = async (formData: T) => {
+    setSubmitting(true);
+    setFormEpoch(formEpoch + 1);
+    setFormData(formData);
+    setAdditionalFormErrors({});
+
+    try {
+      const response = await props.send(formData);
+
+      if (response.data !== undefined) {
+        if (props.onResponse) {
+          props.onResponse(response.data);
+        }
+      } else {
+        const e = response.error;
+        // How to handle situations where we don't know the error type? Currently
+        // we just... ignore them. Which is bad.
+        if (e instanceof ErrorResponse) {
+          if (e.details.status === 0 || e.details.status >= 500) {
+            dispatch(addNotificationRequest(notificationConnectionIssue(t)));
+          }
+
+          if (e.details.type === "APPLICATION") {
+            const formErrors = PDInvalidParameters.toFormErrors(
+              t,
+              e.details.data,
+            );
+            if (formErrors !== null) {
+              setAdditionalFormErrors(formErrors);
+            }
+          }
+        }
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  return (
+    <>
+      <RjsfForm
+        key={formEpoch}
+        idPrefix={props.idPrefix}
+        schema={props.schema}
+        uiSchema={props.uiSchema}
+        customValidate={props.validate}
+        onChange={({ formData }) => setFormData(formData)}
+        onSubmit={({ formData }) => submit(formData)}
+        formData={formData}
+        disabled={disabled || readonly || submitting}
+        // @ts-ignore
+        extraErrors={additionalFormErrors}
+        validator={validator}
+      >
+        {readonly === true ? (
+          // Empty RjsfForm children to hide the default submit button.
+          <>{children && <Form.Group>{children}</Form.Group>}</>
+        ) : (
+          <Form.Group>
+            <Button
+              type="submit"
+              variant="positive"
+              disabled={disabled || submitting}
+              loading={submitting}
+            >
+              {props.submitLabel || t("form.submit")}
+            </Button>
+            {children}
+          </Form.Group>
+        )}
+      </RjsfForm>
+    </>
+  );
+}
