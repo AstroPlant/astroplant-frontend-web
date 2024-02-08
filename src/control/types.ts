@@ -41,11 +41,11 @@ export type OutputSettings = {
 
 export type OutputFuzzySet = "minimal" | "low" | "medium" | "high" | "maximal";
 
-export type Hedge = "very" | "slightly" | null;
+export type Hedge = "very" | "slightly";
 
 export type FuzzyRuleCondition = {
   negation: boolean;
-  hedge: Hedge;
+  hedge?: Hedge;
   delta: boolean;
   peripheral: string;
   quantityType: number;

@@ -27,8 +27,8 @@ export const outputFuzzySetSchema = {
 } as const satisfies JSONSchema;
 
 export const hedgeSchema = {
-  type: ["string", "null"],
-  enum: ["very", "slightly", null],
+  type: "string",
+  enum: ["very", "slightly"],
 } as const satisfies JSONSchema;
 
 export const setpointSchema = {
@@ -211,7 +211,6 @@ export const fuzzyRuleCondition = {
   type: "object",
   required: [
     "negation",
-    "hedge",
     "delta",
     "peripheral",
     "quantityType",
