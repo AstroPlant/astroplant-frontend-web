@@ -13,17 +13,12 @@ import {
 import { JSONSchema7 } from "json-schema";
 
 import { withAuthentication } from "~/Components/AuthenticatedGuard";
-import { Response, api, schemas } from "~/api";
 import { useAppDispatch } from "~/hooks";
 import { kitCreated } from "~/modules/me/actions";
-import ApiForm from "~/Components/ApiForm";
+import { RtkApiForm } from "~/Components/ApiForm";
 
 import commonStyle from "~/Common.module.css";
-
-const CreateKitForm = ApiForm<
-  any,
-  Response<{ kitSerial: string; password: string }>
->;
+import { rtkApi } from "~/services/astroplant";
 
 function CreateKit() {
   const { t } = useTranslation();
@@ -34,34 +29,12 @@ function CreateKit() {
     kitSerial: string;
     password: string;
   } | null>(null);
+  const [createKit] = rtkApi.useCreateKitMutation();
 
-  const onResponse = (
-    response: Response<{ kitSerial: string; password: string }>,
-  ) => {
+  const onResponse = (response: { kitSerial: string; password: string }) => {
     dispatch(kitCreated());
     setDone(true);
-    setResult(response.data);
-  };
-
-  const transform = (formData: any): schemas["NewKit"] => {
-    const { coordinate, ...rest } = formData;
-    if (typeof coordinate === "undefined") {
-      return {
-        latitude: null,
-        longitude: null,
-        ...rest,
-      };
-    } else {
-      return {
-        latitude: coordinate.latitude,
-        longitude: coordinate.longitude,
-        ...rest,
-      };
-    }
-  };
-
-  const send = (formData: any) => {
-    return api.createKit({ newKit: formData });
+    setResult(response);
   };
 
   const schema: JSONSchema7 = {
@@ -186,12 +159,28 @@ function CreateKit() {
               be generated to the device (a kit serial and a password). You
               normally create one kit per physical device.
             </p>
-            <CreateKitForm
+            <RtkApiForm
               idPrefix="createKitForm"
               schema={schema}
               uiSchema={uiSchema}
-              transform={transform}
-              send={send}
+              send={async (data) => {
+                const { coordinate, ...rest } = data;
+                let newKit;
+                if (typeof coordinate === "undefined") {
+                  newKit = {
+                    latitude: null,
+                    longitude: null,
+                    ...rest,
+                  };
+                } else {
+                  newKit = {
+                    latitude: coordinate.latitude,
+                    longitude: coordinate.longitude,
+                    ...rest,
+                  };
+                }
+                return await createKit(newKit);
+              }}
               onResponse={onResponse}
               submitLabel={t("createKit.create")}
             />

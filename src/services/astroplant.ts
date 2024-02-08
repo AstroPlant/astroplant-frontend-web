@@ -85,6 +85,17 @@ export const rtkApi = createApi({
     listKits: build.query<schemas["Kit"][], void>({
       query: () => ({ path: "/kits", method: "GET" }),
     }),
+    createKit: build.mutation<
+      { kitSerial: string; password: string },
+      schemas["NewKit"]
+    >({
+      query: (kit) => ({
+        path: `/kits`,
+        method: "POST",
+        body: kit,
+      }),
+      invalidatesTags: [{ type: "KitMemberships", id: "LIST" }],
+    }),
     listMedia: build.query<
       Array<schemas["Media"]>,
       {
