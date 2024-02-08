@@ -225,14 +225,104 @@ export const rtkApi = createApi({
         method: "PATCH",
         body: patchKitConfiguration,
       }),
-      invalidatesTags: ["KitConfigurations"],
+      async onQueryStarted(
+        { configurationId },
+        { dispatch, getState, queryFulfilled },
+      ) {
+        try {
+          const { data } = await queryFulfilled;
+
+          // Update getKitConfigurations query cache
+          const state = getState();
+          const args = rtkApi.util.selectCachedArgsForQuery(
+            state,
+            "getKitConfigurations",
+          );
+          for (const arg of args) {
+            dispatch(
+              rtkApi.util.updateQueryData(
+                "getKitConfigurations",
+                arg,
+                (draft) => {
+                  const config = draft.find(
+                    (config) => config.id === configurationId,
+                  );
+                  if (config !== undefined) {
+                    Object.assign(config, { ...config, ...data });
+                  }
+                },
+              ),
+            );
+          }
+        } catch {
+          dispatch(
+            rtkApi.util.invalidateTags([
+              { type: "KitConfigurations", id: configurationId },
+            ]),
+          );
+        }
+      },
     }),
     deleteConfiguration: build.mutation<void, { configurationId: number }>({
       query: ({ configurationId }) => ({
         path: `/kit-configurations/${encodeUri(configurationId)}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["KitConfigurations"],
+      invalidatesTags: (_result, _error, { configurationId }) => [
+        { type: "KitConfigurations", id: configurationId },
+      ],
+    }),
+    patchPeripheral: build.mutation<
+      schemas["Peripheral"],
+      {
+        peripheralId: number;
+        patchPeripheral: schemas["PatchPeripheral"];
+      }
+    >({
+      query: ({ peripheralId, patchPeripheral }) => ({
+        path: `/peripherals/${encodeUri(peripheralId)}`,
+        method: "PATCH",
+        body: patchPeripheral,
+      }),
+      async onQueryStarted(_, { getState, dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+
+          // Update getKitConfigurations query cache
+          const state = getState();
+          const args = rtkApi.util.selectCachedArgsForQuery(
+            state,
+            "getKitConfigurations",
+          );
+          for (const arg of args) {
+            dispatch(
+              rtkApi.util.updateQueryData(
+                "getKitConfigurations",
+                arg,
+                (draft) => {
+                  const config = draft.find(
+                    (config) => config.id === data.kitConfigurationId,
+                  );
+                  if (config === undefined) {
+                    return;
+                  }
+
+                  const peripheral = config.peripherals.find(
+                    (peripheral) => peripheral.id === data.id,
+                  );
+                  if (peripheral === undefined) {
+                    return;
+                  }
+
+                  Object.assign(peripheral, data);
+                },
+              ),
+            );
+          }
+        } catch {
+          dispatch(rtkApi.util.invalidateTags([{ type: "KitConfigurations" }]));
+        }
+      },
     }),
     deletePeripheral: build.mutation<void, { peripheralId: number }>({
       query: ({ peripheralId }) => ({
