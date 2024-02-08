@@ -74,6 +74,7 @@ const baseQueryWithRetry = retry(baseQueryFn);
 export const rtkApi = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithRetry,
+  invalidationBehavior: "delayed",
   tagTypes: [
     "Users",
     "KitMemberships",
