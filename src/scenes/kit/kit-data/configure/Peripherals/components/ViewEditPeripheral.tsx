@@ -7,16 +7,19 @@ import { IconX, IconPencil } from "@tabler/icons-react";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 
 import { JSONSchema7 } from "json-schema";
-import ApiForm from "~/Components/ApiForm";
-import ApiButton from "~/Components/ApiButton";
+import { RtkApiForm } from "~/Components/ApiForm";
 import RjsfForm from "~/rjsf-theme";
 
 import PeripheralDefinitionCard from "~/Components/PeripheralDefinitionCard";
-import { useAppDispatch, useAppSelector } from "~/hooks";
+import { useAppSelector } from "~/hooks";
 import Loading from "~/Components/Loading";
-import { api, schemas, Response } from "~/api";
+import { schemas } from "~/api";
 import { Button } from "~/Components/Button";
 import { rtkApi } from "~/services/astroplant";
+import {
+  fuzzyControlDeletePeripheral,
+  fuzzyControlRenamePeripheral,
+} from "~/control";
 
 export type Props = {
   kit: schemas["Kit"];
@@ -25,9 +28,6 @@ export type Props = {
   readOnly: boolean;
 };
 
-const PeripheralForm = ApiForm<any, any>;
-const DeletePeripheralButton = ApiButton<any>();
-
 export default function ViewEditPeripheral({
   kit,
   configuration,
@@ -35,7 +35,6 @@ export default function ViewEditPeripheral({
   readOnly = false,
 }: Props) {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
 
   const peripheralDefinition = useAppSelector((state) =>
     peripheralDefinitionsSelectors.selectById(
@@ -46,23 +45,9 @@ export default function ViewEditPeripheral({
 
   const [editing, setEditing] = useState(false);
 
+  const [patchKitConfiguration] = rtkApi.usePatchKitConfigurationMutation();
+  const [patchPeripheral] = rtkApi.usePatchPeripheralMutation();
   const [deletePeripheral] = rtkApi.useDeletePeripheralMutation();
-
-  const sendUpdate = (formData: any) => {
-    return api.patchPeripheral({
-      peripheralId: peripheral.id,
-      patchPeripheral: formData,
-    });
-  };
-
-  const responseUpdate = (_response: Response<schemas["Peripheral"]>) => {
-    dispatch(rtkApi.util.invalidateTags(["KitConfigurations"]));
-    setEditing(false);
-  };
-
-  const responseDelete = () => {
-    dispatch(rtkApi.util.invalidateTags(["KitConfigurations"]));
-  };
 
   if (!peripheralDefinition) {
     return <Loading />;
@@ -88,17 +73,36 @@ export default function ViewEditPeripheral({
       />
       {editing ? (
         <>
-          <PeripheralForm
+          <RtkApiForm
             idPrefix={`peripheralForm.${peripheral.id}`}
             schema={schema}
             uiSchema={{}}
-            send={sendUpdate}
-            onResponse={responseUpdate}
-            transform={(formData) => ({
-              ...formData,
-              peripheralDefinitionId: peripheralDefinition.id,
-            })}
             formData={peripheral}
+            onResponse={() => setEditing(false)}
+            send={async (data: schemas["Peripheral"]) => {
+              if (data.name !== peripheral.name) {
+                if (configuration.controlRules) {
+                  try {
+                    const newFuzzyControl = fuzzyControlRenamePeripheral(
+                      (configuration.controlRules as any).fuzzyControl,
+                      peripheral.name,
+                      data.name,
+                    );
+                    await patchKitConfiguration({
+                      configurationId: configuration.id,
+                      patchKitConfiguration: {
+                        controlRules: { fuzzyControl: newFuzzyControl },
+                      },
+                    });
+                  } catch {}
+                }
+              }
+
+              return await patchPeripheral({
+                peripheralId: peripheral.id,
+                patchPeripheral: data,
+              });
+            }}
           />
         </>
       ) : (
@@ -124,12 +128,24 @@ export default function ViewEditPeripheral({
                 Edit
               </Button>
               <Button
-                // send={sendDelete}
-                // onResponse={responseDelete}
                 variant="negative"
                 leftAdornment={<IconX aria-hidden />}
-                onClick={() => {
-                  console.warn("DELETE");
+                onClick={async () => {
+                  if (configuration.controlRules) {
+                    try {
+                      const newFuzzyControl = fuzzyControlDeletePeripheral(
+                        (configuration.controlRules as any).fuzzyControl,
+                        peripheral.name,
+                      );
+                      await patchKitConfiguration({
+                        configurationId: configuration.id,
+                        patchKitConfiguration: {
+                          controlRules: { fuzzyControl: newFuzzyControl },
+                        },
+                      });
+                    } catch {}
+                  }
+                  await deletePeripheral({ peripheralId: peripheral.id });
                 }}
                 confirm={() => ({
                   content: {
