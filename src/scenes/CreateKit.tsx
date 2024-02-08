@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import {
   Container,
-  Segment,
   Header,
   Transition,
   Icon,
@@ -14,7 +13,6 @@ import {
 import { JSONSchema7 } from "json-schema";
 
 import { withAuthentication } from "~/Components/AuthenticatedGuard";
-import HeadTitle from "~/Components/HeadTitle";
 import { Response, api, schemas } from "~/api";
 import { useAppDispatch } from "~/hooks";
 import { kitCreated } from "~/modules/me/actions";
