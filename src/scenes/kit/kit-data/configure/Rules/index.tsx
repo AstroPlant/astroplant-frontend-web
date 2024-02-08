@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Header,
@@ -11,12 +11,17 @@ import {
 } from "semantic-ui-react";
 import { produce } from "immer";
 import { JSONSchema7 } from "json-schema";
+import {
+  IconAdjustmentsHorizontal,
+  IconPlus,
+  IconTransferIn,
+  IconTransferOut,
+} from "@tabler/icons-react";
 
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { selectors as quantityTypesSelectors } from "~/modules/quantity-type/reducer";
 import { Button } from "~/Components/Button";
-
-import Option from "~/utils/option";
+import Loading from "~/Components/Loading";
 
 import {
   FuzzyControl,
@@ -28,6 +33,7 @@ import {
   validateFuzzyControl,
   validateFuzzyControlErrors,
 } from "~/control/schemas";
+
 import ViewInput from "./components/ViewInput";
 import ViewOutput from "./components/ViewOutput";
 import ViewRule from "./components/ViewRule";
@@ -36,15 +42,8 @@ import AddOutput from "./components/AddOutput";
 import EditInput from "./components/EditInput";
 import EditOutput from "./components/EditOutput";
 import EditRule from "./components/EditRule";
-import { firstValueFrom } from "rxjs";
-import Loading from "~/Components/Loading";
-import { api, schemas } from "~/api";
-import {
-  IconAdjustmentsHorizontal,
-  IconPlus,
-  IconTransferIn,
-  IconTransferOut,
-} from "@tabler/icons-react";
+
+import { schemas } from "~/api";
 import { useAppSelector } from "~/hooks";
 import { rtkApi } from "~/services/astroplant";
 
@@ -55,21 +54,38 @@ export type Props = {
 };
 
 // /** Check whether the fuzzy control references existing peripherals, etc. */
-// function checkFuzzyControlReferences(
-//   fuzzyControl: FuzzyControl,
-//   configuration: KitConfigurationState,
-// ): boolean {
-//   for (const [pName, qtSettings] of Object.entries(fuzzyControl.input)) {
-//     configuration.peripherals;
-//     for (const [qtId, _settings] of Object.entries(qtSettings)) {
-//     }
-//   }
-//   return false;
-// }
+function checkFuzzyControlReferences(
+  fuzzyControl: FuzzyControl,
+  configuration: schemas["KitConfigurationWithPeripherals"],
+): boolean {
+  const peripherals: { [name: string]: schemas["Peripheral"] } = {};
+  for (const peripheral of configuration.peripherals) {
+    peripherals[peripheral.name] = peripheral;
+  }
+
+  for (const [pName, _qtSettings] of Object.entries(fuzzyControl.input)) {
+    if (!(pName in peripherals)) {
+      return false;
+    }
+
+    // TODO: check if peripheral definition has these quantity types
+  }
+
+  for (const [pName, _commands] of Object.entries(fuzzyControl.output)) {
+    if (!(pName in peripherals)) {
+      return false;
+    }
+
+    // TODO: check if peripheral definition has these commands
+  }
+
+  return true;
+}
 
 function parseConfiguration(
   configuration: schemas["KitConfigurationWithPeripherals"],
 ): FuzzyControl {
+  const empty: FuzzyControl = { input: {}, output: {}, rules: [] };
   const rules = configuration.controlRules as { fuzzyControl?: unknown };
 
   if (!validateFuzzyControl(rules?.fuzzyControl)) {
@@ -77,8 +93,11 @@ function parseConfiguration(
       "Fuzzy control rules failed to validate.",
       validateFuzzyControlErrors(),
     );
-    const fuzzyControl: FuzzyControl = { input: {}, output: {}, rules: [] };
-    return fuzzyControl;
+    return empty;
+  }
+
+  if (!checkFuzzyControlReferences(rules.fuzzyControl, configuration)) {
+    return empty;
   }
 
   let fuzzyControl: FuzzyControl = { input: {}, output: {}, rules: [] };
@@ -212,21 +231,24 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
   const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editingInput, setEditingInput] = useState<
-    [schemas["Peripheral"], schemas["QuantityType"]] | null
+    [schemas["Peripheral"], schemas["QuantityType"], InputSettings] | null
   >(null);
   const [editingOutput, setEditingOutput] = useState<
-    [schemas["Peripheral"], string, JSONSchema7] | null
+    [schemas["Peripheral"], string, JSONSchema7, OutputSettings] | null
   >(null);
-  const [editingRule, setEditingRule] = useState<number | null>(null);
-  const [fuzzyControl, setFuzzyControl] = useState(
-    parseConfiguration(configuration),
+  const [editingRule, setEditingRule] = useState<[number, FuzzyRule] | null>(
+    null,
+  );
+
+  const fuzzyControl = useMemo(
+    () => parseConfiguration(configuration),
+    [configuration],
   );
 
   const [patchKitConfiguration] = rtkApi.usePatchKitConfigurationMutation();
 
   const update = async (fuzzyControl: FuzzyControl) => {
     setLoading(true);
-    setFuzzyControl(fuzzyControl);
 
     await patchKitConfiguration({
       configurationId: configuration.id,
@@ -244,22 +266,17 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
     peripheral: schemas["Peripheral"],
     quantityType: schemas["QuantityType"],
   ) => {
-    setFuzzyControl(
-      produce(fuzzyControl, (draft) => {
-        if (!(peripheral.name in draft.input)) {
-          draft.input[peripheral.name] = {};
-        }
-        draft.input[peripheral.name]![quantityType.id] = {
-          nominalRange: 1.0,
-          nominalDeltaRange: 0.1,
-          deltaMeasurements: 1,
-          interpolated: false,
-          setpoints: [],
-        };
-      }),
-    );
-
-    setEditingInput([peripheral, quantityType]);
+    setEditingInput([
+      peripheral,
+      quantityType,
+      {
+        nominalRange: 1.0,
+        nominalDeltaRange: 0.1,
+        deltaMeasurements: 1,
+        interpolated: false,
+        setpoints: [],
+      },
+    ]);
   };
 
   const addEmptyOutput = (
@@ -267,53 +284,32 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
     command: string,
     schema: JSONSchema7,
   ) => {
-    setFuzzyControl(
-      produce(fuzzyControl, (draft) => {
-        if (!(peripheral.name in draft.output)) {
-          draft.output[peripheral.name] = {};
-        }
-        if (schema.type && schema.type === "number") {
-          draft.output[peripheral.name]![command] = {
-            type: "continuous",
-            continuous: {
-              minimal: (schema as any).minimal || 0.0,
-              maximal: (schema as any).maximal || 100.0,
-            },
-          };
-        } else {
-          draft.output[peripheral.name]![command] = {
-            type: "scheduled",
-            // @ts-ignore
-            scheduled: {
-              interpolated: false,
-              schedules: [
-                {
-                  schedule: [{ time: "00:00:00", value: 0 }],
-                },
-              ],
-            },
-          };
-        }
-      }),
-    );
+    const settings: OutputSettings = {
+      type: "scheduled",
+      scheduled: {
+        interpolated: false,
+        schedules: [
+          {
+            schedule: [{ time: "00:00:00", value: 0 }],
+          },
+        ],
+      },
+    };
 
-    setEditingOutput([peripheral, command, schema]);
+    setEditingOutput([peripheral, command, schema, settings]);
   };
 
   const addEmptyRule = () => {
-    setFuzzyControl(
-      produce(fuzzyControl, (draft) => {
-        draft.rules.push({
-          condition: [],
-          implication: [],
-          schedules: [],
-          activeFrom: "00:00:00",
-          activeTo: "23:59:59",
-        });
-      }),
-    );
-
-    setEditingRule(fuzzyControl.rules.length);
+    setEditingRule([
+      fuzzyControl.rules.length,
+      {
+        condition: [],
+        implication: [],
+        schedules: [],
+        activeFrom: "00:00:00",
+        activeTo: "23:59:59",
+      },
+    ]);
   };
 
   const editInput = (
@@ -335,6 +331,9 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
 
     update(
       produce(fuzzyControl, (draft) => {
+        if (!(peripheral.name in draft.input)) {
+          draft.input[peripheral.name] = {};
+        }
         draft.input[peripheral.name]![quantityType.id] = inputSettingsSorted;
       }),
     );
@@ -347,6 +346,9 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
   ) => {
     update(
       produce(fuzzyControl, (draft) => {
+        if (!(peripheral.name in draft.output)) {
+          draft.output[peripheral.name] = {};
+        }
         draft.output[peripheral.name]![command] = outputSettings;
       }),
     );
@@ -355,7 +357,11 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
   const editRule = (index: number, rule: FuzzyRule) => {
     update(
       produce(fuzzyControl, (draft) => {
-        draft.rules[index] = rule;
+        if (index < draft.rules.length) {
+          draft.rules[index] = rule;
+        } else {
+          draft.rules.push(rule);
+        }
       }),
     );
   };
@@ -504,7 +510,11 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
                       variant="muted"
                       rightAdornment={<Icon name="pencil" />}
                       onClick={() =>
-                        setEditingInput([peripheral, quantityType])
+                        setEditingInput([
+                          peripheral,
+                          quantityType,
+                          produce(settings, (settings) => settings),
+                        ])
                       }
                     >
                       Edit
@@ -519,27 +529,27 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
 
         {editingInput !== null &&
           (() => {
-            const [peripheral, quantityType] = editingInput;
-            const inputSettings =
-              fuzzyControl.input[peripheral.name]![quantityType.id]!;
-            return (
-              <EditInput
-                peripheral={peripheral}
-                quantityType={quantityType}
-                inputSettings={inputSettings}
-                edit={(peripheral, quantityType, inputSettings) => {
-                  editInput(peripheral, quantityType, inputSettings);
-                  setEditingInput(null);
-                }}
-                delete={(peripheral, quantityType) => {
-                  deleteInput(peripheral, quantityType);
-                  setEditingInput(null);
-                }}
-                close={() => {
-                  setEditingInput(null);
-                }}
-              />
-            );
+            const [peripheral, quantityType, inputSettings] = editingInput;
+            if (inputSettings !== undefined) {
+              return (
+                <EditInput
+                  peripheral={peripheral}
+                  quantityType={quantityType}
+                  inputSettings={inputSettings}
+                  edit={(peripheral, quantityType, inputSettings) => {
+                    editInput(peripheral, quantityType, inputSettings);
+                    setEditingInput(null);
+                  }}
+                  delete={(peripheral, quantityType) => {
+                    deleteInput(peripheral, quantityType);
+                    setEditingInput(null);
+                  }}
+                  close={() => {
+                    setEditingInput(null);
+                  }}
+                />
+              );
+            }
           })()}
 
         {!readOnly && (
@@ -586,7 +596,12 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
                         variant="muted"
                         rightAdornment={<Icon name="pencil" />}
                         onClick={() =>
-                          setEditingOutput([peripheral, command, schema])
+                          setEditingOutput([
+                            peripheral,
+                            command,
+                            schema,
+                            produce(settings, (settings) => settings),
+                          ])
                         }
                       >
                         Edit
@@ -602,9 +617,7 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
 
         {editingOutput !== null &&
           (() => {
-            const [peripheral, command, schema] = editingOutput;
-            const outputSettings =
-              fuzzyControl.output[peripheral.name]![command]!;
+            const [peripheral, command, schema, outputSettings] = editingOutput;
             return (
               <EditOutput
                 peripheral={peripheral}
@@ -657,7 +670,9 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
               <Button
                 variant="muted"
                 rightAdornment={<Icon name="pencil" />}
-                onClick={() => setEditingRule(index)}
+                onClick={() =>
+                  setEditingRule([index, produce(rule, (rule) => rule)])
+                }
               >
                 Edit
               </Button>
@@ -668,8 +683,7 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
 
         {editingRule !== null &&
           (() => {
-            const index = editingRule;
-            const rule = fuzzyControl.rules[index]!;
+            const [index, rule] = editingRule;
             let conditionChoices: [string, schemas["QuantityType"]][] = [];
             let implicationChoices: [string, string][] = [];
             let scheduleChoices: [string, string][] = [];
@@ -696,6 +710,7 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
                 }
               }
             }
+
             return (
               <EditRule
                 conditionChoices={conditionChoices}
