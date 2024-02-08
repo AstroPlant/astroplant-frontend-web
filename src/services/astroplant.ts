@@ -187,7 +187,16 @@ export const rtkApi = createApi({
         path: `/kits/${encodeUri(kitSerial)}/configurations`,
         method: "GET",
       }),
-      providesTags: ["KitConfigurations"],
+      providesTags: (result = []) => [
+        ...result.map(
+          ({ id }) =>
+            ({
+              type: "KitConfigurations",
+              id,
+            }) as const,
+        ),
+        { type: "KitConfigurations", id: "LIST" },
+      ],
     }),
     cloneConfiguration: build.mutation<
       schemas["KitConfiguration"],
@@ -202,7 +211,7 @@ export const rtkApi = createApi({
         method: "POST",
         query: params,
       }),
-      invalidatesTags: ["KitConfigurations"],
+      invalidatesTags: [{ type: "KitConfigurations", id: "LIST" }],
     }),
     patchKitConfiguration: build.mutation<
       schemas["KitConfiguration"],
@@ -230,7 +239,7 @@ export const rtkApi = createApi({
         path: `/peripherals/${encodeUri(peripheralId)}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["KitConfigurations"],
+      invalidatesTags: [{ type: "KitConfigurations" }],
     }),
     getMe: build.query<schemas["FullUser"], void>({
       providesTags: (result, error) =>
