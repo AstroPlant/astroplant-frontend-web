@@ -99,7 +99,6 @@ export default function Members({ kit }: Props) {
                 onClick={() => {
                   deleteKitMembership({
                     kitMembershipId: membership.id,
-                    kitId: kit.id,
                   });
                 }}
               >

@@ -108,7 +108,14 @@ export const rtkApi = createApi({
         method: "GET",
       }),
       providesTags: (result) => [
-        { type: "KitMemberships", id: result?.[0]?.kit.id },
+        ...(result ?? []).map(
+          (membership) =>
+            ({
+              type: "KitMemberships",
+              id: membership.id,
+            }) as const,
+        ),
+        { type: "KitMemberships", id: "LIST" },
       ],
     }),
     addKitMember: build.mutation<
@@ -127,9 +134,7 @@ export const rtkApi = createApi({
         method: "POST",
         body: member,
       }),
-      invalidatesTags: (result) => [
-        { type: "KitMemberships", id: result?.kit.id },
-      ],
+      invalidatesTags: [{ type: "KitMemberships", id: "LIST" }],
     }),
     getKitMemberSuggestions: build.query<
       Array<schemas["User"]>,
@@ -151,21 +156,17 @@ export const rtkApi = createApi({
         method: "PATCH",
         body: patch,
       }),
-      invalidatesTags: (result) => [
-        { type: "KitMemberships", id: result?.kit.id },
-      ],
+      invalidatesTags: (result) => [{ type: "KitMemberships", id: result?.id }],
     }),
     /// `kitId` is required to be able to target the cache invalidation
-    deleteKitMembership: build.mutation<
-      void,
-      { kitMembershipId: number; kitId: number }
-    >({
+    deleteKitMembership: build.mutation<void, { kitMembershipId: number }>({
       query: ({ kitMembershipId }) => ({
         path: `/kit-memberships/${encodeUri(kitMembershipId)}`,
         method: "DELETE",
       }),
-      invalidatesTags: (_result, _err, { kitId }) => [
-        { type: "KitMemberships", id: kitId },
+      invalidatesTags: (_result, _err, { kitMembershipId }) => [
+        { type: "KitMemberships", id: kitMembershipId },
+        { type: "KitMemberships", id: "LIST" },
         { type: "KitMemberSuggestions" },
       ],
     }),
