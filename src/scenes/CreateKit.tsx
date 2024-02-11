@@ -13,8 +13,6 @@ import {
 import { JSONSchema7 } from "json-schema";
 
 import { withAuthentication } from "~/Components/AuthenticatedGuard";
-import { useAppDispatch } from "~/hooks";
-import { kitCreated } from "~/modules/me/actions";
 import { RtkApiForm } from "~/Components/ApiForm";
 
 import commonStyle from "~/Common.module.css";
@@ -22,7 +20,6 @@ import { rtkApi } from "~/services/astroplant";
 
 function CreateKit() {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
 
   const [done, setDone] = useState(false);
   const [result, setResult] = useState<{
@@ -32,7 +29,6 @@ function CreateKit() {
   const [createKit] = rtkApi.useCreateKitMutation();
 
   const onResponse = (response: { kitSerial: string; password: string }) => {
-    dispatch(kitCreated());
     setDone(true);
     setResult(response);
   };

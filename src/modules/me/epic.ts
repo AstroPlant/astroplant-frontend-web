@@ -1,11 +1,10 @@
 import { combineEpics } from "redux-observable";
-import { of, concat, EMPTY } from "rxjs";
+import { EMPTY } from "rxjs";
 import { switchMap, map, filter, catchError } from "rxjs/operators";
 
 import { api } from "~/api";
 import * as actions from "./actions";
 import * as authActions from "../auth/actions";
-import * as genericActions from "../generic/actions";
 import { AppEpic } from "~/store";
 
 /**
@@ -26,31 +25,4 @@ const fetchUserDetailsEpic: AppEpic = (action$, _state$) =>
     map(actions.setUsername),
   );
 
-/**
- * Listens to user details change and kit creation to fetch our kit memberships.
- */
-const fetchUserKitsEpic: AppEpic = (actions$, state$) =>
-  actions$.pipe(
-    filter(
-      (action) =>
-        actions.setUsername.match(action) || actions.kitCreated.match(action),
-    ),
-    switchMap(() =>
-      concat(
-        of(actions.loadingKitMemberships()),
-        api
-          .showUserKitMemberships({
-            username: state$.value.me.username!,
-          })
-          .pipe(
-            map((resp) => resp.data),
-            map(actions.setKitMemberships),
-            catchError((_err) =>
-              of(genericActions.setApiConnectionFailed(true)),
-            ),
-          ),
-      ),
-    ),
-  );
-
-export default combineEpics(fetchUserDetailsEpic, fetchUserKitsEpic);
+export default combineEpics(fetchUserDetailsEpic);

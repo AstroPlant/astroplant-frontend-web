@@ -22,7 +22,6 @@ import { KitAvatar } from "~/Components/KitAvatar";
 import { Badge } from "~/Components/Badge";
 
 import { startWatching, stopWatching } from "~/modules/kit/actions";
-import { KitMembership } from "~/modules/me/reducer";
 import { KitPermissions, kitPermissionsFromMembership } from "~/permissions";
 
 import {
@@ -41,12 +40,13 @@ import Rpc from "./rpc";
 import style from "./index.module.css";
 import { rtkApi } from "~/services/astroplant";
 import { skipToken } from "@reduxjs/toolkit/query";
+import { selectMe } from "~/modules/me/reducer";
 
 type Params = { kitSerial: string };
 
 type KitDashboardProps = {
   kit: schemas["Kit"];
-  membership: KitMembership | null;
+  membership: schemas["KitMembership"] | null;
 };
 
 function KitHeader({
@@ -146,8 +146,19 @@ const Kit = ({}) => {
     kitSerial,
   });
 
-  const membership =
-    useAppSelector((state) => state.me.kitMemberships[kitSerial]) ?? null;
+  const username = useAppSelector(selectMe)?.username ?? null;
+  const { data: myKitMemberships, isLoading: myKitMembershipsLoading } =
+    rtkApi.useGetUserKitMembershipsQuery(
+      username !== null ? { username } : skipToken,
+    );
+
+  const membership = useMemo(
+    () =>
+      (myKitMemberships || []).find(
+        (membership) => membership.kit.serial === kitSerial,
+      ) ?? null,
+    [myKitMemberships],
+  );
 
   const kitAccessible = kit !== undefined;
   useEffect(() => {
@@ -182,13 +193,13 @@ const Kit = ({}) => {
     return v;
   }, [configurations]);
 
-  if (kitSuccess && configurationsSuccess) {
+  if (kitSuccess && configurationsSuccess && !myKitMembershipsLoading) {
     return (
       <ConfigurationsContext.Provider value={configurations_!}>
         <KitDashboard kit={kit} membership={membership} />
       </ConfigurationsContext.Provider>
     );
-  } else if (kitLoading || configurationsLoading) {
+  } else if (kitLoading || configurationsLoading || myKitMembershipsLoading) {
     return <Loading />;
   } else if (
     kitError !== undefined &&

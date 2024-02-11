@@ -1,4 +1,4 @@
-import { KitMembership } from "~/modules/me/reducer";
+import { schemas } from "./api";
 
 export interface KitPermissions {
   deleteMedia: boolean;
@@ -29,7 +29,7 @@ export const NO_PERMISSIONS: KitPermissions = {
 // Might be better if the API returns the permissions, so we don't have to
 // calculate them here.
 export function kitPermissionsFromMembership(
-  membership: KitMembership | null,
+  membership: schemas["KitMembership"] | null,
 ): KitPermissions {
   let accessConfigure = membership?.accessConfigure ?? false;
   let accessSuper = membership?.accessSuper ?? false;
