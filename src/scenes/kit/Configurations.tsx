@@ -3,7 +3,6 @@ import { Link, Route, Routes } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import { useAppDispatch } from "~/hooks";
-import { KitState } from "~/modules/kit/reducer";
 import { default as apiButton } from "~/Components/ApiButton";
 import { Response, api, schemas } from "~/api";
 import { ButtonLink } from "~/Components/Button";
@@ -23,7 +22,7 @@ import { rtkApi } from "~/services/astroplant";
 const ApiButton = apiButton<any>();
 
 export type ConfigurationsProps = {
-  kit: KitState;
+  kit: schemas["Kit"];
 };
 
 function ConfigurationRow({
@@ -31,7 +30,7 @@ function ConfigurationRow({
   configuration,
   showActivate,
 }: {
-  kit: KitState;
+  kit: schemas["Kit"];
   configuration: schemas["KitConfigurationWithPeripherals"];
   showActivate: boolean;
 }) {
@@ -118,7 +117,7 @@ function ConfigurationRow({
                         ? "kitConfiguration.activateConfirmNeverUsed"
                         : "kitConfiguration.activateConfirm",
                       {
-                        kitName: kit.details?.name ?? "Unnamed kit",
+                        kitName: kit.name ?? "Unnamed kit",
                         configurationDescription:
                           configuration.description ?? "Unnamed configuration",
                       },

@@ -1,5 +1,5 @@
 import { Container, Card } from "semantic-ui-react";
-import { KitState } from "~/modules/kit/reducer";
+import { kitSelectors } from "~/modules/kit/reducer";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { selectors as quantityTypesSelectors } from "~/modules/quantity-type/reducer";
 import Option from "~/utils/option";
@@ -9,52 +9,54 @@ import { schemas } from "~/api";
 import { useAppSelector } from "~/hooks";
 
 export type Props = {
-  kitState: KitState;
+  kit: schemas["Kit"];
   configuration: schemas["KitConfigurationWithPeripherals"];
 };
 
-export default function RawMeasurements({ kitState, configuration }: Props) {
+export default function RawMeasurements({ kit, configuration }: Props) {
   const peripheralDefinitions = useAppSelector(
     peripheralDefinitionsSelectors.selectEntities,
   );
   const quantityTypes = useAppSelector(quantityTypesSelectors.selectEntities);
 
-  const rawMeasurements = kitState.rawMeasurements;
+  const kitState = useAppSelector((state) =>
+    kitSelectors.selectById(state, kit.serial),
+  );
+  const rawMeasurements = kitState?.rawMeasurements ?? {};
 
   if (configuration !== null) {
     let hasMeasurements = false;
-    const cards = Object.values(configuration.peripherals)
-      .map((peripheral) => {
-        const def: Option<schemas["PeripheralDefinition"]> = Option.from(
-          peripheralDefinitions[peripheral.peripheralDefinitionId],
-        );
-        return def
-          .map((def: schemas["PeripheralDefinition"]) =>
-            def.expectedQuantityTypes!.map((quantityType) => {
-              hasMeasurements = true;
-              const qt: Option<schemas["QuantityType"]> = Option.from(
-                quantityTypes[quantityType],
-              );
-              return qt
-                .map((qt) => {
-                  const measurement = Option.from(
-                    rawMeasurements[peripheral.id + "." + qt.id],
-                  );
-                  return (
-                    <RawMeasurementComp
-                      key={peripheral.id + "." + qt.id}
-                      peripheral={peripheral}
-                      peripheralDefinition={def}
-                      quantityType={qt}
-                      rawMeasurement={measurement}
-                    />
-                  );
-                })
-                .unwrapOrNull();
-            }),
-          )
-          .unwrapOrNull();
-      });
+    const cards = Object.values(configuration.peripherals).map((peripheral) => {
+      const def: Option<schemas["PeripheralDefinition"]> = Option.from(
+        peripheralDefinitions[peripheral.peripheralDefinitionId],
+      );
+      return def
+        .map((def: schemas["PeripheralDefinition"]) =>
+          def.expectedQuantityTypes!.map((quantityType) => {
+            hasMeasurements = true;
+            const qt: Option<schemas["QuantityType"]> = Option.from(
+              quantityTypes[quantityType],
+            );
+            return qt
+              .map((qt) => {
+                const measurement = Option.from(
+                  rawMeasurements[peripheral.id + "." + qt.id],
+                );
+                return (
+                  <RawMeasurementComp
+                    key={peripheral.id + "." + qt.id}
+                    peripheral={peripheral}
+                    peripheralDefinition={def}
+                    quantityType={qt}
+                    rawMeasurement={measurement}
+                  />
+                );
+              })
+              .unwrapOrNull();
+          }),
+        )
+        .unwrapOrNull();
+    });
     if (hasMeasurements) {
       return (
         <Container>

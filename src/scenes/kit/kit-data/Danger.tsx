@@ -6,7 +6,6 @@ import { Button } from "~/Components/Button";
 import { Input } from "~/Components/Input";
 import { schemas } from "~/api";
 import { useAppDispatch } from "~/hooks";
-import { KitState } from "~/modules/kit/reducer";
 import { notificationSuccess } from "~/modules/notification";
 import { addNotificationRequest } from "~/modules/notification/actions";
 import { PDForbidden, PDNotFound } from "~/problems";
@@ -14,7 +13,7 @@ import { rtkApi } from "~/services/astroplant";
 import { configurationToNameString } from "~/utils/configuration";
 
 export type DangerProps = {
-  kit: KitState;
+  kit: schemas["Kit"];
   configuration: schemas["KitConfigurationWithPeripherals"];
 };
 

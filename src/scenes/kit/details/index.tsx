@@ -6,7 +6,6 @@ import ReactMarkdown from "react-markdown";
 import { IconCircleCheck } from "@tabler/icons-react";
 
 import { removeNull, undefinedToNull, emptyStringToNull } from "~/utils/form";
-import { addKit } from "~/modules/kit/actions";
 
 import {
   schema as patchSchema,
@@ -16,7 +15,6 @@ import ApiForm from "~/Components/ApiForm";
 import MapWithMarker from "~/Components/MapWithMarker";
 import { ModalDialog } from "~/Components/ModalDialog";
 import { Button } from "~/Components/Button";
-import { useAppDispatch } from "~/hooks";
 import { Response, api, schemas } from "~/api";
 
 import { KitContext, PermissionsContext } from "../contexts";
@@ -30,7 +28,6 @@ const PatchKitForm = ApiForm<any, Response<schemas["Kit"]>>;
 
 export default function KitDetails() {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   const [done, setDone] = useState(false);
@@ -92,8 +89,7 @@ export default function KitDetails() {
     });
   };
 
-  const onPatchResponse = (response: Response<schemas["Kit"]>) => {
-    dispatch(addKit(response.data));
+  const onPatchResponse = (_response: Response<schemas["Kit"]>) => {
     setDone(true);
     navigate("");
   };

@@ -7,7 +7,6 @@ import authEpic from "./modules/auth/epic";
 import meReducer from "./modules/me/reducer";
 import meEpic from "./modules/me/epic";
 import kitReducer from "./modules/kit/reducer";
-import kitEpic from "./modules/kit/epic";
 import peripheralDefinitionReducer from "./modules/peripheral-definition/reducer";
 import peripheralDefinitionEpic from "./modules/peripheral-definition/epic";
 import quantityTypeReducer from "./modules/quantity-type/reducer";
@@ -54,7 +53,6 @@ export const rootReducer = combineReducers({
 export const rootEpic = combineEpics(
   authEpic,
   meEpic,
-  kitEpic,
   peripheralDefinitionEpic,
   quantityTypeEpic,
   notificationEpic,

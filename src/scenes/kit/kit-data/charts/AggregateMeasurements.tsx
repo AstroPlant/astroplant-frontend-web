@@ -1,6 +1,5 @@
 import { useSelector } from "react-redux";
 import { Container, Card } from "semantic-ui-react";
-import { KitState } from "~/modules/kit/reducer";
 import { selectors as peripheralDefinitionsSelectors } from "~/modules/peripheral-definition/reducer";
 import { selectors as quantityTypesSelectors } from "~/modules/quantity-type/reducer";
 
@@ -9,14 +8,11 @@ import { useAppSelector } from "~/hooks";
 import { schemas } from "~/api";
 
 export type Props = {
-  kitState: KitState;
+  kit: schemas["Kit"];
   configuration: schemas["KitConfigurationWithPeripherals"];
 };
 
-export default function AggregateMeasurements({
-  kitState,
-  configuration,
-}: Props) {
+export default function AggregateMeasurements({ kit, configuration }: Props) {
   const peripheralDefinitions = useSelector(
     peripheralDefinitionsSelectors.selectEntities,
   );
@@ -34,7 +30,7 @@ export default function AggregateMeasurements({
           qt !== undefined && (
             <AggregateMeasurementsChart
               key={peripheral.id + "." + qt.id}
-              kitState={kitState}
+              kit={kit}
               peripheral={peripheral}
               peripheralDefinition={def}
               quantityType={qt}

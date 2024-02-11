@@ -6,10 +6,9 @@ import Description from "./configure/Description";
 import Rules from "./configure/Rules";
 import ActivateDeactivate from "./configure/ActivateDeactivate";
 import Peripherals from "./configure/Peripherals";
-import { KitState, kitSelectors } from "~/modules/kit/reducer";
 import { Button, ButtonLink } from "~/Components/Button";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { useAppDispatch, useAppSelector } from "~/hooks";
 import { selectMe } from "~/modules/me/reducer";
 import { Select } from "~/Components/Select";
@@ -18,9 +17,11 @@ import { rtkApi } from "~/services/astroplant";
 import style from "./Configuration.module.css";
 import { PermissionsContext } from "../contexts";
 import { schemas } from "~/api";
+import { skipToken } from "@reduxjs/toolkit/query";
+import Loading from "~/Components/Loading";
 
 export type ConfigurationProps = {
-  kit: KitState;
+  kit: schemas["Kit"];
   configuration: schemas["KitConfigurationWithPeripherals"];
 };
 
@@ -33,7 +34,7 @@ function InnerConfiguration({ kit, configuration }: ConfigurationProps) {
       <Segment raised>
         <Header>Description</Header>
         <Description
-          kit={kit.details!}
+          kit={kit}
           configuration={configuration}
           readOnly={!permissions.editConfiguration}
         />
@@ -46,13 +47,13 @@ function InnerConfiguration({ kit, configuration }: ConfigurationProps) {
         >
           Clone
         </ButtonLink>
-        <ActivateDeactivate kit={kit.details!} configuration={configuration} />
+        <ActivateDeactivate kit={kit} configuration={configuration} />
       </Container>
       <Divider />
       <Container>
         <Header>{t("control.header")}</Header>
         <Rules
-          kit={kit.details!}
+          kit={kit}
           configuration={configuration}
           readOnly={!permissions.editConfiguration || !configuration.neverUsed}
         />
@@ -61,7 +62,7 @@ function InnerConfiguration({ kit, configuration }: ConfigurationProps) {
       <Container>
         <Header>Peripherals</Header>
         <Peripherals
-          kit={kit.details!}
+          kit={kit}
           configuration={configuration}
           readOnly={!configuration.neverUsed}
         />
@@ -75,14 +76,32 @@ function Clone({ kit, configuration }: ConfigurationProps) {
   const dispatch = useAppDispatch();
 
   const me = useAppSelector(selectMe);
-  const kits = useAppSelector(kitSelectors.selectEntities);
 
-  let defaultTarget;
-  if (me.kitMemberships[kit.serial]?.accessConfigure) {
-    defaultTarget = kit.serial;
-  }
+  const { data: kitMemberships, isLoading: kitMembershipsLoading } =
+    rtkApi.useGetUserKitMembershipsQuery(
+      me.username !== null
+        ? {
+            username: me.username,
+          }
+        : skipToken,
+    );
+
+  const defaultTarget: string | null = useMemo(() => {
+    const found = (kitMemberships || [])
+      .filter(
+        (membership) => membership.accessConfigure || membership.accessSuper,
+      )
+      .find((membership) => membership.kit.serial === kit.serial);
+    return found ? kit.serial : null;
+  }, [kit, kitMemberships]);
 
   const [target, setTarget] = useState(defaultTarget);
+
+  useEffect(() => {
+    if (target === null) {
+      setTarget(defaultTarget);
+    }
+  }, [target, defaultTarget]);
 
   if (result.isSuccess) {
     dispatch(rtkApi.util.invalidateTags(["KitConfigurations"]));
@@ -95,6 +114,10 @@ function Clone({ kit, configuration }: ConfigurationProps) {
         }}
       />
     );
+  }
+
+  if (kitMembershipsLoading) {
+    return <Loading />;
   }
 
   return (
@@ -121,19 +144,23 @@ function Clone({ kit, configuration }: ConfigurationProps) {
         <label>
           Target kit
           <Select
-            value={target}
+            value={target ?? undefined}
             onChange={(e) => setTarget(e.currentTarget.value)}
             disabled={result.isLoading}
           >
-            {Object.entries(me.kitMemberships)
-              .filter(([_, m]) => m.accessConfigure)
-              .map(([s, _]) => {
-                let name = s;
-                let kitName = kits[s]?.details?.name;
+            {(kitMemberships || [])
+              .filter((m) => m.accessConfigure || m.accessSuper)
+              .map((m) => {
+                let name = m.kit.serial;
+                let kitName = m.kit.name;
                 if (kitName) {
                   name = `${kitName} - ${name}`;
                 }
-                return <option value={s}>{name}</option>;
+                return (
+                  <option key={m.kit.serial} value={m.kit.serial}>
+                    {name}
+                  </option>
+                );
               })}
           </Select>
         </label>

@@ -21,8 +21,7 @@ import { Menu } from "~/Components/Menu";
 import { KitAvatar } from "~/Components/KitAvatar";
 import { Badge } from "~/Components/Badge";
 
-import { KitState, kitSelectors } from "~/modules/kit/reducer";
-import { startWatching, stopWatching, fetchKit } from "~/modules/kit/actions";
+import { startWatching, stopWatching } from "~/modules/kit/actions";
 import { KitMembership } from "~/modules/me/reducer";
 import { KitPermissions, kitPermissionsFromMembership } from "~/permissions";
 
@@ -46,7 +45,7 @@ import { skipToken } from "@reduxjs/toolkit/query";
 type Params = { kitSerial: string };
 
 type KitDashboardProps = {
-  kitState: KitState;
+  kit: schemas["Kit"];
   membership: KitMembership | null;
 };
 
@@ -100,9 +99,7 @@ function KitHeader({
 }
 
 const KitDashboard = (props: KitDashboardProps) => {
-  const { kitState, membership } = props;
-
-  const kit = kitState.details!;
+  const { kit, membership } = props;
 
   const permissions = useMemo(
     () => kitPermissionsFromMembership(membership),
@@ -117,10 +114,10 @@ const KitDashboard = (props: KitDashboardProps) => {
           <Routes>
             {/* redirect 404, or should an error message be given? */}
             <Route path="*" element={<Navigate to="data" replace />} />
-            <Route path="/data/*" element={<KitData kitState={kitState} />} />
+            <Route path="/data/*" element={<KitData kit={kit} />} />
             <Route
               path="/configurations/*"
-              element={<Configurations kit={kitState} />}
+              element={<Configurations kit={kit} />}
             />
             <Route path="/details/*" element={<Details />} />
             <Route path="/download" element={<Download />} />
@@ -140,16 +137,19 @@ const Kit = ({}) => {
   const { kitSerial: kitSerial_ } = useParams<Params>();
   const kitSerial = kitSerial_!;
 
-  const kit = useAppSelector((state) =>
-    kitSelectors.selectById(state, kitSerial),
-  );
+  const {
+    data: kit,
+    isLoading: kitLoading,
+    isSuccess: kitSuccess,
+    error: kitError,
+  } = rtkApi.useGetKitQuery({
+    kitSerial,
+  });
+
   const membership =
     useAppSelector((state) => state.me.kitMemberships[kitSerial]) ?? null;
-  useEffect(() => {
-    dispatch(fetchKit({ serial: kitSerial }));
-  }, [kitSerial, fetchKit]);
 
-  const kitAccessible = kit?.details !== null ?? false;
+  const kitAccessible = kit !== undefined;
   useEffect(() => {
     if (kitAccessible) {
       dispatch(startWatching({ serial: kitSerial }));
@@ -159,7 +159,11 @@ const Kit = ({}) => {
     }
   }, [kitAccessible, kitSerial, startWatching, stopWatching]);
 
-  const { data: configurations } = rtkApi.useGetKitConfigurationsQuery(
+  const {
+    data: configurations,
+    isSuccess: configurationsSuccess,
+    isLoading: configurationsLoading,
+  } = rtkApi.useGetKitConfigurationsQuery(
     kit === undefined
       ? skipToken
       : {
@@ -178,28 +182,19 @@ const Kit = ({}) => {
     return v;
   }, [configurations]);
 
-  if (kit === undefined || configurations === undefined) {
-    return <Loading />;
-  }
-
-  if (
-    (kit.status === "Fetched" && kit.configurations !== null) ||
-    (kit.status === "Fetching" &&
-      kit.details !== null &&
-      kit.configurations !== null)
-  ) {
+  if (kitSuccess && configurationsSuccess) {
     return (
       <ConfigurationsContext.Provider value={configurations_!}>
-        <KitDashboard kitState={kit} membership={membership} />
+        <KitDashboard kit={kit} membership={membership} />
       </ConfigurationsContext.Provider>
     );
-  } else if (
-    kit.status === "None" ||
-    kit.status === "Fetching" ||
-    kit.configurations === null
-  ) {
+  } else if (kitLoading || configurationsLoading) {
     return <Loading />;
-  } else if (kit.status === "NotFound") {
+  } else if (
+    kitError !== undefined &&
+    "type" in kitError &&
+    kitError.status === 404
+  ) {
     return (
       <>
         <HeadTitle main={t("kit.notFound.header")} />
@@ -213,7 +208,11 @@ const Kit = ({}) => {
         </Container>
       </>
     );
-  } else if (kit.status === "NotAuthorized") {
+  } else if (
+    kitError !== undefined &&
+    "type" in kitError &&
+    kitError.status === 401
+  ) {
     return (
       <>
         <HeadTitle main={t("kit.notAuthorized.header")} />
@@ -230,7 +229,15 @@ const Kit = ({}) => {
       </>
     );
   } else {
-    throw new Error("Unknown Kit status");
+    return (
+      <>
+        <HeadTitle main="Woops" />
+        <Container text>
+          An unexpected error occurred while trying to access kit with serial{" "}
+          <code>{kitSerial}</code>.
+        </Container>
+      </>
+    );
   }
 };
 

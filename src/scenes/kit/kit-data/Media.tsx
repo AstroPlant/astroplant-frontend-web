@@ -5,11 +5,10 @@ import { IconTrash } from "@tabler/icons-react";
 
 import RelativeTime from "~/Components/RelativeTime";
 import Loading from "~/Components/Loading";
-import { KitConfigurationState, KitState } from "~/modules/kit/reducer";
 import { api, schemas } from "~/api";
 import { rtkApi } from "~/services/astroplant";
 import { firstValueFrom } from "rxjs";
-import { useAppDispatch, useAppSelector } from "~/hooks";
+import { useAppDispatch } from "~/hooks";
 import { default as apiButton } from "~/Components/ApiButton";
 import { Button } from "~/Components/Button";
 import { ModalDialog } from "~/Components/ModalDialog";
@@ -23,11 +22,11 @@ import { addNotificationRequest } from "~/modules/notification/actions";
 const ApiButton = apiButton<any>();
 
 export type Props = {
-  kitState: KitState;
+  kit: schemas["Kit"];
   configuration: schemas["KitConfigurationWithPeripherals"];
 };
 
-export default function Media({ kitState, configuration }: Props) {
+export default function Media({ kit, configuration }: Props) {
   const permissions = useContext(PermissionsContext);
   const dispatch = useAppDispatch();
 
@@ -37,7 +36,7 @@ export default function Media({ kitState, configuration }: Props) {
     isLoading: mediaListIsLoading,
     refetch,
   } = rtkApi.useListMediaQuery({
-    kitSerial: kitState.details!.serial,
+    kitSerial: kit.serial,
     configuration: configuration.id,
   });
 

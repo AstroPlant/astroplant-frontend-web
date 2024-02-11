@@ -77,6 +77,7 @@ export const rtkApi = createApi({
   invalidationBehavior: "delayed",
   tagTypes: [
     "Users",
+    "Kits",
     "KitMemberships",
     "KitMemberSuggestions",
     "KitConfigurations",
@@ -84,6 +85,21 @@ export const rtkApi = createApi({
   endpoints: (build) => ({
     listKits: build.query<schemas["Kit"][], void>({
       query: () => ({ path: "/kits", method: "GET" }),
+      providesTags: (result) => [
+        ...(result || []).map(
+          (kit) => ({ type: "Kits", id: kit.serial }) as const,
+        ),
+        { type: "Kits", id: "LIST" },
+      ],
+    }),
+    getKit: build.query<schemas["Kit"], { kitSerial: string }>({
+      query: ({ kitSerial }) => ({
+        path: `/kits/${encodeURI(kitSerial)}`,
+        method: "GET",
+      }),
+      providesTags: (_result, _error, { kitSerial }) => [
+        { type: "Kits", id: kitSerial },
+      ],
     }),
     createKit: build.mutation<
       { kitSerial: string; password: string },
@@ -94,14 +110,20 @@ export const rtkApi = createApi({
         method: "POST",
         body: kit,
       }),
-      invalidatesTags: [{ type: "KitMemberships", id: "LIST" }],
+      invalidatesTags: [
+        { type: "Kits", id: "LIST" },
+        { type: "KitMemberships", id: "LIST" },
+      ],
     }),
     deleteKit: build.mutation<void, { kitSerial: string }>({
       query: ({ kitSerial }) => ({
         path: `/kits/${encodeUri(kitSerial)}`,
         method: "DELETE",
       }),
-      invalidatesTags: [{ type: "KitMemberships", id: "LIST" }],
+      invalidatesTags: [
+        { type: "Kits", id: "LIST" },
+        { type: "KitMemberships", id: "LIST" },
+      ],
     }),
     listMedia: build.query<
       Array<schemas["Media"]>,

@@ -7,7 +7,6 @@ import { JSONSchema7 } from "json-schema";
 import ApiForm from "~/Components/ApiForm";
 import { Response, api, schemas } from "~/api";
 import { useAppDispatch } from "~/hooks";
-import { KitState } from "~/modules/kit/reducer";
 import { rtkApi } from "~/services/astroplant";
 
 const CreateConfigurationForm = ApiForm<
@@ -16,7 +15,7 @@ const CreateConfigurationForm = ApiForm<
 >;
 
 export type CreateConfigurationProps = {
-  kit: KitState;
+  kit: schemas["Kit"];
 };
 
 export default function CreateConfiguration({ kit }: CreateConfigurationProps) {

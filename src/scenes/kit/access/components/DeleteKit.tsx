@@ -7,7 +7,6 @@ import { rtkApi } from "~/services/astroplant";
 import { useAppDispatch } from "~/hooks";
 import { notificationSuccess } from "~/modules/notification";
 import { addNotificationRequest } from "~/modules/notification/actions";
-import { deleteKit } from "~/modules/kit/actions";
 import { Button } from "~/Components/Button";
 import { useModalConfirmDialog } from "~/Components/ModalDialog";
 
@@ -67,7 +66,6 @@ export default function DeleteKit({ kit }: Props) {
             "This kit was successfully deleted",
           );
           dispatch(addNotificationRequest(notification));
-          dispatch(deleteKit({ serial: kit.serial, kitId: kit.id }));
           navigate("/me", { replace: true });
         }}
       >

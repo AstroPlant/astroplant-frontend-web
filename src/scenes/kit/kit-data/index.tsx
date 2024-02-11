@@ -14,12 +14,13 @@ import ViewConfiguration from "./Configuration";
 import commonStyle from "~/Common.module.css";
 import style from "./index.module.css";
 import { Danger } from "./Danger";
+import { schemas } from "~/api";
 
 export type Props = {
-  kitState: KitState;
+  kit: schemas["Kit"];
 };
 
-export function KitData({ kitState }: Props) {
+export function KitData({ kit }: Props) {
   const [searchParams] = useSearchParams();
   const currentSearchParams = searchParams.toString();
   let routeConfigurationId = searchParams.get("c");
@@ -65,14 +66,14 @@ export function KitData({ kitState }: Props) {
                 <>
                   <h2>Current measurements</h2>
                   <RawMeasurements
-                    kitState={kitState}
+                    kit={kit}
                     configuration={configuration}
                   />
                 </>
               )}
               <h2>Past measurements</h2>
               <AggregateMeasurements
-                kitState={kitState}
+                kit={kit}
                 configuration={configuration}
               />
             </>
@@ -80,17 +81,17 @@ export function KitData({ kitState }: Props) {
         />
         <Route
           path="/media/*"
-          element={<Media kitState={kitState} configuration={configuration} />}
+          element={<Media kit={kit} configuration={configuration} />}
         />
         <Route
           path="/configuration/*"
           element={
-            <ViewConfiguration kit={kitState} configuration={configuration} />
+            <ViewConfiguration kit={kit} configuration={configuration} />
           }
         />
         <Route
           path="/danger"
-          element={<Danger kit={kitState} configuration={configuration} />}
+          element={<Danger kit={kit} configuration={configuration} />}
         />
       </Routes>
     );

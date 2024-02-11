@@ -2,7 +2,6 @@ import { createReducer } from "@reduxjs/toolkit";
 import isEqual from "lodash/isEqual";
 
 import * as actions from "./actions";
-import * as kitActions from "../kit/actions";
 import { RootState } from "~/types";
 
 export interface KitMembership {
@@ -42,11 +41,6 @@ export default createReducer<MeState>(initial, (build) =>
     })
     .addCase(actions.loadingKitMemberships, (state) => {
       state.loadingKitMemberships = true;
-    })
-    .addCase(kitActions.deleteKit, (state, action) => {
-      if (action.payload.serial in state.kitMemberships) {
-        delete state.kitMemberships[action.payload.serial];
-      }
     }),
 );
 

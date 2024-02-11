@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Card, CardProps } from "semantic-ui-react";
 import {
@@ -14,7 +14,6 @@ import { DateTime } from "luxon";
 import { map, tap } from "rxjs/operators";
 import { firstValueFrom, Observable } from "rxjs";
 import Option from "~/utils/option";
-import { KitState } from "~/modules/kit/reducer";
 
 import { api, Response, schemas } from "~/api";
 import { rateLimit } from "~/utils/api";
@@ -31,7 +30,7 @@ export type Aggregate = {
 };
 
 export type Props = CardProps & {
-  kitState: KitState;
+  kit: schemas["Kit"];
   peripheral: schemas["Peripheral"];
   peripheralDefinition: schemas["PeripheralDefinition"];
   quantityType: schemas["QuantityType"];
@@ -40,9 +39,9 @@ export type Props = CardProps & {
 export default function AggregateMeasurementsChart(props: Props) {
   const { t } = useTranslation();
 
-  const { kitState, peripheral, peripheralDefinition, quantityType, ...rest } =
+  const { kit, peripheral, peripheralDefinition, quantityType, ...rest } =
     props;
-  const kitSerial = kitState.details!.serial;
+  const kitSerial = kit.serial;
 
   const [measurements, setMeasurements] = useState<Option<Array<Aggregate>>>(
     Option.none(),
