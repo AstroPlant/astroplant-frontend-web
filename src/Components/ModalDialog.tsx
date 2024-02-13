@@ -18,6 +18,7 @@ export type ModalDialogProps = {
   onClose: () => unknown;
   header?: React.ReactNode;
   actions?: React.ReactNode;
+  closeWhenClickedOutside?: boolean;
 };
 
 export function ModalDialog({
@@ -26,6 +27,7 @@ export function ModalDialog({
   header,
   actions,
   children,
+  closeWhenClickedOutside = true,
 }: PropsWithChildren<ModalDialogProps>) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
@@ -48,11 +50,11 @@ export function ModalDialog({
   // Trigger closing when we click out of the modal.
   const onClick: React.ReactEventHandler<HTMLDialogElement> = useCallback(
     (e) => {
-      if (e.target === dialogRef.current) {
+      if (closeWhenClickedOutside && e.target === dialogRef.current) {
         onClose();
       }
     },
-    [onClose],
+    [closeWhenClickedOutside, onClose],
   );
 
   useEffect(() => {
@@ -92,6 +94,7 @@ export type ModalConfirmDialogProps = {
   confirmLabel?: string;
   cancelLabel?: string;
   header?: string;
+  closeWhenClickedOutside?: boolean;
 };
 
 export function ModalConfirmDialog({
@@ -102,6 +105,7 @@ export function ModalConfirmDialog({
   cancelLabel,
   header,
   children,
+  closeWhenClickedOutside,
 }: PropsWithChildren<ModalConfirmDialogProps>) {
   const { t } = useTranslation();
 
@@ -120,6 +124,7 @@ export function ModalConfirmDialog({
           </Button>
         </>
       }
+      closeWhenClickedOutside={closeWhenClickedOutside}
     >
       {children}
     </ModalDialog>
