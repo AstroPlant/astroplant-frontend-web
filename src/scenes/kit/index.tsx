@@ -168,7 +168,7 @@ function Kit() {
         dispatch(stopWatching({ serial: kitSerial }));
       };
     }
-  }, [dispatch, kitAccessible, kitSerial, startWatching, stopWatching]);
+  }, [dispatch, kitAccessible, kitSerial]);
 
   const {
     data: configurations,
