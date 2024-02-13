@@ -115,6 +115,19 @@ export const rtkApi = createApi({
         { type: "KitMemberships", id: "LIST" },
       ],
     }),
+    patchKit: build.mutation<
+      schemas["Kit"],
+      { kitSerial: string; patchKit: schemas["PatchKit"] }
+    >({
+      query: ({ kitSerial, patchKit }) => ({
+        path: `/kits/${encodeURI(kitSerial)}`,
+        method: "PATCH",
+        body: patchKit,
+      }),
+      invalidatesTags: (_result, _error, { kitSerial }) => [
+        { type: "Kits", id: kitSerial },
+      ],
+    }),
     deleteKit: build.mutation<void, { kitSerial: string }>({
       query: ({ kitSerial }) => ({
         path: `/kits/${encodeUri(kitSerial)}`,

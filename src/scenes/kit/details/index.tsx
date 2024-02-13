@@ -11,11 +11,10 @@ import {
   schema as patchSchema,
   uiSchema as patchUiSchema,
 } from "./patch-kit-schema";
-import ApiForm from "~/Components/ApiForm";
+import { RtkApiForm } from "~/Components/ApiForm";
 import MapWithMarker from "~/Components/MapWithMarker";
 import { ModalDialog } from "~/Components/ModalDialog";
 import { Button } from "~/Components/Button";
-import { Response, api, schemas } from "~/api";
 
 import { KitContext, PermissionsContext } from "../contexts";
 
@@ -23,8 +22,6 @@ import commonStyle from "~/Common.module.css";
 import style from "./index.module.css";
 import { rtkApi } from "~/services/astroplant";
 import Gravatar from "~/Components/Gravatar";
-
-const PatchKitForm = ApiForm<any, Response<schemas["Kit"]>>;
 
 export default function KitDetails() {
   const { t } = useTranslation();
@@ -38,6 +35,7 @@ export default function KitDetails() {
   const { data: kitMembers } = rtkApi.useGetKitMembersQuery({
     kitSerial: kit.serial,
   });
+  const [patchKit] = rtkApi.usePatchKitMutation();
 
   const kitDetails = useMemo(() => {
     return removeNull({
@@ -75,25 +73,6 @@ export default function KitDetails() {
     }
   };
 
-  const patchSend = (formData: any) => {
-    return api.patchKit({
-      kitSerial: kit.serial,
-      patchKit: emptyStringToNull(
-        undefinedToNull(formData, [
-          "name",
-          "description",
-          "privacyPublicDashboard",
-          "privacyShowOnMap",
-        ]),
-      ),
-    });
-  };
-
-  const onPatchResponse = (_response: Response<schemas["Kit"]>) => {
-    setDone(true);
-    navigate("");
-  };
-
   return (
     <section className={commonStyle.containerWide}>
       <h2>About</h2>
@@ -101,14 +80,31 @@ export default function KitDetails() {
         <Route
           path="/edit"
           element={
-            <PatchKitForm
+            <RtkApiForm
               idPrefix="patchKitForm"
               key={0}
               schema={schema as any}
               uiSchema={patchUiSchema as any}
-              transform={(formData) => patchTransform(formData)}
-              send={(formData) => patchSend(formData)}
-              onResponse={(formData) => onPatchResponse(formData)}
+              send={async (formData) => {
+                const data = patchTransform(formData);
+                const patch = emptyStringToNull(
+                  undefinedToNull(data, [
+                    "name",
+                    "description",
+                    "privacyPublicDashboard",
+                    "privacyShowOnMap",
+                  ]),
+                );
+
+                return await patchKit({
+                  kitSerial: kit.serial,
+                  patchKit: patch,
+                });
+              }}
+              onResponse={(_response) => {
+                setDone(true);
+                navigate("");
+              }}
               formData={kitDetails}
             />
           }
