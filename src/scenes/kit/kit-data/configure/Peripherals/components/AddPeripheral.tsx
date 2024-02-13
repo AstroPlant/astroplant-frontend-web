@@ -140,6 +140,7 @@ export default function AddPeripheral({ kit: _, configuration }: Props) {
         open={open}
         onClose={handleClose}
         header="Add a peripheral"
+        closeWhenClickedOutside={closeEasily}
         actions={
           <>
             {done ? (
