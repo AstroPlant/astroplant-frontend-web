@@ -208,7 +208,13 @@ function RoleSelector({
         patchKitMembership({ kitMembershipId: kitMembership.id, patch });
       }
     },
-    [kitMembership.id],
+    [
+      confirmTrigger,
+      patchKitMembership,
+      kitMembership.id,
+      kitMembership.user,
+      me.username,
+    ],
   );
 
   return (

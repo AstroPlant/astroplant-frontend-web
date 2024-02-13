@@ -47,7 +47,6 @@ export function Danger({ kit, configuration }: DangerProps) {
   }, [configuration]);
 
   useEffect(() => {
-    console.warn(deleteResult);
     if (deleteResult.isSuccess) {
       const notification = notificationSuccess(
         "Configuration deleted",
@@ -56,7 +55,7 @@ export function Danger({ kit, configuration }: DangerProps) {
       dispatch(addNotificationRequest(notification));
       navigate("../../configurations");
     }
-  }, [deleteResult, kit, configuration]);
+  }, [dispatch, navigate, deleteResult, kit, configuration]);
 
   let error = (
     <>The configuration could not be deleted due to an unknown error.</>

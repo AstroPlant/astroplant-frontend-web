@@ -157,7 +157,7 @@ const Kit = ({}) => {
       (myKitMemberships || []).find(
         (membership) => membership.kit.serial === kitSerial,
       ) ?? null,
-    [myKitMemberships],
+    [myKitMemberships, kitSerial],
   );
 
   const kitAccessible = kit !== undefined;
@@ -168,7 +168,7 @@ const Kit = ({}) => {
         dispatch(stopWatching({ serial: kitSerial }));
       };
     }
-  }, [kitAccessible, kitSerial, startWatching, stopWatching]);
+  }, [dispatch, kitAccessible, kitSerial, startWatching, stopWatching]);
 
   const {
     data: configurations,
