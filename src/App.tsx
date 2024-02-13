@@ -36,7 +36,7 @@ export default function App() {
           <Route path="/log-in" element={<LogIn />} />
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/me" element={<Me />} />
-          <Route path="/user/:username" element={<User_ />} />
+          <Route path="/user/:username" element={<UserWrapped />} />
           <Route path="/create-kit" element={<CreateKit />} />
           <Route path="/kit/:kitSerial/*" element={<Kit />} />
           <Route path="*" element={<NotFound />} />
@@ -52,7 +52,7 @@ export default function App() {
   );
 }
 
-function User_() {
+function UserWrapped() {
   const { username } = useParams<{ username: string }>();
   if (username) {
     return <User username={username} />;

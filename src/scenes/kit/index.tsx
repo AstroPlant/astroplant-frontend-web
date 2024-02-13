@@ -130,7 +130,7 @@ const KitDashboard = (props: KitDashboardProps) => {
   );
 };
 
-const Kit = ({}) => {
+function Kit() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
@@ -250,6 +250,6 @@ const Kit = ({}) => {
       </>
     );
   }
-};
+}
 
 export default compose<{}, {}>(awaitAuthenticationRan())(Kit);
