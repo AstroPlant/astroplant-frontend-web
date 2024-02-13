@@ -427,6 +427,7 @@ function AddMember({ kit, close }: { kit: schemas["Kit"]; close: () => void }) {
                     <li
                       key={suggestion.username}
                       role="option"
+                      aria-selected={false}
                       onClick={() => setSelectedUser(suggestion)}
                     >
                       <Gravatar
