@@ -2,7 +2,6 @@ import { useContext, useMemo } from "react";
 import { Link, Route, Routes, useSearchParams } from "react-router-dom";
 
 import { Menu } from "~/Components/Menu";
-import { KitState } from "~/modules/kit/reducer";
 import { ConfigurationsContext } from "../contexts";
 
 import RawMeasurements from "./charts/RawMeasurements";
@@ -65,17 +64,11 @@ export function KitData({ kit }: Props) {
               {configuration.active && (
                 <>
                   <h2>Current measurements</h2>
-                  <RawMeasurements
-                    kit={kit}
-                    configuration={configuration}
-                  />
+                  <RawMeasurements kit={kit} configuration={configuration} />
                 </>
               )}
               <h2>Past measurements</h2>
-              <AggregateMeasurements
-                kit={kit}
-                configuration={configuration}
-              />
+              <AggregateMeasurements kit={kit} configuration={configuration} />
             </>
           }
         />

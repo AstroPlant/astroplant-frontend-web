@@ -12,7 +12,7 @@ import { KitContext, ConfigurationsContext } from "../contexts";
 import { firstValueFrom } from "rxjs";
 import { useAppSelector } from "~/hooks";
 
-export default function PeripheralCommand({}) {
+export default function PeripheralCommand() {
   const peripheralDefinitions = useAppSelector(
     peripheralDefinitionsSelectors.selectEntities,
   );

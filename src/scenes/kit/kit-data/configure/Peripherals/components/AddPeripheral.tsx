@@ -24,7 +24,7 @@ export type Props = {
 
 const PeripheralForm = ApiForm<any, any>;
 
-export default function AddPeripheral({ kit, configuration }: Props) {
+export default function AddPeripheral({ kit: _, configuration }: Props) {
   const { t } = useTranslation();
   const peripheralDefinitions = useAppSelector(
     peripheralDefinitionsSelectors.selectAll,
@@ -41,10 +41,6 @@ export default function AddPeripheral({ kit, configuration }: Props) {
     setOpen(false);
     setDone(false);
     setPeripheralDefinition(null);
-  };
-
-  const handleOpen = () => {
-    setOpen(true);
   };
 
   const selectPeripheralDefinition = (
