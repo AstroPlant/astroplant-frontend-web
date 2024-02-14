@@ -13,6 +13,7 @@ import { produce } from "immer";
 import { JSONSchema7 } from "json-schema";
 import {
   IconAdjustmentsHorizontal,
+  IconCheck,
   IconPlus,
   IconTransferIn,
   IconTransferOut,
@@ -46,6 +47,11 @@ import EditRule from "./components/EditRule";
 import { schemas } from "~/api";
 import { useAppSelector } from "~/hooks";
 import { rtkApi } from "~/services/astroplant";
+import { Textarea } from "~/Components/Textarea";
+import { isEmpty } from "lodash";
+import { ModalDialog } from "~/Components/ModalDialog";
+
+import style from "./index.module.css";
 
 export type Props = {
   kit: schemas["Kit"];
@@ -84,20 +90,30 @@ function checkFuzzyControlReferences(
 
 function parseConfiguration(
   configuration: schemas["KitConfigurationWithPeripherals"],
-): FuzzyControl {
-  const empty: FuzzyControl = { input: {}, output: {}, rules: [] };
+):
+  | { data: FuzzyControl }
+  | { error: ReturnType<typeof validateFuzzyControlErrors> } {
   const rules = configuration.controlRules as { fuzzyControl?: unknown };
 
+  if (
+    configuration.controlRules === undefined ||
+    isEmpty(configuration.controlRules)
+  ) {
+    return {
+      data: {
+        input: {},
+        output: {},
+        rules: [],
+      },
+    };
+  }
+
   if (!validateFuzzyControl(rules?.fuzzyControl)) {
-    console.debug(
-      "Fuzzy control rules failed to validate.",
-      validateFuzzyControlErrors(),
-    );
-    return empty;
+    return { error: validateFuzzyControlErrors() };
   }
 
   if (!checkFuzzyControlReferences(rules.fuzzyControl, configuration)) {
-    return empty;
+    return { error: null };
   }
 
   let fuzzyControl: FuzzyControl = { input: {}, output: {}, rules: [] };
@@ -217,10 +233,20 @@ function parseConfiguration(
     }
   }
 
-  return fuzzyControl;
+  return { data: fuzzyControl };
 }
 
-export default function Rules({ readOnly, kit: _, configuration }: Props) {
+function RulesFuzzyControl({
+  readOnly,
+  kit: _,
+  configuration,
+  fuzzyControl,
+}: {
+  readOnly: boolean;
+  kit: schemas["Kit"];
+  configuration: schemas["KitConfigurationWithPeripherals"];
+  fuzzyControl: FuzzyControl;
+}) {
   const { t } = useTranslation();
 
   const peripheralDefinitions = useAppSelector(
@@ -238,11 +264,6 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
   >(null);
   const [editingRule, setEditingRule] = useState<[number, FuzzyRule] | null>(
     null,
-  );
-
-  const fuzzyControl = useMemo(
-    () => parseConfiguration(configuration),
-    [configuration],
   );
 
   const [patchKitConfiguration] = rtkApi.usePatchKitConfigurationMutation();
@@ -752,6 +773,131 @@ export default function Rules({ readOnly, kit: _, configuration }: Props) {
       >
         {readOnly ? "View rules" : "Edit rules"}
       </Button>
+    );
+  }
+}
+
+function RulesUnknownFormat({
+  readOnly,
+  kit: _,
+  configuration,
+  fuzzyControlError,
+}: {
+  readOnly: boolean;
+  kit: schemas["Kit"];
+  configuration: schemas["KitConfigurationWithPeripherals"];
+  fuzzyControlError: ReturnType<typeof validateFuzzyControlErrors>;
+}) {
+  const [controlRules, setControlRules] = useState(
+    JSON.stringify(configuration.controlRules, null, 2),
+  );
+
+  const [patchKitConfiguration, patchKitConfigurationResult] =
+    rtkApi.usePatchKitConfigurationMutation();
+  const [error, setError] = useState<string>();
+
+  const [reasonOpen, setReasonOpen] = useState(false);
+
+  return (
+    <>
+      <p>
+        This configuration's control rules failed to validate. They might be of
+        an old control version.{" "}
+        {fuzzyControlError !== null && (
+          <a
+            href="#"
+            onClick={(e) => {
+              e.preventDefault();
+              setReasonOpen(true);
+            }}
+          >
+            Click here to see the failure reason.
+          </a>
+        )}
+      </p>
+      {readOnly ? (
+        <p>You can view the control rule document below.</p>
+      ) : (
+        <p>You can view and update the control rule document below.</p>
+      )}
+      <form
+        onSubmit={async (e) => {
+          e.preventDefault();
+          setError(undefined);
+
+          let controlRules_;
+          try {
+            controlRules_ = JSON.parse(controlRules);
+          } catch {
+            setError("The control document must be valid JSON, but it isn't.");
+            return;
+          }
+
+          const res = await patchKitConfiguration({
+            configurationId: configuration.id,
+            patchKitConfiguration: {
+              controlRules: controlRules_,
+            },
+          });
+          if ("error" in res) {
+            setError("An unknown error occurred");
+          }
+        }}
+      >
+        <Textarea
+          readOnly={readOnly}
+          onChange={(e) => setControlRules(e.currentTarget.value)}
+          fullWidth
+          value={controlRules}
+        />
+        {error !== undefined && <p className="error">{error}</p>}
+        {!readOnly && (
+          <Button
+            type="submit"
+            variant="primary"
+            disabled={patchKitConfigurationResult.isLoading}
+          >
+            Submit
+          </Button>
+        )}
+      </form>
+      {fuzzyControlError !== null && (
+        <ModalDialog
+          open={reasonOpen}
+          onClose={() => setReasonOpen(false)}
+          actions={<Button onClick={() => setReasonOpen(false)}>Close</Button>}
+        >
+          <p>The control rules failed to validate for the following reason:</p>
+        <pre className={style.failureReason}><code>{JSON.stringify(fuzzyControlError, null, 2)}</code></pre>
+        </ModalDialog>
+      )}
+    </>
+  );
+}
+
+export default function Rules({ readOnly, kit, configuration }: Props) {
+  const fuzzyControl = useMemo(
+    () => parseConfiguration(configuration),
+    [configuration],
+  );
+
+  if ("data" in fuzzyControl) {
+    return (
+      <RulesFuzzyControl
+        readOnly={readOnly}
+        kit={kit}
+        configuration={configuration}
+        fuzzyControl={fuzzyControl.data}
+      />
+    );
+  } else {
+    return (
+      <RulesUnknownFormat
+        readOnly={readOnly}
+        kit={kit}
+        configuration={configuration}
+        fuzzyControlError={fuzzyControl.error}
+      />
     );
   }
 }
