@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import compose from "~/utils/compose";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Icon } from "semantic-ui-react";
@@ -58,7 +58,7 @@ function EditOutput(props: PInner) {
 
   let outputSettingsSchemaModified: JSONSchema7;
   let outputSettingsUiSchema: any;
-  let data: any;
+  let data: object | undefined;
   if (outputType === "continuous") {
     outputSettingsSchemaModified = produce(
       castDraft(continuousOutputSettingsSchema),
@@ -92,6 +92,14 @@ function EditOutput(props: PInner) {
     throw new Error("Unknown output type");
   }
   const [formData, setFormData] = useState(data);
+
+  useEffect(
+    () => setFormData(data),
+    [
+      outputType, // note: the outputType dependency is necessary here to ensure formData updates on outputType change
+      data,
+    ],
+  );
 
   const submitButtonRef = useRef(null);
 
