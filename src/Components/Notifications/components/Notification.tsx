@@ -53,7 +53,7 @@ export function NotificationMsg({ notification, time: time_, dismiss }: Props) {
         error={notification.kind === NotificationKind.error}
         onDismiss={dismiss}
       />
-      {progress && <Progress percent={progress || 0} attached="bottom" />}
+      {progress !== undefined && <Progress percent={progress || 0} attached="bottom" />}
     </>
   );
 }
