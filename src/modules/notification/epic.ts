@@ -2,7 +2,6 @@ import { combineEpics } from "redux-observable";
 import { of, concat } from "rxjs";
 import { mergeMap, filter, delay } from "rxjs/operators";
 import { DateTime } from "luxon";
-import Option from "~/utils/option";
 import * as actions from "./actions";
 import { AppEpic } from "~/store";
 
@@ -17,11 +16,11 @@ const notificationRequestEpic: AppEpic = (action$, state$) =>
       const id = state$.value.notification.nextId;
       const nextId = id + 1;
 
-      let time: Option<{ from: DateTime; to: DateTime }> = Option.none();
+      let time: { from: DateTime; to: DateTime } | undefined;
       if (timeout) {
         const from = DateTime.now();
         const to = DateTime.now().plus({ milliseconds: timeout });
-        time = Option.some({ from, to });
+        time = { from, to };
       }
 
       const addObservable = of(
@@ -29,7 +28,7 @@ const notificationRequestEpic: AppEpic = (action$, state$) =>
           nextId,
           id.toString(),
           notification,
-          time,
+          time && { from: time.from.toISO()!, to: time.to.toISO()! },
         ),
       );
 

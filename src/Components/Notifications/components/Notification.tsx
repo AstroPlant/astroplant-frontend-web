@@ -1,12 +1,11 @@
 import React from "react";
 import { Message, Progress } from "semantic-ui-react";
 import { DateTime, Interval } from "luxon";
-import Option from "~/utils/option";
 import { Notification, NotificationKind } from "~/modules/notification";
 
 export type Props = {
   notification: Notification;
-  time: Option<{ from: DateTime; to: DateTime }>;
+  time?: { from: string; to: string };
   dismiss: () => void;
 };
 
@@ -24,13 +23,14 @@ class NotificationMsg extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
-    if (props.time.isSome()) {
+    if (props.time !== undefined) {
       this.interval = setInterval(this.update.bind(this), 1000 / 60);
     }
   }
 
   update() {
-    const { from, to } = this.props.time.unwrap();
+    const from = DateTime.fromISO(this.props.time!.from);
+    const to = DateTime.fromISO(this.props.time!.to);
     const now = DateTime.now();
 
     const total = Interval.fromDateTimes(from, to).length("milliseconds");

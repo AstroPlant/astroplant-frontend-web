@@ -1,14 +1,15 @@
 import { createReducer } from "@reduxjs/toolkit";
-import { DateTime } from "luxon";
 import * as actions from "./actions";
-import Option from "utils/option";
 import { Notification } from "./index";
 
 export interface NotificationState {
   notifications: {
     [id: string]: {
       notification: Notification;
-      time: Option<{ from: DateTime; to: DateTime }>;
+      time?: {
+        from: string;
+        to: string;
+      };
     };
   };
   nextId: number;
