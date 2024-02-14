@@ -1,4 +1,4 @@
-import React from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Message, Progress } from "semantic-ui-react";
 import { DateTime, Interval } from "luxon";
 import { Notification, NotificationKind } from "~/modules/notification";
@@ -13,59 +13,49 @@ export type State = {
   progress: number | null;
 };
 
-class NotificationMsg extends React.Component<Props, State> {
-  interval: any;
+export function NotificationMsg({ notification, time: time_, dismiss }: Props) {
+  const time = useMemo(
+    () =>
+      time_
+        ? { to: DateTime.fromISO(time_.to), from: DateTime.fromISO(time_.from) }
+        : undefined,
+    [time_],
+  );
 
-  state = {
-    progress: null,
-  };
+  const [progress, setProgress] = useState(time ? 100 : undefined);
 
-  constructor(props: Props) {
-    super(props);
+  useEffect(() => {
+    if (time !== undefined) {
+      const { from, to } = time;
+      const interval = setInterval(() => {
+        const now = DateTime.now();
 
-    if (props.time !== undefined) {
-      this.interval = setInterval(this.update.bind(this), 1000 / 60);
+        const total = Interval.fromDateTimes(from, to).length("milliseconds");
+        const elapsed = Interval.fromDateTimes(from, now).length(
+          "milliseconds",
+        );
+
+        const progress = (elapsed / total) * 100;
+        setProgress(Math.max(0, 100 - progress));
+      }, 1000 / 60);
+      return () => clearInterval(interval);
     }
-  }
+  }, [time]);
 
-  update() {
-    const from = DateTime.fromISO(this.props.time!.from);
-    const to = DateTime.fromISO(this.props.time!.to);
-    const now = DateTime.now();
-
-    const total = Interval.fromDateTimes(from, to).length("milliseconds");
-    const elapsed = Interval.fromDateTimes(from, now).length("milliseconds");
-
-    const progress = (elapsed / total) * 100;
-
-    this.setState({
-      progress: 100 - progress,
-    });
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.interval);
-  }
-
-  render() {
-    const { props, state } = this;
-    return (
-      <>
-        <Message
-          attached={(state.progress && "top") || false}
-          header={props.notification.title}
-          content={props.notification.body}
-          success={props.notification.kind === NotificationKind.success}
-          warning={props.notification.kind === NotificationKind.warning}
-          error={props.notification.kind === NotificationKind.error}
-          onDismiss={props.dismiss}
-        />
-        {state.progress && (
-          <Progress percent={state.progress || 0} attached="bottom" />
-        )}
-      </>
-    );
-  }
+  return (
+    <>
+      <Message
+        attached={progress !== undefined ? "top" : false}
+        header={notification.title}
+        content={notification.body}
+        success={notification.kind === NotificationKind.success}
+        warning={notification.kind === NotificationKind.warning}
+        error={notification.kind === NotificationKind.error}
+        onDismiss={dismiss}
+      />
+      {progress && <Progress percent={progress || 0} attached="bottom" />}
+    </>
+  );
 }
 
 export default NotificationMsg;
