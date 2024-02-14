@@ -52,21 +52,34 @@ export function ConfigurationSelector({
 }: ConfigurationSelectorProps) {
   const configurations = useContext(ConfigurationsContext);
 
-  // TODO: ensure selected configuration is always visible
-  const numConfigurations = Object.keys(configurations).length;
+  // Show the active configuration first, make sure the chosen configuration
+  // (the one the user is currently viewing) is shown, and show at most
+  // `MAX_ENTRIES` configurations.
+  const shownConfigurations = useMemo(() => {
+    const activeConfiguration =
+      Object.values(configurations).find((c) => c.active) ?? null;
 
-  const activeConfiguration = useMemo(
-    () => Object.values(configurations).find((c) => c.active) ?? null,
-    [configurations],
-  );
-
-  const inactiveConfigurations = useMemo(
-    () =>
-      Object.values(configurations)
+    const shownConfigurations = [
+      ...(activeConfiguration ? [activeConfiguration] : []),
+      ...Object.values(configurations)
         .filter((c) => !c.active)
         .slice(0, activeConfiguration === null ? MAX_ENTRIES : MAX_ENTRIES - 1),
-    [configurations, activeConfiguration],
-  );
+    ];
+
+    if (chosenConfiguration !== null) {
+      if (
+        shownConfigurations.find((c) => c.id === chosenConfiguration.id) ===
+        undefined
+      ) {
+        if (shownConfigurations.length === MAX_ENTRIES) {
+          shownConfigurations.pop();
+        }
+        shownConfigurations.push(chosenConfiguration);
+      }
+    }
+
+    return shownConfigurations;
+  }, [chosenConfiguration, configurations]);
 
   return (
     <DropdownDetails
@@ -87,13 +100,7 @@ export function ConfigurationSelector({
       anchor="left"
     >
       <ul role="menu">
-        {activeConfiguration && (
-          <Row
-            configuration={activeConfiguration}
-            chosen={activeConfiguration.id === chosenConfiguration?.id}
-          />
-        )}
-        {inactiveConfigurations.map((configuration) => (
+        {shownConfigurations.map((configuration) => (
           <Row
             key={configuration.id}
             configuration={configuration}
