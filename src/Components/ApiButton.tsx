@@ -53,7 +53,7 @@ class ApiButton<R = any> extends Component<AllProps<R>, State> {
   };
 
   async submit() {
-    this.setState((state) => {
+    this.setState((_state) => {
       return {
         submitting: true,
       };
@@ -151,9 +151,3 @@ export default function Conn<R>(): React.ComponentType<Props<R>> {
     mapDispatchToProps,
   )(withTranslation()(ApiButton as React.ComponentType<AllProps<R>>));
 }
-
-/*export default connect<any, any, Props<T, R>>(
-    null,
-    mapDispatchToProps
-)(withTranslation()(ApiForm));
-*/
