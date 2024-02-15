@@ -115,8 +115,10 @@ export default function Media({ kit, configuration }: Props) {
                     </Table.Cell>
                     <Table.Cell>
                       {
-                        configuration.peripherals[displayMedia.peripheralId]!
-                          .name
+                        configuration.peripherals.find(
+                          (peripheral) =>
+                            peripheral.id === displayMedia.peripheralId,
+                        )?.name
                       }
                     </Table.Cell>
                     <Table.Cell>{displayMedia.name}</Table.Cell>
@@ -142,7 +144,9 @@ export default function Media({ kit, configuration }: Props) {
           </Table.Header>
           <Table.Body>
             {mediaList.map((media) => {
-              const peripheral = configuration.peripherals[media.peripheralId]!;
+              const peripheral = configuration.peripherals.find(
+                (peripheral) => peripheral.id === media.peripheralId,
+              );
               const displayable =
                 media.type === "image/png" ||
                 media.type === "image/jpeg" ||
@@ -152,6 +156,9 @@ export default function Media({ kit, configuration }: Props) {
                 displayMedia !== null &&
                 displayMedia.id === media.id &&
                 displayUrl === null;
+              if (peripheral === undefined) {
+                return;
+              }
               return (
                 <Table.Row key={media.id}>
                   <Table.Cell>
