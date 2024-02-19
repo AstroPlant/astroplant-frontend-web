@@ -74,7 +74,6 @@ export function Button({
   confirm,
   children,
   className,
-  type,
   ...props
 }: PropsWithChildren<ButtonProps>) {
   const [confirmContent, setConfirmContent] = useState<{
