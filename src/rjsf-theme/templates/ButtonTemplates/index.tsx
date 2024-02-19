@@ -3,6 +3,7 @@ import {
   RJSFSchema,
   StrictRJSFSchema,
   TemplatesType,
+  getSubmitButtonOptions,
 } from "@rjsf/utils";
 import { Icon } from "semantic-ui-react";
 import { Button } from "~/Components/Button";
@@ -13,7 +14,21 @@ function buttonTemplates<
   F extends FormContextType = any,
 >(): TemplatesType<T, S, F>["ButtonTemplates"] {
   return {
-    SubmitButton: (props) => <Button {...props}>Submit</Button>,
+    SubmitButton: (props) => {
+      const {
+        submitText,
+        norender,
+        props: submitButtonProps,
+      } = getSubmitButtonOptions<T, S, F>(props.uiSchema);
+      if (norender) {
+        return null;
+      }
+      return (
+        <Button variant="primary" type="submit" {...submitButtonProps}>
+          {submitText}
+        </Button>
+      );
+    },
     AddButton: ({ uiSchema: _, ...props }) => (
       /* a bit hacky to specify the style here */
       <Button
