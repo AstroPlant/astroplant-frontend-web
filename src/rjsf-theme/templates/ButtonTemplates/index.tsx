@@ -14,12 +14,12 @@ function buttonTemplates<
   F extends FormContextType = any,
 >(): TemplatesType<T, S, F>["ButtonTemplates"] {
   return {
-    SubmitButton: (props) => {
+    SubmitButton: ({ uiSchema }) => {
       const {
         submitText,
         norender,
         props: submitButtonProps,
-      } = getSubmitButtonOptions<T, S, F>(props.uiSchema);
+      } = getSubmitButtonOptions<T, S, F>(uiSchema);
       if (norender) {
         return null;
       }
