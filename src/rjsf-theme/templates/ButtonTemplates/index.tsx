@@ -29,7 +29,7 @@ function buttonTemplates<
         </Button>
       );
     },
-    AddButton: ({ uiSchema: _, ...props }) => (
+    AddButton: ({ uiSchema, registry, ...props }) => (
       /* a bit hacky to specify the style here */
       <Button
         {...props}
@@ -40,22 +40,22 @@ function buttonTemplates<
         <Icon name="add" />
       </Button>
     ),
-    CopyButton: ({ uiSchema: _, ...props }) => (
+    CopyButton: ({ uiSchema, registry, ...props }) => (
       <Button {...props} leftAdornment="+">
         Add
       </Button>
     ),
-    MoveDownButton: ({ uiSchema: _, ...props }) => (
+    MoveDownButton: ({ uiSchema, registry, ...props }) => (
       <Button {...props} size="small" variant="muted">
         <Icon name="arrow down" />
       </Button>
     ),
-    MoveUpButton: ({ uiSchema: _, ...props }) => (
+    MoveUpButton: ({ uiSchema, registry, ...props }) => (
       <Button {...props} size="small" variant="muted">
         <Icon name="arrow up" />
       </Button>
     ),
-    RemoveButton: ({ uiSchema: _, ...props }) => (
+    RemoveButton: ({ uiSchema, registry, ...props }) => (
       <Button {...props} size="small" variant="muted">
         <Icon name="delete" />
       </Button>
