@@ -33,6 +33,7 @@ function buttonTemplates<
       /* a bit hacky to specify the style here */
       <Button
         {...props}
+        type="button"
         size="small"
         variant="muted"
         style={{ float: "right", marginRight: "1.2rem" }}
@@ -41,22 +42,22 @@ function buttonTemplates<
       </Button>
     ),
     CopyButton: ({ uiSchema, registry, ...props }) => (
-      <Button {...props} leftAdornment="+">
+      <Button {...props} type="button" leftAdornment="+">
         Add
       </Button>
     ),
     MoveDownButton: ({ uiSchema, registry, ...props }) => (
-      <Button {...props} size="small" variant="muted">
+      <Button {...props} type="button" size="small" variant="muted">
         <Icon name="arrow down" />
       </Button>
     ),
     MoveUpButton: ({ uiSchema, registry, ...props }) => (
-      <Button {...props} size="small" variant="muted">
+      <Button {...props} type="button" size="small" variant="muted">
         <Icon name="arrow up" />
       </Button>
     ),
     RemoveButton: ({ uiSchema, registry, ...props }) => (
-      <Button {...props} size="small" variant="muted">
+      <Button {...props} type="button" size="small" variant="muted">
         <Icon name="delete" />
       </Button>
     ),
