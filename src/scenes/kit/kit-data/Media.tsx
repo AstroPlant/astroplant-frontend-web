@@ -157,7 +157,7 @@ export default function Media({ kit, configuration }: Props) {
                 displayMedia.id === media.id &&
                 displayUrl === null;
               if (peripheral === undefined) {
-                return;
+                return null;
               }
               return (
                 <Table.Row key={media.id}>
