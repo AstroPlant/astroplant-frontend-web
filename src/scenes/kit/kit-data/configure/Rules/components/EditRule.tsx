@@ -97,6 +97,7 @@ export default function EditRule(props: Props) {
     activeFrom: fuzzyRuleGiven.activeFrom,
     activeTo: fuzzyRuleGiven.activeTo,
   };
+  const [closeEasily, setCloseEasily] = useState(true);
   const [formData, setFormData] = useState(fuzzyRuleAdapted);
 
   const submitButtonRef = useRef(null);
@@ -243,6 +244,7 @@ export default function EditRule(props: Props) {
     <ModalDialog
       open={true}
       onClose={handleClose}
+      closeWhenClickedOutside={closeEasily}
       header={
         <>
           <IconScale aria-hidden /> Rule
@@ -271,7 +273,10 @@ export default function EditRule(props: Props) {
         uiSchema={uiSchema}
         onSubmit={({ formData }) => handleSubmit(formData)}
         formData={formData}
-        onChange={({ formData }) => setFormData(formData)}
+        onChange={({ formData }) => {
+          setCloseEasily(false);
+          setFormData(formData);
+        }}
         validator={validator}
       >
         <input

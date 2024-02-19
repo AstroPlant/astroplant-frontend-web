@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import compose from "~/utils/compose";
 import { withTranslation, WithTranslation } from "react-i18next";
 import { Icon } from "semantic-ui-react";
@@ -92,6 +92,7 @@ function EditOutput(props: PInner) {
     throw new Error("Unknown output type");
   }
   const [formData, setFormData] = useState(data);
+  const [closeEasily, setCloseEasily] = useState(true);
 
   useEffect(
     () => setFormData(data),
@@ -147,6 +148,7 @@ function EditOutput(props: PInner) {
     <ModalDialog
       open={true}
       onClose={handleClose}
+      closeWhenClickedOutside={closeEasily}
       header={
         <>
           <Icon name="cogs" /> {peripheral.name} — {command}
@@ -188,7 +190,10 @@ function EditOutput(props: PInner) {
         uiSchema={outputSettingsUiSchema}
         onSubmit={({ formData }) => handleSubmit(peripheral, command, formData)}
         formData={formData}
-        onChange={({ formData }) => setFormData(formData)}
+        onChange={({ formData }) => {
+          setCloseEasily(false);
+          setFormData(formData);
+        }}
         validator={validator}
       >
         <input
