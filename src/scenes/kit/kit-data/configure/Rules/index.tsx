@@ -491,11 +491,6 @@ function RulesFuzzyControl({
           <Message warning>
             <Message.Header>Note</Message.Header>
             <p>
-              If you change this configuration's peripherals, existing rules are
-              not automatically updated. This is a known limitation, and can be
-              improved in the future.
-            </p>
-            <p>
               This version of the control system requires kit version{" "}
               <strong>1.0.0b7</strong> or higher.
             </p>
@@ -868,7 +863,9 @@ function RulesUnknownFormat({
           actions={<Button onClick={() => setReasonOpen(false)}>Close</Button>}
         >
           <p>The control rules failed to validate for the following reason:</p>
-        <pre className={style.failureReason}><code>{JSON.stringify(fuzzyControlError, null, 2)}</code></pre>
+          <pre className={style.failureReason}>
+            <code>{JSON.stringify(fuzzyControlError, null, 2)}</code>
+          </pre>
         </ModalDialog>
       )}
     </>
