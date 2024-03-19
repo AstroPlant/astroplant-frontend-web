@@ -8,6 +8,7 @@ import HeadTitle from "../Components/HeadTitle";
 import { rtkApi } from "~/services/astroplant";
 import { KitAvatar } from "~/Components/KitAvatar";
 import { Badge } from "~/Components/Badge";
+import { KitActiveBadge } from "~/Components/KitActiveBadge";
 
 import style from "./Home.module.css";
 
@@ -60,6 +61,7 @@ export default function Home() {
                   <Link to={`/kit/${activeKit.serial}`}>
                     <h3>{activeKit.name}</h3>
                   </Link>
+                  <KitActiveBadge kit={activeKit} />
                   {activeKit.privacyPublicDashboard && (
                     <Badge variant="muted" size="small" text="Public" />
                   )}
