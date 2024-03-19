@@ -22,13 +22,12 @@
       "confirm": "Confirm"
     },
     "home": {
-      "header": "AstroPlant Prototype",
-      "subheader": "Be a space farmer",
+      "header": "AstroPlant sensing and control",
       "content": {
         "title": "Grow plants in space",
-        "body1": "Welcome, space farmer!",
-        "body2": "AstroPlant is an educational citizen science project with the European Space Agency to engage a new generation of space farmers, collect data and ideas for agriculture on Mars, develop open source research equipment, and create awareness of regenerative and closed-loop life support systems.",
-        "body3": "We have built a prototype plant lab that collects and shares open data about plant growth in different grow environments and are working on an open lab-infrastructure that makes it possible for everyone to contribute to science and space exploration—and to get to know more about topics such as plant science and biology, space science, engineering, electronics, open innovation and the circular economy."
+        "body1": "You have found the sensing and control platform powering AstroPlant. This is an open source platform that you can use to configure and run hardware-based industrial control systems and conduct experiments. The control system can run on low-power devices such as the Raspberry Pi and communicates with various types of sensors and actuators, either wired or wirelessly.",
+        "body2": "AstroPlant is an educational citizen science project in cooporation with the European Space Agency to engage a new generation of space farmers, collect data and ideas for agriculture on Mars, develop open source research equipment, and create awareness of regenerative and closed-loop agricultural systems.",
+        "body3": "We have built a prototype plant lab that collects and shares open data about plant growth in different growth environments and are working on an open lab-infrastructure that makes it possible for everyone to contribute to science and space exploration—and to get to know more about topics such as plant science and biology, space science, engineering, electronics, open innovation and the circular economy."
       },
       "buttons": {
         "see": {

@@ -83,8 +83,14 @@ export const rtkApi = createApi({
     "KitConfigurations",
   ],
   endpoints: (build) => ({
-    listKits: build.query<schemas["Kit"][], void>({
-      query: () => ({ path: "/kits", method: "GET" }),
+    listKits: build.query<
+      schemas["Kit"][],
+      {
+        lastSeenSince?: string;
+        after?: number;
+      }
+    >({
+      query: (query) => ({ path: "/kits", method: "GET", query }),
       providesTags: (result) => [
         ...(result || []).map(
           (kit) => ({ type: "Kits", id: kit.serial }) as const,
