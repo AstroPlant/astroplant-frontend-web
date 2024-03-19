@@ -11,4 +11,4 @@ if ! test -f "$SPEC"; then
   exit 1
 fi
 
-yarn openapi-typescript "$SPEC" -o ./astroplant-frontend/src/api/schema.ts
+yarn openapi-typescript "$SPEC" -o ./src/api/schema.ts
