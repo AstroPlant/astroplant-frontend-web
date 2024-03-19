@@ -16,6 +16,7 @@ import { Badge } from "~/Components/Badge";
 
 import commonStyle from "~/Common.module.css";
 import style from "./index.module.css";
+import { KitActiveBadge } from "~/Components/KitActiveBadge";
 
 export default function User({ username }: { username: string }) {
   // This component is used to render both the user profile of the logged-in
@@ -160,6 +161,7 @@ export default function User({ username }: { username: string }) {
                             <Link to={`/kit/${kit.serial}`}>
                               <h3>{kit.name}</h3>
                             </Link>
+                            <KitActiveBadge kit={kit} />
                             {kit.privacyPublicDashboard && (
                               <Badge
                                 variant="muted"

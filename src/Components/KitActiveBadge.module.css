@@ -1,0 +1,23 @@
+
+.active {
+  --color1: oklch(76% 0.12 151.19);
+  --color2: oklch(72% 0.12 151.19);
+}
+
+.recentlyActive {
+  --color1: oklch(76% 0.12 70.5);
+  --color2: oklch(72% 0.12 70.5);
+}
+
+.inactive,
+.neverSeen {
+  --color1: oklch(76% 0.0 70.5);
+  --color2: oklch(72% 0.0 70.5);
+}
+
+.badge {
+  border-radius: 100%;
+  width: 1rem;
+  height: 1rem;
+  background: linear-gradient(225deg, var(--color1), var(--color2));
+}

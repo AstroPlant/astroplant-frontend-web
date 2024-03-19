@@ -41,6 +41,7 @@ import style from "./index.module.css";
 import { rtkApi } from "~/services/astroplant";
 import { skipToken } from "@reduxjs/toolkit/query";
 import { selectMe } from "~/modules/me/reducer";
+import { KitActiveBadge } from "~/Components/KitActiveBadge";
 
 type Params = { kitSerial: string };
 
@@ -62,6 +63,7 @@ function KitHeader({
         <div className={style.title}>
           <KitAvatar serial={kit.serial} />
           {kit.name || "Unnamed kit"} / {kit.serial}
+          <KitActiveBadge kit={kit} />
           {kit.privacyPublicDashboard && (
             <Badge variant="muted" size="small" text="Public" />
           )}
