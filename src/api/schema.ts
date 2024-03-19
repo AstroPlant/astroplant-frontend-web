@@ -207,7 +207,7 @@ export interface components {
      */
     ProblemInvalidParameters: components["schemas"]["ProblemDetails"] & {
       invalidParameters?: {
-        [key: string]: components["schemas"]["InvalidParameter"] | undefined;
+        [key: string]: components["schemas"]["InvalidParameter"];
       };
     };
     InvalidParameter: (
@@ -251,6 +251,8 @@ export interface components {
       longitude?: number;
       privacyPublicDashboard?: boolean;
       privacyShowOnMap?: boolean;
+      /** Format: date-time */
+      lastSeen?: string;
     };
     PatchKit: {
       name?: string;
@@ -379,7 +381,7 @@ export interface components {
       /** @description A JSON schema specifying valid configuration documents. */
       configurationSchema: unknown;
       /** @description A JSON schema specifying valid command documents. */
-      commandSchema: Record<string, unknown> | null;
+      commandSchema: unknown;
       expectedQuantityTypes?: number[];
     };
     PeripheralDefinitions: components["schemas"]["PeripheralDefinition"][];
@@ -477,7 +479,7 @@ export interface components {
       /** Format: date-time */
       datetimeEnd: string;
       values: {
-        [key: string]: number | undefined;
+        [key: string]: number;
       };
     };
     Media: {
@@ -512,7 +514,9 @@ export interface components {
       };
     };
     /** @description The request was denied because you are not authorized to access the resource. */
-    ErrorUnauthorized: never;
+    ErrorUnauthorized: {
+      content: never;
+    };
     /** @description The request was denied because you exceeded the rate limit. */
     ErrorRateLimit: {
       content: {
@@ -543,6 +547,8 @@ export interface components {
   pathItems: never;
 }
 
+export type $defs = Record<string, never>;
+
 export type external = Record<string, never>;
 
 export interface operations {
@@ -550,6 +556,8 @@ export interface operations {
   listKits: {
     parameters: {
       query?: {
+        /** @description Fetch all kits that have been seen after the given date and time. */
+        lastSeenSince?: string;
         /** @description Fetch all kits after the given identifier. */
         after?: number;
       };
@@ -626,7 +634,9 @@ export interface operations {
     };
     responses: {
       /** @description The kit was successfully deleted. */
-      200: never;
+      200: {
+        content: never;
+      };
       400: components["responses"]["InvalidJson"];
       401: components["responses"]["ErrorUnauthorized"];
       429: components["responses"]["ErrorRateLimit"];
@@ -760,7 +770,9 @@ export interface operations {
     };
     responses: {
       /** @description The kit membership was successfully deleted. */
-      200: never;
+      200: {
+        content: never;
+      };
       401: components["responses"]["ErrorUnauthorized"];
       429: components["responses"]["ErrorRateLimit"];
       500: components["responses"]["ErrorInternalServer"];
@@ -931,7 +943,7 @@ export interface operations {
     parameters: {
       query?: {
         /** @description The id of the source configuration to clone. If this is set, the request body must not be set. The id is allowed to be of a configuration of a kit other than specified in `kitSerial`, but the agent making the request must have View permission on the kit to clone from. */
-        source?: string;
+        source?: number;
       };
       path: {
         /** @description The serial of the kit to create a configuration for. */
@@ -1030,7 +1042,9 @@ export interface operations {
     };
     responses: {
       /** @description The user was created. */
-      201: never;
+      201: {
+        content: never;
+      };
       400: components["responses"]["InvalidParameters"];
       429: components["responses"]["ErrorRateLimit"];
       500: components["responses"]["ErrorInternalServer"];
@@ -1285,7 +1299,9 @@ export interface operations {
     };
     responses: {
       /** @description The peripheral has been deleted. */
-      200: never;
+      200: {
+        content: never;
+      };
       400: components["responses"]["InvalidJson"];
       401: components["responses"]["ErrorUnauthorized"];
       429: components["responses"]["ErrorRateLimit"];
@@ -1308,7 +1324,9 @@ export interface operations {
     };
     responses: {
       /** @description The peripheral has been deleted. */
-      200: never;
+      200: {
+        content: never;
+      };
       400: components["responses"]["InvalidJson"];
       401: components["responses"]["ErrorUnauthorized"];
       429: components["responses"]["ErrorRateLimit"];

@@ -19,7 +19,7 @@ export default function KitMap() {
     data: kitsData,
     isLoading: kitsIsLoading,
     error: kitsError,
-  } = rtkApi.useListKitsQuery();
+  } = rtkApi.useListKitsQuery({});
 
   return (
     <div>
