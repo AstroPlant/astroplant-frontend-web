@@ -69,7 +69,9 @@ export default function PeripheralCommand() {
   if (activeConfiguration !== undefined) {
     let form = null;
     if (peripheralId !== null) {
-      const peripheral = activeConfiguration.peripherals[peripheralId]!;
+      const peripheral = activeConfiguration.peripherals.find(
+        (peri) => peri.id === peripheralId,
+      )!;
       const peripheralDefinition =
         peripheralDefinitions[peripheral.peripheralDefinitionId]!;
       form = (
